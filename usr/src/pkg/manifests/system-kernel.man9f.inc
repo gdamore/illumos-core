@@ -62,64 +62,6 @@ file path=usr/share/man/man9f/copyb.9f
 file path=usr/share/man/man9f/copyin.9f
 file path=usr/share/man/man9f/copymsg.9f
 file path=usr/share/man/man9f/copyout.9f
-file path=usr/share/man/man9f/csx_AccessConfigurationRegister.9f
-file path=usr/share/man/man9f/csx_CS_DDI_Info.9f
-file path=usr/share/man/man9f/csx_ConvertSize.9f
-file path=usr/share/man/man9f/csx_ConvertSpeed.9f
-file path=usr/share/man/man9f/csx_DeregisterClient.9f
-file path=usr/share/man/man9f/csx_DupHandle.9f
-file path=usr/share/man/man9f/csx_Error2Text.9f
-file path=usr/share/man/man9f/csx_Event2Text.9f
-file path=usr/share/man/man9f/csx_FreeHandle.9f
-file path=usr/share/man/man9f/csx_Get8.9f
-file path=usr/share/man/man9f/csx_GetFirstClient.9f
-file path=usr/share/man/man9f/csx_GetFirstTuple.9f
-file path=usr/share/man/man9f/csx_GetHandleOffset.9f
-file path=usr/share/man/man9f/csx_GetMappedAddr.9f
-file path=usr/share/man/man9f/csx_GetStatus.9f
-file path=usr/share/man/man9f/csx_GetTupleData.9f
-file path=usr/share/man/man9f/csx_MakeDeviceNode.9f
-file path=usr/share/man/man9f/csx_MapLogSocket.9f
-file path=usr/share/man/man9f/csx_MapMemPage.9f
-file path=usr/share/man/man9f/csx_ModifyConfiguration.9f
-file path=usr/share/man/man9f/csx_ModifyWindow.9f
-file path=usr/share/man/man9f/csx_ParseTuple.9f
-file path=usr/share/man/man9f/csx_Parse_CISTPL_BATTERY.9f
-file path=usr/share/man/man9f/csx_Parse_CISTPL_BYTEORDER.9f
-file path=usr/share/man/man9f/csx_Parse_CISTPL_CFTABLE_ENTRY.9f
-file path=usr/share/man/man9f/csx_Parse_CISTPL_CONFIG.9f
-file path=usr/share/man/man9f/csx_Parse_CISTPL_DATE.9f
-file path=usr/share/man/man9f/csx_Parse_CISTPL_DEVICE.9f
-file path=usr/share/man/man9f/csx_Parse_CISTPL_DEVICEGEO.9f
-file path=usr/share/man/man9f/csx_Parse_CISTPL_DEVICEGEO_A.9f
-file path=usr/share/man/man9f/csx_Parse_CISTPL_FORMAT.9f
-file path=usr/share/man/man9f/csx_Parse_CISTPL_FUNCE.9f
-file path=usr/share/man/man9f/csx_Parse_CISTPL_FUNCID.9f
-file path=usr/share/man/man9f/csx_Parse_CISTPL_GEOMETRY.9f
-file path=usr/share/man/man9f/csx_Parse_CISTPL_JEDEC_C.9f
-file path=usr/share/man/man9f/csx_Parse_CISTPL_LINKTARGET.9f
-file path=usr/share/man/man9f/csx_Parse_CISTPL_LONGLINK_A.9f
-file path=usr/share/man/man9f/csx_Parse_CISTPL_LONGLINK_MFC.9f
-file path=usr/share/man/man9f/csx_Parse_CISTPL_MANFID.9f
-file path=usr/share/man/man9f/csx_Parse_CISTPL_ORG.9f
-file path=usr/share/man/man9f/csx_Parse_CISTPL_SPCL.9f
-file path=usr/share/man/man9f/csx_Parse_CISTPL_SWIL.9f
-file path=usr/share/man/man9f/csx_Parse_CISTPL_VERS_1.9f
-file path=usr/share/man/man9f/csx_Parse_CISTPL_VERS_2.9f
-file path=usr/share/man/man9f/csx_Put8.9f
-file path=usr/share/man/man9f/csx_RegisterClient.9f
-file path=usr/share/man/man9f/csx_ReleaseConfiguration.9f
-file path=usr/share/man/man9f/csx_RepGet8.9f
-file path=usr/share/man/man9f/csx_RepPut8.9f
-file path=usr/share/man/man9f/csx_RequestConfiguration.9f
-file path=usr/share/man/man9f/csx_RequestIO.9f
-file path=usr/share/man/man9f/csx_RequestIRQ.9f
-file path=usr/share/man/man9f/csx_RequestSocketMask.9f
-file path=usr/share/man/man9f/csx_RequestWindow.9f
-file path=usr/share/man/man9f/csx_ResetFunction.9f
-file path=usr/share/man/man9f/csx_SetEventMask.9f
-file path=usr/share/man/man9f/csx_SetHandleOffset.9f
-file path=usr/share/man/man9f/csx_ValidateCIS.9f
 file path=usr/share/man/man9f/datamsg.9f
 file path=usr/share/man/man9f/ddi_add_event_handler.9f
 file path=usr/share/man/man9f/ddi_add_intr.9f
@@ -603,39 +545,6 @@ link path=usr/share/man/man9f/crgetsgid.9f target=ddi_cred.9f
 link path=usr/share/man/man9f/crgetsuid.9f target=ddi_cred.9f
 link path=usr/share/man/man9f/crgetuid.9f target=ddi_cred.9f
 link path=usr/share/man/man9f/crgetzoneid.9f target=ddi_cred.9f
-link path=usr/share/man/man9f/csx_Get16.9f target=csx_Get8.9f
-link path=usr/share/man/man9f/csx_Get32.9f target=csx_Get8.9f
-link path=usr/share/man/man9f/csx_Get64.9f target=csx_Get8.9f
-link path=usr/share/man/man9f/csx_GetEventMask.9f target=csx_SetEventMask.9f
-link path=usr/share/man/man9f/csx_GetNextClient.9f \
-    target=csx_GetFirstClient.9f
-link path=usr/share/man/man9f/csx_GetNextTuple.9f target=csx_GetFirstTuple.9f
-link path=usr/share/man/man9f/csx_Parse_CISTPL_DEVICE_A.9f \
-    target=csx_Parse_CISTPL_DEVICE.9f
-link path=usr/share/man/man9f/csx_Parse_CISTPL_DEVICE_OA.9f \
-    target=csx_Parse_CISTPL_DEVICE.9f
-link path=usr/share/man/man9f/csx_Parse_CISTPL_DEVICE_OC.9f \
-    target=csx_Parse_CISTPL_DEVICE.9f
-link path=usr/share/man/man9f/csx_Parse_CISTPL_JEDEC_A.9f \
-    target=csx_Parse_CISTPL_JEDEC_C.9f
-link path=usr/share/man/man9f/csx_Parse_CISTPL_LONGLINK_C.9f \
-    target=csx_Parse_CISTPL_LONGLINK_A.9f
-link path=usr/share/man/man9f/csx_Put16.9f target=csx_Put8.9f
-link path=usr/share/man/man9f/csx_Put32.9f target=csx_Put8.9f
-link path=usr/share/man/man9f/csx_Put64.9f target=csx_Put8.9f
-link path=usr/share/man/man9f/csx_ReleaseIO.9f target=csx_RequestIO.9f
-link path=usr/share/man/man9f/csx_ReleaseIRQ.9f target=csx_RequestIRQ.9f
-link path=usr/share/man/man9f/csx_ReleaseSocketMask.9f \
-    target=csx_RequestSocketMask.9f
-link path=usr/share/man/man9f/csx_ReleaseWindow.9f target=csx_RequestWindow.9f
-link path=usr/share/man/man9f/csx_RemoveDeviceNode.9f \
-    target=csx_MakeDeviceNode.9f
-link path=usr/share/man/man9f/csx_RepGet16.9f target=csx_RepGet8.9f
-link path=usr/share/man/man9f/csx_RepGet32.9f target=csx_RepGet8.9f
-link path=usr/share/man/man9f/csx_RepGet64.9f target=csx_RepGet8.9f
-link path=usr/share/man/man9f/csx_RepPut16.9f target=csx_RepPut8.9f
-link path=usr/share/man/man9f/csx_RepPut32.9f target=csx_RepPut8.9f
-link path=usr/share/man/man9f/csx_RepPut64.9f target=csx_RepPut8.9f
 link path=usr/share/man/man9f/cv_broadcast.9f target=condvar.9f
 link path=usr/share/man/man9f/cv_destroy.9f target=condvar.9f
 link path=usr/share/man/man9f/cv_init.9f target=condvar.9f

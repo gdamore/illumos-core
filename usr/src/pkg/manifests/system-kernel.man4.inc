@@ -12,9 +12,9 @@
 #
 # Copyright 2011, Richard Lowe
 # Copyright 2012 Nexenta Systems, Inc. All rights reserved.
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 
-file path=usr/share/man/man4/cardbus.4
 file path=usr/share/man/man4/dir_ufs.4
 file path=usr/share/man/man4/driver.conf.4
 file path=usr/share/man/man4/pci.4

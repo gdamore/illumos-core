@@ -21,7 +21,7 @@
 #
 # Copyright (c) 1989, 2010, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2013, Joyent, Inc. All rights reserved.
-# Copyright 2013 Garrett D'Amore <garrett@damore.org>
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 
 include $(SRC)/uts/Makefile.uts
@@ -424,12 +424,10 @@ CHKHDRS=			\
 	queue.h			\
 	serializer.h		\
 	pbio.h			\
-	pccard.h		\
 	pci.h			\
 	pcie.h			\
 	pci_impl.h		\
 	pci_tools.h		\
-	pcmcia.h		\
 	pctypes.h		\
 	pfmod.h			\
 	pg.h			\
@@ -517,7 +515,6 @@ CHKHDRS=			\
 	squeue.h		\
 	squeue_impl.h		\
 	srn.h			\
-	sservice.h		\
 	stat.h			\
 	statfs.h		\
 	statvfs.h		\
@@ -1113,8 +1110,6 @@ PCHDRS=			\
 	avintr.h	\
 	dma_engine.h	\
 	i8272A.h	\
-	pcic_reg.h	\
-	pcic_var.h	\
 	pic.h		\
 	pit.h		\
 	rtc.h

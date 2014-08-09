@@ -66,64 +66,6 @@ MANFILES= 	ASSERT.9f				\
 	 	copyin.9f				\
 	 	copymsg.9f				\
 	 	copyout.9f				\
-	 	csx_AccessConfigurationRegister.9f	\
-	 	csx_CS_DDI_Info.9f			\
-	 	csx_ConvertSize.9f			\
-	 	csx_ConvertSpeed.9f			\
-	 	csx_DeregisterClient.9f			\
-	 	csx_DupHandle.9f			\
-	 	csx_Error2Text.9f			\
-	 	csx_Event2Text.9f			\
-	 	csx_FreeHandle.9f			\
-	 	csx_Get8.9f				\
-	 	csx_GetFirstClient.9f			\
-	 	csx_GetFirstTuple.9f			\
-	 	csx_GetHandleOffset.9f			\
-	 	csx_GetMappedAddr.9f			\
-	 	csx_GetStatus.9f			\
-	 	csx_GetTupleData.9f			\
-	 	csx_MakeDeviceNode.9f			\
-	 	csx_MapLogSocket.9f			\
-	 	csx_MapMemPage.9f			\
-	 	csx_ModifyConfiguration.9f		\
-	 	csx_ModifyWindow.9f			\
-	 	csx_ParseTuple.9f			\
-	 	csx_Parse_CISTPL_BATTERY.9f		\
-	 	csx_Parse_CISTPL_BYTEORDER.9f		\
-	 	csx_Parse_CISTPL_CFTABLE_ENTRY.9f	\
-	 	csx_Parse_CISTPL_CONFIG.9f		\
-	 	csx_Parse_CISTPL_DATE.9f		\
-	 	csx_Parse_CISTPL_DEVICE.9f		\
-	 	csx_Parse_CISTPL_DEVICEGEO.9f		\
-	 	csx_Parse_CISTPL_DEVICEGEO_A.9f		\
-	 	csx_Parse_CISTPL_FORMAT.9f		\
-	 	csx_Parse_CISTPL_FUNCE.9f		\
-	 	csx_Parse_CISTPL_FUNCID.9f		\
-	 	csx_Parse_CISTPL_GEOMETRY.9f		\
-	 	csx_Parse_CISTPL_JEDEC_C.9f		\
-	 	csx_Parse_CISTPL_LINKTARGET.9f		\
-	 	csx_Parse_CISTPL_LONGLINK_A.9f		\
-	 	csx_Parse_CISTPL_LONGLINK_MFC.9f	\
-	 	csx_Parse_CISTPL_MANFID.9f		\
-	 	csx_Parse_CISTPL_ORG.9f			\
-	 	csx_Parse_CISTPL_SPCL.9f		\
-	 	csx_Parse_CISTPL_SWIL.9f		\
-	 	csx_Parse_CISTPL_VERS_1.9f		\
-	 	csx_Parse_CISTPL_VERS_2.9f		\
-	 	csx_Put8.9f				\
-	 	csx_RegisterClient.9f			\
-	 	csx_ReleaseConfiguration.9f		\
-	 	csx_RepGet8.9f				\
-	 	csx_RepPut8.9f				\
-	 	csx_RequestConfiguration.9f		\
-	 	csx_RequestIO.9f			\
-	 	csx_RequestIRQ.9f			\
-	 	csx_RequestSocketMask.9f		\
-	 	csx_RequestWindow.9f			\
-	 	csx_ResetFunction.9f			\
-	 	csx_SetEventMask.9f			\
-	 	csx_SetHandleOffset.9f			\
-	 	csx_ValidateCIS.9f			\
 	 	datamsg.9f				\
 	 	ddi_add_event_handler.9f		\
 	 	ddi_add_intr.9f				\
@@ -636,31 +578,6 @@ MANLINKS=	SIZEOF_PTR.9f				\
 	 	crgetsuid.9f				\
 	 	crgetuid.9f				\
 	 	crgetzoneid.9f				\
-	 	csx_Get16.9f				\
-	 	csx_Get32.9f				\
-	 	csx_Get64.9f				\
-	 	csx_GetEventMask.9f			\
-	 	csx_GetNextClient.9f			\
-	 	csx_GetNextTuple.9f			\
-	 	csx_Parse_CISTPL_DEVICE_A.9f		\
-	 	csx_Parse_CISTPL_DEVICE_OA.9f		\
-	 	csx_Parse_CISTPL_DEVICE_OC.9f		\
-	 	csx_Parse_CISTPL_JEDEC_A.9f		\
-	 	csx_Parse_CISTPL_LONGLINK_C.9f		\
-	 	csx_Put16.9f				\
-	 	csx_Put32.9f				\
-	 	csx_Put64.9f				\
-	 	csx_ReleaseIO.9f			\
-	 	csx_ReleaseIRQ.9f			\
-	 	csx_ReleaseSocketMask.9f		\
-	 	csx_ReleaseWindow.9f			\
-	 	csx_RemoveDeviceNode.9f			\
-	 	csx_RepGet16.9f				\
-	 	csx_RepGet32.9f				\
-	 	csx_RepGet64.9f				\
-	 	csx_RepPut16.9f				\
-	 	csx_RepPut32.9f				\
-	 	csx_RepPut64.9f				\
 	 	cv_broadcast.9f				\
 	 	cv_destroy.9f				\
 	 	cv_init.9f				\
@@ -1312,46 +1229,6 @@ cv_timedwait.9f				:= LINKSRC = condvar.9f
 cv_timedwait_sig.9f			:= LINKSRC = condvar.9f
 cv_wait.9f				:= LINKSRC = condvar.9f
 cv_wait_sig.9f				:= LINKSRC = condvar.9f
-
-csx_Get16.9f				:= LINKSRC = csx_Get8.9f
-csx_Get32.9f				:= LINKSRC = csx_Get8.9f
-csx_Get64.9f				:= LINKSRC = csx_Get8.9f
-
-csx_GetNextClient.9f			:= LINKSRC = csx_GetFirstClient.9f
-
-csx_GetNextTuple.9f			:= LINKSRC = csx_GetFirstTuple.9f
-
-csx_RemoveDeviceNode.9f			:= LINKSRC = csx_MakeDeviceNode.9f
-
-csx_Parse_CISTPL_DEVICE_A.9f		:= LINKSRC = csx_Parse_CISTPL_DEVICE.9f
-csx_Parse_CISTPL_DEVICE_OA.9f		:= LINKSRC = csx_Parse_CISTPL_DEVICE.9f
-csx_Parse_CISTPL_DEVICE_OC.9f		:= LINKSRC = csx_Parse_CISTPL_DEVICE.9f
-
-csx_Parse_CISTPL_JEDEC_A.9f		:= LINKSRC = csx_Parse_CISTPL_JEDEC_C.9f
-
-csx_Parse_CISTPL_LONGLINK_C.9f		:= LINKSRC = csx_Parse_CISTPL_LONGLINK_A.9f
-
-csx_Put16.9f				:= LINKSRC = csx_Put8.9f
-csx_Put32.9f				:= LINKSRC = csx_Put8.9f
-csx_Put64.9f				:= LINKSRC = csx_Put8.9f
-
-csx_RepGet16.9f				:= LINKSRC = csx_RepGet8.9f
-csx_RepGet32.9f				:= LINKSRC = csx_RepGet8.9f
-csx_RepGet64.9f				:= LINKSRC = csx_RepGet8.9f
-
-csx_RepPut16.9f				:= LINKSRC = csx_RepPut8.9f
-csx_RepPut32.9f				:= LINKSRC = csx_RepPut8.9f
-csx_RepPut64.9f				:= LINKSRC = csx_RepPut8.9f
-
-csx_ReleaseIO.9f			:= LINKSRC = csx_RequestIO.9f
-
-csx_ReleaseIRQ.9f			:= LINKSRC = csx_RequestIRQ.9f
-
-csx_ReleaseSocketMask.9f		:= LINKSRC = csx_RequestSocketMask.9f
-
-csx_ReleaseWindow.9f			:= LINKSRC = csx_RequestWindow.9f
-
-csx_GetEventMask.9f			:= LINKSRC = csx_SetEventMask.9f
 
 ddi_get_iblock_cookie.9f		:= LINKSRC = ddi_add_intr.9f
 ddi_remove_intr.9f			:= LINKSRC = ddi_add_intr.9f

@@ -96,8 +96,6 @@ _MANFILES=	aac.7d		\
 		nxge.7d		\
 		ohci.7d		\
 		openprom.7d	\
-		pcic.7d		\
-		pcmcia.7d	\
 		physmem.7d	\
 		pm.7d		\
 		poll.7d		\

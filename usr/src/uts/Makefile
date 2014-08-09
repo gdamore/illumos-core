@@ -21,6 +21,7 @@
 #
 # Copyright (c) 1989, 2010, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2012 Nexenta Systems, Inc. All rights reserved.
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 # include global definitions
 include ../Makefile.master
@@ -150,7 +151,6 @@ COMMON_HDRDIRS= common/avs \
 		common/net \
 		common/netinet \
 		common/nfs \
-		common/pcmcia/sys \
 		common/rpc \
 		common/rpcsvc \
 		common/sharefs \

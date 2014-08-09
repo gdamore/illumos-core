@@ -21,6 +21,7 @@
 # Copyright (c) 2005, 2010, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2012 Nexenta Systems, Inc. All rights reserved.
 # Copyright (c) 2013 Andrew Stormont.  All rights reserved.
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 
 #
 #	This makefile contains the common definitions for all intel
@@ -288,7 +289,6 @@ DRV_KMODS	+= nxge
 DRV_KMODS	+= oce
 DRV_KMODS	+= openeepr
 DRV_KMODS	+= pci_pci
-DRV_KMODS	+= pcic
 DRV_KMODS	+= pcieb
 DRV_KMODS	+= physmem
 DRV_KMODS	+= pit_beep
@@ -438,12 +438,6 @@ DRV_KMODS	+= fcsm
 DRV_KMODS	+= fp
 DRV_KMODS	+= qlc
 DRV_KMODS	+= iscsi
-
-#
-#	PCMCIA specific module(s)
-#
-DRV_KMODS	+= pcs
-MISC_KMODS	+= cardbus
 
 #
 #	SCSI Enclosure Services driver
@@ -607,7 +601,6 @@ MISC_KMODS	+= neti
 MISC_KMODS	+= pci_autoconfig
 MISC_KMODS	+= pcicfg
 MISC_KMODS	+= pcihp
-MISC_KMODS	+= pcmcia
 MISC_KMODS	+= rpcsec
 MISC_KMODS	+= rpcsec_gss
 MISC_KMODS	+= rsmops

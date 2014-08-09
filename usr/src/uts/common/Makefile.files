@@ -24,6 +24,7 @@
 # Copyright (c) 2012 Nexenta Systems, Inc. All rights reserved.
 # Copyright (c) 2013 by Delphix. All rights reserved.
 # Copyright (c) 2013 by Saso Kiselkov. All rights reserved.
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 
 #
@@ -133,7 +134,6 @@ GENUNIX_OBJS +=	\
 		core.o		\
 		corectl.o	\
 		cred.o		\
-		cs_stubs.o	\
 		dacf.o		\
 		dacf_clnt.o	\
 		damap.o	\
@@ -475,8 +475,6 @@ AUDIOTS_OBJS +=	audiots.o
 AC97_OBJS += ac97.o ac97_ad.o ac97_alc.o ac97_cmi.o
 
 BLKDEV_OBJS += blkdev.o
-
-CARDBUS_OBJS += cardbus.o cardbus_hp.o cardbus_cfg.o
 
 CONSKBD_OBJS += conskbd.o
 
@@ -1594,8 +1592,6 @@ C2AUDIT_OBJS +=	adr.o audit.o audit_event.o audit_io.o \
 		audit_path.o audit_start.o audit_syscalls.o audit_token.o \
 		audit_mem.o
 
-PCIC_OBJS +=	pcic.o
-
 RPCSEC_OBJS +=	secmod.o	sec_clnt.o	sec_svc.o	sec_gen.o \
 		auth_des.o	auth_kern.o	auth_none.o	auth_loopb.o\
 		authdesprt.o	authdesubr.o	authu_prot.o \
@@ -1720,11 +1716,7 @@ EXACCTSYS_OBJS += exacctsys.o
 
 KAIO_OBJS += aio.o
 
-PCMCIA_OBJS += pcmcia.o cs.o cis.o cis_callout.o cis_handlers.o cis_params.o
-
 BUSRA_OBJS += busra.o
-
-PCS_OBJS += pcs.o
 
 PSET_OBJS +=	pset.o
 
