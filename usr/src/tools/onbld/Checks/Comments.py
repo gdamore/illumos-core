@@ -26,6 +26,7 @@
 #
 
 # Copyright 2007, 2010 Richard Lowe
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 
 #
 # Check delta comments:
@@ -58,13 +59,13 @@ def comchk(comments, check_db=True, output=sys.stderr):
 	which defaults to stderr
 	'''
 	bugnospcre = re.compile(r'^(\d{2,7})([^ ].*)')
-	ignorere = re.compile(r'^(' +
+	ignorere = re.compile(r'^((' +
                               r'Portions contributed by|' +
                               r'Contributed by|' +
                               r'Reviewed[ -]by|' +
                               r'Approved[ -]by|' +
                               r'back[ -]?out)' +
-                              r'[: ]')
+                              r'[: ])|(fixes \#\d{1,6} )')
 
 	errors = { 'bugnospc': [],
 		   'mutant': [],
