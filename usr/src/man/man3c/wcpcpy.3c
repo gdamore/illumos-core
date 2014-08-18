@@ -11,7 +11,7 @@
 .\"
 .\" Copyright 2014 Garrett D'Amore <garrett@damore.org>
 .\"
-.Dd "Jul 27, 2014"
+.Dd Aug 17, 2014
 .Dt WCPCPY 3C
 .Os
 .Sh NAME
@@ -112,5 +112,10 @@ The
 .Fn wcpcpy
 and
 .Fn wcpncpy
-functions were introduced in
-.St -p1003.1-2008 .
+functions are available in the following compilation environment.  See
+.Xr standards 5 .
+.Lp
+.Bl -bullet -compact
+.It
+.St -p1003.1-2008
+.El
