@@ -62,6 +62,11 @@ struct symbol_test stests[] = {
 	/*
 	 * Functions
 	 */
+	{ "bsd_signal", SYM_FUNC, NULL,
+		{ "signal.h", NULL },
+		{ "void (*)(int)", "int", "void (*)(int)" },
+		MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
+	},
 	{ "ualarm", SYM_FUNC, NULL,
 		{ "unistd.h", NULL },
 		{ "int", "useconds_t", "useconds_t", NULL },

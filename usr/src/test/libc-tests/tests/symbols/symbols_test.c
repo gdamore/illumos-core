@@ -290,11 +290,17 @@ find_compiler(void)
 	cleanup();
 }
 
+/*
+ * This function handles creation of a C file.  It understands
+ * functions, values (usually macros), and types.  It also understands
+ * function pointer types, which adds a lot of complexity.
+ */
 void
 mkcfile(test_t t, struct symbol_test *st)
 {
 	FILE *f;
 	int i;
+	const char *rvsuffix = NULL;
 
 	if (mkworkdir(t, st->symbol) < 0) {
 		return;
@@ -309,13 +315,35 @@ mkcfile(test_t t, struct symbol_test *st)
 	for (i = 0; st->includes[i] != NULL; i++) {
 		(void) fprintf(f, "#include <%s>\n", st->includes[i]);
 	}
-	(void) fprintf(f, "%s ", st->types[0]);
+
+	for (rvsuffix = st->types[0]; *rvsuffix; rvsuffix++) {
+		(void) fputc(*rvsuffix, f);
+		if (*rvsuffix == '(') {
+			rvsuffix++;
+			(void) fputc(*rvsuffix, f);
+			rvsuffix++;
+			break;
+		}
+	}
+	if (*rvsuffix == 0) {
+		(void) fputc(' ', f);
+	}
 	switch (st->symtype) {
 	case SYM_TYPE:
-		(void) fprintf(f, "test_%s;\n", st->symbol);
+		(void) fprintf(f, "test_%s", st->symbol);
+		if (*rvsuffix != 0) {
+			(void) fprintf(f, "%s", rvsuffix);
+		}
+		(void) fputc(';', f);
+		(void) fputc('\n', f);
 		break;
 	case SYM_VALUE:
-		(void) fprintf(f, "test_%s;\n", st->symbol);
+		(void) fprintf(f, "test_%s", st->symbol);
+		if (*rvsuffix != 0) {
+			(void) fprintf(f, "%s", rvsuffix);
+		}
+		(void) fputc(';', f);
+		(void) fputc('\n', f);
 		(void) fprintf(f, "void func_%s(void) { ", st->symbol);
 		(void) fprintf(f, "test_%s = %s;\n", st->symbol, st->symbol);
 		(void) fprintf(f, "}\n");
@@ -323,13 +351,31 @@ mkcfile(test_t t, struct symbol_test *st)
 	case SYM_FUNC:
 		(void) fprintf(f, "test_%s(", st->symbol);
 		for (i = 1; st->types[i] != NULL; i++) {
-			(void) fprintf(f, "%s%s a%d",
-			    i > 1 ? ", ": "", st->types[i], i);
+			const char *s;
+			int didarg = 0;
+			if (i > 1) {
+				(void) fprintf(f, ", ");
+			}
+			for (s = st->types[i]; *s; s++) {
+				(void) fputc(*s, f);
+				if (*s == '(' && s[1] == '*') {
+					(void) fprintf(f, "*a%d", i);
+					didarg = 1;
+					s++;
+				}
+			}
+			if (!didarg) {
+				(void) fprintf(f, " a%d", i);
+			}
 		}
 		if (i == 1) {
 			(void) fprintf(f, "void");
 		}
-		(void) fprintf(f, ") { ");
+		(void) fprintf(f, ")");
+		if (*rvsuffix != 0) {
+			(void) fprintf(f, "%s", rvsuffix);
+		}
+		(void) fprintf(f, " { ");
 		if ((strcmp(st->types[0], "") != 0) ||
 		    (strcmp(st->types[0], "void") != 0)) {
 			(void) fprintf(f, "return ");

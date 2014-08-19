@@ -95,9 +95,12 @@ extern int str2sig(const char *, int *);
 #define	SIG2STR_MAX	32
 #endif /* defined(__EXTENSIONS__) || (!defined(_STRICT_STDC)... */
 
+#if !defined(_STRICT_SYMBOLS) || (defined(_XPG4_2) && !defined(_XPG7))
+extern void (*bsd_signal(int, void (*)(int)))(int);
+#endif
+
 #if defined(__EXTENSIONS__) || (!defined(_STRICT_STDC) && \
 	!defined(__XOPEN_OR_POSIX)) || defined(_XPG4_2)
-extern void (*bsd_signal(int, void (*)(int)))(int);
 extern int killpg(pid_t, int);
 extern int siginterrupt(int, int);
 extern int sigaltstack(const stack_t *_RESTRICT_KYWD, stack_t *_RESTRICT_KYWD);

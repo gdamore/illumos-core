@@ -87,5 +87,6 @@ function is available in the following compilation environments.  See
 .El
 .Lp
 It is marked obsolete in
-.St -susv3 , and was removed from
+.St -susv3 ,
+and was removed from
 .St -p1003.1-2008 .
