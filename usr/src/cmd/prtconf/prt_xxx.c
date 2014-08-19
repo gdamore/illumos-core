@@ -23,6 +23,7 @@
  * Use is subject to license terms.
  *
  * Copyright (c) 2012, Joyent, Inc. All rights reserved.
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
  */
 
 #include <stdio.h>
@@ -31,7 +32,6 @@
 #include <string.h>
 #include <libdevinfo.h>
 #include <sys/pctypes.h>
-#include <sys/pcmcia.h>
 #include <sys/utsname.h>
 #include <sys/avintr.h>
 
@@ -47,9 +47,6 @@ static void obio_printregs(struct regspec *, int);
 static void obio_printranges(struct rangespec *, int);
 static void obio_printintr(struct intrspec *, int);
 static void obio_print(uintptr_t, int);
-static void pcmcia_printregs(struct pcm_regs *, int);
-static void pcmcia_printintr(struct intrspec *, int);
-static void pcmcia_print(uintptr_t, int);
 static void sbus_print(uintptr_t, int);
 static struct priv_data *match_priv_data(di_node_t);
 
@@ -87,23 +84,6 @@ static struct di_priv_format ppd_format[] = {
 		0, 0, 0
 	},
 
-	{	/* pcmcia format */
-		"pcic",
-		sizeof (struct pcmcia_parent_private),
-
-		sizeof (struct pcm_regs),		/* first pointer */
-		offsetof(struct pcmcia_parent_private, ppd_reg),
-		offsetof(struct pcmcia_parent_private, ppd_nreg),
-
-		sizeof (struct intrspec),		/* second pointer */
-		offsetof(struct pcmcia_parent_private, ppd_intrspec),
-		offsetof(struct pcmcia_parent_private, ppd_intr),
-
-		0, 0, 0,	/* no more pointers */
-		0, 0, 0,
-		0, 0, 0
-	},
-
 	{	/* sbus format--it's different on sun4u!! */
 		"sbus",
 		sizeof (struct ddi_parent_private_data),
@@ -127,8 +107,7 @@ static struct di_priv_format ppd_format[] = {
 
 static struct priv_data prt_priv_data[] = {
 	{ ppd_format[0].drv_name, obio_print},
-	{ ppd_format[1].drv_name, pcmcia_print},
-	{ ppd_format[2].drv_name, sbus_print}
+	{ ppd_format[1].drv_name, sbus_print}
 };
 
 static int nprt_priv_data = sizeof (prt_priv_data)/sizeof (struct priv_data);
@@ -225,62 +204,6 @@ obio_print(uintptr_t data, int ilev)
 		intr = (struct intrspec *)(data + *(di_off_t *)(&dp->par_intr));
 		for (i = 0; i < nintr; ++i)
 			obio_printintr(intr + i, ilev);
-	}
-}
-
-static void
-pcmcia_printregs(struct pcm_regs *rp, int ilev)
-{
-	indent_to_level(ilev);
-	(void) printf("    Phys hi=0x%x, Phys lo=0x%x, Phys len=%x\n",
-	    rp->phys_hi, rp->phys_lo, rp->phys_len);
-}
-
-static void
-pcmcia_printintr(struct intrspec *ip, int ilev)
-{
-	obio_printintr(ip, ilev);
-}
-
-static void
-pcmcia_print(uintptr_t data, int ilev)
-{
-	int i, nreg, nintr;
-	struct pcmcia_parent_private *dp;
-	struct pcm_regs *reg;
-	struct intrspec *intr;
-
-	dp = (struct pcmcia_parent_private *)data;
-#ifdef DEBUG
-	dprintf("pcmcia parent private data: nreg = 0x%x offset = 0x%x"
-	    " intr = 0x%x offset = %x\n",
-	    dp->ppd_nreg, *(di_off_t *)(&dp->ppd_reg),
-	    dp->ppd_intr, *(di_off_t *)(&dp->ppd_intrspec));
-#endif /* DEBUG */
-	nreg = dp->ppd_nreg;
-	nintr = dp->ppd_intr;
-
-	/*
-	 * All pointers are translated to di_off_t by the devinfo driver.
-	 * This is a private agreement between libdevinfo and prtconf.
-	 */
-	if (nreg != 0)  {
-		indent_to_level(ilev);
-		(void) printf("Register Specifications:\n");
-
-		reg = (struct pcm_regs *)(data + *(di_off_t *)(&dp->ppd_reg));
-		for (i = 0; i < nreg; ++i)
-			pcmcia_printregs(reg + i, ilev);
-	}
-
-	if (nintr != 0)  {
-		indent_to_level(ilev);
-		(void) printf("Interrupt Specifications:\n");
-
-		intr = (struct intrspec *)
-		    (data + *(di_off_t *)(&dp->ppd_intrspec));
-		for (i = 0; i < nintr; ++i)
-			pcmcia_printintr(intr + i, ilev);
 	}
 }
 
