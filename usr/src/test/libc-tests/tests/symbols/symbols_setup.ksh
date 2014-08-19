@@ -1,3 +1,5 @@
+#!/usr/bin/ksh
+#
 #
 # This file and its contents are supplied under the terms of the
 # Common Development and Distribution License ("CDDL"), version 1.0.
@@ -10,11 +12,7 @@
 #
 
 #
-# Copyright (c) 2012 by Delphix. All rights reserved.
 # Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 
-SUBDIRS = newlocale nl_langinfo symbols wcsrtombs
-
-include $(SRC)/Makefile.master
-include $(SRC)/test/Makefile.com
+$(dirname $0)/symbols_test -C

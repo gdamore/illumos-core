@@ -53,6 +53,12 @@ Additionally some text locales are required, specifically, en_US.UTF-8,
 de_DE.UTF-8, ja_JP.UTF-8, and ru_RU.UTF-8.  Again, these are listed as
 dependencies and will be automatically installed.
 
+Furthermore, the symbol visibility tests require that /usr/bin/c99 and
+/usr/bin/c89 represent a compiler suite.  These aren't pre-requisites to
+install the package, but if you want a complete set of tests, you need to
+install them. (The symbol visibility tests actually try compiling under
+different compilation environments.)
+
 3. Running this Unit Test Suite
 
 The pre-requisites for running the this Unit Test Suite are:
