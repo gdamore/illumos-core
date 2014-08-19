@@ -21,12 +21,12 @@
 .Sh SYNOPSIS
 .In wchar.h
 .
-.Ft wchar_t
+.Ft size_t
 .Fo wcslen
 .Fa "const wchar_t *string"
 .Fc
 .
-.Ft wchar_t
+.Ft size_t
 .Fo wcsnlen
 .Fa "const wchar_t *string"
 .Fa "size_t maxlen"
