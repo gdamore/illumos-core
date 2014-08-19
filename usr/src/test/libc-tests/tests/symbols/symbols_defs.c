@@ -57,9 +57,24 @@
  * Functions
  */
 {
+	"bcmp", SYM_FUNC, NULL,
+	{ "strings.h" },
+	{ "int", "const void *", "const void *", "size_t" },
+	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
+}, {
+	"bcopy", SYM_FUNC, NULL,
+	{ "strings.h" },
+	{ "void", "const void *", "void *", "size_t" },
+	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
+}, {
 	"bsd_signal", SYM_FUNC, NULL,
 	{ "signal.h" },
 	{ "void (*)(int)", "int", "void (*)(int)" },
+	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
+}, {
+	"bzero", SYM_FUNC, NULL,
+	{ "strings.h" },
+	{ "void", "void *", "size_t" },
 	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
 }, {
 	"ecvt", SYM_FUNC, NULL,
@@ -75,6 +90,16 @@
 	"gcvt", SYM_FUNC, NULL,
 	{ "stdlib.h" },
 	{ "char *", "double", "int", "char *" },
+	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
+}, {
+	"index", SYM_FUNC, NULL,
+	{ "strings.h" },
+	{ "char *", "const char *", "int" },
+	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
+}, {
+	"rindex", SYM_FUNC, NULL,
+	{ "strings.h" },
+	{ "char *", "const char *", "int" },
 	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
 }, {
 	"ualarm", SYM_FUNC, NULL,

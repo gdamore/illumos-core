@@ -40,12 +40,19 @@
 extern "C" {
 #endif
 
+/*
+ * BSD strings were added in XPG4.2, and removed in XPG7. While applications
+ * using other standards may include this file, they should not do so if they
+ * are declaring strict conformance.
+ */
+#if !defined(_STRICT_SYMBOLS) || (defined(_XPG4_2) && !defined(_XPG7))
 extern int bcmp(const void *, const void *, size_t);
 extern void bcopy(const void *, void *, size_t);
 extern void bzero(void *, size_t);
 
 extern char *index(const char *, int);
 extern char *rindex(const char *, int);
+#endif
 
 /*
  * X/Open System Interfaces and Headers, Issue 4, Version 2, defines

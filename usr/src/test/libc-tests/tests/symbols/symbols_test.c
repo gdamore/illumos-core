@@ -383,7 +383,7 @@ mkcfile(test_t t, const struct symbol_test *st)
 			(void) fprintf(f, "%s", rvsuffix);
 		}
 		(void) fprintf(f, " { ");
-		if ((strcmp(st->types[0], "") != 0) ||
+		if ((strcmp(st->types[0], "") != 0) &&
 		    (strcmp(st->types[0], "void") != 0)) {
 			(void) fprintf(f, "return ");
 		}
