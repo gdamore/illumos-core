@@ -19,112 +19,116 @@
  * ease of use.  This file will be #include'd into the actual C file.
  */
 
-struct symbol_test stests[] = {
-	/*
-	 * Types
-	 */
-	{ "locale_t", SYM_TYPE, "in locale.h",
-		{ "locale.h", NULL },
-		{ "locale_t", NULL },
-		MASK_ALL, MASK_SINCE_SUSV4,
-	},
-	{ "locale_t", SYM_TYPE, "in wchar.h",
-		{ "wchar.h", NULL },
-		{ "locale_t", NULL },
-		MASK_ALL, MASK_SINCE_SUSV4,
-	},
-	{ "wctype_t", SYM_TYPE, "in wchar.h (UNIX)",
-		{ "wchar.h", NULL },
-		{ "wctype_t", NULL },
-		MASK_ALL, MASK_UNIX,
-	},
-	{ "wctype_t", SYM_TYPE, "in wctype.h (ISO C)",
-		{ "wctype.h", NULL },
-		{ "wctype_t", NULL },
-		MASK_ALL, MASK_SINCE_C89,
-	},
+/*
+ * Types
+ */
+{
+	"locale_t", SYM_TYPE, "in locale.h",
+	{ "locale.h" }, { "locale_t" },
+	MASK_ALL, MASK_SINCE_SUSV4,
+}, {
+	"locale_t", SYM_TYPE, "in wchar.h",
+	{ "wchar.h" }, { "locale_t" },
+	MASK_ALL, MASK_SINCE_SUSV4,
+}, {
+	"wctype_t", SYM_TYPE, "in wchar.h (UNIX)",
+	{ "wchar.h" }, { "wctype_t" },
+	MASK_ALL, MASK_UNIX,
+}, {
+	"wctype_t", SYM_TYPE, "in wctype.h (ISO C)",
+	{ "wctype.h" }, { "wctype_t" },
+	MASK_ALL, MASK_SINCE_C89,
+},
 
-	/*
-	 * Macros.
-	 */
-	{ "NULL", SYM_VALUE, "in wchar.h",
-		{ "wchar.h", NULL },
-		{ "void *", NULL },
-		MASK_ALL, MASK_SINCE_C89,
-	},
-	{ "LC_GLOBAL_LOCALE", SYM_VALUE, NULL,
-		{ "locale.h", NULL },
-		{ "locale_t", NULL },
-		MASK_ALL, MASK_SINCE_SUSV4,
-	},
+/*
+ * Values.
+ */
+{
+	"NULL", SYM_VALUE, "in wchar.h",
+	{ "wchar.h" }, { "void *" },
+	MASK_ALL, MASK_SINCE_C89,
+}, {
+	"LC_GLOBAL_LOCALE", SYM_VALUE, NULL,
+	{ "locale.h" }, { "locale_t" },
+	MASK_ALL, MASK_SINCE_SUSV4,
+},
 
-
-	/*
-	 * Functions
-	 */
-	{ "bsd_signal", SYM_FUNC, NULL,
-		{ "signal.h", NULL },
-		{ "void (*)(int)", "int", "void (*)(int)" },
-		MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
-	},
-	{ "ualarm", SYM_FUNC, NULL,
-		{ "unistd.h", NULL },
-		{ "int", "useconds_t", "useconds_t", NULL },
-		MASK_IX, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
-	},
-	{ "usleep", SYM_FUNC, NULL,
-		{ "unistd.h", NULL },
-		{ "int", "useconds_t", NULL },
-		MASK_IX, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
-	},
-	{ "wcpcpy", SYM_FUNC, NULL,
-		{ "wchar.h", NULL },
-		{ "wchar_t *", "wchar_t *", "const wchar_t *", NULL },
-		MASK_ALL, MASK_SINCE_SUSV4
-	},
-	{ "wcpncpy", SYM_FUNC, NULL,
-		{ "wchar.h", NULL },
-		{ "wchar_t *", "wchar_t *", "const wchar_t *", "size_t", NULL },
-		MASK_ALL, MASK_SINCE_SUSV4
-	},
-	{ "wcsdup", SYM_FUNC, NULL,
-		{ "wchar.h", NULL },
-		{ "wchar_t *", "const wchar_t *", NULL },
-		MASK_ALL, MASK_SINCE_SUSV4
-	},
-	{ "wcscasecmp", SYM_FUNC, NULL,
-		{ "wchar.h", NULL },
-		{ "int", "const wchar_t *", "const wchar_t *", NULL },
-		MASK_ALL, MASK_SINCE_SUSV4
-	},
-	{ "wcscasecmp_l", SYM_FUNC, NULL,
-		{ "wchar.h", NULL },
-		{ "int", "const wchar_t *", "const wchar_t *", "locale_t",
-			NULL },
-		MASK_ALL, MASK_SINCE_SUSV4
-	},
-	{ "wcslen", SYM_FUNC, NULL,	/* introduced in C90-AMD1 */
-		{ "wchar.h", NULL },
-		{ "size_t", "const wchar_t *", NULL },
-		MASK_ALL, MASK_ALL
-	},
-	{ "wcsncasecmp", SYM_FUNC, NULL,
-		{ "wchar.h", NULL },
-		{ "int", "const wchar_t *", "const wchar_t *", "size_t", NULL },
-		MASK_ALL, MASK_SINCE_SUSV4
-	},
-	{ "wcsncasecmp_l", SYM_FUNC, NULL,
-		{ "wchar.h", NULL },
-		{ "int", "const wchar_t *", "const wchar_t *", "size_t",
-			"locale_t", NULL },
-		MASK_ALL, MASK_SINCE_SUSV4
-	},
-	{ "wcsnlen", SYM_FUNC, NULL,
-		{ "wchar.h", NULL },
-		{ "size_t", "const wchar_t *", "size_t", NULL },
-		MASK_ALL, MASK_SINCE_SUSV4
-	},
-
-	/* This must be last */
-	{ NULL }
-};
+/*
+ * Functions
+ */
+{
+	"bsd_signal", SYM_FUNC, NULL,
+	{ "signal.h" },
+	{ "void (*)(int)", "int", "void (*)(int)" },
+	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
+}, {
+	"ecvt", SYM_FUNC, NULL,
+	{ "stdlib.h" },
+	{ "char *", "double", "int", "int *", "int *" },
+	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
+}, {
+	"fcvt", SYM_FUNC, NULL,
+	{ "stdlib.h" },
+	{ "char *", "double", "int", "int *", "int *" },
+	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
+}, {
+	"gcvt", SYM_FUNC, NULL,
+	{ "stdlib.h" },
+	{ "char *", "double", "int", "char *" },
+	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
+}, {
+	"ualarm", SYM_FUNC, NULL,
+	{ "unistd.h" },
+	{ "int", "useconds_t", "useconds_t" },
+	MASK_IX, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
+}, {
+	"usleep", SYM_FUNC, NULL,
+	{ "unistd.h" },
+	{ "int", "useconds_t" },
+	MASK_IX, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
+}, {
+	"wcpcpy", SYM_FUNC, NULL,
+	{ "wchar.h" },
+	{ "wchar_t *", "wchar_t *", "const wchar_t *" },
+	MASK_ALL, MASK_SINCE_SUSV4
+}, {
+	"wcpncpy", SYM_FUNC, NULL,
+	{ "wchar.h" },
+	{ "wchar_t *", "wchar_t *", "const wchar_t *", "size_t" },
+	MASK_ALL, MASK_SINCE_SUSV4
+}, {
+	"wcsdup", SYM_FUNC, NULL,
+	{ "wchar.h" },
+	{ "wchar_t *", "const wchar_t *" },
+	MASK_ALL, MASK_SINCE_SUSV4
+}, {
+	"wcscasecmp", SYM_FUNC, NULL,
+	{ "wchar.h" },
+	{ "int", "const wchar_t *", "const wchar_t *" },
+	MASK_ALL, MASK_SINCE_SUSV4
+}, {
+	"wcscasecmp_l", SYM_FUNC, NULL,
+	{ "wchar.h" },
+	{ "int", "const wchar_t *", "const wchar_t *", "locale_t" },
+	MASK_ALL, MASK_SINCE_SUSV4
+}, {
+	"wcslen", SYM_FUNC, NULL,	/* introduced in C90-AMD1 */
+	{ "wchar.h" },
+	{ "size_t", "const wchar_t *" },
+	MASK_ALL, MASK_ALL
+}, {
+	"wcsncasecmp", SYM_FUNC, NULL,
+	{ "wchar.h" },
+	{ "int", "const wchar_t *", "const wchar_t *", "size_t" },
+	MASK_ALL, MASK_SINCE_SUSV4
+}, {
+	"wcsncasecmp_l", SYM_FUNC, NULL,
+	{ "wchar.h" },
+	{ "int", "const wchar_t *", "const wchar_t *", "size_t", "locale_t" },
+	MASK_ALL, MASK_SINCE_SUSV4
+}, {
+	"wcsnlen", SYM_FUNC, NULL,
+	{ "wchar.h" },
+	{ "size_t", "const wchar_t *", "size_t" },
+	MASK_ALL, MASK_SINCE_SUSV4
+},

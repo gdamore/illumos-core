@@ -140,7 +140,14 @@ struct symbol_test {
 	int vismask;
 };
 
+static const struct symbol_test stests[] = {
+
+/* include the list of symbols here */
 #include "symbols_defs.c"
+
+	/* Ensure the list is terminated  */
+	{ NULL }
+};
 
 static void
 show_file(test_t t, const char *path)
@@ -296,7 +303,7 @@ find_compiler(void)
  * function pointer types, which adds a lot of complexity.
  */
 void
-mkcfile(test_t t, struct symbol_test *st)
+mkcfile(test_t t, const struct symbol_test *st)
 {
 	FILE *f;
 	int i;
@@ -449,7 +456,7 @@ do_compile(test_t t, int idx, int vis)
 void
 test_compile(void)
 {
-	struct symbol_test *st;
+	const struct symbol_test *st;
 	int i, bit;
 	test_t t;
 	int rv = 0;

@@ -1,4 +1,4 @@
-'\" te
+.\" Copyright 2014 Garrett D'Amore <garrett@damore.org>
 .\" Copyright 1989 AT&T.  Copyright (c) 2004, Sun Microsystems, Inc.  All Rights Reserved.  Portions Copyright (c) 1992, X/Open Company Limited,  All Rights Reserved.
 .\" Sun Microsystems, Inc. gratefully acknowledges The Open Group for permission to reproduce portions of its copyrighted documentation. Original documentation from The Open Group can be obtained online at
 .\" http://www.opengroup.org/bookstore/.
@@ -7,113 +7,148 @@
 .\" The contents of this file are subject to the terms of the Common Development and Distribution License (the "License").  You may not use this file except in compliance with the License.
 .\" You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE or http://www.opensolaris.org/os/licensing.  See the License for the specific language governing permissions and limitations under the License.
 .\" When distributing Covered Code, include this CDDL HEADER in each file and include the License file at usr/src/OPENSOLARIS.LICENSE.  If applicable, add the following below this CDDL HEADER, with the fields enclosed by brackets "[]" replaced with your own identifying information: Portions Copyright [yyyy] [name of copyright owner]
-.TH ECVT 3C "May 18, 2004"
-.SH NAME
-ecvt, fcvt, gcvt \- convert floating-point number to string
-.SH SYNOPSIS
-.LP
-.nf
-#include <stdlib.h>
-
-\fBchar *\fR\fBecvt\fR(\fBdouble\fR \fIvalue\fR, \fBint\fR \fIndigit\fR, \fBint *restrict\fR \fIdecpt\fR, \fBint *restrict\fR \fIsign\fR);
-.fi
-
-.LP
-.nf
-\fBchar *\fR\fBfcvt\fR(\fBdouble\fR \fIvalue\fR, \fBint\fR \fIndigit\fR, \fBint *restrict\fR \fIdecpt\fR, \fBint *restrict\fR \fIsign\fR);
-.fi
-
-.LP
-.nf
-\fBchar *\fR\fBgcvt\fR(\fBdouble\fR \fIvalue\fR, \fBint\fR \fIndigit\fR, \fBchar *\fR\fIbuf\fR);
-.fi
-
-.SH DESCRIPTION
-.sp
-.LP
-The \fBecvt()\fR, \fBfcvt()\fR and \fBgcvt()\fR functions convert
-floating-point numbers to null-terminated strings.
-.SS "\fBecvt()\fR"
-.sp
-.LP
-The \fBecvt()\fR function converts \fIvalue\fR to a null-terminated string of
-\fIndigit\fR digits (where \fIndigit\fR is reduced to an unspecified limit
-determined by the precision of a \fBdouble\fR) and returns a pointer to the
+.Dd Aug 19, 2014
+.Dt ECVT 3C
+.Os
+.Sh NAME
+.Nm ecvt, fcvt, gcvt
+.Nd convert floating-point number to string
+.Sh SYNOPSIS
+.In stdlib.h
+.Ft "char *"
+.Fn ecvt "double value" "int ndigit" "int *restrict decpt" "int *restrict sign"
+.Ft "char *"
+.Fn fcvt "double value" "int ndigit" "int *restrict decpt" "int *restrict sign"
+.Ft "char *"
+.Fn gcvt "double value" "int ndigit" "char *buf"
+.Sh DESCRIPTION
+The
+.Fn ecvt ,
+.Fn fcvt ,
+and
+.Fn gcvt
+functions convert floating-point numbers to null-terminated strings.
+.Ss Fn ecvt
+The
+.Fn ecvt
+function converts
+.Fa value
+to a null-terminated string of
+.Fa ndigit
+digits (where
+.Fa ndigit
+is reduced to an unspecified limit determined by the precision of a
+.Ft double
+and returns a pointer to the
 string.  The high-order digit is non-zero, unless the value is 0.  The
 low-order digit is rounded.  The position of the radix character relative to
-the beginning of the string is stored in the integer pointed to by \fIdecpt\fR
+the beginning of the string is stored in the integer pointed to by
+.Fa decpt
 (negative means to the left of the returned digits). The radix character is not
 included in the returned string. If the sign of the result is negative, the
-integer pointed to by \fIsign\fR is non-zero, otherwise it is 0.
-.sp
-.LP
+integer pointed to by
+.Fa sign
+is non-zero, otherwise it is 0.
+.Lp
 If the converted value is out of range or is not representable, the contents of
 the returned string are unspecified.
-.SS "\fBfcvt()\fR"
-.sp
-.LP
-The \fBfcvt()\fR function is identical to \fBecvt()\fR except that \fIndigit\fR
+.Ss Fn fcvt
+The
+.Fn fcvt
+function is identical to
+.Fn ecvt
+except that
+.Fa ndigit
 specifies the number of digits desired after the radix point.  The total number
 of digits in the result string is restricted to an unspecified limit as
-determined by the precision of a \fBdouble\fR.
-.SS "\fBgcvt()\fR"
-.sp
-.LP
-The \fBgcvt()\fR function converts \fIvalue\fR to a null-terminated string
-(similar to that of the \fB%g\fR format of \fBprintf\fR(3C)) in the array
-pointed to by \fIbuf\fR and returns \fIbuf\fR. It produces \fIndigit\fR
+determined by the precision of a
+.Ft double .
+.Ss Fn gcvt
+The
+.Fn gcvt
+function converts
+.Fa value
+to a null-terminated string
+(similar to that of the
+.Em %g
+format of
+.Xr printf 3C
+in the array pointed to by
+.Fa buf
+and returns
+.Fa buf .
+It produces
+.Fa ndigit
 significant digits (limited to an unspecified value determined by the precision
-of a \fBdouble\fR) in \fB%f\fR if possible, or \fB%e\fR (scientific notation)
-otherwise.  A minus sign is included in the returned string if \fIvalue\fR is
-less than 0.  A radix character is included in the returned string if
-\fIvalue\fR is not a whole number.  Trailing zeros are suppressed where
-\fIvalue\fR is not a whole number.  The radix character is determined by the
-current locale. If \fBsetlocale\fR(3C) has not been called successfully, the
-default locale, POSIX, is used.  The default locale specifies a period
-(\fB\&.\fR) as the radix character.  The \fBLC_NUMERIC\fR category determines
-the value of the radix character within the current locale.
-.SH RETURN VALUES
-.sp
-.LP
-The \fBecvt()\fR and \fBfcvt()\fR functions return a pointer to a
-null-terminated string of digits.
-.sp
-.LP
-The \fBgcvt()\fR function returns \fIbuf\fR.
-.SH ERRORS
-.sp
-.LP
+of a
+.Ft double )
+in
+.Em %f
+if possible, or
+.Em %e
+(scientific notation)
+otherwise.  A minus sign is included in the returned string if
+.Fa value
+is less than 0.  A radix character is included in the returned string if
+.Fa value
+is not a whole number.  Trailing zeros are suppressed where
+.Fa value
+is not a whole number.  The radix character is determined by the
+.Dv LC_NUMERIC
+category of the current locale.  In the default, POSIX, locale, the period
+.Pq Em \&.
+is used for the radix character.
+default locale, POSIX, is used.
+.Sh RETURN VALUES
+The
+.Fn ecvt
+and
+.Fn fcvt
+functions return a pointer to a null-terminated string of digits.
+.Lp
+The
+.Fn gcvt
+function returns
+.Fa buf .
+.Sh ERRORS
 No errors are defined.
-.SH USAGE
-.sp
-.LP
-The return values from \fBecvt()\fR and \fBfcvt()\fR might point to
+.Sh USAGE
+The return values from
+.Fn ecvt
+and
+.Fn fcvt
+might point to
 thread-specific data that can be overwritten by subsequent calls to these
 functions by the same thread.
-.sp
-.LP
-For portability to implementations conforming to earlier versions of Solaris,
-\fBsprintf\fR(3C) is preferred over this function.
-.SH ATTRIBUTES
-.sp
-.LP
-See \fBattributes\fR(5) for descriptions of the following attributes:
-.sp
-
-.sp
-.TS
-box;
-c | c
-l | l .
-ATTRIBUTE TYPE	ATTRIBUTE VALUE
-_
-Interface Stability	Standard
-_
-MT-Level	Safe
-.TE
-
-.SH SEE ALSO
-.sp
-.LP
-\fBprintf\fR(3C), \fBsetlocale\fR(3C), \fBsprintf\fR(3C), \fBattributes\fR(5),
-\fBstandards\fR(5)
+.Lp
+Portable applications should use
+.Xr sprintf 3C ,
+which is mandated by
+.St -isoC .
+.Sh INTERFACE STABILITY
+.Sy Obsolete Standard .
+.Sh MT-LEVEL
+.Sy Safe .
+.Sh SEE ALSO
+.Xr printf 3C ,
+.Xr setlocale 3C ,
+.Xr sprintf 3C ,
+.Xr standards 5
+.Sh STANDARDS
+These functions are available in the following compilation environments.
+See
+.Xr standards 5 .
+.Lp
+.Bl -bullet -compact
+.It
+.St -xpg4.2
+.It
+.St -susv2
+.It
+.St -susv3
+.El
+.Lp
+They were obsoleted in
+.St -susv3
+and removed from
+.St -p1003.1-2008 .

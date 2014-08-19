@@ -178,13 +178,17 @@ extern int	mkstemps64(char *, int);
 #endif
 #endif	/* _LARGEFILE64_SOURCE... */
 
+/* Added in XPG4.2, obsoleted in Issue 6, removed in Issue 7 */
+#if !defined(_STRICT_SYMBOLS) || (defined(_XPG4_2) && !defined(_XPG7))
+extern char *ecvt(double, int, int *_RESTRICT_KYWD, int *_RESTRICT_KYWD);
+extern char *fcvt(double, int, int *_RESTRICT_KYWD, int *_RESTRICT_KYWD);
+extern char *gcvt(double, int, char *);
+#endif
+
 #if defined(__EXTENSIONS__) || \
 	(!defined(_STRICT_STDC) && !defined(__XOPEN_OR_POSIX)) || \
 	defined(_XPG4_2)
 extern long a64l(const char *);
-extern char *ecvt(double, int, int *_RESTRICT_KYWD, int *_RESTRICT_KYWD);
-extern char *fcvt(double, int, int *_RESTRICT_KYWD, int *_RESTRICT_KYWD);
-extern char *gcvt(double, int, char *);
 extern int getsubopt(char **, char *const *, char **);
 extern int  grantpt(int);
 extern char *initstate(unsigned, char *, size_t);
