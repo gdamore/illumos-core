@@ -75,7 +75,7 @@ struct compile_env {
 	char *flags;
 } envs[] = {
 	{ "XPG3", 89, "-D_XOPEN_SOURCE" },
-	{ "XPG4", 89, "-D_XOPEN_SOURCE=4" },
+	{ "XPG4", 89, "-D_XOPEN_SOURCE -D_XOPEN_VERSION=4" },
 	{ "SUS/XPG4v2", 89, "-D_XOPEN_SOURCE=4 -D_XOPEN_SOURCE_EXTENDED" },
 	{ "SUSv2", 89, "-D_XOPEN_SOURCE=500" },
 	{ "SUSv3/POSIX.1-2001", 99, "-D_XOPEN_SOURCE=600" },

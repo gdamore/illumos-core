@@ -138,7 +138,9 @@ extern int iswcntrl(wint_t);
 extern int iswctype(wint_t, wctype_t);
 extern wint_t towlower(wint_t);
 extern wint_t towupper(wint_t);
+#if !defined(_STRICT_SYMBOLS) || (defined(_XPG4) && !defined(_XPG7))
 extern wchar_t *wcswcs(const wchar_t *, const wchar_t *);
+#endif
 extern int wcswidth(const wchar_t *, size_t);
 extern int wcwidth(wchar_t);
 extern wctype_t wctype(const char *);
@@ -159,7 +161,9 @@ using std::iswcntrl;
 using std::iswctype;
 using std::towlower;
 using std::towupper;
+#if !defined(_STRICT_SYMBOLS) || (defined(_XPG4) && !defined(_XPG7))
 using std::wcswcs;
+#endif
 using std::wcswidth;
 using std::wcwidth;
 using std::wctype;

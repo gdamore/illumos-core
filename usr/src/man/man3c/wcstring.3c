@@ -8,11 +8,11 @@
 .\" The contents of this file are subject to the terms of the Common Development and Distribution License (the "License").  You may not use this file except in compliance with the License.
 .\" You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE or http://www.opensolaris.org/os/licensing.  See the License for the specific language governing permissions and limitations under the License.
 .\" When distributing Covered Code, include this CDDL HEADER in each file and include the License file at usr/src/OPENSOLARIS.LICENSE.  If applicable, add the following below this CDDL HEADER, with the fields enclosed by brackets "[]" replaced with your own identifying information: Portions Copyright [yyyy] [name of copyright owner]
-.TH WCSTRING 3C "Aug 15, 2014"
+.TH WCSTRING 3C "Aug 20, 2014"
 .SH NAME
 wcstring, wcscat, wscat, wcsncat, wsncat, wcscmp, wscmp, wcsncmp, wsncmp,
 wcscpy, wscpy, wcsncpy, wsncpy, wslen, wcschr, wschr, wcsrchr, wsrchr,
-windex, wrindex, wcspbrk, wspbrk, wcswcs, wcsspn, wsspn, wcscspn, wscspn,
+windex, wrindex, wcspbrk, wspbrk, wcsspn, wsspn, wcscspn, wscspn,
 wcstok, wstok \- wide-character string operations
 .SH SYNOPSIS
 .LP
@@ -62,11 +62,6 @@ wcstok, wstok \- wide-character string operations
 .LP
 .nf
 \fBwchar_t *\fR\fBwcspbrk\fR(\fBconst wchar_t *\fR\fIws1\fR, \fBconst wchar_t *\fR\fIws2\fR);
-.fi
-
-.LP
-.nf
-\fBwchar_t *\fR\fBwcswcs\fR(\fBconst wchar_t *\fR\fIws1\fR, \fBconst wchar_t *\fR\fIws2\fR);
 .fi
 
 .LP
@@ -305,15 +300,6 @@ the wide character string pointed to by \fIws1\fR of any wide-character code
 from the wide-character string pointed to by \fIws2\fR. Upon successful
 completion, the function returns a pointer to the wide-character code, or a
 null pointer if no wide-character code from \fIws2\fR occurs in \fIws1\fR.
-.SS "wcswcs(\|)"
-.LP
-The \fBwcswcs()\fR function locates the first occurrence in the wide-character
-string pointed to by \fIws1\fR of the sequence of wide-character codes
-(excluding the terminating null wide-character code) in the wide-character
-string pointed to by \fIws2\fR. Upon successful completion, the function
-returns a pointer to the located wide-character string, or a null pointer if
-the wide-character string is not found. If \fIws2\fR points to a wide-character
-string with zero length, the function returns \fIws1\fR.
 .SS "wcsspn(\|), wsspn(\|)"
 .LP
 The \fBwcsspn()\fR and \fBwsspn()\fR functions compute the length of the
@@ -395,6 +381,8 @@ MT-Level	MT-Safe
 \fBwcscasecmp\fR(3C),
 \fBwcsdup\fR(3C),
 \fBwcslen\fR(3C),
+\fBwcsstr\fR(3C),
+\fBwcswcs\fR(3C),
 \fBwcswidth\fR(3C),
 \fBwcwidth\fR(3C),
 \fBattributes\fR(5),
@@ -403,7 +391,7 @@ MT-Level	MT-Safe
 .LP
 The \fBwcscat()\fR, \fBwcsncat()\fR, \fBwcscmp()\fR, \fBwcsncmp()\fR,
 \fBwcscpy()\fR, \fBwcsncpy()\fR, \fBwcschr()\fR,
-\fBwcsrchr()\fR, \fBwcspbrk()\fR, \fBwcswcs()\fR, \fBwcsspn()\fR,
+\fBwcsrchr()\fR, \fBwcspbrk()\fR, \fBwcsspn()\fR,
 \fBwcscspn()\fR, and \fBwcstok()\fR functions are Standard. The \fBwscat()\fR,
 \fBwsncat()\fR, \fBwscmp()\fR, \fBwsncmp()\fR, \fBwscpy()\fR, \fBwsncpy()\fR,
 \fBwslen()\fR, \fBwschr()\fR, \fBwsrchr()\fR, \fBwspbrk()\fR, \fBwsspn()\fR,

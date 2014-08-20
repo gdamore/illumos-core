@@ -491,7 +491,6 @@ file path=usr/share/man/man3c/wcpcpy.3c
 file path=usr/share/man/man3c/wcrtomb.3c
 file path=usr/share/man/man3c/wcscasecmp.3c
 file path=usr/share/man/man3c/wcscoll.3c
-file path=usr/share/man/man3c/wcsdup.3c
 file path=usr/share/man/man3c/wcsftime.3c
 file path=usr/share/man/man3c/wcslen.3c
 file path=usr/share/man/man3c/wcsrtombs.3c
@@ -501,6 +500,7 @@ file path=usr/share/man/man3c/wcstoimax.3c
 file path=usr/share/man/man3c/wcstol.3c
 file path=usr/share/man/man3c/wcstoul.3c
 file path=usr/share/man/man3c/wcstring.3c
+file path=usr/share/man/man3c/wcswcs.3c
 file path=usr/share/man/man3c/wcswidth.3c
 file path=usr/share/man/man3c/wcsxfrm.3c
 file path=usr/share/man/man3c/wctob.3c
@@ -1332,7 +1332,6 @@ link path=usr/share/man/man3c/wcstold.3c target=wcstod.3c
 link path=usr/share/man/man3c/wcstoll.3c target=wcstol.3c
 link path=usr/share/man/man3c/wcstoull.3c target=wcstoul.3c
 link path=usr/share/man/man3c/wcstoumax.3c target=wcstoimax.3c
-link path=usr/share/man/man3c/wcswcs.3c target=wcstring.3c
 link path=usr/share/man/man3c/wcswidth_l.3c target=wcswidth.3c
 link path=usr/share/man/man3c/wctob_l.3c target=wctob.3c
 link path=usr/share/man/man3c/wctomb_l.3c target=wctomb.3c

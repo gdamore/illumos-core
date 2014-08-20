@@ -1,0 +1,79 @@
+.\" Copyright 2014 Garrett D'Amore <garrett@damore.org>
+.\" Copyright (c) 1992, X/Open Company Limited  All Rights Reserved  Portions Copyright (c) 2002, Sun Microsystems, Inc.  All Rights Reserved
+.\" Sun Microsystems, Inc. gratefully acknowledges The Open Group for permission to reproduce portions of its copyrighted documentation. Original documentation from The Open Group can be obtained online at
+.\" http://www.opengroup.org/bookstore/.
+.\" The Institute of Electrical and Electronics Engineers and The Open Group, have given us permission to reprint portions of their documentation. In the following statement, the phrase "this text" refers to portions of the system documentation. Portions of this text are reprinted and reproduced in electronic form in the Sun OS Reference Manual, from IEEE Std 1003.1, 2004 Edition, Standard for Information Technology -- Portable Operating System Interface (POSIX), The Open Group Base Specifications Issue 6, Copyright (C) 2001-2004 by the Institute of Electrical and Electronics Engineers, Inc and The Open Group. In the event of any discrepancy between these versions and the original IEEE and The Open Group Standard, the original IEEE and The Open Group Standard is the referee document. The original Standard can be obtained online at http://www.opengroup.org/unix/online.html.
+.\"  This notice shall appear on any product containing this material.
+.\" The contents of this file are subject to the terms of the Common Development and Distribution License (the "License").  You may not use this file except in compliance with the License.
+.\" You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE or http://www.opensolaris.org/os/licensing.  See the License for the specific language governing permissions and limitations under the License.
+.\" When distributing Covered Code, include this CDDL HEADER in each file and include the License file at usr/src/OPENSOLARIS.LICENSE.  If applicable, add the following below this CDDL HEADER, with the fields enclosed by brackets "[]" replaced with your own identifying information: Portions Copyright [yyyy] [name of copyright owner]
+.Dd Aug 19, 2014
+.Dt WCSWCS 3C
+.Os
+.Sh NAME
+.Nm wcswcs
+.Nd find a wide-character substring
+.Sh SYNOPSIS
+.In wchar.h
+.Ft "wchar_t *"
+.Fn wcswcs "const wchar_t * ws1" "const wchar_t *ws2"
+.Sh DESCRIPTION
+The
+.Fn wcswcs
+function locates the first occurrence in the wide-character
+string pointed to by
+.Fa ws1
+of the sequence of wide-character codes
+(excluding the terminating null wide-character code) in the wide-character
+string pointed to by
+.Fa ws2 .
+.Sh RETURN VALUES
+Upon successful completion, the function
+returns a pointer to the located wide-character string, or a null pointer if
+the wide-character string is not found. If
+.Fa ws2
+points to a wide-character
+string with zero length, the function returns
+.Fa ws1 .
+.Sh USAGE
+The
+.Fn wcswcs
+function was introduced in
+.St -xpg4 .
+However, the
+.Xr wcsstr 3C
+function, which behaves identically to
+.Fn wcswcs ,
+is defined by
+.St -isoC-99
+and should be used in preference this this function.
+.Sh CODE SET INDEPENDENCE
+.Sy Enabled .
+.Sh INTERFACE STABILITY
+.Sy Obsolete Standard .
+.Sh MT-LEVEL
+.Sy MT-Safe .
+.Sh SEE ALSO
+.Xr wcsstr 3C ,
+.Xr standards 5
+.Sh STANDARDS
+The
+.Fn wcswcs
+function is available in the following compilation environments.  See
+.Xr standards 5 .
+.Lp
+.Bl -bullet -compact
+.It
+.St -xpg4
+.It
+.St -xpg4.2
+.It
+.St -susv2
+.It
+.St -susv3
+.El
+.Lp
+It was marked obsolete in
+.St -susv3
+and removed from
+.St -p1003.1-2008 .

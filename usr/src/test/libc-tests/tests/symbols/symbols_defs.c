@@ -193,4 +193,9 @@
 	{ "wchar.h" },
 	{ "size_t", "const wchar_t *", "size_t" },
 	MASK_ALL, MASK_SINCE_SUSV4
+}, {
+	"wcswcs", SYM_FUNC, NULL,
+	{ "wchar.h" },
+	{ "wchar_t *", "const wchar_t *", "const wchar_t *" },
+	MASK_ALL, MASK_SINCE_XPG4 & ~MASK_SINCE_SUSV4
 },

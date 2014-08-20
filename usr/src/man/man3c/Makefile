@@ -505,6 +505,7 @@ MANFILES= 	__fbufsize.3c					\
 	 	wcstol.3c					\
 	 	wcstoul.3c					\
 	 	wcstring.3c					\
+		wcswcs.3c					\
 	 	wcswidth.3c					\
 	 	wcsxfrm.3c					\
 	 	wctob.3c					\
@@ -1262,7 +1263,6 @@ MANLINKS=	FD_CLR.3c				\
 	 	wcstoll.3c				\
 	 	wcstoull.3c				\
 	 	wcstoumax.3c				\
-	 	wcswcs.3c				\
 	 	wcswidth_l.3c				\
 	 	wctob_l.3c				\
 	 	wctomb_l.3c				\
@@ -2276,7 +2276,6 @@ wcspbrk.3c				:= LINKSRC = wcstring.3c
 wcsrchr.3c				:= LINKSRC = wcstring.3c
 wcsspn.3c				:= LINKSRC = wcstring.3c
 wcstok.3c				:= LINKSRC = wcstring.3c
-wcswcs.3c				:= LINKSRC = wcstring.3c
 windex.3c				:= LINKSRC = wcstring.3c
 wrindex.3c				:= LINKSRC = wcstring.3c
 wscat.3c				:= LINKSRC = wcstring.3c
