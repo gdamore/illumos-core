@@ -17,6 +17,9 @@
 /*
  * This is the beginning of test cases.  Ints in a separate file for
  * ease of use.  This file will be #include'd into the actual C file.
+ *
+ * Note that no attempt is made to verify volatile or restrict qualifiers
+ * in parameters.  We do validate const keywords along with variable types.
  */
 
 /*
@@ -35,12 +38,24 @@
 	{ "unistd.h" }, { "pid_t" },
 	MASK_IX, MASK_IX,
 }, {
+	"sigset_t", SYM_TYPE, "in ucontext.h",
+	{ "ucontext.h" }, { "ucontext_t" },
+	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4,
+}, {
+	"stack_t", SYM_TYPE, "in ucontext.h",
+	{ "ucontext.h" }, { "ucontext_t" },
+	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4,
+}, {
 	"time_t", SYM_TYPE, "in sys/timeb.h",
 	{ "sys/timeb.h" }, { "time_t" },
 	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4,
 }, {
 	"timeb", SYM_TYPE, "in sys/timeb.h",
 	{ "sys/timeb.h" }, { "struct timeb" },
+	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4,
+}, {
+	"ucontext_t", SYM_TYPE, NULL,
+	{ "ucontext.h" }, { "ucontext_t" },
 	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4,
 }, {
 	"wctype_t", SYM_TYPE, "in wchar.h (UNIX)",
@@ -109,6 +124,11 @@
 	{ "char *", "double", "int", "char *" },
 	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
 }, {
+	"getcontext", SYM_FUNC, NULL,
+	{ "ucontext.h" },
+	{ "int", "ucontext_t *" },
+	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
+}, {
 	"getwd", SYM_FUNC, NULL,
 	{ "unistd.h" },
 	{ "char *", "char *" },
@@ -124,9 +144,24 @@
 	{ "char *", "const char *", "int" },
 	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
 }, {
+	"makecontext", SYM_FUNC, NULL,
+	{ "ucontext.h" },
+	{ "void", "ucontext_t *", "void (*)()", "int" },
+	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
+}, {
 	"mktemp", SYM_FUNC, NULL,
 	{ "stdlib.h" },
 	{ "char *", "char *" },
+	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
+}, {
+	"setcontext", SYM_FUNC, NULL,
+	{ "ucontext.h" },
+	{ "int", "const ucontext_t *" },
+	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
+}, {
+	"swapcontext", SYM_FUNC, NULL,
+	{ "ucontext.h" },
+	{ "int", "ucontext_t *", "const ucontext_t *" },
 	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
 }, {
 	"ualarm", SYM_FUNC, NULL,

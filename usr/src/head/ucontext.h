@@ -32,9 +32,17 @@
 #ifndef _UCONTEXT_H
 #define	_UCONTEXT_H
 
+#include <sys/feature_tests.h>
+
+/*
+ * This file is defined for XPG4.2, XPG5, and XPG6 only.  Otherwise not
+ * for use in strict standards compliance.
+ */
+#if !defined _STRICT_SYMBOLS || (defined(_XPG4_2) && !defined(_XPG7))
+
 #include <sys/ucontext.h>
 
-#if !defined(_XPG4_2) || defined(__EXTENSIONS__)
+#if !defined(_STRICT_SYMBOLS)
 #include <sys/siginfo.h>
 #endif
 
@@ -57,7 +65,7 @@ extern int swapcontext(ucontext_t *_RESTRICT_KYWD,
 		const ucontext_t *_RESTRICT_KYWD);
 extern void makecontext(ucontext_t *, void(*)(), int, ...);
 
-#if !defined(_XPG4_2) || defined(__EXTENSIONS__)
+#if !defined(_STRICT_SYMBOLS)
 extern int walkcontext(const ucontext_t *, int (*)(uintptr_t, int, void *),
     void *);
 extern int printstack(int);
@@ -71,10 +79,11 @@ extern int stack_inbounds(void *);
 extern int stack_violation(int, const siginfo_t *, const ucontext_t *);
 
 extern void *_stack_grow(void *);
-#endif	/* !_XPG4_2 || __EXTENSIONS__ */
+#endif	/* !_STRICT_SYMBOLS) */
 
 #ifdef	__cplusplus
 }
 #endif
 
+#endif	/* !_STRICT_SYMBOLS || (_XPG4_2 && !_XPG7) */
 #endif	/* _UCONTEXT_H */
