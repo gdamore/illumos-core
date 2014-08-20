@@ -395,9 +395,10 @@ extern uid_t getuid(void);
 #if !defined(__XOPEN_OR_POSIX) || defined(__EXTENSIONS__)
 extern char *getusershell(void);
 #endif /* !defined(__XOPEN_OR_POSIX) || defined(__EXTENSIONS__) */
-#if !defined(__XOPEN_OR_POSIX) || defined(_XPG4_2) || defined(__EXTENSIONS__)
+
+#if (defined(_XPG4_2) && !defined(_XPG7)) || !defined(_STRICT_SYMBOLS)
 extern char *getwd(char *);
-#endif /* !defined(__XOPEN_OR_POSIX) || defined(_XPG4_2)... */
+#endif
 /*
  * The following ioctl prototype is duplicated in <stropts.h>. The
  * duplication is necessitated by XPG4.2 which requires the prototype

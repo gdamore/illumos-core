@@ -105,6 +105,11 @@
 	{ "char *", "double", "int", "char *" },
 	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
 }, {
+	"getwd", SYM_FUNC, NULL,
+	{ "unistd.h" },
+	{ "char *", "char *" },
+	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
+}, {
 	"index", SYM_FUNC, NULL,
 	{ "strings.h" },
 	{ "char *", "const char *", "int" },
