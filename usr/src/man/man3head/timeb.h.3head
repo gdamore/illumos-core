@@ -1,4 +1,4 @@
-'\" te
+.\" Copyright 2014 Garrett D'Amore <garrett@damore.org>
 .\" Copyright (c) 2001, The IEEE and The Open Group. All Rights Reserved. Portions Copyright (c) 2004, Sun Microsystems, Inc. All Rights Reserved.
 .\" Sun Microsystems, Inc. gratefully acknowledges The Open Group for permission to reproduce portions of its copyrighted documentation. Original documentation from The Open Group can be obtained online at
 .\" http://www.opengroup.org/bookstore/.
@@ -7,51 +7,53 @@
 .\" The contents of this file are subject to the terms of the Common Development and Distribution License (the "License").  You may not use this file except in compliance with the License.
 .\" You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE or http://www.opensolaris.org/os/licensing.  See the License for the specific language governing permissions and limitations under the License.
 .\" When distributing Covered Code, include this CDDL HEADER in each file and include the License file at usr/src/OPENSOLARIS.LICENSE.  If applicable, add the following below this CDDL HEADER, with the fields enclosed by brackets "[]" replaced with your own identifying information: Portions Copyright [yyyy] [name of copyright owner]
-.TH TIMEB.H 3HEAD "Sep 10, 2004"
-.SH NAME
-timeb.h, timeb \- additional definitions for date and time
-.SH SYNOPSIS
-.LP
-.nf
-#include <\fBsys/timeb.h\fR>
-.fi
-
-.SH DESCRIPTION
-.sp
-.LP
-The <\fBsys/timeb.h\fR> header defines the \fBtimeb\fR structure, which
-includes the following members:
-.sp
-.in +2
-.nf
-time_t         time        /* the seconds portion of the current time */
-unsigned short millitm     /* the milliseconds portion of the current time */
-short          timezone    /* the local timezone in minutes west  of Greenwich */
-short          dstflag     /* TRUE if Daylight Savings Time is in effect */
-.fi
-.in -2
-
-.sp
-.LP
-The \fBtime_t\fR type is defined as described in <\fBsys/types.h\fR>.
-.SH ATTRIBUTES
-.sp
-.LP
-See \fBattributes\fR(5) for descriptions of the following attributes:
-.sp
-
-.sp
-.TS
-box;
-c | c
-l | l .
-ATTRIBUTE TYPE	ATTRIBUTE VALUE
-_
-Interface Stability	Standard
-.TE
-
-.SH SEE ALSO
-.sp
-.LP
-\fBtime.h\fR(3HEAD), \fBtypes.h\fR(3HEAD), \fBattributes\fR(5),
-\fBstandards\fR(5)
+.Dd "Jul 20, 2014"
+.Dt TIMEB.H 3HEAD
+.Os
+.Sh NAME
+.Nm timeb.h, timeb
+.Nd additional definitions for date and time
+.Sh SYNOPSIS
+.In sys/timeb.h
+.Sh DESCRIPTION
+The
+.In sys/timeb.h
+header defines the
+.Ft timeb
+structure, which includes the following members:
+.Bl -column -offset indent "unsigned short" "timezone" "more"
+.It Ft time_t	Ft time ;	seconds portion of current time
+.It Ft unsigned short	Ft millitm ;	milliseconds portion of current time
+.It Ft short	Ft timezone ;	local timezone in minutes west of Greenwich
+.It Ft short	Ft dstflag ;	TRUE if Daylight Savings Time in effect
+.El
+.Lp
+The
+.Ft time_t
+type is defined as described in
+.In sys/types.h .
+.Sh INTERFACE STABILITY
+.Sy Obsolete Standard .
+.Sh SEE ALSO
+.Xr time.h 3HEAD ,
+.Xr types.h 3HEAD ,
+.Xr standards 5
+.Sh STANDARDS
+The
+.In sys/timeb.h
+header is available in the following compilation environments. See
+.Xr standards 5 .
+.Lp
+.Bl -bullet -compact
+.It
+.St -xpg4.2
+.It
+.St -susv2
+.It
+.St -susv3
+.El
+.Lp
+This header was obsoleted in
+.St -susv3
+and removed from
+.St -p1003.1-2008 .

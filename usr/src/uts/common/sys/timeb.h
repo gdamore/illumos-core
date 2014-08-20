@@ -1,8 +1,10 @@
 /*
- * Copyright 2014 Garrett D'Amore <garrett@damore.org>
- *
  * Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
+ */
+
+/*
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
  */
 
 #ifndef	_SYS_TIMEB_H
@@ -12,7 +14,7 @@
 extern "C" {
 #endif
 
-#include <sys/types.h>
+#include <sys/feature_tests.h>
 
 /*
  * Copyright (c) 1991, 1993
@@ -52,7 +54,29 @@ extern "C" {
  * SUCH DAMAGE.
  */
 
-/* The ftime(2) system call structure */
+
+/*
+ * NOTE: struct timeb and ftime live in sys/timeb.h due to standards
+ * requirements.
+ *
+ * The actual function is not a system call, but a libc function.  Hence
+ * this header should never be included into kernel modules.  Presumably
+ * the header shouldn't be included unless ftime() is desired, since it
+ * defines nothing else, but be pedantic.
+ */
+
+#ifdef _KERNEL
+#error	"sys/timeb.h not supported in the kernel"
+#endif
+
+#if !defined(_STRICT_SYMBOLS) || (defined(_XPG4_2) && !defined(_XPG7))
+
+/* Standard says we get time_t, but lets not bring in all sys/types.h */
+#if !defined(_TIME_T)
+#define	_TIME_T
+typedef long		time_t; /* time of day in seconds */
+#endif	/* _TIME_T */
+
 struct timeb {
 	time_t	time;			/* seconds since the Epoch */
 	unsigned short millitm;		/* + milliseconds since the Epoch */
@@ -61,6 +85,7 @@ struct timeb {
 };
 
 extern int ftime(struct timeb *);
+#endif
 
 #ifdef	__cplusplus
 }

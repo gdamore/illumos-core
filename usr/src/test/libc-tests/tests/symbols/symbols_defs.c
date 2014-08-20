@@ -31,6 +31,14 @@
 	{ "wchar.h" }, { "locale_t" },
 	MASK_ALL, MASK_SINCE_SUSV4,
 }, {
+	"time_t", SYM_TYPE, "in sys/timeb.h",
+	{ "sys/timeb.h" }, { "time_t" },
+	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4,
+}, {
+	"timeb", SYM_TYPE, "in sys/timeb.h",
+	{ "sys/timeb.h" }, { "struct timeb" },
+	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4,
+}, {
 	"wctype_t", SYM_TYPE, "in wchar.h (UNIX)",
 	{ "wchar.h" }, { "wctype_t" },
 	MASK_ALL, MASK_UNIX,
@@ -85,6 +93,11 @@
 	"fcvt", SYM_FUNC, NULL,
 	{ "stdlib.h" },
 	{ "char *", "double", "int", "int *", "int *" },
+	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
+}, {
+	"ftime", SYM_FUNC, NULL,
+	{ "sys/timeb.h" },
+	{ "int", "struct timeb *" },
 	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
 }, {
 	"gcvt", SYM_FUNC, NULL,
