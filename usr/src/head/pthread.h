@@ -195,9 +195,18 @@ extern int pthread_attr_getstack(const pthread_attr_t *_RESTRICT_KYWD,
 extern int pthread_attr_setstacksize(pthread_attr_t *, size_t);
 extern int pthread_attr_getstacksize(const pthread_attr_t *_RESTRICT_KYWD,
 		size_t *_RESTRICT_KYWD);
+
+#if !defined(_STRICT_SYMBOLS) || (!defined(_XPG7) && _POSIX_C_SOURCE >= 199506L)
+/*
+ * Technically as these start with pthread_ we are allowed to expose them
+ * here regardless of standards conformance.  But we think its better to
+ * suppress symbols that aren't supposed to be exposed.
+ */
 extern int pthread_attr_setstackaddr(pthread_attr_t *, void *);
 extern int pthread_attr_getstackaddr(const pthread_attr_t *_RESTRICT_KYWD,
 		void **_RESTRICT_KYWD);
+#endif
+
 extern int pthread_attr_setdetachstate(pthread_attr_t *, int);
 extern int pthread_attr_getdetachstate(const pthread_attr_t *, int *);
 extern int pthread_attr_setscope(pthread_attr_t *, int);

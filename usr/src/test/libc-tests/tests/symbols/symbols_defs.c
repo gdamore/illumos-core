@@ -154,6 +154,16 @@
 	{ "char *", "char *" },
 	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
 }, {
+	"pthread_attr_getstackaddr", SYM_FUNC, NULL,
+	{ "pthread.h" },
+	{ "int", "const pthread_attr_t *", "void **" },
+	MASK_ALL, (MASK_SINCE_P95|MASK_SINCE_SUSV2) & ~MASK_SINCE_SUSV4
+}, {
+	"pthread_attr_setstackaddr", SYM_FUNC, NULL,
+	{ "pthread.h" },
+	{ "int", "pthread_attr_t *", "void *" },
+	MASK_ALL, (MASK_SINCE_P95|MASK_SINCE_SUSV2) & ~MASK_SINCE_SUSV4
+}, {
 	"setcontext", SYM_FUNC, NULL,
 	{ "ucontext.h" },
 	{ "int", "const ucontext_t *" },
