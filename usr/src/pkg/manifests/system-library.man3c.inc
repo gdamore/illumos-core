@@ -491,6 +491,7 @@ file path=usr/share/man/man3c/wcpcpy.3c
 file path=usr/share/man/man3c/wcrtomb.3c
 file path=usr/share/man/man3c/wcscasecmp.3c
 file path=usr/share/man/man3c/wcscoll.3c
+file path=usr/share/man/man3c/wcsdup.3c
 file path=usr/share/man/man3c/wcsftime.3c
 file path=usr/share/man/man3c/wcslen.3c
 file path=usr/share/man/man3c/wcsrtombs.3c
