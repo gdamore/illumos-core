@@ -143,9 +143,6 @@ usb/hubd/%.check:	usb/hubd/%.h
 usb/clients/hid/%.check:	usb/clients/hid/%.h
 	$(DOT_H_CHECK)
 
-usb/clients/hwarc/%.check:	usb/clients/hwarc/%.h
-	$(DOT_H_CHECK)
-
 usb/clients/mass_storage/%.check:	usb/clients/mass_storage/%.h
 	$(DOT_H_CHECK)
 
@@ -229,7 +226,6 @@ ROOTDIRS=			\
 	$(ROOTDIR)/usb/clients	\
 	$(ROOTDIR)/usb/clients/audio  \
 	$(ROOTDIR)/usb/clients/hid \
-	$(ROOTDIR)/usb/clients/hwarc \
 	$(ROOTDIR)/usb/clients/mass_storage	\
 	$(ROOTDIR)/usb/clients/printer  \
 	$(ROOTDIR)/usb/clients/usbcdc  \
