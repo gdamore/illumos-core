@@ -102,6 +102,11 @@
 	{ "char *", "const char *", "int" },
 	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
 }, {
+	"mktemp", SYM_FUNC, NULL,
+	{ "stdlib.h" },
+	{ "char *", "char *" },
+	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
+}, {
 	"ualarm", SYM_FUNC, NULL,
 	{ "unistd.h" },
 	{ "int", "useconds_t", "useconds_t" },

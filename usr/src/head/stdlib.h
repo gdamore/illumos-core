@@ -183,6 +183,7 @@ extern int	mkstemps64(char *, int);
 extern char *ecvt(double, int, int *_RESTRICT_KYWD, int *_RESTRICT_KYWD);
 extern char *fcvt(double, int, int *_RESTRICT_KYWD, int *_RESTRICT_KYWD);
 extern char *gcvt(double, int, char *);
+extern char *mktemp(char *);
 #endif
 
 #if defined(__EXTENSIONS__) || \
@@ -193,7 +194,6 @@ extern int getsubopt(char **, char *const *, char **);
 extern int  grantpt(int);
 extern char *initstate(unsigned, char *, size_t);
 extern char *l64a(long);
-extern char *mktemp(char *);
 extern char *ptsname(int);
 extern long random(void);
 extern char *realpath(const char *_RESTRICT_KYWD, char *_RESTRICT_KYWD);
