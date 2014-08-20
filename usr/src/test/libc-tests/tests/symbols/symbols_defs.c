@@ -31,6 +31,10 @@
 	{ "wchar.h" }, { "locale_t" },
 	MASK_ALL, MASK_SINCE_SUSV4,
 }, {
+	"pid_t", SYM_TYPE, NULL,
+	{ "unistd.h" }, { "pid_t" },
+	MASK_IX, MASK_IX,
+}, {
 	"time_t", SYM_TYPE, "in sys/timeb.h",
 	{ "sys/timeb.h" }, { "time_t" },
 	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4,
@@ -134,6 +138,16 @@
 	{ "unistd.h" },
 	{ "int", "useconds_t" },
 	MASK_IX, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
+}, {
+	"vfork", SYM_FUNC, NULL,
+	{ "unistd.h" },
+	{ "pid_t" },
+	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
+}, {
+	"vforkx", SYM_FUNC, NULL,
+	{ "sys/fork.h" },
+	{ "pid_t", "int" },
+	MASK_ALL, 0,	/* vforkx not in any standards */
 }, {
 	"wcpcpy", SYM_FUNC, NULL,
 	{ "wchar.h" },

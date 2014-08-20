@@ -22,6 +22,8 @@
 /*
  * Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
+ *
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
  */
 
 #ifndef _SYS_FORK_H
@@ -33,7 +35,7 @@
 extern "C" {
 #endif
 
-#if !defined(__XOPEN_OR_POSIX) || defined(__EXTENSIONS__)
+#if !defined(_STRICT_SYMBOLS)
 
 #if !defined(_KERNEL)
 
@@ -70,7 +72,7 @@ extern pid_t vforkx(int) __RETURNS_TWICE;
  */
 #define	FORK_WAITPID	0x0002
 
-#endif	/* !defined(__XOPEN_OR_POSIX) || defined(__EXTENSIONS__) */
+#endif	/* !defined(_STRICT_SYMBOLS) */
 
 #ifdef	__cplusplus
 }
