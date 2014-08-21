@@ -73,12 +73,20 @@
 #ifndef _NETDB_H
 #define	_NETDB_H
 
+#include <sys/feature_tests.h>
+
+/*
+ * The entire contents of this file are unavailable in strictly standards
+ * conforming compilation unless XNS4 or later are applied.
+ */
+#if !defined(_STRICT_SYMBOLS) || defined(_XPG4_2)
+
 #include <sys/types.h>
 #include <netinet/in.h>
 #if !defined(_XPG4_2) || defined(_XPG6) || defined(__EXTENSIONS__)
 #include <sys/socket.h>
 #endif /* !defined(_XPG4_2) || defined(_XPG6) || defined(__EXTENSIONS__) */
-#include <sys/feature_tests.h>
+
 
 #ifdef	__cplusplus
 extern "C" {
@@ -263,7 +271,9 @@ int innetgr(const char *, const char *, const char *, const char *);
 #endif /* !defined(_XPG4_2) || defined(__EXTENSIONS__) */
 
 /* Old interfaces that return a pointer to a static area;  MT-unsafe */
+#if !defined(_STRICT_SYMBOLS) || (defined(_XPG4_2) && !defined(_XPG7))
 struct hostent	*gethostbyname(const char *);
+#endif
 struct hostent	*gethostent(void);
 struct netent	*getnetbyaddr(in_addr_t, int);
 struct netent	*getnetbyname(const char *);
@@ -276,11 +286,13 @@ struct servent	*getservbyport(int, const char *);
 struct servent	*getservent(void);
 
 /* gethostbyaddr() second argument is a size_t only in unix95/unix98 */
+#if !defined(_STRICT_SYMBOLS) || (defined(_XPG4_2) && !defined(_XPG7))
 #if !defined(_XPG4_2) || defined(_XPG6) || defined(__EXTENSIONS__)
 struct hostent	*gethostbyaddr(const void *, socklen_t, int);
 #else
 struct hostent	*gethostbyaddr(const void *, size_t, int);
 #endif /* !defined(_XPG4_2) || defined(_XPG6) || defined(__EXTENSIONS__) */
+#endif /* !_STRICT_SYMBOLS || !_XPG7 */
 
 #if !defined(_XPG4_2) || defined(__EXTENSIONS__)
 int endhostent(void);
@@ -360,6 +372,7 @@ void freeipsecalgent(struct ipsecalgent *ptr);
  * (when using the resolver)
  */
 
+#if !defined(_STRICT_SYMBOLS) || (defined(_XPG4_2) && !defined(_XPG7))
 extern  int h_errno;
 
 #ifdef	_REENTRANT
@@ -380,6 +393,8 @@ extern int	*__h_errno(void);
 #define	NO_RECOVERY	3 /* Non recoverable errors, FORMERR, REFUSED, NOTIMP */
 #define	NO_DATA		4 /* Valid name, no data record of requested type */
 
+#endif	/* !_STRICT_SYMBOLS || !_XPG7 */
+
 #if !defined(_XPG4_2) || defined(__EXTENSIONS__)
 #define	NO_ADDRESS	NO_DATA		/* no address, look for MX record */
 
@@ -387,6 +402,7 @@ extern int	*__h_errno(void);
 #define	NETDB_INTERNAL	-1	/* see errno */
 #define	NETDB_SUCCESS	0	/* no problem */
 /* End BIND */
+
 
 #define	MAXHOSTNAMELEN	256
 
@@ -397,5 +413,7 @@ extern int	*__h_errno(void);
 #ifdef	__cplusplus
 }
 #endif
+
+#endif  /* !_STRICT_SYMBOLS || _XPG4_2 */
 
 #endif	/* _NETDB_H */

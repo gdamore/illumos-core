@@ -78,6 +78,26 @@
 	"LC_GLOBAL_LOCALE", SYM_VALUE, NULL,
 	{ "locale.h" }, { "locale_t" },
 	MASK_ALL, MASK_SINCE_SUSV4,
+}, {
+	"h_errno", SYM_VALUE, NULL,
+	{ "netdb.h" }, { "int" },
+	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4,
+}, {
+	"HOST_NOT_FOUND", SYM_VALUE, NULL,
+	{ "netdb.h" }, { "int" },
+	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4,
+}, {
+	"NO_DATA", SYM_VALUE, NULL,
+	{ "netdb.h" }, { "int" },
+	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4,
+}, {
+	"NO_RECOVERY", SYM_VALUE, NULL,
+	{ "netdb.h" }, { "int" },
+	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4,
+}, {
+	"TRY_AGAIN", SYM_VALUE, NULL,
+	{ "netdb.h" }, { "int" },
+	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4,
 },
 
 /*
@@ -109,6 +129,11 @@
 	{ "char *", "double", "int", "int *", "int *" },
 	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
 }, {
+	"endhostent", SYM_FUNC, NULL,
+	{ "netdb.h" },
+	{ "void" },
+	MASK_ALL, MASK_SINCE_SUS
+}, {
 	"fcvt", SYM_FUNC, NULL,
 	{ "stdlib.h" },
 	{ "char *", "double", "int", "int *", "int *" },
@@ -128,6 +153,21 @@
 	{ "ucontext.h" },
 	{ "int", "ucontext_t *" },
 	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
+}, {
+	"gethostbyaddr", SYM_FUNC, NULL,
+	{ "netdb.h" },
+	{ "struct hostent *", "const char *", "socklen_t", "int" },
+	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
+}, {
+	"gethostbyname", SYM_FUNC, NULL,
+	{ "netdb.h" },
+	{ "struct hostent *", "const char *" },
+	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
+}, {
+	"gethostent", SYM_FUNC, NULL,
+	{ "netdb.h" },
+	{ "struct hostent *" },
+	MASK_ALL, MASK_SINCE_SUS
 }, {
 	"getwd", SYM_FUNC, NULL,
 	{ "unistd.h" },
@@ -168,6 +208,11 @@
 	{ "ucontext.h" },
 	{ "int", "const ucontext_t *" },
 	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
+}, {
+	"sethostent", SYM_FUNC, NULL,
+	{ "netdb.h" },
+	{ "void", "int" },
+	MASK_ALL, MASK_SINCE_SUS
 }, {
 	"swapcontext", SYM_FUNC, NULL,
 	{ "ucontext.h" },
