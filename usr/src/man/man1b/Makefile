@@ -18,8 +18,7 @@ include		$(SRC)/Makefile.master
 
 MANSECT=	 1b
 
-MANFILES=	basename.1b	\
-		biff.1b		\
+MANFILES=	biff.1b		\
 		chown.1b	\
 		df.1b		\
 		du.1b		\

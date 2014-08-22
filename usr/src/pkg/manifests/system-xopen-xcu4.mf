@@ -21,6 +21,7 @@
 
 #
 # Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 
 set name=pkg.fmri value=pkg:/system/xopen/xcu4@$(PKGVERS)
@@ -36,7 +37,6 @@ dir path=usr/xpg4/bin
 file path=usr/xpg4/bin/ar mode=0555
 file path=usr/xpg4/bin/at group=sys mode=4755
 file path=usr/xpg4/bin/awk mode=0555
-file path=usr/xpg4/bin/basename mode=0555
 file path=usr/xpg4/bin/batch mode=0555
 file path=usr/xpg4/bin/chgrp mode=0555
 file path=usr/xpg4/bin/chown mode=0555
@@ -84,6 +84,7 @@ license lic_CDDL license=lic_CDDL
 license lic_OSBL license=lic_OSBL
 license lic_OSBL_preamble license=lic_OSBL_preamble
 link path=usr/xpg4/bin/alias target=../../bin/alias
+link path=usr/xpg4/bin/basename target=../../bin/basename
 link path=usr/xpg4/bin/bg target=../../bin/alias
 link path=usr/xpg4/bin/cd target=../../bin/alias
 link path=usr/xpg4/bin/command target=../../bin/alias

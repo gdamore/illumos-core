@@ -23,6 +23,8 @@
 # Copyright 2010 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
+# Copyright 2014 Garett D'Amore <garrett@damore.org>
+#
 
 # ucbcmd/Makefile
 
@@ -32,7 +34,6 @@ include $(SRC)/Makefile.master
 include $(SRC)/ucbcmd/Makefile.ucbcmd
 
 COMMON_SUBDIRS=		\
-	basename	\
 	biff		\
 	chown		\
 	df		\
@@ -95,6 +96,7 @@ LINKDEST=	../bin/$(@F)
 
 BINLINKS=		\
 	arch		\
+	basename	\
 	clear		\
 	e		\
 	edit		\

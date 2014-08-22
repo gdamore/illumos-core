@@ -20,31 +20,29 @@
 # CDDL HEADER END
 #
 #
-#ident	"%Z%%M%	%I%	%E% SMI"
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 # Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
 
 PROG= basename
-XPG4PROG= basename
+XPG4PROG = $(PROG)
 
 include ../Makefile.cmd
 
-$(XPG4) := CFLAGS += -DXPG4 $(CCVERBOSE)
-lint_PROG_XPG4 := CPPFLAGS += -DXPG4
-
 .KEEP_STATE:
 
-all: $(PROG) $(XPG4)
+all: $(PROG)
 
 install: all $(ROOTPROG) $(ROOTXPG4PROG)
 
 clean:
 
-lint: lint_PROG lint_PROG_XPG4
+lint: lint_PROG
 
-lint_PROG_XPG4:	$(PROG).c
-	$(LINT.c) $(PROG).c $(LDLIBS)
+$(ROOTXPG4PROG):
+	-$(RM) $@
+	-$(LN) -s ../../bin/$(PROG) $@
 
 include ../Makefile.targ

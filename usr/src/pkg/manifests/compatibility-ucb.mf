@@ -22,6 +22,7 @@
 #
 # Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2013 Nexenta Systems, Inc.  All rights reserved.
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 
 set name=pkg.fmri value=pkg:/compatibility/ucb@$(PKGVERS)
@@ -44,7 +45,6 @@ dir path=usr/ucblib
 dir path=usr/ucblib/$(ARCH64)
 file path=etc/mail/Mail.rc original_name=SUNWscp:etc/mail/Mail.rc \
     preserve=true
-file path=usr/share/man/man1b/basename.1b
 file path=usr/share/man/man1b/biff.1b
 file path=usr/share/man/man1b/chown.1b
 file path=usr/share/man/man1b/df.1b
@@ -79,7 +79,6 @@ file path=usr/share/man/man1b/users.1b
 file path=usr/share/man/man1b/vipw.1b
 file path=usr/share/man/man1b/whereis.1b
 file path=usr/share/man/man1b/whoami.1b
-file path=usr/ucb/basename mode=0755
 file path=usr/ucb/biff mode=0755
 file path=usr/ucb/chown mode=0755
 file path=usr/ucb/df mode=0755
@@ -130,8 +129,6 @@ legacy pkg=SUNWscpu \
     name="Source Compatibility, (Usr)"
 license cr_Sun license=cr_Sun
 license lic_CDDL license=lic_CDDL
-license usr/src/ucbcmd/basename/THIRDPARTYLICENSE \
-    license=usr/src/ucbcmd/basename/THIRDPARTYLICENSE
 license usr/src/ucbcmd/echo/THIRDPARTYLICENSE \
     license=usr/src/ucbcmd/echo/THIRDPARTYLICENSE
 license usr/src/ucbcmd/from/THIRDPARTYLICENSE \
@@ -173,6 +170,7 @@ link path=usr/share/man/man1b/fasthalt.1b target=fastboot.1b
 link path=usr/share/man/man1b/reset.1b target=tset.1b
 link path=usr/ucb/Mail target=../bin/mailx
 link path=usr/ucb/arch target=../bin/arch
+link path=usr/ucb/basename target=../bin/basename
 link path=usr/ucb/clear target=../bin/clear
 link path=usr/ucb/e target=../bin/edit
 link path=usr/ucb/edit target=../bin/edit
