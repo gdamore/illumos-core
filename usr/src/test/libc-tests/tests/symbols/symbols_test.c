@@ -519,7 +519,7 @@ main(int argc, char **argv)
 		}
 	}
 
-	atexit(cleanup);
+	(void) atexit(cleanup);
 
 	find_compiler();
 	if (!optC)
