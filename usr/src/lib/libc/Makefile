@@ -24,6 +24,8 @@
 # Copyright 2010 Nexenta Systems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
+#
 
 LIBBASENAME=	libc
 LIBRARY=	$(LIBBASENAME:%=%.a)
