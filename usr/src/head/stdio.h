@@ -279,14 +279,12 @@ extern int asprintf(char **, const char *, ...);
 extern int vasprintf(char **, const char *, __va_list);
 #endif
 
-#if defined(__EXTENSIONS__) || \
-	(!defined(_STRICT_STDC) && !defined(__XOPEN_OR_POSIX))
-	/* || defined(_XPG7) */
+#if !defined(_STRICT_SYMBOLS) || defined(_XPG7)
 extern ssize_t getdelim(char **_RESTRICT_KYWD, size_t *_RESTRICT_KYWD,
 	int, FILE *_RESTRICT_KYWD);
 extern ssize_t getline(char **_RESTRICT_KYWD, size_t *_RESTRICT_KYWD,
 	FILE *_RESTRICT_KYWD);
-#endif	/* __EXTENSIONS__ ... */
+#endif
 
 /*
  * The following are known to POSIX and XOPEN, but not to ANSI-C.

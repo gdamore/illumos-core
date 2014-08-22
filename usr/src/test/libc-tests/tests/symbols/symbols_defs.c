@@ -154,6 +154,11 @@
 	{ "int", "ucontext_t *" },
 	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
 }, {
+	"getdelim", SYM_FUNC, NULL,
+	{ "stdio.h" },
+	{ "ssize_t", "char **", "size_t *", "int", "FILE *" },
+	MASK_ALL, MASK_SINCE_SUSV4
+}, {
 	"gethostbyaddr", SYM_FUNC, NULL,
 	{ "netdb.h" },
 	{ "struct hostent *", "const char *", "socklen_t", "int" },
@@ -168,6 +173,11 @@
 	{ "netdb.h" },
 	{ "struct hostent *" },
 	MASK_ALL, MASK_SINCE_SUS
+}, {
+	"getline", SYM_FUNC, NULL,
+	{ "stdio.h" },
+	{ "ssize_t", "char **", "size_t *", "FILE *" },
+	MASK_ALL, MASK_SINCE_SUSV4
 }, {
 	"getwd", SYM_FUNC, NULL,
 	{ "unistd.h" },

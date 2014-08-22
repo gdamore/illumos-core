@@ -315,7 +315,6 @@ mkcfile(test_t t, const struct symbol_test *st)
 
 	if ((f = fopen(cfile, "w+")) == NULL) {
 		test_failed(t, "fopen: %s", strerror(errno));
-		cleanup();
 		return;
 	}
 
@@ -423,7 +422,6 @@ do_compile(test_t t, int idx, int vis)
 
 	if ((logf = fopen(lfile, "w+")) == NULL) {
 		test_failed(t, "fopen: %s", strerror(errno));
-		cleanup();
 		return (-1);
 	}
 	(void) fprintf(logf, "COMMAND: %s\n", cmd);
@@ -435,7 +433,6 @@ do_compile(test_t t, int idx, int vis)
 			fail_count++;
 			show_file(t, lfile);
 			show_file(t, cfile);
-			cleanup();
 			test_failed(t, "error compiling in %s", e->desc);
 			return (-1);
 		}
@@ -444,7 +441,6 @@ do_compile(test_t t, int idx, int vis)
 			fail_count++;
 			show_file(t, lfile);
 			show_file(t, cfile);
-			cleanup();
 			test_failed(t, "symbol visible in %s", e->desc);
 			return (-1);
 		}
@@ -462,6 +458,7 @@ test_compile(void)
 	int rv = 0;
 
 	for (i = 0; stests[i].symbol != NULL; i++) {
+		int srv = 0;
 		st = &stests[i];
 		if (st->desc != NULL) {
 			t = test_start("%s (%s)", st->symbol, st->desc);
@@ -475,13 +472,13 @@ test_compile(void)
 				continue;
 			}
 			if (do_compile(t, bit, st->vismask & m) != 0) {
+				srv = -1;
 				rv = -1;
 			}
 		}
-		if (rv == 0) {
+		if (srv == 0) {
 			test_passed(t);
 		}
-		cleanup();
 	}
 
 	t = test_start("Summary");
@@ -521,6 +518,8 @@ main(int argc, char **argv)
 			exit(1);
 		}
 	}
+
+	atexit(cleanup);
 
 	find_compiler();
 	if (!optC)
