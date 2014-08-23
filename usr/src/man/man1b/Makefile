@@ -45,7 +45,6 @@ MANFILES=	biff.1b		\
 		stty.1b		\
 		sum.1b		\
 		test.1b		\
-		touch.1b	\
 		tset.1b		\
 		users.1b	\
 		vipw.1b		\
