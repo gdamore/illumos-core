@@ -536,7 +536,6 @@ file path=lib/svc/manifest/system/coreadm.xml group=sys mode=0444
 file path=lib/svc/manifest/system/cron.xml group=sys mode=0444
 file path=lib/svc/manifest/system/cryptosvc.xml group=sys mode=0444
 file path=lib/svc/manifest/system/device/allocate.xml group=sys mode=0444
-file path=lib/svc/manifest/system/device/devices-audio.xml group=sys mode=0444
 file path=lib/svc/manifest/system/device/devices-local.xml group=sys mode=0444
 file path=lib/svc/manifest/system/device/mpxio-upgrade.xml group=sys mode=0444
 file path=lib/svc/manifest/system/early-manifest-import.xml group=sys \
@@ -567,7 +566,6 @@ file path=lib/svc/manifest/system/vtdaemon.xml group=sys mode=0444
 file path=lib/svc/method/boot-archive mode=0555
 file path=lib/svc/method/boot-archive-update mode=0555
 file path=lib/svc/method/console-login mode=0555
-file path=lib/svc/method/devices-audio mode=0555
 file path=lib/svc/method/devices-local mode=0555
 file path=lib/svc/method/dns-install mode=0555
 file path=lib/svc/method/fs-local mode=0555
