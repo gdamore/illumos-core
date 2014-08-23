@@ -129,6 +129,11 @@
 	{ "void", "void *", "size_t" },
 	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
 }, {
+	"dirfd", SYM_FUNC, NULL,
+	{ "dirent.h" },
+	{ "int", "DIR *" },
+	MASK_ALL, MASK_SINCE_SUSV4
+}, {
 	"ecvt", SYM_FUNC, NULL,
 	{ "stdlib.h" },
 	{ "char *", "double", "int", "int *", "int *" },
@@ -143,6 +148,11 @@
 	{ "stdlib.h" },
 	{ "char *", "double", "int", "int *", "int *" },
 	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
+}, {
+	"fdopendir", SYM_FUNC, NULL,
+	{ "dirent.h" },
+	{ "DIR *", "int" },
+	MASK_ALL, MASK_SINCE_SUSV4
 }, {
 	"ftime", SYM_FUNC, NULL,
 	{ "sys/timeb.h" },
@@ -204,6 +214,11 @@
 	{ "char *", "char *" },
 	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
 }, {
+	"opendir", SYM_FUNC, NULL,
+	{ "dirent.h" },
+	{ "DIR *", "const char *" },
+	MASK_ALL, MASK_SINCE_XPG3 | MASK_SINCE_P90,
+}, {
 	"pthread_attr_getstackaddr", SYM_FUNC, NULL,
 	{ "pthread.h" },
 	{ "int", "const pthread_attr_t *", "void **" },
@@ -220,7 +235,7 @@
 	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
 }, {
 	"scandir", SYM_FUNC, NULL,
-	{ "sys/types.h", "dirent.h" },
+	{ "dirent.h" },
 	{ "int", "const char *", "struct dirent ***",
 	    "int (*)(const struct dirent *)",
 	    "int (*)(const struct dirent **, const struct dirent **)"  },

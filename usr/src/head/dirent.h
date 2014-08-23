@@ -95,17 +95,19 @@ typedef struct {
 #endif
 #endif	/* _LP64 && _LARGEFILE64_SOURCE */
 
-extern DIR		*opendir(const char *);
-#if defined(__EXTENSIONS__) || !defined(__XOPEN_OR_POSIX) || \
-	defined(_ATFILE_SOURCE)
-extern DIR		*fdopendir(int);
-extern int		dirfd(DIR *);
-#endif /* defined(__EXTENSIONS__) || !defined(__XOPEN_OR_POSIX) ... */
+#if !defined(_STRICT_SYMBOLS) || defined(__XOPEN_OR_POSIX)
+extern DIR *opendir(const char *);
+#endif
+
+#if !defined(_STRICT_SYMBOLS) || defined(_XPG7) || defined(_ATFILE_SOURCE)
+extern DIR *fdopendir(int);
+extern int dirfd(DIR *);
+#endif
 
 #if !defined(_STRICT_SYMBOLS) || defined(_XPG7)
 extern int scandir(const char *, struct dirent *(*[]),
-		int (*)(const struct dirent *),
-		int (*)(const struct dirent **, const struct dirent **));
+    int (*)(const struct dirent *),
+    int (*)(const struct dirent **, const struct dirent **));
 
 extern int alphasort(const struct dirent **, const struct dirent **);
 #endif
