@@ -97,7 +97,6 @@ file path=usr/ucb/shutdown mode=0755
 file path=usr/ucb/stty mode=0755
 file path=usr/ucb/sum mode=0755
 file path=usr/ucb/test mode=0755
-file path=usr/ucb/tr mode=0755
 file path=usr/ucb/tset mode=0755
 file path=usr/ucb/users mode=0755
 file path=usr/ucb/vipw mode=0555
@@ -200,6 +199,7 @@ link path=usr/ucb/tcopy target=../bin/tcopy
 link path=usr/ucb/telnet target=../bin/telnet
 link path=usr/ucb/tftp target=../bin/tftp
 link path=usr/ucb/touch target=../bin/touch
+link path=usr/ucb/tr target=../bin/tr
 link path=usr/ucb/uptime target=../bin/uptime
 link path=usr/ucb/vacation target=../bin/vacation
 link path=usr/ucb/vedit target=../bin/vedit

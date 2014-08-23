@@ -55,7 +55,6 @@ COMMON_SUBDIRS=		\
 	stty		\
 	sum		\
 	test		\
-	tr		\
 	tset		\
 	users		\
 	vipw		\
@@ -131,6 +130,7 @@ BINLINKS=		\
 	telnet		\
 	tftp		\
 	touch		\
+	tr		\
 	uptime		\
 	vacation	\
 	vmstat		\
