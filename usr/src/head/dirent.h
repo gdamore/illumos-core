@@ -101,14 +101,15 @@ extern DIR		*opendir(const char *);
 extern DIR		*fdopendir(int);
 extern int		dirfd(DIR *);
 #endif /* defined(__EXTENSIONS__) || !defined(__XOPEN_OR_POSIX) ... */
-#if defined(__EXTENSIONS__) || !defined(__XOPEN_OR_POSIX)
-extern int		scandir(const char *, struct dirent *(*[]),
-				int (*)(const struct dirent *),
-				int (*)(const struct dirent **,
-					const struct dirent **));
-extern int		alphasort(const struct dirent **,
-					const struct dirent **);
-#endif /* defined(__EXTENSIONS__) || !defined(__XOPEN_OR_POSIX) */
+
+#if !defined(_STRICT_SYMBOLS) || defined(_XPG7)
+extern int scandir(const char *, struct dirent *(*[]),
+		int (*)(const struct dirent *),
+		int (*)(const struct dirent **, const struct dirent **));
+
+extern int alphasort(const struct dirent **, const struct dirent **);
+#endif
+
 extern struct dirent	*readdir(DIR *);
 #if defined(__EXTENSIONS__) || !defined(_POSIX_C_SOURCE) || \
 	defined(_XOPEN_SOURCE)
@@ -122,13 +123,15 @@ extern int		closedir(DIR *);
 #if	defined(_LARGEFILE64_SOURCE) && !((_FILE_OFFSET_BITS == 64) && \
 	    !defined(__PRAGMA_REDEFINE_EXTNAME))
 extern struct dirent64	*readdir64(DIR *);
-#if defined(__EXTENSIONS__) || !defined(__XOPEN_OR_POSIX)
-extern int	scandir64(const char *, struct dirent64 *(*[]),
-			int (*)(const struct dirent64 *),
-			int (*)(const struct dirent64 **,
-				const struct dirent64 **));
-extern int	alphasort64(const struct dirent64 **, const struct dirent64 **);
-#endif /* defined(__EXTENSIONS__) || !defined(__XOPEN_OR_POSIX) */
+
+#if !defined(_STRICT_SYMBOLS) || defined(_XPG7)
+
+extern int scandir64(const char *, struct dirent64 *(*[]),
+	int (*)(const struct dirent64 *),
+	int (*)(const struct dirent64 **, const struct dirent64 **));
+extern int alphasort64(const struct dirent64 **, const struct dirent64 **);
+
+#endif
 #endif
 
 #if defined(__EXTENSIONS__) || !defined(_POSIX_C_SOURCE) || \

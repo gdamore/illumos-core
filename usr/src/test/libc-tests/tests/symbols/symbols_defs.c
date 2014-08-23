@@ -104,6 +104,11 @@
  * Functions
  */
 {
+	"alphasort", SYM_FUNC, NULL,
+	{ "sys/types.h", "dirent.h" },
+	{ "int", "const struct dirent **", "const struct dirent **" },
+	MASK_ALL, MASK_SINCE_SUSV4
+}, {
 	"bcmp", SYM_FUNC, NULL,
 	{ "strings.h" },
 	{ "int", "const void *", "const void *", "size_t" },
@@ -189,11 +194,6 @@
 	{ "char *", "const char *", "int" },
 	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
 }, {
-	"rindex", SYM_FUNC, NULL,
-	{ "strings.h" },
-	{ "char *", "const char *", "int" },
-	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
-}, {
 	"makecontext", SYM_FUNC, NULL,
 	{ "ucontext.h" },
 	{ "void", "ucontext_t *", "void (*)()", "int" },
@@ -213,6 +213,18 @@
 	{ "pthread.h" },
 	{ "int", "pthread_attr_t *", "void *" },
 	MASK_ALL, (MASK_SINCE_P95|MASK_SINCE_SUSV2) & ~MASK_SINCE_SUSV4
+}, {
+	"rindex", SYM_FUNC, NULL,
+	{ "strings.h" },
+	{ "char *", "const char *", "int" },
+	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
+}, {
+	"scandir", SYM_FUNC, NULL,
+	{ "sys/types.h", "dirent.h" },
+	{ "int", "const char *", "struct dirent ***",
+	    "int (*)(const struct dirent *)",
+	    "int (*)(const struct dirent **, const struct dirent **)"  },
+	MASK_ALL, MASK_SINCE_SUSV4
 }, {
 	"setcontext", SYM_FUNC, NULL,
 	{ "ucontext.h" },
