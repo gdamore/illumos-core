@@ -46,7 +46,6 @@ COMMON_SUBDIRS=		\
 	from		\
 	groups		\
 	install.d	\
-	ln		\
 	ls		\
 	mkstr		\
 	printenv	\
@@ -111,6 +110,7 @@ BINLINKS=		\
 	head		\
 	hostid		\
 	hostname	\
+	ln		\
 	logger		\
 	mach		\
 	more		\

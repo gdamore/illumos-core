@@ -12,6 +12,7 @@
 #
 # Copyright 2011, Richard Lowe
 # Copyright 2013 Nexenta Systems, Inc.  All rights reserved.
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 
 include		$(SRC)/Makefile.master
@@ -30,8 +31,6 @@ MANFILES=	biff.1b		\
 		from.1b		\
 		groups.1b	\
 		grpck.1b	\
-		ln.1b		\
-		logger.1b	\
 		lpc.1b		\
 		lpq.1b		\
 		lpr.1b		\

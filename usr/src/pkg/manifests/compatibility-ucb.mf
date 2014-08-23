@@ -57,8 +57,6 @@ file path=usr/share/man/man1b/file.1b
 file path=usr/share/man/man1b/from.1b
 file path=usr/share/man/man1b/groups.1b
 file path=usr/share/man/man1b/grpck.1b
-file path=usr/share/man/man1b/ln.1b
-file path=usr/share/man/man1b/logger.1b
 file path=usr/share/man/man1b/lpc.1b
 file path=usr/share/man/man1b/lpq.1b
 file path=usr/share/man/man1b/lpr.1b
@@ -91,7 +89,6 @@ file path=usr/ucb/file mode=0555
 file path=usr/ucb/from mode=0755
 file path=usr/ucb/groups mode=0755
 file path=usr/ucb/install mode=0755
-file path=usr/ucb/ln mode=0755
 file path=usr/ucb/ls mode=0755
 file path=usr/ucb/mkstr mode=0555
 file path=usr/ucb/printenv mode=0755
@@ -135,8 +132,6 @@ license usr/src/ucbcmd/from/THIRDPARTYLICENSE \
     license=usr/src/ucbcmd/from/THIRDPARTYLICENSE
 license usr/src/ucbcmd/groups/THIRDPARTYLICENSE \
     license=usr/src/ucbcmd/groups/THIRDPARTYLICENSE
-license usr/src/ucbcmd/ln/THIRDPARTYLICENSE \
-    license=usr/src/ucbcmd/ln/THIRDPARTYLICENSE
 license usr/src/ucbcmd/ls/THIRDPARTYLICENSE \
     license=usr/src/ucbcmd/ls/THIRDPARTYLICENSE
 license usr/src/ucbcmd/sum/THIRDPARTYLICENSE \
@@ -182,6 +177,7 @@ link path=usr/ucb/ftp target=../bin/ftp
 link path=usr/ucb/head target=../bin/head
 link path=usr/ucb/hostid target=../bin/hostid
 link path=usr/ucb/hostname target=../bin/hostname
+link path=usr/ucb/ln target=../bin/ln
 link path=usr/ucb/logger target=../bin/logger
 link path=usr/ucb/mach target=../bin/mach
 link path=usr/ucb/mail target=../bin/mailx
