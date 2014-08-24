@@ -34,10 +34,7 @@ MANFILES=	acctcom.1			\
 	 	at.1				\
 	 	atq.1				\
 	 	atrm.1				\
-	 	audioconvert.1			\
 	 	audioctl.1			\
-	 	audioplay.1			\
-	 	audiorecord.1			\
 	 	audiotest.1			\
 	 	auths.1				\
 	 	awk.1				\

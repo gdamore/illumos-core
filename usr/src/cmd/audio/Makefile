@@ -18,6 +18,7 @@
 #
 # CDDL HEADER END
 #
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 # Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
@@ -29,14 +30,7 @@ include ../Makefile.cmd
 
 SUBDIRS =			\
 		audioctl	\
-		audiotest	\
-		utilities .WAIT \
-		audioplay	\
-		audiorecord	\
-		audioconvert	\
-		samples
-
-AUDIODIR= $(ROOT)/usr/share/audio
+		audiotest
 
 all :=		TARGET= all
 install :=	TARGET= install

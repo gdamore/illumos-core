@@ -217,7 +217,6 @@ DIRS= \
 	/usr/ccs/bin \
 	/usr/ccs/lib \
 	/usr/demo \
-	/usr/demo/SOUND \
 	/usr/games \
 	/usr/has \
 	/usr/has/bin \
@@ -311,9 +310,6 @@ DIRS= \
 	/usr/sbin/$(MACH32) \
 	/usr/share  \
 	/usr/share/applications \
-	/usr/share/audio \
-	/usr/share/audio/samples \
-	/usr/share/audio/samples/au \
 	/usr/share/gnome \
 	/usr/share/gnome/autostart \
 	/usr/share/hwdata \
