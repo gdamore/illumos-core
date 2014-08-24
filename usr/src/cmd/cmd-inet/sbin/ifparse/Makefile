@@ -22,6 +22,8 @@
 #
 # Makefile for "ifparse" 
 #
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
+#
 # Copyright 2000-2003 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
