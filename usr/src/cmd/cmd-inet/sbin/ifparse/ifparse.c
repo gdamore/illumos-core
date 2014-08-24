@@ -7,6 +7,9 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  */
+/*
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
+ */
 
 /*
  * Ifparse splits up an ifconfig command line, and was written for use
@@ -62,6 +65,7 @@
 #include	<stdio.h>
 #include	<string.h>
 #include	<assert.h>
+#include	<unistd.h>
 
 /*
  * Parser flags:
