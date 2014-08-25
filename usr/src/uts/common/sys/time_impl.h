@@ -20,6 +20,8 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
+ *
  * Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
@@ -36,8 +38,6 @@
 
 #ifndef _SYS_TIME_IMPL_H
 #define	_SYS_TIME_IMPL_H
-
-#pragma ident	"%Z%%M%	%I%	%E% SMI"
 
 #include <sys/feature_tests.h>
 
@@ -56,10 +56,13 @@ typedef	long	time_t;		/* time of day in seconds */
  * Time expressed in seconds and nanoseconds
  */
 
+#ifndef	_TIMESPEC_T
+#define	_TIMESPEC_T
 typedef struct  timespec {		/* definition per POSIX.4 */
 	time_t		tv_sec;		/* seconds */
 	long		tv_nsec;	/* and nanoseconds */
 } timespec_t;
+#endif
 
 #if defined(_SYSCALL32)
 
@@ -87,9 +90,9 @@ typedef struct timespec timestruc_t;	/* definition per SVr4 */
  * applications should not use the structure name timestruc.
  */
 
-#if !defined(__XOPEN_OR_POSIX) || defined(__EXTENSIONS__)
+#if !defined(_STRICT_SYMBOLS) || defined(__EXTENSIONS__)
 #define	timestruc	timespec	/* structure name per SVr4 */
-#endif /* !defined(__XOPEN_OR_POSIX) || defined(__EXTENSIONS__) */
+#endif /* !defined(_STRICT_SYMBOLS) || defined(__EXTENSIONS__) */
 
 /*
  * Timer specification

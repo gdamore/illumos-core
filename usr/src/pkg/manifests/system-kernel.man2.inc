@@ -13,6 +13,7 @@
 # Copyright 2011, Richard Lowe
 # Copyright 2012 Nexenta Systems, Inc. All rights reserved.
 # Copyright 2013, OmniTI Computer Consulting, Inc.
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 
 file path=usr/share/man/man2/Intro.2
@@ -45,6 +46,7 @@ file path=usr/share/man/man2/exit.2
 file path=usr/share/man/man2/fcntl.2
 file path=usr/share/man/man2/fork.2
 file path=usr/share/man/man2/fpathconf.2
+file path=usr/share/man/man2/futimens.2
 file path=usr/share/man/man2/getacct.2
 file path=usr/share/man/man2/getaudit.2
 file path=usr/share/man/man2/getauid.2
@@ -204,6 +206,8 @@ link path=usr/share/man/man2/gettaskid.2 target=settaskid.2
 link path=usr/share/man/man2/intro.2 target=Intro.2
 link path=usr/share/man/man2/lchown.2 target=chown.2
 link path=usr/share/man/man2/lstat.2 target=stat.2
+link path=usr/share/man/man2/mkdirat.2 target=mkdir.2
+link path=usr/share/man/man2/mknodat.2 target=mknod.2
 link path=usr/share/man/man2/openat.2 target=open.2
 link path=usr/share/man/man2/pathconf.2 target=fpathconf.2
 link path=usr/share/man/man2/pipe2.2 target=pipe.2
@@ -236,6 +240,7 @@ link path=usr/share/man/man2/shmdt.2 target=shmop.2
 link path=usr/share/man/man2/sigsendset.2 target=sigsend.2
 link path=usr/share/man/man2/umount2.2 target=umount.2
 link path=usr/share/man/man2/unlinkat.2 target=unlink.2
+link path=usr/share/man/man2/utimensat.2 target=futimens.2
 link path=usr/share/man/man2/vforkx.2 target=vfork.2
 link path=usr/share/man/man2/wracct.2 target=getacct.2
 link path=usr/share/man/man2/writev.2 target=write.2

@@ -54,6 +54,10 @@
 	{ "sys/timeb.h" }, { "struct timeb" },
 	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4,
 }, {
+	"timespec", SYM_TYPE, "in sys/stat.h",
+	{ "sys/stat.h" }, { "struct timespec" },
+	MASK_ALL, MASK_SINCE_SUSV4,
+}, {
 	"ucontext_t", SYM_TYPE, NULL,
 	{ "ucontext.h" }, { "ucontext_t" },
 	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4,
@@ -74,6 +78,26 @@
 	"NULL", SYM_VALUE, "in wchar.h",
 	{ "wchar.h" }, { "void *" },
 	MASK_ALL, MASK_SINCE_C89,
+}, {
+	"AT_EACCESS", SYM_VALUE, NULL,
+	{ "fcntl.h" }, { "int" },
+	MASK_ALL, MASK_SINCE_SUSV4,
+}, {
+	"AT_FDCWD", SYM_VALUE, NULL,
+	{ "fcntl.h" }, { "int" },
+	MASK_ALL, MASK_SINCE_SUSV4,
+}, {
+	"AT_REMOVEDIR", SYM_VALUE, NULL,
+	{ "fcntl.h" }, { "int" },
+	MASK_ALL, MASK_SINCE_SUSV4,
+}, {
+	"AT_SYMLINK_NOFOLLOW", SYM_VALUE, NULL,
+	{ "fcntl.h" }, { "int" },
+	MASK_ALL, MASK_SINCE_SUSV4,
+}, {
+	"AT_SYMLINK_FOLLOW", SYM_VALUE, NULL,
+	{ "fcntl.h" }, { "int" },
+	MASK_ALL, MASK_SINCE_SUSV4,
 }, {
 	"LC_GLOBAL_LOCALE", SYM_VALUE, NULL,
 	{ "locale.h" }, { "locale_t" },
@@ -98,12 +122,25 @@
 	"TRY_AGAIN", SYM_VALUE, NULL,
 	{ "netdb.h" }, { "int" },
 	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4,
+}, {
+	"UTIME_NOW", SYM_VALUE, NULL,
+	{ "sys/stat.h" }, { "long" },
+	MASK_ALL, MASK_SINCE_SUSV4,
+}, {
+	"UTIME_OMIT", SYM_VALUE, NULL,
+	{ "sys/stat.h" }, { "long" },
+	MASK_ALL, MASK_SINCE_SUSV4,
 },
 
 /*
  * Functions
  */
 {
+	"access", SYM_FUNC, NULL,
+	{ "unistd.h" },
+	{ "int", "const char *", "int" },
+	MASK_IX, MASK_IX,
+}, {
 	"alphasort", SYM_FUNC, NULL,
 	{ "sys/types.h", "dirent.h" },
 	{ "int", "const struct dirent **", "const struct dirent **" },
@@ -129,6 +166,16 @@
 	{ "void", "void *", "size_t" },
 	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
 }, {
+	"chmod", SYM_FUNC, NULL,
+	{ "sys/stat.h" },
+	{ "int", "const char *", "mode_t" },
+	MASK_IX, MASK_IX
+}, {
+	"chown", SYM_FUNC, NULL,
+	{ "unistd.h" },
+	{ "int", "const char *", "uid_t", "gid_t" },
+	MASK_IX, MASK_IX
+}, {
 	"dirfd", SYM_FUNC, NULL,
 	{ "dirent.h" },
 	{ "int", "DIR *" },
@@ -144,6 +191,31 @@
 	{ "void" },
 	MASK_ALL, MASK_SINCE_SUS
 }, {
+	"faccessat", SYM_FUNC, NULL,
+	{ "unistd.h" },
+	{ "int", "int", "const char *", "int", "int" },
+	MASK_ALL, MASK_SINCE_SUSV4,
+}, {
+	"fchmod", SYM_FUNC, NULL,
+	{ "sys/stat.h" },
+	{ "int", "int", "mode_t" },
+	MASK_IX, MASK_SINCE_P93 | MASK_SINCE_SUS
+}, {
+	"fchmodat", SYM_FUNC, NULL,
+	{ "sys/stat.h" },
+	{ "int", "int", "const char *", "mode_t", "int" },
+	MASK_ALL, MASK_SINCE_SUSV4
+}, {
+	"fchown", SYM_FUNC, NULL,
+	{ "unistd.h" },
+	{ "int", "int", "uid_t", "gid_t" },
+	MASK_IX, MASK_SINCE_SUS
+}, {
+	"fchownat", SYM_FUNC, NULL,
+	{ "unistd.h" },
+	{ "int", "int", "const char *", "uid_t", "gid_t", "int" },
+	MASK_ALL, MASK_SINCE_SUSV4
+}, {
 	"fcvt", SYM_FUNC, NULL,
 	{ "stdlib.h" },
 	{ "char *", "double", "int", "int *", "int *" },
@@ -154,10 +226,30 @@
 	{ "DIR *", "int" },
 	MASK_ALL, MASK_SINCE_SUSV4
 }, {
+	"fstat", SYM_FUNC, NULL,
+	{ "sys/stat.h" },
+	{ "int", "int", "struct stat *" },
+	MASK_IX, MASK_IX
+}, {
+	"fstatat", SYM_FUNC, NULL,
+	{ "sys/stat.h" },
+	{ "int", "int", "const char *", "struct stat *", "int" },
+	MASK_ALL, MASK_SINCE_SUSV4
+}, {
 	"ftime", SYM_FUNC, NULL,
 	{ "sys/timeb.h" },
 	{ "int", "struct timeb *" },
 	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
+}, {
+	"futimens", SYM_FUNC, NULL,
+	{ "sys/stat.h" },
+	{ "int", "int", "const struct timespec [2]" },
+	MASK_ALL, MASK_SINCE_SUSV4
+}, {
+	"futimesat", SYM_FUNC, NULL,
+	{ "sys/time.h" },
+	{ "int", "int", "const char *", "const struct timeval [2]" },
+	MASK_IX, MASK_NONSTD
 }, {
 	"gcvt", SYM_FUNC, NULL,
 	{ "stdlib.h" },
@@ -204,6 +296,11 @@
 	{ "char *", "const char *", "int" },
 	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
 }, {
+	"lchown", SYM_FUNC, NULL,
+	{ "unistd.h" },
+	{ "int", "const char *", "uid_t", "gid_t" },
+	MASK_IX, MASK_SINCE_SUS
+}, {
 	"makecontext", SYM_FUNC, NULL,
 	{ "ucontext.h" },
 	{ "void", "ucontext_t *", "void (*)()", "int" },
@@ -213,6 +310,31 @@
 	{ "stdlib.h" },
 	{ "char *", "char *" },
 	MASK_ALL, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
+}, {
+	"mkdir", SYM_FUNC, NULL,
+	{ "sys/stat.h" },
+	{ "int", "const char *", "mode_t" },
+	MASK_IX, MASK_IX,
+}, {
+	"mkdirat", SYM_FUNC, NULL,
+	{ "sys/stat.h" },
+	{ "int", "int", "const char *", "mode_t" },
+	MASK_ALL, MASK_SINCE_SUSV4
+}, {
+	"mkfifoat", SYM_FUNC, NULL,
+	{ "sys/stat.h" },
+	{ "int", "int", "const char *", "mode_t" },
+	MASK_ALL, MASK_SINCE_SUSV4
+}, {
+	"mknod", SYM_FUNC, NULL,
+	{ "sys/stat.h" },
+	{ "int", "const char *", "mode_t", "dev_t" },
+	MASK_ALL, MASK_SINCE_SUS
+}, {
+	"mknodat", SYM_FUNC, NULL,
+	{ "sys/stat.h" },
+	{ "int", "int", "const char *", "mode_t", "dev_t" },
+	MASK_ALL, MASK_SINCE_SUSV4
 }, {
 	"opendir", SYM_FUNC, NULL,
 	{ "dirent.h" },
@@ -265,6 +387,16 @@
 	{ "unistd.h" },
 	{ "int", "useconds_t" },
 	MASK_IX, MASK_SINCE_SUS & ~MASK_SINCE_SUSV4
+}, {
+	"utimensat", SYM_FUNC, NULL,
+	{ "sys/stat.h" },
+	{ "int", "int", "const char *", "const struct timespec [2]", "int" },
+	MASK_ALL, MASK_SINCE_SUSV4
+}, {
+	"utimes", SYM_FUNC, NULL,
+	{ "sys/time.h" },
+	{ "int", "const char *", "const struct timeval [2]" },
+	MASK_IX, MASK_SINCE_SUS
 }, {
 	"vfork", SYM_FUNC, NULL,
 	{ "unistd.h" },

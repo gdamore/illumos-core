@@ -555,26 +555,28 @@ extern off_t tell(int);
 extern int truncate(const char *, off_t);
 #endif /* !defined(__XOPEN_OR_POSIX) || defined(_XPG4_2)... */
 extern char *ttyname(int);
+
 #if (defined(_XPG4_2) && !defined(_XPG7)) || !defined(_STRICT_SYMBOLS)
 extern useconds_t ualarm(useconds_t, useconds_t);
 #endif
+
 extern int unlink(const char *);
+
 #if (defined(_XPG4_2) && !defined(_XPG7)) || !defined(_STRICT_SYMBOLS)
 extern int usleep(useconds_t);
 extern pid_t vfork(void) __RETURNS_TWICE;
 #pragma unknown_control_flow(vfork)
 #endif
+
 #if !defined(__XOPEN_OR_POSIX) || defined(__EXTENSIONS__)
 extern void vhangup(void);
 #endif /* !defined(__XOPEN_OR_POSIX) || defined(__EXTENSIONS__) */
 extern ssize_t write(int, const void *, size_t);
 #if !defined(__XOPEN_OR_POSIX) || defined(__EXTENSIONS__)
 extern void yield(void);
-#endif /* !defined(__XOPEN_OR_POSIX) || defined(__EXTENSIONS__) */
+#endif
 
-#if !defined(__XOPEN_OR_POSIX) || defined(_ATFILE_SOURCE) || \
-	defined(__EXTENSIONS__)
-	/* || defined(_XPG7) */
+#if !defined(_STRICT_SYMBOLS) || defined(_ATFILE_SOURCE) || defined(_XPG7)
 extern int faccessat(int, const char *, int, int);
 extern int fchownat(int, const char *, uid_t, gid_t, int);
 extern int linkat(int, const char *, int, const char *, int);
@@ -583,7 +585,8 @@ extern ssize_t readlinkat(int, const char *_RESTRICT_KYWD,
 extern int renameat(int, const char *, int, const char *);
 extern int symlinkat(const char *, int, const char *);
 extern int unlinkat(int, const char *, int);
-#endif	/* !defined(__XOPEN_OR_POSIX) || defined(_ATFILE_SOURCE)... */
+#endif
+
 #if !defined(__XOPEN_OR_POSIX) || defined(__EXTENSIONS__)
 extern int get_nprocs(void);
 extern int get_nprocs_conf(void);

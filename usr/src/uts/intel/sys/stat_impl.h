@@ -20,6 +20,8 @@
  */
 
 /*
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
+ *
  * Copyright 2010 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
@@ -40,37 +42,17 @@ extern "C" {
 
 #if !defined(_KERNEL)
 
-#if defined(__STDC__)
-
 extern int fstat(int, struct stat *);
 extern int stat(const char *_RESTRICT_KYWD, struct stat *_RESTRICT_KYWD);
 
-#if !defined(__XOPEN_OR_POSIX) || defined(__EXTENSIONS__) || \
-	defined(_ATFILE_SOURCE)
+#if !defined(_STRICT_SYMBOLS) || defined(_XPG7) || defined(_ATFILE_SOURCE)
 extern int fstatat(int, const char *, struct stat *, int);
-#endif	/* defined (_ATFILE_SOURCE) */
-
-#if !defined(__XOPEN_OR_POSIX) || defined(_XPG4_2) || defined(__EXTENSIONS__)
-extern int lstat(const char *_RESTRICT_KYWD, struct stat *_RESTRICT_KYWD);
-extern int mknod(const char *, mode_t, dev_t);
-#endif	/* !defined(__XOPEN_OR_POSIX) ... */
-
-#else	/* defined(__STDC__) */
-
-extern int fstat();
-extern int stat();
-
-#if !defined(__XOPEN_OR_POSIX) || defined(__EXTENSIONS__) || \
-	defined(_ATFILE_SOURCE)
-extern int fstatat();
 #endif
 
-#if !defined(__XOPEN_OR_POSIX) || defined(_XPG4_2) || defined(__EXTENSIONS__)
-extern int lstat();
-extern int mknod();
-#endif	/* !defined(__XOPEN_OR_POSIX) ... */
-
-#endif	/* defined(__STDC__) */
+#if !defined(_STRICT_SYMBOLS) || defined(_XPG4_2)
+extern int lstat(const char *_RESTRICT_KYWD, struct stat *_RESTRICT_KYWD);
+extern int mknod(const char *, mode_t, dev_t);
+#endif
 
 #if defined(__i386) && _FILE_OFFSET_BITS == 32 && \
 	(!defined(__XOPEN_OR_POSIX) || defined(__EXTENSIONS__))
@@ -79,21 +61,11 @@ extern int mknod();
  * Obsolete SVR3 compatibility functions.
  * Application software should NOT program to the _xstat interface.
  */
-#if defined(__STDC__)
 
 extern int _fxstat(const int, int, struct stat *);
 extern int _xstat(const int, const char *, struct stat *);
 extern int _lxstat(const int, const char *, struct stat *);
 extern int _xmknod(const int, const char *, mode_t, dev_t);
-
-#else	/* __STDC__ */
-
-extern int _fxstat();
-extern int _xstat();
-extern int _lxstat();
-extern int _xmknod();
-
-#endif	/* __STDC__ */
 
 #endif	/* defined(__i386) ... */
 

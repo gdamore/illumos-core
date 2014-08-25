@@ -37,6 +37,8 @@ char *cfile;
 char *ofile;
 char *lfile;
 
+const char *sym = NULL;
+
 static int good_count = 0;
 static int fail_count = 0;
 static int full_count = 0;
@@ -127,6 +129,7 @@ struct compile_env {
 #define	MASK_IX			(MASK_UNIX|MASK_POSIX)
 
 #define	MASK_ALL		(MASK_SINCE_C89|MASK_IX)
+#define	MASK_NONSTD		0
 
 typedef enum { SYM_FUNC, SYM_TYPE, SYM_VALUE } symtype_t;
 
@@ -363,11 +366,15 @@ mkcfile(test_t t, const struct symbol_test *st)
 				(void) fprintf(f, ", ");
 			}
 			for (s = st->types[i]; *s; s++) {
-				(void) fputc(*s, f);
-				if (*s == '(' && s[1] == '*') {
-					(void) fprintf(f, "*a%d", i);
+				if (*s == '(' && s[1] == '*' && !didarg) {
+					(void) fprintf(f, "(*a%d", i);
 					didarg = 1;
 					s++;
+				} else if (*s == '[' && !didarg) {
+					(void) fprintf(f, "a%d[", i);
+					didarg = 1;
+				} else {
+					(void) fputc(*s, f);
 				}
 			}
 			if (!didarg) {
@@ -407,6 +414,8 @@ do_compile(test_t t, int idx, int vis)
 
 	test_debugf(t, "%s (%s)", e->desc, vis ? "+" : "-");
 
+	full_count++;
+
 	if (asprintf(&cmd, "%s %s %s -c %s -o %s >>%s 2>&1",
 	    compiler, e->cstd == 99 ? c99flags : c89flags,
 	    e->flags, cfile, ofile, lfile) < 0) {
@@ -418,7 +427,6 @@ do_compile(test_t t, int idx, int vis)
 		test_debugf(t, "command: %s", cmd);
 	}
 
-	full_count++;
 
 	if ((logf = fopen(lfile, "w+")) == NULL) {
 		test_failed(t, "fopen: %s", strerror(errno));
@@ -460,6 +468,10 @@ test_compile(void)
 	for (i = 0; stests[i].symbol != NULL; i++) {
 		int srv = 0;
 		st = &stests[i];
+
+		if ((sym != NULL) && (strcmp(sym, stests[i].symbol) != 0)) {
+			continue;
+		}
 		if (st->desc != NULL) {
 			t = test_start("%s (%s)", st->symbol, st->desc);
 		} else {
@@ -481,14 +493,18 @@ test_compile(void)
 		}
 	}
 
-	t = test_start("Summary");
-	if (rv != 0) {
-		test_failed(t, "Test FAIL/PASS: %d/%d (%d %%)",
-		    fail_count, good_count, fail_count * 100 / full_count);
-	} else {
-		test_debugf(t, "Test PASS/TOTAL: %d/%d (%d %%)",
-		    good_count, good_count, good_count * 100 / full_count);
-		test_passed(t);
+	if (full_count > 0) {
+		t = test_start("Summary");
+		if (rv != 0) {
+			test_failed(t, "Test FAIL/PASS: %d/%d (%d %%)",
+			    fail_count, good_count,
+			    fail_count * 100 / full_count);
+		} else {
+			test_debugf(t, "Test PASS/TOTAL: %d/%d (%d %%)",
+			    good_count, good_count,
+			    good_count * 100 / full_count);
+			test_passed(t);
+		}
 	}
 }
 
@@ -498,7 +514,7 @@ main(int argc, char **argv)
 	int optc;
 	int optC = 0;
 
-	while ((optc = getopt(argc, argv, "DdfC")) != EOF) {
+	while ((optc = getopt(argc, argv, "DdfCs:")) != EOF) {
 		switch (optc) {
 		case 'd':
 			test_set_debug();
@@ -512,6 +528,9 @@ main(int argc, char **argv)
 			break;
 		case 'C':
 			optC++;
+			break;
+		case 's':
+			sym = optarg;
 			break;
 		default:
 			(void) fprintf(stderr, "Usage: %s [-df]\n", argv[0]);

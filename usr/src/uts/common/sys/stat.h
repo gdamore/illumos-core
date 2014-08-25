@@ -51,11 +51,11 @@ extern "C" {
  * <sys/time.h>.  The header <sys/time_std_impl.h> contains the
  * standards namespace safe versions of these definitions.
  */
-#if !defined(__XOPEN_OR_POSIX) || defined(__EXTENSIONS__)
+#if !defined(_STRICT_SYMBOLS)
 #include <sys/time_impl.h>
 #else
 #include <sys/time_std_impl.h>
-#endif /* !defined(__XOPEN_OR_POSIX) || defined(__EXTENSIONS__) */
+#endif
 
 #define	_ST_FSTYPSZ 16		/* array size for file system type name */
 
@@ -223,7 +223,7 @@ struct stat {
 	gid_t		st_gid;
 	dev_t		st_rdev;
 	off_t		st_size;
-#if !defined(__XOPEN_OR_POSIX) || defined(__EXTENSIONS__)
+#if !defined(_STRICT_SYMBOLS) || defined(_XPG7)
 	timestruc_t	st_atim;
 	timestruc_t	st_mtim;
 	timestruc_t	st_ctim;
@@ -253,7 +253,7 @@ struct	stat {
 #if _FILE_OFFSET_BITS != 64
 	long		st_pad3;	/* future off_t expansion */
 #endif
-#if !defined(__XOPEN_OR_POSIX) || defined(__EXTENSIONS__)
+#if !defined(_STRICT_SYMBOLS) || defined(_XPG7)
 	timestruc_t	st_atim;
 	timestruc_t	st_mtim;
 	timestruc_t	st_ctim;
@@ -284,7 +284,7 @@ struct stat64 {
 	gid_t		st_gid;
 	dev_t		st_rdev;
 	off_t		st_size;
-#if !defined(__XOPEN_OR_POSIX) || defined(__EXTENSIONS__)
+#if !defined(_STRICT_SYMBOLS) || defined(_XPG7)
 	timestruc_t	st_atim;
 	timestruc_t	st_mtim;
 	timestruc_t	st_ctim;
@@ -311,7 +311,7 @@ struct	stat64 {
 	dev_t		st_rdev;
 	long		st_pad2[2];
 	off64_t		st_size;
-#if !defined(__XOPEN_OR_POSIX) || defined(__EXTENSIONS__)
+#if !defined(_STRICT_SYMBOLS) || defined(_XPG7)
 	timestruc_t	st_atim;
 	timestruc_t	st_mtim;
 	timestruc_t	st_ctim;
@@ -329,15 +329,15 @@ struct	stat64 {
 #endif	/* _LP64 */
 #endif
 
-#if !defined(__XOPEN_OR_POSIX) || defined(__EXTENSIONS__)
+#if !defined(_STRICT_SYMBOLS)
 #define	st_atime	st_atim.tv_sec
 #define	st_mtime	st_mtim.tv_sec
 #define	st_ctime	st_ctim.tv_sec
-#else
+#elif !defined(_XPG7)
 #define	st_atime	st_atim.__tv_sec
 #define	st_mtime	st_mtim.__tv_sec
 #define	st_ctime	st_ctim.__tv_sec
-#endif /* !defined(__XOPEN_OR_POSIX) || defined(__EXTENSIONS__) */
+#endif
 
 #endif /* end defined(_KERNEL) */
 
@@ -471,13 +471,11 @@ struct stat64_32 {
 
 #endif	/* __i386 || (__i386_COMPAT && _KERNEL) */
 
-#if defined(__EXTENSIONS__) || \
-	(!defined(_STRICT_STDC) && !defined(__XOPEN_OR_POSIX))
-	/* || defined(_XPG7) */
+#if !defined(_STRICT_SYMBOLS) || defined(_XPG7)
 /* for use with futimens() and utimensat() */
 #define	UTIME_NOW	-1L
 #define	UTIME_OMIT	-2L
-#endif	/* defined(__EXTENSIONS__) ... */
+#endif
 
 #if !defined(_KERNEL) || defined(_BOOT)
 
@@ -497,22 +495,21 @@ extern mode_t umask(mode_t);
 extern int fstat64(int, struct stat64 *);
 extern int stat64(const char *_RESTRICT_KYWD, struct stat64 *_RESTRICT_KYWD);
 extern int lstat64(const char *_RESTRICT_KYWD, struct stat64 *_RESTRICT_KYWD);
-#if !defined(__XOPEN_OR_POSIX) || defined(__EXTENSIONS__) || \
-	defined(_ATFILE_SOURCE)
+#if !defined(_STRICT_SYMBOLS) || defined(_XPG7) || defined(_ATFILE_SOURCE)
 extern int fstatat64(int, const char *, struct stat64 *, int);
-#endif /* defined (_ATFILE_SOURCE) */
+#endif
 #endif
 
-#if defined(__EXTENSIONS__) || defined(_ATFILE_SOURCE) || \
-	(!defined(_STRICT_STDC) && !defined(__XOPEN_OR_POSIX))
-	/* || defined(_XPG7) */
+#if !defined(_STRICT_SYMBOLS) || defined(_XPG7) || defined(_ATFILE_SOURCE)
 extern int mkdirat(int, const char *, mode_t);
 extern int mkfifoat(int, const char *, mode_t);
 extern int mknodat(int, const char *, mode_t, dev_t);
 extern int fchmodat(int, const char *, mode_t, int);
-extern int futimens(int, const struct timespec[2]);
 extern int utimensat(int, const char *, const struct timespec[2], int);
-#endif	/* defined(__EXTENSIONS__) ... */
+#endif
+#if !defined(_STRICT_SYMBOLS) || defined(_XPG7)
+extern int futimens(int, const struct timespec[2]);
+#endif
 
 #include <sys/stat_impl.h>
 

@@ -1,5 +1,5 @@
-'\" te
-.\"  Copyright 1989 AT&T.  Copyright (c) 2004 Sun Microsystems, Inc.  All Rights Reserved.  Portions Copyright (c) 1992, X/Open Company Limited.  All Rights Reserved.
+.\" Copyright 2014 Garrett D'Amore <garrett@damore.org>
+.\" Copyright 1989 AT&T.  Copyright (c) 2004 Sun Microsystems, Inc.  All Rights Reserved.  Portions Copyright (c) 1992, X/Open Company Limited.  All Rights Reserved.
 .\" Sun Microsystems, Inc. gratefully acknowledges The Open Group for permission to reproduce portions of its copyrighted documentation. Original documentation from The Open Group can be obtained online at
 .\" http://www.opengroup.org/bookstore/.
 .\" The Institute of Electrical and Electronics Engineers and The Open Group, have given us permission to reprint portions of their documentation. In the following statement, the phrase "this text" refers to portions of the system documentation. Portions of this text are reprinted and reproduced in electronic form in the Sun OS Reference Manual, from IEEE Std 1003.1, 2004 Edition, Standard for Information Technology -- Portable Operating System Interface (POSIX), The Open Group Base Specifications Issue 6, Copyright (C) 2001-2004 by the Institute of Electrical and Electronics Engineers, Inc and The Open Group. In the event of any discrepancy between these versions and the original IEEE and The Open Group Standard, the original IEEE and The Open Group Standard is the referee document. The original Standard can be obtained online at http://www.opengroup.org/unix/online.html.
@@ -7,331 +7,404 @@
 .\" The contents of this file are subject to the terms of the Common Development and Distribution License (the "License").  You may not use this file except in compliance with the License.
 .\" You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE or http://www.opensolaris.org/os/licensing.  See the License for the specific language governing permissions and limitations under the License.
 .\" When distributing Covered Code, include this CDDL HEADER in each file and include the License file at usr/src/OPENSOLARIS.LICENSE.  If applicable, add the following below this CDDL HEADER, with the fields enclosed by brackets "[]" replaced with your own identifying information: Portions Copyright [yyyy] [name of copyright owner]
-.TH MKNOD 2 "Feb 19, 2004"
-.SH NAME
-mknod \- make a directory, a special file, or a regular file
-.SH SYNOPSIS
-.LP
-.nf
-#include <sys/stat.h>
-
-\fBint\fR \fBmknod\fR(\fBconst char *\fR\fIpath\fR, \fBmode_t\fR \fImode\fR, \fBdev_t\fR \fIdev\fR);
-.fi
-
-.SH DESCRIPTION
-.sp
-.LP
-The \fBmknod()\fR function creates a new file named by the path name pointed to
-by \fIpath\fR. The file type and permissions of the new file are initialized
-from \fImode\fR.
-.sp
-.LP
-The file type is specified in \fImode\fR by the \fBS_IFMT\fR bits, which must
-be set to one of the following values:
-.sp
-.ne 2
-.na
-\fB\fBS_IFIFO\fR\fR
-.ad
-.RS 11n
+.Dd Aug 25, 2014
+.Dt MKNOD 2
+.Os
+.
+.Sh NAME
+.Nm mknod ,
+.Nm mknodat
+.Nd make a directory, a special file, or a regular file
+.Sh SYNOPSIS
+.In sys/stat.h
+.
+.Ft int
+.Fn mknod "const char *path" "mode_t mode" "dev_t dev"
+.
+.Ft int
+.Fn mknodat "int fd" "const char *path" "mode_t mode" "dev_t dev"
+.
+.Sh DESCRIPTION
+The
+.Fn mknod
+function creates a new file named by the path name pointed to
+by
+.Fa path .
+The file type and permissions of the new file are initialized
+from
+.Fa mode .
+.Lp
+The file type is specified in
+.Fa mode
+by the
+.Dv S_IFMT
+bits, which must be set to one of the following values:
+.
+.Lp
+.Bl -tag -width Dv -offset indent -compact
+.It Dv S_IFIFO
 fifo special
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBS_IFCHR\fR\fR
-.ad
-.RS 11n
+.It Dv S_IFCHR
 character special
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBS_IFDIR\fR\fR
-.ad
-.RS 11n
+.It Dv S_IFDIR
 directory
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBS_IFBLK\fR\fR
-.ad
-.RS 11n
+.It Dv S_IFBLK
 block special
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBS_IFREG\fR\fR
-.ad
-.RS 11n
+.It S_IFREG
 ordinary file
-.RE
-
-.sp
-.LP
-The file access permissions are specified in \fImode\fR by the 0007777 bits,
-and may be constructed by a bitwise \fBOR\fR operation of the following values:
-.sp
-
-.sp
-.TS
-l l l
-l l l .
-\fBS_ISUID\fR	04000	Set user ID on execution.
-\fBS_ISGID\fR	020#0	T{
-Set group ID on execution if # is \fB7\fR, \fB5\fR, \fB3\fR, or \fB1\fR. Enable mandatory file/record locking if # is \fB6\fR, \fB4\fR, \fB2\fR, or \fB0\fR
-T}
-\fBS_ISVTX\fR	01000	T{
-On directories, restricted deletion flag; on regular files on a UFS file system, do not cache flag.
-T}
-\fBS_IRWXU\fR	00700	Read, write, execute by owner.
-\fBS_IRUSR\fR	00400	Read by owner.
-\fBS_IWUSR\fR	00200	Write by owner.
-\fBS_IXUSR\fR	00100	T{
-Execute (search if a directory) by owner.
-T}
-\fBS_IRWXG\fR	00070	Read, write, execute by group.
-\fBS_IRGRP\fR	00040	Read by group.
-\fBS_IWGRP\fR	00020	Write by group.
-\fBS_IXGRP\fR	00010	Execute by group.
-\fBS_IRWXO\fR	00007	Read, write, execute (search) by others.
-\fBS_IROTH\fR	00004	Read by others.
-\fBS_IWOTH\fR	00002	Write by others
-\fBS_IXOTH\fR	00001	Execute by others.
-.TE
-
-.sp
-.LP
-The owner \fBID\fR of the file is set to the effective user \fBID\fR of the
-process. The group \fBID\fR of the file is set to the effective group \fBID\fR
-of the process.  However, if the \fBS_ISGID\fR bit is set in the parent
-directory, then the group \fBID\fR of the file is inherited from the parent.
-If the group \fBID\fR of the new file does not match the effective group
-\fBID\fR or one of the supplementary group IDs, the \fBS_ISGID\fR bit is
-cleared.
-.sp
-.LP
-The access permission bits of \fImode\fR are modified by the process's file
+.El
+.Lp
+The file access permissions are specified in
+.Fa mode
+by the 0007777 bits,
+and may be constructed by a bitwise OR operation of the following values:
+.
+.Bl -column -offset indent S_ISMMM MMMMMM infinity
+.It S_ISUID
+.Ta 04000
+.Ta Set user ID on execution.
+.
+.It S_ISGID
+.Ta 020#0
+.Ta Set group ID on execution if # is 7, 5, 3, or 1. Enable mandatory
+file/record locking if # is 6, 4, 2, or 0
+.
+.It S_ISVTX
+.Ta 01000
+.Ta On directories, restricted deletion flag; on regular files on a UFS file
+system, do not cache flag.
+.
+.It S_IRWXU
+.Ta 00700
+.Ta Read, write, execute by owner.
+.
+.It S_IRUSR
+.Ta 00400
+.Ta Read by owner.
+.
+.It S_IWUSR
+.Ta 00200
+.Ta Write by owner.
+.
+.It S_IXUSR
+.Ta 00100
+.Ta Execute (search if a directory) by owner.
+.
+.It S_IRWXG
+.Ta 00070
+.Ta Read, write, execute by group.
+.
+.It S_IRGRP
+.Ta 00040
+.Ta Read by group.
+.
+.It S_IWGRP
+.Ta 00020
+.Ta Write by group.
+.
+.It S_IXGRP
+.Ta 00010
+.Ta Execute by group.
+.
+.It S_IRWXO
+.Ta 00007
+.Ta Read, write, execute (search) by others.
+.
+.It S_IROTH
+.Ta 00004
+.Ta Read by others.
+.
+.It S_IWOTH
+.Ta 00002
+.Ta Write by others
+.
+.It S_IXOTH
+.Ta 00001
+.Ta Execute by others.
+.El
+.
+.Lp
+The owner ID of the file is set to the effective user ID of the
+process. The group ID of the file is set to the effective group ID
+of the process.  However, if the
+.Dv S_ISGID
+bit is set in the parent
+directory, then the group ID of the file is inherited from the parent.
+If the group ID of the new file does not match the effective group
+ID or one of the supplementary group IDs, the
+.Dv S_ISGID
+bit is cleared.
+.
+.Lp
+The access permission bits of
+.Fa mode
+are modified by the process's file
 mode creation mask: all bits set in the process's file mode creation mask are
-cleared (see \fBumask\fR(2)). If \fImode\fR indicates a block or character
-special file, \fIdev\fR is a configuration-dependent specification of a
-character or block I/O device. If \fImode\fR does not indicate a block special
-or character special device, \fIdev\fR is ignored. See \fBmakedev\fR(3C).
-.sp
-.LP
-If \fIpath\fR is a symbolic link, it is not followed.
-.SH RETURN VALUES
-.sp
-.LP
+cleared
+.Pq see Xr umask 2 .
+If
+.Fa mode
+indicates a block or character
+special file,
+.Fa dev
+is a configuration-dependent specification of a
+character or block I/O device. If
+.Fa mode
+does not indicate a block special
+or character special device,
+.Fa dev
+is ignored. See
+.Xr makedev 3C .
+.
+.Lp
+If
+.Fa path
+is a symbolic link, it is not followed.
+.
+.Lp
+The
+.Fn mknodat
+function behaves similarily to
+.Fn mknod ,
+except that if
+.Fa path
+is relative, then it is relative to the
+.Fa fd
+argument, which must be either a file descriptor representing a directory
+.Pq such as from Xr dird 3C ,
+or the special value
+.Dv AT_FDCWD .
+.
+If
+.Fa fd
+is the special value
+.Dv AT_FDWCD
+and the
+.Fa path
+is relative, then the process' current working directory is used as the base
+for the relative
+.Fa path .
+In this case, the
+.Fn mknodat
+function is identical to
+.Fn mknod .
+.
+If
+.Fa path
+is relative, and
+.Fa fd
+is not
+.Dv AT_FDCWD
+and was opened without
+.Dv O_SEARCH ,
+then the directory permissions are checked to ensure that searches in the
+directory are permitted.
+.
+.Sh RETURN VALUES
+.
 Upon successful completion, \fBmknod()\fR returns \fB0\fR. Otherwise, it
 returns \fB\(mi1\fR, the new file is not created, and \fBerrno\fR is set to
 indicate the error.
-.SH ERRORS
-.sp
-.LP
-The \fBmknod()\fR function will fail if:
-.sp
-.ne 2
-.na
-\fB\fBEACCES\fR\fR
-.ad
-.RS 16n
+.
+.Sh ERRORS
+.
+The
+.Fn mknod
+and
+.Fn mknodat
+functions will fail if:
+.
+.Bl -tag -width Er
+.
+.It Bq Er EACCES
 A component of the path prefix denies search permission, or write permission is
 denied on the parent directory.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEDQUOT\fR\fR
-.ad
-.RS 16n
+.
+.It Bq Er EDQUOT
 The directory where the new file entry is being placed cannot be extended
 because the user's quota of disk blocks on that file system has been exhausted,
 or the user's quota of inodes on the file system where the file is being
 created has been exhausted.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEEXIST\fR\fR
-.ad
-.RS 16n
+.
+.It Bq Er EEXIST
 The named file exists.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEFAULT\fR\fR
-.ad
-.RS 16n
-The \fIpath\fR argument points to an illegal address.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEINTR\fR\fR
-.ad
-.RS 16n
-A signal was caught during the execution of the \fBmknod()\fR function.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEINVAL\fR\fR
-.ad
-.RS 16n
+.
+.It Bq Er EFAULT
+The
+.Fa path
+argument points to an illegal address.
+.
+.It Bq Er EINTR
+A signal was caught during the execution of the
+.Fn mknod
+or
+.Fn mknodat
+function.
+.
+.It Bq Er EINVAL
 An invalid argument exists.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEIO\fR\fR
-.ad
-.RS 16n
+.
+.It Bq Er EIO
 An I/O error occurred while accessing the file system.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBELOOP\fR\fR
-.ad
-.RS 16n
-Too many symbolic links were encountered in translating \fIpath\fR.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBENAMETOOLONG\fR\fR
-.ad
-.RS 16n
-The length of the \fIpath\fR argument exceeds {\fB\fR\fBPATH_MAX\fR}, or the
-length of a \fIpath\fR component exceeds {\fB\fR\fBNAME_MAX\fR} while
-\fB\fR\fB_POSIX_NO_TRUNC\fR is in effect.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBENOENT\fR\fR
-.ad
-.RS 16n
+.
+.It Bq Er ELOOP
+Too many symbolic links were encountered in translating
+.Fa path .
+.
+.It Bq Er ENAMETOOLONG
+The length of the
+.Fa path
+argument exceeds
+.Brq Dv PATH_MAX ,
+or the length of a
+.Fa path
+component exceeds
+.Brq Dv NAME_MAX
+while
+.Dv _POSIX_NO_TRUNC
+is in effect.
+.
+.It Bq Er ENOENT
 A component of the path prefix specified by \fIpath\fR does not name an
-existing directory or \fIpath\fR is an empty string.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBENOLINK\fR\fR
-.ad
-.RS 16n
-The \fIpath\fR argument points to a remote machine and the link to that machine
+existing directory or
+.Fa path
+is an empty string.
+.
+.It Bq Er ENOLINK
+The
+.Fa path
+argument points to a remote machine and the link to that machine
 is no longer active.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBENOSPC\fR\fR
-.ad
-.RS 16n
+.
+.It Bq Er ENOSPC
 The directory that would contain the new file cannot be extended or the file
 system is out of file allocation resources.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBENOTDIR\fR\fR
-.ad
-.RS 16n
+.
+.It Bq Er ENOTDIR
 A component of the path prefix is not a directory.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEPERM\fR\fR
-.ad
-.RS 16n
+.
+.It Bq Er EPERM
 Not all privileges are asserted in the effective set of the calling process.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEROFS\fR\fR
-.ad
-.RS 16n
+.
+.It Bq Er EROFS
 The directory in which the file is to be created is located on a read-only file
 system.
-.RE
-
-.sp
-.LP
-The \fBmknod()\fR function may fail if:
-.sp
-.ne 2
-.na
-\fB\fBENAMETOOLONG\fR\fR
-.ad
-.RS 16n
+.
+.El
+.
+.Lp
+The
+.Fn mknodat
+function will fail if:
+.Bl -tag -width Er
+.
+.It Bq Er EBADF
+The
+.Fa path
+argument is not sbsolute, and the
+.Fa fd
+argument is neither an open file descriptor, nor the special value
+.Dv AT_FDCWD .
+.
+.It Bq Er ENOTDIR
+The
+.Fa path
+argument is not absolute, and the object underlying the
+.Fa fd
+argument is not a directory.
+.El
+.
+.Lp
+The
+.Fn mknod
+and
+.Fn mknodat
+functions may fail if:
+.Bl -tag -width Er
+.
+.It Bq Er ENAMETOOLONG
 Pathname resolution of a symbolic link produced an intermediate result whose
-length exceeds {\fBPATH_MAX\fR}.
-.RE
-
-.SH USAGE
-.sp
-.LP
-Applications should use the \fBmkdir\fR(2) function to create a directory
-because appropriate permissions are not required and because \fBmknod()\fR
-might not establish directory entries for the directory itself (\fB\&.\fR) and
-the parent directory (\fB\&.\|.\fR). The \fBmknod()\fR function can be invoked
+length exceeds
+.Brq Dv PATH_MAX .
+.El
+.
+.Sh USAGE
+.
+Applications should use the
+.Xr mkdir 2
+function to create a directory
+because appropriate permissions are not required and because
+.Fn mknod
+might not establish directory entries for the directory itself
+.Pq Dq &.
+and
+the parent directory
+.Pq Dq \&.\|. .
+The
+.Fn mknod
+function can be invoked
 only by a privileged user for file types other than FIFO special. The
-\fBmkfifo\fR(3C) function should be used to create FIFOs.
-.sp
-.LP
-Doors are created using \fBdoor_create\fR(3C) and can be attached to the file
-system using \fBfattach\fR(3C). Symbolic links can be created using
-\fBsymlink\fR(2). An endpoint for communication can be created using
-\fBsocket\fR(3SOCKET).
-.SH ATTRIBUTES
-.sp
-.LP
-See \fBattributes\fR(5) for descriptions of the following attributes:
-.sp
-
-.sp
-.TS
-box;
-c | c
-l | l .
-ATTRIBUTE TYPE	ATTRIBUTE VALUE
-_
-Interface Stability	Standard
-_
-MT-Level	Async-Signal-Safe
-.TE
-
-.SH SEE ALSO
-.sp
-.LP
-\fBchmod\fR(2), \fBcreat\fR(2), \fBexec\fR(2), \fBmkdir\fR(2), \fBopen\fR(2),
-\fBstat\fR(2), \fBsymlink\fR(2), \fBumask\fR(2), \fBdoor_create\fR(3C),
-\fBfattach\fR(3C), \fBmakedev\fR(3C), \fBmkfifo\fR(3C), \fBsocket\fR(3SOCKET),
-\fBstat.h\fR(3HEAD), \fBattributes\fR(5), \fBprivileges\fR(5),
-\fBstandards\fR(5)
+.Xr mkfifo 3C
+function should be used to create FIFOs.
+.Lp
+Doors are created using
+.Xr door_create 3C
+and can be attached to the file
+system using
+.Xr fattach 3C .
+Symbolic links can be created using
+.Xr symlink 2 .
+An endpoint for communication can be created using
+.Xr socket 3SOCKET .
+.
+.Sh INTERFACE STABILITY
+.
+.Sy Standard .
+.
+.Sh MT-LEVEL
+.
+.Sy Async-Signal-Safe .
+.
+.Sh SEE ALSO
+.
+.Xr chmod 2 ,
+.Xr creat 2 ,
+.Xr exec 2 ,
+.Xr mkdir 2 ,
+.Xr open 2 ,
+.Xr stat 2 ,
+.Xr symlink 2 ,
+.Xr umask 2 ,
+.Xr dirfd 3C ,
+.Xr door_create 3C ,
+.Xr fattach 3C ,
+.Xr makedev 3C ,
+.Xr mkfifo 3C ,
+.Xr socket 3SOCKET ,
+.Xr stat.h 3HEAD ,
+.Xr privileges 5 ,
+.Xr standards 5
+.
+.Sh STANDARDS
+.
+These functions are available in the following compilation environments. See
+.Xr standards 5 .
+.
+.Ss Fn mknod
+.
+.Bl -bullet -compact
+.It
+.St -xpg4.2
+.It
+.St -susv2
+.It
+.St -susv3
+.It
+.St -p1003.1-2008
+.El
+.
+.Ss Fn mknodat
+.Bl -bullet -compact
+.It
+.St -p1003.1-2008
+.El

@@ -1,0 +1,264 @@
+.\"
+.\" This file and its contents are supplied under the terms of the
+.\" Common Development and Distribution License ("CDDL"), version 1.0.
+.\" You may only use this file in accordance with the terms of version
+.\" 1.0 of the CDDL.
+.\"
+.\" A full copy of the text of the CDDL should have accompanied this
+.\" source.  A copy of the CDDL is also available via the Internet at
+.\" http://www.illumos.org/license/CDDL.
+.\"
+.\"
+.\" Copyright 2014 Garrett D'Amore <garrett@damore.org>
+.\"
+.Dd Aug 25, 2014
+.Dt FUTIMES 2
+.Os
+.
+.Sh NAME
+.
+.Nm futimens ,
+.Nm utimensat
+.Nd set fine-grained file access times
+.
+.Sh SYNOPSIS
+.
+.In sys/stat.h
+.
+.Ft int
+.Fn futimens "int fd" "const struct timespec times[2]"
+.
+.Ft int
+.Fo utimensat
+.Fa "int fd"
+.Fa "const char *path"
+.Fa "const struct timespec times[2]"
+.Fa "int flag"
+.Fc
+.
+.Sh DESCRIPTION
+.
+These functions set the access and modification times of a file to
+the values supplied in
+.Fa times .
+This is an array of two times, each consisting of the number of seconds and
+nanoseconds since January 1, 1970. The first time is the time of the last
+access to the file, and the second time is the time of the last modification
+of the file.
+.Lp
+If the
+.Fa times
+argument is
+.Dv NULL ,
+then both the access and modification times will be updated to reflect the
+current system time.  If the
+.Vt tv_nsec
+field of either time is the special value
+.Dv UTIME_NOW ,
+then the corresponding file time will be updated to reflect the current
+system time.  If the
+.Vt tv_nsec
+field of either time is the special value
+.Dv UTIME_OMIT ,
+then the corresponding file time will not be changed.
+.Lp
+The
+.Fn futimens
+function sets the times for the file represented by the open file descriptor
+.Fa fd .
+.
+.Lp
+The
+.Fn utimensat
+function sets the times for the file identified by the
+.Fa path
+argument.  If the
+.Fa path
+argument is relative, then it is considered relative to the
+.Fa fd
+argument, which must be an open directory file descriptor, such as from
+.Xr dirfd 3C ,
+or the special value
+.Dv AT_FDCWD .
+.Lp
+If the
+.Fa fd
+argument passed to
+.Fn utimensat
+was not opened with
+.Dv O_SEARCH ,
+then the system will verify that the underying directory is searchable
+by the caller.
+.Lp
+The
+.Fa flags
+argument to
+.Fn utimensat
+is a mask of the following bit fields:
+.
+.Lp
+.Bl -tag -width AT_SYMLINK_NOFOLLOW -compact
+.It Dv AT_SYMLINK_NOFOLLOW
+If
+.Fa path
+is a symbolic link, then the times associated with the link itself shall
+be updated, rather than the link destination.
+.
+.El
+.
+.Sh RETURN VALUES
+.
+.Rv -std
+.
+.Sh ERRORS
+.
+The
+.Fn futimens
+and
+.Fn utimensat
+functions will fail if:
+.Bl -tag -width Er
+.
+.It Bq Er EACCES
+Either
+.Fa times
+is
+.Dv NULL
+or
+both times have their
+.Vt tv_nsec
+values set to
+.Dv UTIME_NOW ,
+and the caller is not the file owner or does not have write access.
+.
+.It Bq Er EINVAL
+One or both of the
+.Fa times
+is invalid.  Invalid times are those where
+.Vt tv_nsec
+is a number that is larger than one billion and is neither
+.Dv UTIME_NOW
+nor
+.Dv UTIME_OMIT ,
+and those where
+.Vt tv_sec
+is not supported on the system.
+.
+.It Bq Er EPERM
+The calling process does not have permission to perform the
+updates requested, the
+.Fa times
+argument is not
+.Dv NULL ,
+and at least one of the times has
+.Vt tv_nsec that is neither
+.Dv UTIME_NOW
+nor
+.Dv UTIME_OMIT .
+.
+.It Bq Er EROFS
+The file system where the file resides is read-only.
+.
+.El
+.
+.Lp
+The
+.Fn futimens
+function will fail if:
+.Bl -tag -width Er
+.It Bq Er EBADF
+The
+.Fa fd
+argument is not an open file descriptor.
+.El
+.
+.Lp
+The
+.Fn utimensat
+function will fail if:
+.
+.Bl -tag -width Er
+.It Bq Er EBADF
+The
+.Fa path
+argument is relative, and the
+.Fa fd
+argument is not an open file descriptor.
+.
+.It Bq Er ENOTDIR
+The
+.Fa path
+argument is relative, and the
+.Fa fd
+argument is not a directory and is not the
+special value
+.Dv AT_FDCWD .
+.
+.It Bq Er EFAULT
+The
+.Fa path
+argument points to an invalid address.
+.
+.It Bq Er EACCES
+The
+.Fa fd
+directory was not opened with
+.Dv O_SEARCH ,
+and the directory is not searchable by the caller, or search permission
+is denied by a component of the
+.Fa path .
+.
+.It Bq Er ELOOP
+Either a loop or more than
+.Brq Dv SYMLOOP_MAX
+symbolic links
+were encountered while traversing
+.Fa path .
+.
+.It Bq Er ENAMETOOLONG
+The length of a path component exceeds
+.Brq Dv NAME_MAX ,
+and
+.Dv _POSIX_NOTRUNC
+is in effect, or the path itself exceeds
+.Brq Dv PATH_MAX .
+.
+.It Bq Er ENOENT
+A component of the
+.Fa path
+does not exist, or is an empty string.
+.
+.It Bq Er EINVAL
+The
+.Fa flags
+argument is not valid.
+.
+.El
+.
+.Sh INTERFACE LEVEL
+.
+.Sy Standard .
+.
+.Sh MT-LEVEL
+.
+.Sy Async-Signal-Safe .
+.
+.Sh SEE ALSO
+.
+.Xr stat 2 ,
+.Xr utimes 2 ,
+.Xr dirfd 3C ,
+.Xr stat.h 3HEAD ,
+.Xr standards 5
+.
+.Sh STANDARDS
+.
+These functions are available in the following compilation environments. See
+.Xr standards 5 .
+.
+.Ss Fn utimensat , futimens
+.
+.Bl -bullet -compact
+.It
+.St -p1003.1-2008
+.El

@@ -13,6 +13,7 @@
 # Copyright 2011, Richard Lowe
 # Copyright 2013, OmniTI Computer Consulting, Inc
 # Copyright 2013 Nexenta Systems, Inc.  All rights reserved.
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 
 include		$(SRC)/Makefile.master
@@ -49,6 +50,7 @@ MANFILES=	Intro.2			\
 	 	fcntl.2			\
 	 	fork.2			\
 	 	fpathconf.2		\
+	 	futimens.2		\
 	 	getacct.2		\
 	 	getaudit.2		\
 	 	getauid.2		\
@@ -209,6 +211,8 @@ MANLINKS=	_Exit.2				\
 	 	intro.2				\
 	 	lchown.2			\
 	 	lstat.2				\
+	 	mkdirat.2			\
+	 	mknodat.2			\
 	 	openat.2			\
 	 	pathconf.2			\
 		pipe2.2				\
@@ -241,6 +245,7 @@ MANLINKS=	_Exit.2				\
 	 	sigsendset.2			\
 	 	umount2.2			\
 	 	unlinkat.2			\
+		utimensat.2			\
 	 	vforkx.2			\
 	 	wracct.2			\
 	 	writev.2
@@ -294,6 +299,8 @@ forkx.2				:= LINKSRC = fork.2
 
 pathconf.2			:= LINKSRC = fpathconf.2
 
+utimensat.2			:= LINKSRC = futimens.2
+
 putacct.2			:= LINKSRC = getacct.2
 wracct.2			:= LINKSRC = getacct.2
 
@@ -328,6 +335,10 @@ geteuid.2			:= LINKSRC = getuid.2
 getgid.2			:= LINKSRC = getuid.2
 
 setustack.2			:= LINKSRC = getustack.2
+
+mkdirat.2			:= LINKSRC = mkdir.2
+
+mknodat.2			:= LINKSRC = mknod.2
 
 openat.2			:= LINKSRC = open.2
 

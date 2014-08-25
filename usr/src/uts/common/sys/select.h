@@ -45,7 +45,7 @@
 #include <sys/feature_tests.h>
 
 #ifndef _KERNEL
-#if !defined(__XOPEN_OR_POSIX) || defined(_XPG6) || defined(__EXTENSIONS__)
+#if !defined(_STRICT_SYMBOLS) || defined(_XPG6)
 #include <sys/time_impl.h>
 #endif
 #include <sys/time.h>
@@ -56,7 +56,7 @@ extern "C" {
 #endif
 
 
-#if !defined(__XOPEN_OR_POSIX) || defined(_XPG6) || defined(__EXTENSIONS__)
+#if !defined(_STRICT_SYMBOLS) || defined(_XPG6)
 /*
  * The sigset_t type is defined in <sys/signal.h> and duplicated
  * in <sys/ucontext.h> as a result of XPG4v2 requirements. XPG6
@@ -74,7 +74,7 @@ typedef struct {		/* signal set type */
 } sigset_t;
 #endif  /* _SIGSET_T */
 
-#endif /* #if !defined(__XOPEN_OR_POSIX) || defined(_XPG6) ... */
+#endif /* #if !defined(_STRICT_SYMBOLS) || defined(_XPG6) */
 
 /*
  * Select uses bit masks of file descriptors in longs.
@@ -96,7 +96,7 @@ typedef struct {		/* signal set type */
 #endif
 #else	/* __PRAGMA_REDEFINE_EXTNAME */
 #define	select	select_large_fdset
-#if !defined(__XOPEN_OR_POSIX) || defined(_XPG6) || defined(__EXTENSIONS__)
+#if !defined(_STRICT_SYMBOLS) || defined(_XPG6)
 #define	pselect	pselect_large_fdset
 #endif
 #endif	/* __PRAGMA_REDEFINE_EXTNAME */
@@ -157,7 +157,7 @@ typedef	struct __fd_set {
 extern int select(int, fd_set *_RESTRICT_KYWD, fd_set *_RESTRICT_KYWD,
 	fd_set *_RESTRICT_KYWD, struct timeval *_RESTRICT_KYWD);
 
-#if !defined(__XOPEN_OR_POSIX) || defined(_XPG6) || defined(__EXTENSIONS__)
+#if !defined(_STRICT_SYMBOLS) || defined(_XPG6)
 extern int pselect(int, fd_set *_RESTRICT_KYWD, fd_set *_RESTRICT_KYWD,
 	fd_set *_RESTRICT_KYWD, const struct timespec *_RESTRICT_KYWD,
 	const sigset_t *_RESTRICT_KYWD);

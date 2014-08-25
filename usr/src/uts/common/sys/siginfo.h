@@ -20,6 +20,8 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
+ *
  * Copyright 2004 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
@@ -29,8 +31,6 @@
 
 #ifndef _SYS_SIGINFO_H
 #define	_SYS_SIGINFO_H
-
-#pragma ident	"%Z%%M%	%I%	%E% SMI"
 
 #include <sys/feature_tests.h>
 #include <sys/types.h>
@@ -417,12 +417,7 @@ typedef struct k_siginfo {
 
 		struct {			/* SIGPROF */
 			caddr_t	__faddr;	/* last fault address	*/
-
-#if !defined(__XOPEN_OR_POSIX) || defined(__EXTENSIONS__)
 			timestruc_t __tstamp;	/* real time stamp	*/
-#else
-			_timestruc_t __tstamp;	/* real time stamp	*/
-#endif
 			short	__syscall;	/* current syscall	*/
 			char	__nsysarg;	/* number of arguments	*/
 			char	__fault;	/* last fault type	*/

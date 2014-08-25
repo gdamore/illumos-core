@@ -1,4 +1,4 @@
-'\" te
+.\" Copyright 2014 Garrett D'Amore <garrett@damore.org>
 .\" Copyright (c) 2002, Sun Microsystems, Inc.  All Rights Reserved.
 .\" Copyright 1989 AT&T
 .\" Portions Copyright (c) 2001, the Institute of Electrical and Electronics Engineers, Inc. and The Open Group. All Rights Reserved.
@@ -9,193 +9,263 @@
 .\" The contents of this file are subject to the terms of the Common Development and Distribution License (the "License").  You may not use this file except in compliance with the License.
 .\" You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE or http://www.opensolaris.org/os/licensing.  See the License for the specific language governing permissions and limitations under the License.
 .\" When distributing Covered Code, include this CDDL HEADER in each file and include the License file at usr/src/OPENSOLARIS.LICENSE.  If applicable, add the following below this CDDL HEADER, with the fields enclosed by brackets "[]" replaced with your own identifying information: Portions Copyright [yyyy] [name of copyright owner]
-.TH MKFIFO 3C "Apr 24, 2002"
-.SH NAME
-mkfifo \- make a FIFO special file
-.SH SYNOPSIS
-.LP
-.nf
-#include <sys/types.h>
-#include <sys/stat.h>
-
-\fBint\fR \fBmkfifo\fR(\fBconst char *\fR\fIpath\fR, \fBmode_t\fR \fImode\fR);
-.fi
-
-.SH DESCRIPTION
-.sp
-.LP
-The \fBmkfifo()\fR function creates a new FIFO special file named by the
-pathname pointed to by \fIpath\fR.  The file permission bits of the new FIFO
-are initialized from \fImode\fR.  The file permission bits of the \fImode\fR
-argument are modified by the process's file creation mask (see \fBumask\fR(2)).
-Bits other than the file permission bits in \fImode\fR are ignored.
-.sp
-.LP
-If \fIpath\fR names a symbolic link, \fBmkfifo()\fR fails and sets \fBerrno\fR
-to \fBEEXIST\fR.
-.sp
-.LP
+.Dd Aug 25, 2014
+.Dt MKFIFO 3C
+.Os
+.
+.Sh NAME
+.Nm mkfifo ,
+.Nm mkfifoat
+.Nd make a FIFO special file
+.
+.Sh SYNOPSIS
+.In sys/stat.h
+.
+.Ft int
+.Fn mkfifo "const char *path" "mode_t mode"
+.
+.Ft int
+.Fn mkfifoat "int fd" "const char *path" "mode_t mode"
+.
+.Sh DESCRIPTION
+.
+The
+.Fn mkfifo
+function creates a new FIFO special file named by the
+pathname pointed to by
+.Fa path .
+The file permission bits of the new FIFO
+are initialized from
+.Fa mode .
+The file permission bits of the
+.Fa mode
+argument are modified by the process's file creation mask
+.Pq see Xr umask 2 .
+Bits other than the file permission bits in
+.Fa mode
+are ignored.
+.Lp
+If
+.Fa path
+names a symbolic link,
+.Fn mkfifo
+fails and sets
+.Va errno
+to
+.Er EEXIST .
+.Lp
 The FIFO's user ID is set to the process's effective user ID. The FIFO's group
 ID is set to the group ID of the parent directory or to the effective group ID
 of the process.
-.sp
-.LP
-The \fBmkfifo()\fR function calls \fBmknod\fR(2) to create the file.
-.sp
-.LP
-Upon successful completion, \fBmkfifo()\fR marks for update the \fBst_atime\fR,
-\fBst_ctime\fR, and \fBst_mtime\fR fields of the file. Also, the \fBst_ctime\fR
-and \fBst_mtime\fR fields of the directory that contains the new entry are
-marked for update.
-.SH RETURN VALUES
-.sp
-.LP
-Upon successful completion, \fB0\fR is returned.  Otherwise, \fB\(mi1\fR is
-returned and \fBerrno\fR is set to indicate the error.
-.SH ERRORS
-.sp
-.LP
-The \fBmkfifo()\fR function will fail if:
-.sp
-.ne 2
-.na
-\fB\fBEACCES\fR\fR
-.ad
-.RS 16n
-A component of the path prefix denies search permission, or write permission is
-denied on the parent directory of the FIFO to be created.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEEXIST\fR\fR
-.ad
-.RS 16n
-The named file already exists.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBELOOP\fR\fR
-.ad
-.RS 16n
-A loop exists in symbolic links encountered during resolution of the \fIpath\fR
-argument.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBENAMETOOLONG\fR\fR
-.ad
-.RS 16n
-The length of the \fIpath\fR argument exceeds {\fBPATH_MAX\fR} or a pathname
-component is longer than {\fBNAME_MAX\fR}.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBENOENT\fR\fR
-.ad
-.RS 16n
-A component of the path prefix specified by \fIpath\fR does not name an
-existing directory or \fIpath\fR is an empty string.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBENOSPC\fR\fR
-.ad
-.RS 16n
-The directory that would contain the new file cannot be extended or the file
-system is out of file-allocation resources.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBENOTDIR\fR\fR
-.ad
-.RS 16n
-A component of the path prefix is not a directory.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEROFS\fR\fR
-.ad
-.RS 16n
-The named file resides on a read-only file system.
-.RE
-
-.sp
-.LP
-The \fBmkfifo()\fR function may fail if:
-.sp
-.ne 2
-.na
-\fB\fBELOOP\fR\fR
-.ad
-.RS 16n
-Too many symbolic links were encountered in resolving \fIpath\fR.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBENAMETOOLONG\fR\fR
-.ad
-.RS 16n
-The length of the \fIpath\fR argument exceeds {\fBPATH_MAX\fR} or a pathname
-component is longer than {\fBNAME_MAX\fR}.
-.RE
-
-.SH EXAMPLES
-.LP
-\fBExample 1 \fRCreate a FIFO File
-.sp
-.LP
+.
+.Lp
+The
+.Fn mkfifo
+function calls
+.Xr mknod 2
+to create the file.
+.
+.Lp
+Upon successful completion,
+.Fn mkfifo
+marks for update the
+.Vt st_atime ,
+.Vt st_ctime ,
+and
+.Vt st_mtime
+fields of the file. Also, the
+.Vt st_ctime
+and
+.Vt st_mtime
+fields of the directory that contains the new entry are marked for update.
+.
+.Lp
+The
+.Fn mkfifoat
+function is similar to
+.Fn mkfifo ,
+except that if
+.Fa path
+is relative, then it is relative to the
+.Fa fd
+argument, which must be either a file descriptor representing a directory
+.Pq such as from Xr dirfd 3C ,
+or the special value
+.Dv AT_FDCWD .
+If fd is the special value
+.Dv AT_FDWCD
+and the path is relative, then the process' current working directory is
+used as the base for the relative path.  In this case, the
+.Fn mkfifo
+function is identical to
+.Fn mkfifo .
+If path is relative, and
+.Fa fd is not
+.Dv AT_FDCWD
+and was opened without
+.Dv O_SEARCH ,
+then the directory permissions are checked
+to ensure that searches in the directory are permitted.
+.
+.Sh RETURN VALUES
+.
+.Rv -std
+.
+.Sh EXAMPLES
+.
+.Ss Example 1 Create a FIFO File
+.
 The following example demonstrates how to create a FIFO file named
-\fB/home/cnd/mod_done\fR with read and write permissions for the owner and read
+.Pa /home/cnd/mod_done
+with read and write permissions for the owner and read
 permissions for the group and others.
-
-.sp
-.in +2
-.nf
+.Bd -literal -offset indent
 #include sys/types.h>
 #include sys/stat.h>
 int status;
 \&...
 status = mkfifo("/home/cnd/mod_done", S_IWUSR | S_IRUSR |
         S_IRGRP | S_IROTH);
-.fi
-.in -2
-
-.SH ATTRIBUTES
-.sp
-.LP
-See \fBattributes\fR(5) for descriptions of the following attributes:
-.sp
-
-.sp
-.TS
-box;
-c | c
-l | l .
-ATTRIBUTE TYPE	ATTRIBUTE VALUE
-_
-Interface Stability	Standard
-_
-MT-Level	MT-Safe
-.TE
-
-.SH SEE ALSO
-.sp
-.LP
-\fBmkdir\fR(1), \fBchmod\fR(2), \fBexec\fR(2), \fBmknod\fR(2), \fBumask\fR(2),
-\fBstat.h\fR(3HEAD), \fBufs\fR(7FS), \fBattributes\fR(5), \fBstandards\fR(5)
+.Ed
+.
+.Sh ERRORS
+.
+The
+.Fn mkfifo
+and
+.Fn mkfifoat
+functions will fail if:
+.Bl -tag -width Er
+.
+.It Bq Er EACCES
+A component of the path prefix denies search permission, or write permission is
+denied on the parent directory of the FIFO to be created.
+.
+.It Bq Er EEXIST
+The named file already exists.
+.
+.It Bq Er ELOOP
+A loop exists in symbolic links encountered during resolution of the
+.Fa path
+argument.
+.
+.It Bq Er ENAMETOOLONG
+The length of the
+.Fa path
+argument exceeds
+.Brq Dv PATH_MAX
+or a pathname component is longer than
+.Brq Dv NAME_MAX .
+.
+.It Bq Er ENOENT
+A component of the path prefix specified by
+.Fa path
+does not name an existing directory or
+.Fa path
+is an empty string.
+.
+.It Bq Er ENOSPC
+The directory that would contain the new file cannot be extended or the file
+system is out of file-allocation resources.
+.
+.It Bq Er ENOTDIR
+A component of the path prefix is not a directory.
+.
+.It Bq Er EROFS
+The named file resides on a read-only file system.
+.
+.El
+.
+.Lp
+The
+.Fn mkfifoat
+function will fail if:
+.Bl -tag -width Er
+.
+.It Bq Er EBADF
+The
+.Fa path
+argument is not sbsolute, and the
+.Fa fd
+argument is neither an open file descriptor, nor the special value
+.Dv AT_FDCWD .
+.
+.It Bq Er ENOTDIR
+The
+.Fa path
+argument is not absolute, and the object underlying the
+.Fa fd
+argument is not a directory.
+.
+.El
+.Lp
+The
+.Fn mkfifo
+and
+.Fn mkfifoat
+functions may fail if:
+.Bl -tag -width Er
+.
+.It Bq Er ELOOP
+Too many symbolic links were encountered in resolving
+.Fa path .
+.
+.It Bq Er ENAMETOOLONG
+The length of the
+.Fa path
+argument exceeds
+.Brq Dv PATH_MAX
+or a pathname component is longer than
+.Brq Dv NAME_MAX .
+.El
+.
+.Sh INTERFACE STABILITY
+.
+.Sy Standard .
+.
+.Sh MT-LEVEL
+.
+.Sy Async-Signal-Safe .
+.
+.Sh SEE ALSO
+.
+.Xr mkdir 1 ,
+.Xr chmod 2 ,
+.Xr exec 2 ,
+.Xr mknod 2 ,
+.Xr umask 2 ,
+.Xr dirfd 3C ,
+.Xr stat.h 3HEAD ,
+.Xr ufs 7FS ,
+.Xr standards 5
+.
+.Sh STANDARDS
+.
+These functions are available in the following compilation environments. See
+.Xr standards 5 .
+.
+.Ss Fn mkfifo
+.Bl -bullet -compact
+.It
+.St -p1003.1-90
+.
+.It
+.St -xpg3
+.It
+.St -xpg4
+.It
+.St -xpg4.2
+.It
+.St -susv2
+.It
+.St -susv3
+.It
+.St -p1003.1-2008
+.El
+.
+.Ss Fn mkfifoat
+.
+.Bl -bullet -compact
+.It
+.St -p1003.1-2008
+.El
