@@ -15,8 +15,31 @@
 
 include $(SRC)/Makefile.master
 
+TESTSUBDIR = symbols
 PROG = symbols_test
-ARCHPROG = symbols_test
-KSHPROG = symbols_setup
+KSHPROG = setup
+SYMTESTS = \
+	dirent_h \
+	fcntl_h \
+	locale_h \
+	netdb_h \
+	pthread_h \
+	signal_h \
+	stdio_h \
+	stdlib_h \
+	strings_h \
+	sys_stat_h \
+	sys_time_h \
+	sys_timeb_h \
+	ucontext_h \
+	unistd_h \
+	wchar_h \
+	wctype_h
+
+EXTRAPROG += $(SYMTESTS)
 
 include ../Makefile.com
+
+$(SYMTESTS:%=$(TESTDIR)/%): $(TESTDIR)/setup
+	-$(RM) $@
+	$(LN) $(TESTDIR)/setup $@
