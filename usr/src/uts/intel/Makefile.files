@@ -22,6 +22,7 @@
 #
 # Copyright (c) 1999, 2010, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2012, Joyent, Inc. All rights reserved.
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 
 #
@@ -151,13 +152,6 @@ PCI_AUTOCONFIG_OBJS += pci_autoconfig.o pci_boot.o pcie_nvidia.o \
 RADEON_OBJS += r300_cmdbuf.o radeon_cp.o radeon_drv.o \
 			radeon_state.o radeon_irq.o radeon_mem.o
 SD_OBJS += sd.o sd_xbuf.o
-
-HECI_OBJS += 		\
-	heci_init.o	\
-	heci_intr.o	\
-	heci_interface.o \
-	io_heci.o	\
-	heci_main.o
 
 STRATEGY_OBJS += strategy.o
 UCODE_OBJS += ucode_drv.o
