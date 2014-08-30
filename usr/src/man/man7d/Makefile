@@ -205,7 +205,6 @@ i386_MANFILES=	ahci.7d		\
 		dnet.7d		\
 		ecpp.7d		\
 		elxl.7d		\
-		heci.7d		\
 		i915.7d		\
 		ipmi.7d		\
 		iprb.7d		\
