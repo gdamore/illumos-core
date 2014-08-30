@@ -337,6 +337,10 @@ extern int	putw(int, FILE *);
 
 #endif	/* defined(__EXTENSIONS__) || !defined(_STRICT_STDC) ... */
 
+#if !defined(_STRICT_SYMBOLS) || defined(_XPG7) || defined(_ATFILE_SOURCE)
+extern int	renameat(int, const char *, int, const char *);
+#endif
+
 /*
  * The following are defined as part of the Large File Summit interfaces.
  */

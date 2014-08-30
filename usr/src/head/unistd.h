@@ -582,7 +582,6 @@ extern int fchownat(int, const char *, uid_t, gid_t, int);
 extern int linkat(int, const char *, int, const char *, int);
 extern ssize_t readlinkat(int, const char *_RESTRICT_KYWD,
 	char *_RESTRICT_KYWD, size_t);
-extern int renameat(int, const char *, int, const char *);
 extern int symlinkat(const char *, int, const char *);
 extern int unlinkat(int, const char *, int);
 #endif

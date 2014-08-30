@@ -1,4 +1,4 @@
-'\" te
+.\" Copyright 2014 Garrett D'Amore <garrett@damore.org>
 .\" Copyright (c) 2007, Sun Microsystems, Inc.  All Rights Reserved.
 .\" Copyright 1989 AT&T
 .\" Portions Copyright (c) 1992, X/Open Company Limited  All Rights Reserved.
@@ -9,262 +9,304 @@
 .\" The contents of this file are subject to the terms of the Common Development and Distribution License (the "License").  You may not use this file except in compliance with the License.
 .\" You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE or http://www.opensolaris.org/os/licensing.  See the License for the specific language governing permissions and limitations under the License.
 .\" When distributing Covered Code, include this CDDL HEADER in each file and include the License file at usr/src/OPENSOLARIS.LICENSE.  If applicable, add the following below this CDDL HEADER, with the fields enclosed by brackets "[]" replaced with your own identifying information: Portions Copyright [yyyy] [name of copyright owner]
-.TH UNLINK 2 "May 18, 2007"
-.SH NAME
-unlink, unlinkat \- remove directory entry
-.SH SYNOPSIS
-.LP
-.nf
-#include <unistd.h>
-
-\fBint\fR \fBunlink\fR(\fBconst char *\fR\fIpath\fR);
-.fi
-
-.LP
-.nf
-\fBint\fR \fBunlinkat\fR(\fBint\fR \fIdirfd\fR, \fBconst char *\fR\fIpath\fR, \fBint\fR \fIflag\fR);
-.fi
-
-.SH DESCRIPTION
-.sp
-.LP
-The \fBunlink()\fR function removes a link to a file. If \fIpath\fR names a
-symbolic link, \fBunlink()\fR removes the symbolic link named by \fIpath\fR and
-does not affect any file or directory named by the contents of the symbolic
-link.  Otherwise, \fBunlink()\fR removes the link named by the pathname pointed
-to by \fIpath\fR and decrements the link count of the file referenced by the
+.Dd Aug 30, 2014
+.Dt UNLINK 2
+.Os
+.Sh NAME
+.Nm unlink ,
+.Nm unlinkat
+.Nd remove directory entry
+.Sh SYNOPSIS
+.In unistd.h
+.Ft int
+.Fn unlink "const char *path"
+.
+.Ft int
+.Fo unlinkat
+.Fa "int dirfd"
+.Fa "const char *path"
+.Fa "int flag"
+.Fc
+.
+.Sh DESCRIPTION
+.
+The
+.Fn unlink
+function removes a link to a file. If
+.Fa path
+names a symbolic link,
+.Fn unlink
+removes the symbolic link named by
+.Fa path
+and does not affect any file or directory named by the contents of the symbolic
+link.  Otherwise,
+.Fn unlink
+removes the link named by the pathname pointed
+to by
+.Fa path
+and decrements the link count of the file referenced by the
 link.
-.sp
-.LP
-The \fBunlinkat()\fR function also removes a link to a file. See
-\fBfsattr\fR(5). If the \fIflag\fR argument is 0, the behavior of
-\fBunlinkat()\fR is the same as \fBunlink()\fR except in the processing of its
-\fIpath\fR argument. If \fIpath\fR is absolute, \fBunlinkat()\fR behaves the
-same as \fBunlink()\fR and the \fIdirfd\fR argument is unused. If \fIpath\fR is
-relative and \fIdirfd\fR has the value \fBAT_FDCWD\fR, defined in
-<\fBfcntl.h\fR>, \fBunlinkat()\fR also behaves the same as \fBunlink()\fR.
-Otherwise, \fIpath\fR is resolved relative to the directory referenced by the
-\fIdirfd\fR argument.
-.sp
-.LP
-If the \fIflag\fR argument is set to the value \fBAT_REMOVEDIR\fR, defined in
-<\fBfcntl.h\fR>, \fBunlinkat()\fR behaves the same as \fBrmdir\fR(2) except in
-the processing of the \fIpath\fR argument as described above.
-.sp
-.LP
+.Lp
+The
+.Fn unlinkat
+function also removes a link to a file. See
+.Xr fsattr 5 .
+If the
+.Fa flag
+argument is 0, the behavior of
+.Fn unlinkat
+is the same as
+.Fn unlink
+except in the processing of its
+.Fa path
+argument. If
+.Fa path
+is absolute,
+.Fn unlinkat
+behaves the same as
+.Fn unlink
+and the
+.Fa dirfd
+argument is unused. If
+.Fa path
+is relative and
+.Fa dirfd
+has the value
+.Dv AT_FDCWD ,
+defined in
+.In fcntl.h ,
+.Fn unlinkat
+also behaves the same as
+.Fn unlink .
+Otherwise,
+.Fa path
+is resolved relative to the directory referenced by the
+.Fa dirfd
+argument.
+.Lp
+If the
+.Fa flag
+argument is set to the value
+.Dv AT_REMOVEDIR ,
+defined in
+.In fcntl.h ,
+.Fn unlinkat
+behaves the same as
+.Xr rmdir 2
+except in the processing of the
+.Fa path
+argument as described above.
+.Lp
 When the file's link count becomes 0 and no process has the file open, the
 space occupied by the file will be freed and the file is no longer accessible.
 If one or more processes have the file open when the last link is removed, the
-link is removed before \fBunlink()\fR or \fBunlinkat()\fR returns, but the
+link is removed before
+.Fn unlink
+or
+.Fn unlinkat
+returns, but the
 removal of the file contents is postponed until all references to the file are
 closed.
-.sp
-.LP
-If the \fIpath\fR argument is a directory and the filesystem supports
-\fBunlink()\fR and \fBunlinkat()\fR on directories, the directory is unlinked
+.Lp
+If the
+.Fa path
+argument is a directory and the filesystem supports
+.Fn unlink
+and
+.Fn unlinkat
+on directories, the directory is unlinked
 from its parent with no cleanup being performed.  In UFS, the disconnected
 directory will be found the next time the filesystem is checked with
-\fBfsck\fR(1M). The \fBunlink()\fR and \fBunlinkat()\fR functions will not fail
+.Xr fsck 1M .
+The
+.Fn unlink
+and
+.Fn unlinkat
+functions will not fail
 simply because a directory is not empty. The user with appropriate privileges
 can orphan a non-empty directory without generating an error message.
-.sp
-.LP
-If the \fIpath\fR argument is a directory and the filesystem does not support
-\fBunlink()\fR and \fBunlink()\fR on directories (for example, ZFS), the call
-will fail with \fBerrno\fR set to \fBEPERM\fR.
-.sp
-.LP
-Upon successful completion, \fBunlink()\fR and \fBunlinkat()\fR will mark for
-update the \fBst_ctime\fR and \fBst_mtime\fR fields of the parent directory.
-If the file's link count is not 0, the \fBst_ctime\fR field of the file will be
-marked for update.
-.SH RETURN VALUES
-.sp
-.LP
-Upon successful completion, \fB0\fR is returned.  Otherwise, \fB\(mi1\fR is
-returned, \fBerrno\fR is set to indicate the error, and the file is not
-unlinked.
-.SH ERRORS
-.sp
-.LP
-The \fBunlink()\fR and \fBunlinkat()\fR functions will fail if:
-.sp
-.ne 2
-.na
-\fB\fBEACCES\fR\fR
-.ad
-.RS 16n
-Search permission is denied for a component of the \fIpath\fR prefix, or write
+.Lp
+If the
+.Fa path
+argument is a directory and the filesystem does not support
+.Fn unlink
+and
+.Fn unlinkat
+on directories (for example, ZFS), the call
+will fail with
+.Va errno
+set to
+.Er EPERM .
+.Lp
+Upon successful completion,
+.Fn unlink
+and
+.Fn unlinkat
+will mark for
+update the
+.Vt st_ctime
+and
+.Vt st_mtime
+fields of the parent directory.
+If the file's link count is not 0, the
+.Vt st_ctime
+field of the file will be marked for update.
+.
+.Sh RETURN VALUES
+.
+Upon successful completion, 0 is returned.  Otherwise, \(mi1 is
+returned,
+.Va errno
+is set to indicate the error, and the file is not unlinked.
+.
+.Sh ERRORS
+.
+The
+.Fn unlink
+and
+.Fn unlinkat
+functions will fail if:
+.Bl -tag -width Er
+.It Bq Er EACCES
+Search permission is denied for a component of the
+.Fa path
+prefix, or write
 permission is denied on the directory containing the link to be removed.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEACCES\fR\fR
-.ad
-.RS 16n
+.
+.It Bq Er EACCES
 The parent directory has the sticky bit set and the file is not writable by the
 user, the user does not own the parent directory, the user does not own the
 file, and the user is not a privileged user.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEBUSY\fR\fR
-.ad
-.RS 16n
+.
+.It Bq Er EBUSY
 The entry to be unlinked is the mount point for a mounted file system.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEFAULT\fR\fR
-.ad
-.RS 16n
-The \fIpath\fR argument points to an illegal address.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEILSEQ\fR\fR
-.ad
-.RS 16n
+.
+.It Bq Er EFAULT
+The
+.Fa path
+argument points to an illegal address.
+.
+.It Bq Er EILSEQ
 The path argument includes non-UTF8 characters and the file system accepts only
 file names where all characters are part of the UTF-8 character codeset.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEINTR\fR\fR
-.ad
-.RS 16n
-A signal was caught during the execution of the \fBunlink()\fR function.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBELOOP\fR\fR
-.ad
-.RS 16n
-Too many symbolic links were encountered in translating \fIpath\fR.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBENAMETOOLONG\fR\fR
-.ad
-.RS 16n
-The length of the \fIpath\fR argument exceeds \fBPATH_MAX\fR, or the length of
-a \fIpath\fR component exceeds \fBNAME_MAX\fR while \fB_POSIX_NO_TRUNC\fR is in
-effect.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBENOENT\fR\fR
-.ad
-.RS 16n
+.
+.It Bq Er EINTR
+A signal was caught during the execution of the function.
+.
+.It Bq Er ELOOP
+Too many symbolic links were encountered in translating
+.Fa path .
+.
+.It Bq Er ENAMETOOLONG
+The length of the
+.Fa path
+argument exceeds
+.Brq Dv PATH_MAX ,
+or the length of a
+.Fa path
+component exceeds
+.Brq Dv NAME_MAX
+while
+.Dv _POSIX_NO_TRUNC
+is in effect.
+.
+.It Bq Er ENOENT
 The named file does not exist or is a null pathname.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBENOLINK\fR\fR
-.ad
-.RS 16n
-The \fIpath\fR argument points to a remote machine and the link to that machine
+.
+.It Bq Er ENOLINK
+The
+.Fa path
+argument points to a remote machine and the link to that machine
 is no longer active.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBENOTDIR\fR\fR
-.ad
-.RS 16n
-A component of the \fIpath\fR prefix is not a directory or the provided
-directory descriptor for \fBunlinkat()\fR is not \fBAT_FDCWD\fR or does not
-reference a directory.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEPERM\fR\fR
-.ad
-.RS 16n
-The named file is a directory and {\fBPRIV_SYS_LINKDIR\fR} is not asserted in
+.
+.It Bq Er ENOTDIR
+A component of the
+.Fa path
+prefix is not a directory or the provided
+directory descriptor for
+.Fn unlinkat
+is not
+.Dv AT_FDCWD
+or does not reference a directory.
+.
+.It Bq Er EPERM
+The named file is a directory and
+.Brq Dv PRIV_SYS_LINKDIR
+is not asserted in
 the effective set of the calling process, or the filesystem implementation does
-not support \fBunlink()\fR or \fBunlinkat()\fR on directories.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEROFS\fR\fR
-.ad
-.RS 16n
+not support
+.Fn unlink
+or
+.Fn unlinkat
+on directories.
+.
+.It Bq Er EROFS
 The directory entry to be unlinked is part of a read-only file system.
-.RE
-
-.sp
-.LP
-The \fBunlink()\fR and \fBunlinkat()\fR functions may fail if:
-.sp
-.ne 2
-.na
-\fB\fBENAMETOOLONG\fR\fR
-.ad
-.RS 16n
+.El
+.
+The
+.Fn unlink
+and
+.Fn unlinkat
+functions may fail if:
+.Bl -tag -width Er
+.It Bq Er ENAMETOOLONG
 Pathname resolution of a symbolic link produced an intermediate result whose
-length exceeds {\fBPATH_MAX\fR}.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBETXTBSY\fR\fR
-.ad
-.RS 16n
+length exceeds
+.Brq Dv PATH_MAX .
+.
+.It Bq Er ETXTBSY
 The entry to be unlinked is the last directory entry to a pure procedure
 (shared text) file that is being executed.
-.RE
-
-.SH USAGE
-.sp
-.LP
-Applications should use \fBrmdir\fR(2) to remove a directory.
-.SH ATTRIBUTES
-.sp
-.LP
-See \fBattributes\fR(5) for descriptions of the following attributes:
-.sp
-
-.sp
-.TS
-box;
-c | c
-l | l .
-ATTRIBUTE TYPE	ATTRIBUTE VALUE
-_
-Interface Stability	T{
-\fBunlink()\fR is Standard; \fBunlinkat()\fR is Evolving
-T}
-_
-MT-Level	Async-Signal-Safe
-.TE
-
-.SH SEE ALSO
-.sp
-.LP
-\fBrm\fR(1), \fBclose\fR(2), \fBlink\fR(2), \fBopen\fR(2), \fBrmdir\fR(2),
-\fBremove\fR(3C), \fBattributes\fR(5), \fBprivileges\fR(5), \fBfsattr\fR(5)
+.El
+.
+.Sh USAGE
+Applications should use
+.Xr rmdir 2
+to remove a directory.
+.
+.Sh INTERFACE STABILITY
+.
+.Sy Standard .
+.
+.Sh MT-LEVEL
+.
+.Sy Async-Signal-Safe .
+.
+.Sh SEE ALSO
+.
+.Xr rm 1 ,
+.Xr close 2 ,
+.Xr link 2 ,
+.Xr open 2 ,
+.Xr rmdir 2 ,
+.Xr remove 3C ,
+.Xr privileges 5 ,
+.Xr fsattr 5
+.
+.Sh STANDARDS
+.
+These functions are available in the following compilation environments. See
+.Xr standards 5 .
+.Ss Fn unlink
+.Bl -bullet -compact
+.It
+.St -p1003.1
+.It
+.St -xpg3
+.It
+.St -xpg4
+.It
+.St -xpg4.2
+.It
+.St -susv2
+.It
+.St -susv3
+.It
+.St -p1003.1-2008
+.El
+.Ss Fn unlinkat
+.Bl -bullet -compact
+.It
+.St -p1003.1-2008
+.El
