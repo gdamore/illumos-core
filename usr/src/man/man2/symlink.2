@@ -1,192 +1,233 @@
-'\" te
+.\" Copyright 2014 Garrett D'Amore <garrett@damore.org>
 .\" Copyright (c) 2007, Sun Microsystems, Inc.  All Rights Reserved.
 .\" Copyright 1989 AT&T
 .\" The contents of this file are subject to the terms of the Common Development and Distribution License (the "License").  You may not use this file except in compliance with the License.
 .\" You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE or http://www.opensolaris.org/os/licensing.  See the License for the specific language governing permissions and limitations under the License.
 .\" When distributing Covered Code, include this CDDL HEADER in each file and include the License file at usr/src/OPENSOLARIS.LICENSE.  If applicable, add the following below this CDDL HEADER, with the fields enclosed by brackets "[]" replaced with your own identifying information: Portions Copyright [yyyy] [name of copyright owner]
-.TH SYMLINK 2 "May 18, 2007"
-.SH NAME
-symlink \- make a symbolic link to a file
-.SH SYNOPSIS
-.LP
-.nf
-#include <unistd.h>
-
-\fBint\fR \fBsymlink\fR(\fBconst char *\fR\fIname1\fR, \fBconst char *\fR\fIname2\fR);
-.fi
-
-.SH DESCRIPTION
-.sp
-.LP
-The \fBsymlink()\fR function creates a symbolic link \fIname2\fR to the file
-\fIname1\fR. Either name may be an arbitrary pathname, the files need not be on
-the same file system, and \fIname1\fR may be nonexistent.
-.sp
-.LP
-The file to which the symbolic link points is used when an \fBopen\fR(2)
-operation is performed on the link. A \fBstat()\fR operation performed on a
-symbolic link returns the linked-to file, while an \fBlstat()\fR operation
-returns information about the link itself.  See \fBstat\fR(2). Unexpected
+.Dd Aug 29, 2014
+.Dt SYMLINK 2
+.Os
+.Sh NAME
+.Nm symlink ,
+.Nm symlinkat
+.Nd make a symbolic link to a file
+.Sh SYNOPSIS
+.In unistd.h
+.Ft int
+.Fn symlink "const char *name1" "const char *name2"
+.
+.Ft int
+.Fn symlinkat "const char *name1" "int fd" "const char *name2"
+.
+.Sh DESCRIPTION
+The
+.Fn symlink
+function creates a symbolic link
+.Fa name2
+to the file
+.Fa name1 .
+Either name may be an arbitrary pathname, the files need not be on
+the same file system, and
+.Fa name1
+may be nonexistent.
+.Lp
+The file to which the symbolic link points is used when an
+.Xr open 2
+operation is performed on the link. A
+.Xr stat 2
+operation performed on a
+symbolic link returns the linked-to file, while an
+.Xr lstat 2
+operation
+returns information about the link itself.  Unexpected
 results may occur when a symbolic link is made to a directory. To avoid
-confusion in applications, the \fBreadlink\fR(2) call can be used to read the
-contents of a symbolic link.
-.SH RETURN VALUES
-.sp
-.LP
-Upon successful completion, \fB0\fR is returned.  Otherwise, \fB\(mi1\fR is
-returned, \fBerrno\fR is set to indicate the error, and the symbolic link is
-not made.
-.SH ERRORS
-.sp
-.LP
-The \fBsymlink()\fR function will fail if:
-.sp
-.ne 2
-.na
-\fB\fBEACCES\fR\fR
-.ad
-.RS 16n
-Search permission is denied for a component of the path prefix of \fIname2\fR.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEDQUOT\fR\fR
-.ad
-.RS 16n
+confusion in applications, the
+.Xr readlink 2
+call can be used to read the contents of a symbolic link.
+.
+.Lp
+The
+.Fn symlinkat
+function performs the same function, but in the case where
+.Fa name2
+is relative, then it is taken relative to the
+.Fa fd
+argument, which should be either an open directory file descriptor
+.Pq such as from Xr dirfd 3C ,
+or the special value
+.Dv AT_FDCWD .
+If the value
+.Dv AT_FDCWD
+is used, then the
+.Fn symlinkat
+function uses the current working directory instead, and the function is
+identical to
+.Fn symlink
+in behavior.
+.Lp
+If the
+.Fa fd
+descriptor was not opened with
+.Dv O_SEARCH ,
+then the directory is checked for searchability.
+.
+.Sh RETURN VALUES
+.
+Upon successful completion, 0 is returned.  Otherwise, \(mi1 is
+returned,
+.Va errno
+is set to indicate the error, and the symbolic link is not made.
+.
+.Sh ERRORS
+.
+The
+.Fn symlink
+and
+.Fn symlinkat
+functions will fail if:
+.Bl -tag -width Er
+.It Bq Er EACCES
+Search permission is denied for a component of the path prefix of
+.Fa name2 .
+.
+.It Bq Er EDQUOT
 The directory where the entry for the new symbolic link is being placed cannot
 be extended because the user's quota of disk blocks on that file system has
 been exhausted; the new symbolic link cannot be created because the user's
 quota of disk blocks on that file system has been exhausted; or the user's
 quota of inodes on the file system where the file is being created has been
 exhausted.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEEXIST\fR\fR
-.ad
-.RS 16n
-The file referred to by \fIname2\fR already exists.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEFAULT\fR\fR
-.ad
-.RS 16n
-The \fIname1\fR or \fIname2\fR argument points to an illegal address.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEILSEQ\fR\fR
-.ad
-.RS 16n
+.
+.It Bq Er EEXIST
+The file referred to by
+.Fa name2
+already exists.
+.
+.It Bq Er EFAULT
+The
+.Fa name1 or
+.Fa name2
+argument points to an illegal address.
+.
+.It Bq Er EILSEQ
 The path argument includes non-UTF8 characters and the file system accepts only
 file names where all characters are part of the UTF-8 character codeset.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEIO\fR\fR
-.ad
-.RS 16n
+.
+.It Bq Er EIO
 An I/O error occurs while reading from or writing to the file system.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBELOOP\fR\fR
-.ad
-.RS 16n
-Too many symbolic links are encountered in translating \fIname2\fR.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBENAMETOOLONG\fR\fR
-.ad
-.RS 16n
-The length of the \fIname2\fR argument exceeds \fBPATH_MAX\fR, or the length of
-a \fIname2\fR component exceeds \fBNAME_MAX\fR while \fB_POSIX_NO_TRUNC\fR is
-in effect.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBENOENT\fR\fR
-.ad
-.RS 16n
-A component of the path prefix of \fIname2\fR does not exist.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBENOSPC\fR\fR
-.ad
-.RS 16n
+.
+.It Bq Er ELOOP
+Too many symbolic links are encountered in translating
+.Fa name2 .
+.
+.It Bq Er ENAMETOOLONG
+The length of the
+.Fa name2
+argument exceeds
+.Brq Dv PATH_MAX ,
+or the length of
+a
+.Fa name2
+component exceeds
+.Brq Dv NAME_MAX
+while
+.Dv _POSIX_NO_TRUNC
+is in effect.
+.
+.It Bq Er ENOENT
+A component of the path prefix of
+.Fa name2
+does not exist.
+.
+.It Bq Er ENOSPC
 The directory in which the entry for the new symbolic link is being placed
 cannot be extended because no space is left on the file system containing the
 directory; the new symbolic link cannot be created because no space is left on
 the file system which will contain the link; or there are no free inodes on the
 file system on which the file is being created.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBENOSYS\fR\fR
-.ad
-.RS 16n
+.
+.It Bq Er ENOSYS
 The file system does not support symbolic links.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBENOTDIR\fR\fR
-.ad
-.RS 16n
-A component of the path prefix of \fIname2\fR is not a directory.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEROFS\fR\fR
-.ad
-.RS 16n
-The file \fIname2\fR would reside on a read-only file system.
-.RE
-
-.SH ATTRIBUTES
-.sp
-.LP
-See \fBattributes\fR(5) for descriptions of the following attributes:
-.sp
-
-.sp
-.TS
-box;
-c | c
-l | l .
-ATTRIBUTE TYPE	ATTRIBUTE VALUE
-_
-Interface Stability	Standard
-.TE
-
-.SH SEE ALSO
-.sp
-.LP
-\fBcp\fR(1), \fBlink\fR(2), \fBopen\fR(2), \fBreadlink\fR(2), \fBstat\fR(2),
-\fBunlink\fR(2), \fBattributes\fR(5)
+.
+.It Bq Er ENOTDIR
+A component of the path prefix of
+.Fa name2
+is not a directory.
+.
+.It Bq Er EROFS
+The file
+.Fa name2
+would reside on a read-only file system.
+.El
+.
+.Lp
+The
+.Fn symlinkat
+function will fail if:
+.Bl -tag -width Er
+.
+.It Bq Er EBADF
+The
+.Fa name2
+path name is not absolute, and
+.Fa fd
+is neither an open file descriptor, nor the special value
+.Dv AT_FDCWD .
+.
+.It Bq Er ENOTDIR
+The
+.Fa name2
+path name is not absolute, and the file descriptor
+.Fa fd
+does not reference a directory.
+.
+.It Bq Er EACCES
+The
+.Fa name2
+is not absolute, and
+.Fa fd
+was opened without
+.Dv O_SEARCH ,
+and the underlying directory is not searchable.
+.El
+.
+.Sh INTERFACE STABILITY
+.
+.Sy Standard .
+.
+.Sh MT-LEVEL
+.
+.Sy Async-Signal-Safe .
+.
+.Sh SEE ALSO
+.
+.Xr cp 1 ,
+.Xr link 2 ,
+.Xr open 2 ,
+.Xr readlink 2 ,
+.Xr stat 2 ,
+.Xr unlink 2 ,
+.Xr dirfd 3C ,
+.Xr standards 5
+.
+.Sh STANDARDS
+.
+These functions are available in the following compilation environments. See
+.Xr standards 5 .
+.
+.Ss Fn symlink
+.Bl -bullet -compact
+.It
+.St -xpg4.2
+.It
+.St -susv2
+.It
+.St -susv3
+.It
+.St -p1003.1-2008
+.El
+.Ss Fn symlinkat
+.Bl -bullet -compact
+.It
+.St -p1003.1-2008
+.El

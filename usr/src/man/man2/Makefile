@@ -210,6 +210,7 @@ MANLINKS=	_Exit.2				\
 	 	gettaskid.2			\
 	 	intro.2				\
 	 	lchown.2			\
+		linkat.2			\
 	 	lstat.2				\
 	 	mkdirat.2			\
 	 	mknodat.2			\
@@ -224,6 +225,7 @@ MANLINKS=	_Exit.2				\
 	 	putpmsg.2			\
 	 	pwrite.2			\
 	 	readv.2				\
+	 	readlinkat.2			\
 	 	renameat.2			\
 	 	sbrk.2				\
 	 	semtimedop.2			\
@@ -243,6 +245,7 @@ MANLINKS=	_Exit.2				\
 	 	shmat.2				\
 	 	shmdt.2				\
 	 	sigsendset.2			\
+		symlinkat.2			\
 	 	umount2.2			\
 	 	unlinkat.2			\
 		utimensat.2			\
@@ -336,6 +339,8 @@ getgid.2			:= LINKSRC = getuid.2
 
 setustack.2			:= LINKSRC = getustack.2
 
+linkat.2			:= LINKSRC = link.2
+
 mkdirat.2			:= LINKSRC = mkdir.2
 
 mknodat.2			:= LINKSRC = mknod.2
@@ -353,6 +358,8 @@ putpmsg.2			:= LINKSRC = putmsg.2
 
 pread.2				:= LINKSRC = read.2
 readv.2				:= LINKSRC = read.2
+
+readlinkat.2			:= LINKSRC = readlink.2
 
 renameat.2			:= LINKSRC = rename.2
 
@@ -377,6 +384,8 @@ fstatat.2			:= LINKSRC = stat.2
 lstat.2				:= LINKSRC = stat.2
 
 fstatvfs.2			:= LINKSRC = statvfs.2
+
+symlinkat.2			:= LINKSRC = symlink.2
 
 umount2.2			:= LINKSRC = umount.2
 

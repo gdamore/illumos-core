@@ -205,6 +205,7 @@ link path=usr/share/man/man2/getrctl.2 target=setrctl.2
 link path=usr/share/man/man2/gettaskid.2 target=settaskid.2
 link path=usr/share/man/man2/intro.2 target=Intro.2
 link path=usr/share/man/man2/lchown.2 target=chown.2
+link path=usr/share/man/man2/linkat.2 target=link.2
 link path=usr/share/man/man2/lstat.2 target=stat.2
 link path=usr/share/man/man2/mkdirat.2 target=mkdir.2
 link path=usr/share/man/man2/mknodat.2 target=mknod.2
@@ -219,6 +220,7 @@ link path=usr/share/man/man2/putacct.2 target=getacct.2
 link path=usr/share/man/man2/putpmsg.2 target=putmsg.2
 link path=usr/share/man/man2/pwrite.2 target=write.2
 link path=usr/share/man/man2/readv.2 target=read.2
+link path=usr/share/man/man2/readlinkat.2 target=readlink.2
 link path=usr/share/man/man2/renameat.2 target=rename.2
 link path=usr/share/man/man2/sbrk.2 target=brk.2
 link path=usr/share/man/man2/semtimedop.2 target=semop.2
@@ -238,6 +240,7 @@ link path=usr/share/man/man2/setustack.2 target=getustack.2
 link path=usr/share/man/man2/shmat.2 target=shmop.2
 link path=usr/share/man/man2/shmdt.2 target=shmop.2
 link path=usr/share/man/man2/sigsendset.2 target=sigsend.2
+link path=usr/share/man/man2/symlinkat.2 target=symlink.2
 link path=usr/share/man/man2/umount2.2 target=umount.2
 link path=usr/share/man/man2/unlinkat.2 target=unlink.2
 link path=usr/share/man/man2/utimensat.2 target=futimens.2

@@ -1,227 +1,303 @@
-'\" te
+.\" Copyright 2014 Garrett D'Amore <garrett@damore.org>
 .\" Copyright (c) 2007, Sun Microsystems, Inc.  All Rights Reserved.
 .\"  Copyright 1989 AT&T
 .\" The contents of this file are subject to the terms of the Common Development and Distribution License (the "License").  You may not use this file except in compliance with the License.
 .\" You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE or http://www.opensolaris.org/os/licensing.  See the License for the specific language governing permissions and limitations under the License.
 .\" When distributing Covered Code, include this CDDL HEADER in each file and include the License file at usr/src/OPENSOLARIS.LICENSE.  If applicable, add the following below this CDDL HEADER, with the fields enclosed by brackets "[]" replaced with your own identifying information: Portions Copyright [yyyy] [name of copyright owner]
-.TH LINK 2 "May 18, 2007"
-.SH NAME
-link \- link to a file
-.SH SYNOPSIS
-.LP
-.nf
-#include <unistd.h>
-
-\fBint\fR \fBlink\fR(\fBconst char *\fR\fIexisting\fR, \fBconst char *\fR\fInew\fR);
-.fi
-
-.SH DESCRIPTION
-.sp
-.LP
-The \fBlink()\fR function creates a new link (directory entry) for the existing
-file and increments its link count by one.  The \fIexisting\fR argument points
-to a path name naming an existing file.  The \fInew\fR argument points to a
-pathname naming the new directory entry to be created.
-.sp
-.LP
+.Dd Aug 29, 2014
+.Dt LINK 2
+.Os
+.Sh NAME
+.Nm link ,
+.Nm linkat
+.Nd link to a file
+.Sh SYNOPSIS
+.In unistd.h
+.Ft int
+.Fn link "const char *path1" "const char *path2"
+.
+.Ft int
+.Fo linkat
+.Fa "int fd1"
+.Fa "const char *path1"
+.Fa "int fd2"
+.Fa "const char *path2"
+.Fa "int flag"
+.Fc
+.
+.Sh DESCRIPTION
+The
+.Fn link
+function creates a new link (directory entry) at
+.Fa path2
+for the existing
+file
+.Fa path1
+and increments its link count by one.
+.Lp
 To create hard links, both files must be on the same file system. Both the old
 and the new link share equal access and rights to the underlying object.
 Privileged processes can make multiple links to a directory. Unless the caller
-is privileged, the file named by \fIexisting\fR must not be a directory.
-.sp
-.LP
-Upon successful completion, \fBlink()\fR marks for update the \fBst_ctime\fR
-field of the file. Also, the \fBst_ctime\fR and \fBst_mtime\fR fields of the
+is privileged, the file named by
+.Fa path1
+must not be a directory.
+.Lp
+Upon successful completion,
+.Fn link
+marks for update the
+.Vt st_ctime
+field of the file. Also, the
+.Vt st_ctime
+and
+.Vt st_mtime
+fields of the
 directory that contains the new entry are marked for update.
-.SH RETURN VALUES
-.sp
-.LP
-Upon successful completion, \fB0\fR is returned. Otherwise, \fB\(mi1\fR is
-returned, no link is created, and \fBerrno\fR is set to indicate the error.
-.SH ERRORS
-.sp
-.LP
-The \fBlink()\fR function will fail if:
-.sp
-.ne 2
-.na
-\fB\fBEACCES\fR\fR
-.ad
-.RS 16n
+.
+.Lp
+The
+.Fn linkat
+function performs much the same function, except that if either
+.Fa path1
+or
+.Fa path2
+are relative path names, then they are taken relative to
+.Fa fd1
+and
+.Fa fd2 ,
+which must be either open directory file descriptors
+.Pq such as from Xr dirfd 3C ,
+or the special value
+.Dv AT_FDCWD .
+If
+.Dv AT_FDCWD
+is supplied, then the corresponding path is taken relative to the current
+working directory.
+.
+.Lp
+When relative path names are supplied to
+.Fn renameat ,
+the directories underlying
+.Fa fd1
+and
+.Fa fd2
+are checked for searchability, unless the file descriptor was opened with
+.Dv O_SEARCH .
+.
+.Lp
+The
+.Fa flag
+argument is a bit-wise OR of the following values, which are defined
+in
+.In fcntl.h :
+.Lp
+.Bl -tag -width Dv -compact
+.It Dv AT_SYMLINK_FOLLOW
+If
+.Fa path1
+is a symbolic link, then the link created is to the target of the symlink
+pointed to by
+.Fa path1
+rather than to
+.Fa path1
+itself.
+.El
+.
+.Sh RETURN VALUES
+.
+Upon successful completion, 0 is returned. Otherwise, \(mi1 is
+returned, no link is created, and
+.Va errno
+is set to indicate the error.
+.
+.Sh ERRORS
+.
+The
+.Fn link
+and
+.Fn linkat
+functions will fail if:
+.Bl -tag -width Er
+.
+.It Bq Er EACCES
 A component of either path prefix denies search permission, or the requested
 link requires writing in a directory with a mode that denies write permission.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEDQUOT\fR\fR
-.ad
-.RS 16n
+.
+.It Bq Er EDQUOT
 The directory where the entry for the new link is being placed cannot be
 extended because the user's quota of disk blocks on that file system has been
 exhausted.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEEXIST\fR\fR
-.ad
-.RS 16n
-The link named by \fInew\fR exists.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEFAULT\fR\fR
-.ad
-.RS 16n
-The \fIexisting\fR or \fInew\fR argument points to an illegal address.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEILSEQ\fR\fR
-.ad
-.RS 16n
+.
+.It Bq Er EEXIST
+The link named by
+.Fa path2
+exists.
+.
+.It Bq Er EFAULT
+The
+.Fa path1
+or
+.Fa path2
+argument points to an illegal address.
+.
+.It Bq Er EILSEQ
 The path argument includes non-UTF8 characters and the file system accepts only
 file names where all characters are part of the UTF-8 character codeset.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEINTR\fR\fR
-.ad
-.RS 16n
-A signal was caught during the execution of the \fBlink()\fR function.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBELOOP\fR\fR
-.ad
-.RS 16n
-Too many symbolic links were encountered in translating \fIpath\fR.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEMLINK\fR\fR
-.ad
-.RS 16n
+.
+.It Bq Er EINTR
+A signal was caught during the execution of the function.
+.
+.It Bq Er ELOOP
+Too many symbolic links were encountered in translating
+.Fa path1
+or
+.Fa path2 .
+.
+.It Bq Er EMLINK
 The maximum number of links to a file would be exceeded.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBENAMETOOLONG\fR\fR
-.ad
-.RS 16n
-The length of the \fIexisting\fR or \fInew\fR argument exceeds \fBPATH_MAX\fR,
-or the length of a \fIexisting\fR or \fInew\fR component exceeds \fBNAME_MAX\fR
-while \fB_POSIX_NO_TRUNC\fR is in effect.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBENOENT\fR\fR
-.ad
-.RS 16n
-The \fIexisting\fR or \fInew\fR argument is a null pathname; a component of
-either path prefix does not exist; or the file named by \fIexisting\fR does not
-exist.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBENOLINK\fR\fR
-.ad
-.RS 16n
-The \fIexisting\fR or \fInew\fR argument points to a remote machine and the
-link to that machine is no longer active.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBENOSPC\fR\fR
-.ad
-.RS 16n
+.
+.It Bq Er ENAMETOOLONG
+The length of the
+.Fa path1
+or
+.Fa path2
+argument exceeds
+.Brq Dv PATH_MAX ,
+or the length of a path component exceeds
+.Brq Dv NAME_MAX
+while
+.Dv _POSIX_NO_TRUNC
+is in effect.
+.
+.It Bq Er ENOENT
+The
+.Fa path1
+or
+.Fa path2
+argument is a null pathname; a component of
+either path prefix does not exist; or the file named by
+.Fa path1
+does not exist.
+.
+.It Bq Er ENOLINK
+The
+.Fa path1
+or
+.Fa path2
+argument points to a remote machine and the link to that machine is no
+longer active.
+.
+.It Bq Er ENOSPC
 The directory that would contain the link cannot be extended.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBENOTDIR\fR\fR
-.ad
-.RS 16n
+.
+.It Bq Er ENOTDIR
 A component of either path prefix is not a directory.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEPERM\fR\fR
-.ad
-.RS 16n
-The file named by \fIexisting\fR is a directory and the
-{\fBPRIV_SYS_LINKDIR\fR} privilege is not asserted in the effective set of the
-calling process.
-.sp
-The effective user ID does not match the owner of the file and the
-{\fBPRIV_FILE_LINK_ANY\fR} privilege is not asserted in the effective set of
+.
+.It Bq Er EPERM
+The file named by
+.Fa path1
+is a directory and the
+.Brq Dv PRIV_SYS_LINKDIR
+privilege is not asserted in the effective set of the
+calling process; or
+the effective user ID does not match the owner of the file and the
+.Brq Dv PRIV_FILE_LINK_ANY
+privilege is not asserted in the effective set of
 the calling process.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEROFS\fR\fR
-.ad
-.RS 16n
+.
+.It Bq Er EROFS
 The requested link requires writing in a directory on a read-only file system.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEXDEV\fR\fR
-.ad
-.RS 16n
-The link named by \fInew\fR and the file named by \fIexisting\fR are on
-different logical devices (file systems).
-.RE
-
-.SH ATTRIBUTES
-.sp
-.LP
-See \fBattributes\fR(5) for descriptions of the following attributes:
-.sp
-
-.sp
-.TS
-box;
-c | c
-l | l .
-ATTRIBUTE TYPE	ATTRIBUTE VALUE
-_
-Interface Stability	Standard
-_
-MT-Level	Async-Signal-Safe
-.TE
-
-.SH SEE ALSO
-.sp
-.LP
-\fBsymlink\fR(2), \fBunlink\fR(2), \fBattributes\fR(5), \fBprivileges\fR(5),
-\fBstandards\fR(5)
+.
+.It Bq Er EXDEV
+The link named by
+.Fa path2
+and the file named by
+.Fa path1
+are on different logical devices (file systems).
+.El
+.
+.Lp
+The
+.Fn linkat
+function will fail if:
+.Bl -tag -width Er
+.It Bq Er EBADF
+Either
+.Fa path1
+is not absolute and
+.Fa fd1
+is not an open file descriptor or the special value
+.Dv AT_FDCWD ,
+or
+.Fa path2
+is not absolute and
+.Fa fd2
+is not an open file descriptor or the special value
+.Dv AT_FDCWD .
+.
+.It Bq Er ENOTDIR
+Either
+.Fa path1
+is not absolute and
+.Fa fd1
+does not represent a directory ,
+or
+.Fa path2
+is not absolute and
+.Fa fd2
+does not represnt a directory.
+.
+.El
+.Lp
+The
+.Fn linkat
+function may fail if:
+.Bl -tag -width Er
+.It Bq Er EINVAL
+The
+.Fa flag
+argument is not valid.
+.El
+.
+.Sh INTERFACE STABILITY
+.
+.Sy Standard .
+.
+.Sh MT-LEVEL
+.
+.Sy Async-Signal-Safe .
+.
+.Sh SEE ALSO
+.
+.Xr symlink 2 ,
+.Xr unlink 2 ,
+.Xr dirfd 3C ,
+.Xr privileges 5 ,
+.Xr standards 5
+.
+.Sh STANDARDS
+.
+These functions are available in the following compilation environments. See
+.Xr standards 5 .
+.
+.Ss Fn link
+.Bl -bullet -compact
+.It
+.St -p1003.1
+.It
+.St -xpg3
+.It
+.St -xpg4
+.It
+.St -xpg4.2
+.It
+.St -susv2
+.It
+.St -susv3
+.It
+.St -p1003.1-2008
+.El
+.Ss Fn linkat
+.Bl -bullet -compact
+.It
+.St -p1003.1-2008
+.El
