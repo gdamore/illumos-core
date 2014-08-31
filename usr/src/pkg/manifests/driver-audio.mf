@@ -42,9 +42,9 @@ dir path=kernel/misc group=sys
 dir path=kernel/misc/$(ARCH64) group=sys
 dir path=lib
 dir path=lib/svc
-dir path=lib/svc/manifest
-dir path=lib/svc/manifest/system
-dir path=lib/svc/manifest/system/device
+dir path=lib/svc/manifest group=sys
+dir path=lib/svc/manifest/system group=sys
+dir path=lib/svc/manifest/system/device group=sys
 dir path=lib/svc/method
 dir path=usr/bin variant.opensolaris.zone=__NODEFAULT
 dir path=usr/share/man
@@ -91,3 +91,4 @@ file path=usr/share/man/man7i/mixer.7i
 legacy pkg=SUNWaudd desc="SunOS audio device drivers" name="Audio Drivers"
 license cr_Sun license=cr_Sun
 license lic_CDDL license=lic_CDDL
+depend fmri=SUNWcs@$(PKGVERS) type=optional
