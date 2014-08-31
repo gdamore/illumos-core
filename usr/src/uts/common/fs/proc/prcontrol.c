@@ -26,6 +26,7 @@
 
 /*
  * Copyright (c) 2013, Joyent, Inc.  All rights reserved.
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
  */
 
 #include <sys/types.h>
@@ -1595,7 +1596,8 @@ pr_setentryexit(proc_t *p, sysset_t *sysset, int entry)
 }
 
 #define	ALLFLAGS	\
-	(PR_FORK|PR_RLC|PR_KLC|PR_ASYNC|PR_BPTADJ|PR_MSACCT|PR_MSFORK|PR_PTRACE)
+	(PR_FORK|PR_RLC|PR_KLC|PR_ASYNC|PR_BPTADJ|PR_MSACCT|PR_MSFORK|\
+	PR_PTRACE|PR_AUNAME)
 
 int
 pr_set(proc_t *p, long flags)
@@ -1627,6 +1629,8 @@ pr_set(proc_t *p, long flags)
 		if (p->p_ppid == 1)
 			sigtoproc(p, NULL, SIGKILL);
 	}
+	if (flags & PR_AUNAME)
+		PTOU(p)->u_flags |= U_FLAG_ALTUNAME;
 
 	return (0);
 }
@@ -1656,6 +1660,8 @@ pr_unset(proc_t *p, long flags)
 		p->p_flag &= ~SMSFORK;
 	if (flags & PR_PTRACE)
 		p->p_proc_flag &= ~P_PR_PTRACE;
+	if (flags & PR_AUNAME)
+		PTOU(p)->u_flags &= ~U_FLAG_ALTUNAME;
 
 	return (0);
 }

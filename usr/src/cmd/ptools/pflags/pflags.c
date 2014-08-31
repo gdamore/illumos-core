@@ -26,6 +26,7 @@
 
 /*
  * Copyright (c) 2013, Joyent, Inc. All rights reserved.
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
  */
 
 #include <stdio.h>
@@ -68,8 +69,8 @@ static	int	rflag;	/* Show registers? */
 	|PR_AGENT|PR_DETACH|PR_DAEMON)
 
 #define	PROCFLAGS	\
-	(PR_ISSYS|PR_VFORKP|PR_ORPHAN|PR_NOSIGCHLD|PR_WAITPID \
-	|PR_FORK|PR_RLC|PR_KLC|PR_ASYNC|PR_BPTADJ|PR_MSACCT|PR_MSFORK|PR_PTRACE)
+	(PR_ISSYS|PR_VFORKP|PR_ORPHAN|PR_NOSIGCHLD|PR_WAITPID|PR_FORK|PR_RLC \
+	|PR_KLC|PR_ASYNC|PR_BPTADJ|PR_MSACCT|PR_MSFORK|PR_PTRACE|PR_AUNAME)
 
 #define	ALLFLAGS	(LWPFLAGS|PROCFLAGS)
 
@@ -434,6 +435,8 @@ prflags(int arg)
 		(void) strcat(str, "|MSFORK");
 	if (arg & PR_PTRACE)
 		(void) strcat(str, "|PTRACE");
+	if (arg & PR_AUNAME)
+		(void) strcat(str, "|AUNAME");
 
 	if (*str == '|')
 		str++;

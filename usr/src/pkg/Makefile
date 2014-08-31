@@ -133,8 +133,16 @@ PKGPUBLISHER= $(PKGPUBLISHER_REDIST)
 #
 # To get these defaults, manifests should simply refer to $(PKGVERS).
 #
-PKGVERS_COMPONENT= 0.$(RELEASE)
-PKGVERS_BUILTON= $(RELEASE)
+# NOTE WELL:
+# Because of the circular dependencies in the osnet incorporation, it
+# is COMPLETELY AND UTTERLY IMPOSSIBLE TO UPDATE YOUR SYSTEM if your
+# build doesn't have the same leading components.  CHANGE THIS AT YOUR
+# OWN RISK.  If you're not using an existing distro, feel free to change
+# this in your environment.  This setting has no impact on tools that
+# don't examine packaging versions.
+#
+PKGVERS_COMPONENT= 0.5.11
+PKGVERS_BUILTON= 5.11
 PKGVERS_BRANCH= 0.$(ONNV_BUILDNUM)
 PKGVERS= $(PKGVERS_COMPONENT),$(PKGVERS_BUILTON)-$(PKGVERS_BRANCH)
 
@@ -366,6 +374,9 @@ $(PDIR):
 # 16012 and its dependencies are resolved, pkgdepend will always exit
 # with an error.
 #
+# Note that for now pkgdepend relies on uname -s -r == SunOS 5.11.
+# This is a bug inherited via its use of terminatorlib via simpljson.
+#
 $(PDIR)/gendeps: $(DEP_SYNTH_PKGS) $(DEP_PKGS)
 	-$(PKGDEBUG)if [ "$(SUPPRESSPKGDEP)" = "true" ]; then \
 		print "Suppressing dependency resolution"; \
@@ -374,7 +385,7 @@ $(PDIR)/gendeps: $(DEP_SYNTH_PKGS) $(DEP_PKGS)
 		done; \
 	else \
 		print "Resolving dependencies"; \
-		pkgdepend -R $(PKGDEP_RESOLVE_IMAGE) resolve \
+		$(SETALTUNAME) pkgdepend -R $(PKGDEP_RESOLVE_IMAGE) resolve \
 		    -m $(DEP_SYNTH_PKGS) $(DEP_PKGS); \
 		for p in $(DEP_SYNTH_PKGS:%.dep=%) $(DEP_PKGS:%.dep=%); do \
 			if [ "$$(print $$p.metadata.*)" = \
@@ -514,8 +525,8 @@ $(PDIR)/%.dep: $(PDIR)/%.mog
 	@print "Generating dependencies for $(<F)"
 	$(PKGDEBUG)$(RM) $(@)
 	$(PKGDEBUG)if [ ! -f $(@:%.dep=%.nodepend) ]; then \
-		pkgdepend generate -m $(PKGDEP_TOKENS:%=-D %) $(<) \
-			$(PKGROOT) > $(@); \
+		$(SETALTUNAME) pkgdepend generate -m \
+			$(PKGDEP_TOKENS:%=-D %) $(<) $(PKGROOT) > $(@); \
 	else \
 		$(CP) $(<) $(@); \
 	fi

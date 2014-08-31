@@ -25,6 +25,7 @@
 # Copyright 2008, 2010, Richard Lowe
 # Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
 # Copyright 2012 Joshua M. Clulow <josh@sysmgr.org>
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 # Based on the nightly script from the integration folks,
 # Mostly modified and owned by mike_s.
@@ -957,12 +958,13 @@ if [ -z "$RELEASE_DATE" ]; then
 fi
 BUILD_DATE=$(LC_ALL=C date +%Y-%b-%d)
 BASEWSDIR=$(basename $CODEMGR_WS)
-DEV_CM="\"@(#)SunOS Internal Development: $LOGNAME $BUILD_DATE [$BASEWSDIR]\""
+DEV_CM="\"@(#)illumos Development: $LOGNAME $BUILD_DATE [$BASEWSDIR]\""
+RELEASE_MICRO=$(( ($(date +%Y) * 12 + $(date +%m) - 1) - (2010 * 12 + 8 - 1) ))
 
 # we export POUND_SIGN, RELEASE_DATE and DEV_CM to speed up the build process
 # by avoiding repeated shell invocations to evaluate Makefile.master
 # definitions.
-export POUND_SIGN RELEASE_DATE DEV_CM
+export POUND_SIGN RELEASE_DATE DEV_CM RELEASE_MICRO
 
 maketype="distributed"
 if [[ -z "$MAKE" ]]; then

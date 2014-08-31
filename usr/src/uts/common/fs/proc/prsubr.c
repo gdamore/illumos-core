@@ -22,6 +22,7 @@
 /*
  * Copyright (c) 1989, 2010, Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 2013, Joyent, Inc. All rights reserved.
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
  */
 
 /*	Copyright (c) 1984, 1986, 1987, 1988, 1989 AT&T	*/
@@ -969,6 +970,8 @@ prgetlwpstatus32(kthread_t *t, lwpstatus32_t *sp, zone_t *zp)
 		flags |= PR_MSFORK;
 	if (p->p_flag & SVFWAIT)
 		flags |= PR_VFORKP;
+	if (PTOU(p)->u_flags & U_FLAG_ALTUNAME)
+		flags |= PR_AUNAME;
 	sp->pr_flags = flags;
 	if (VSTOPPED(t)) {
 		sp->pr_why   = PR_REQUESTED;
@@ -1201,6 +1204,8 @@ prgetlwpstatus(kthread_t *t, lwpstatus_t *sp, zone_t *zp)
 		flags |= PR_NOSIGCHLD;
 	if (p->p_pidflag & CLDWAITPID)
 		flags |= PR_WAITPID;
+	if (PTOU(p)->u_flags & U_FLAG_ALTUNAME)
+		flags |= PR_AUNAME;
 	sp->pr_flags = flags;
 	if (VSTOPPED(t)) {
 		sp->pr_why   = PR_REQUESTED;

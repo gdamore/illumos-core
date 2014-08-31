@@ -22,6 +22,7 @@
 #
 # Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2012 Nexenta Systems, Inc. All rights reserved.
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 
 set name=pkg.fmri value=pkg:/system/extended-system-utilities@$(PKGVERS)
@@ -67,6 +68,7 @@ $(i386_ONLY)file path=usr/bin/$(ARCH32)/pstack mode=0555
 $(i386_ONLY)file path=usr/bin/$(ARCH32)/pstop mode=0555
 $(i386_ONLY)file path=usr/bin/$(ARCH32)/ptime mode=0555
 $(i386_ONLY)file path=usr/bin/$(ARCH32)/ptree mode=0555
+$(i386_ONLY)file path=usr/bin/$(ARCH32)/puname mode=0555
 $(i386_ONLY)file path=usr/bin/$(ARCH32)/pwait mode=0555
 $(i386_ONLY)file path=usr/bin/$(ARCH32)/pwdx mode=0555
 $(i386_ONLY)file path=usr/bin/$(ARCH32)/sort mode=0555
@@ -87,6 +89,7 @@ file path=usr/bin/$(ARCH64)/pstack mode=0555
 file path=usr/bin/$(ARCH64)/pstop mode=0555
 file path=usr/bin/$(ARCH64)/ptime mode=0555
 file path=usr/bin/$(ARCH64)/ptree mode=0555
+file path=usr/bin/$(ARCH64)/puname mode=0555
 file path=usr/bin/$(ARCH64)/pwait mode=0555
 file path=usr/bin/$(ARCH64)/pwdx mode=0555
 file path=usr/bin/$(ARCH64)/sort mode=0555
@@ -198,6 +201,7 @@ file path=usr/share/man/man1/ppgsz.1
 file path=usr/share/man/man1/ppriv.1
 file path=usr/share/man/man1/preap.1
 file path=usr/share/man/man1/ptree.1
+file path=usr/share/man/man1/puname.1
 file path=usr/share/man/man1/sdiff.1
 file path=usr/share/man/man1/sort.1
 file path=usr/share/man/man1/spell.1
@@ -234,6 +238,7 @@ hardlink path=usr/bin/pstack target=../../usr/lib/isaexec
 hardlink path=usr/bin/pstop target=../../usr/lib/isaexec
 hardlink path=usr/bin/ptime target=../../usr/lib/isaexec
 hardlink path=usr/bin/ptree target=../../usr/lib/isaexec
+hardlink path=usr/bin/puname target=../../usr/lib/isaexec
 hardlink path=usr/bin/pwait target=../../usr/lib/isaexec
 hardlink path=usr/bin/pwdx target=../../usr/lib/isaexec
 hardlink path=usr/bin/sort target=../../usr/lib/isaexec

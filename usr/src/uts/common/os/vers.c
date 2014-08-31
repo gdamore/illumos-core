@@ -20,19 +20,40 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
+ *
  * Copyright (c) 2001 by Sun Microsystems, Inc.
  * All rights reserved.
  */
 
-#pragma ident	"%Z%%M%	%I%	%E% SMI"
-
 /*
- * Template utsname; appropriate values for UTS_RELEASE, UTS_VERSION and
- * UTS_PLATFORM must be passed in by the build process.
+ * Template utsname; appropriate values for UTS_SYSNAME, UTS_RELEASE,
+ * UTS_VERSION and  UTS_PLATFORM must be passed in by the build process.
+ *
+ * The build process can also override ALT_SYSNAME, ALT_VERSION
+ * and ALT_RELEASE to change the fallback legacy uname.  We use these
+ * alternate values for legacy compatibility, but it may have other uses
+ * in the future.
  */
 
 #include <sys/utsname.h>
 
 struct utsname utsname = {
-	"SunOS", "", UTS_RELEASE, UTS_VERSION, UTS_PLATFORM
+	UTS_SYSNAME, "", UTS_RELEASE, UTS_VERSION, UTS_PLATFORM
 };
+
+#ifndef	ALT_SYSNAME
+#define	ALT_SYSNAME	"SunOS"
+#endif
+
+#ifndef	ALT_RELEASE
+#define	ALT_RELEASE	"5.11"
+#endif
+
+#ifndef	ALT_VERSION
+#define	ALT_VERSION	"alternate-uname"
+#endif
+
+const char *alt_sysname	= ALT_SYSNAME;
+const char *alt_version = ALT_VERSION;
+const char *alt_release	= ALT_RELEASE;

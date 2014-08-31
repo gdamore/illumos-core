@@ -25,6 +25,7 @@
  */
 /*
  * Copyright 2012 DEY Storage Systems, Inc.  All rights reserved.
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
  */
 
 #ifndef _SYS_PROCFS_H
@@ -217,6 +218,7 @@ typedef struct pstatus {
 #define	PR_BPTADJ  0x02000000	/* breakpoint trap pc adjustment is in effect */
 #define	PR_PTRACE  0x04000000	/* ptrace-compatibility mode is in effect */
 #define	PR_MSFORK  0x08000000	/* micro-state accounting inherited on fork */
+#define	PR_AUNAME  0x10000000	/* alternate utsname in effect */
 
 /*
  * See <sys/procfs_isa.h> for possible values of pr_dmodel.

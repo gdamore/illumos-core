@@ -1,0 +1,102 @@
+.\"
+.\" This file and its contents are supplied under the terms of the
+.\" Common Development and Distribution License ("CDDL"), version 1.0.
+.\" You may only use this file in accordance with the terms of version
+.\" 1.0 of the CDDL.
+.\"
+.\" A full copy of the text of the CDDL should have accompanied this
+.\" source.  A copy of the CDDL is also available via the Internet at
+.\" http://www.illumos.org/license/CDDL.
+.\"
+.\"
+.\" Copyright 2014 Garrett D'Amore <garrett@damore.org>
+.\"
+.Dd Aug 31, 2014
+.Dt PUNAME 1
+.Os
+.Sh NAME
+.Nm puname
+.Nd set or clear alternate uname for process
+.Sh SYNOPSIS
+.Nm
+.Op Fl S | U
+.Op Fl v
+.Fl p Ar pid
+.Nm
+.Op Fl S | U
+.Op Fl v
+.Ar command
+.Op arg Ns \&...
+.
+.Sh DESCRIPTION
+.
+The
+.Nm
+command is used to query, set or clear the process flag that drives
+the use of an alternate set of values used to report the system identity
+in response to the
+.Xr uname 2
+and
+.Xr sysinfo 2
+system calls.
+.Lp
+The use of an alternate uname affects the
+.Vt sysname ,
+.Vt release ,
+and
+.Vt version
+fields of the
+.Vt utsname
+structure.  See
+.Xr utsname 3HEAD
+and
+.Xr uname 2 .
+It also affects the
+.Dv SI_SYSNAME ,
+.Dv SI_RELEASE ,
+and
+.Dv SI_VERSION
+commands used with
+.Xr sysinfo 2 .
+.
+.Sh OPTIONS
+.
+The following options are supported:
+.Bl -tag -width indent
+.It Fl S
+Sets the use of the alternate system identity for the process.  The
+system will report alternate identity information to the process, and
+any children subsequently created.
+.It Fl U
+Clears the use of the alternate system identity for the process.  The
+system will report the primary identity information to the process, and
+any children subsequently created.
+.It Fl v
+Report the setting of the flag for the process to the standard error
+stream.
+.El
+.
+.Sh OPERANDS
+.
+The following operands are supported:
+.Bl -tag -width indent
+.It Ar pid
+The process id of an existing process to modify.
+.It Ar command Op arg Ns ...
+A command to execute, under the specified setting.
+.El
+.
+.Sh EXIT STATUS
+.
+.Ex -std
+.
+.Sh INTERFACE STABILITY
+.
+.Sy Uncommitted .
+.
+.Sh SEE ALSO
+.Xr proc 1 ,
+.Xr sysinfo 2 ,
+.Xr uname 2 ,
+.Xr utsname 3HEAD ,
+.Xr proc 4

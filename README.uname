@@ -1,0 +1,48 @@
+
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+
+This tree has the changes to implement an illumos-specific uname.
+
+Specifically, uname -s will return "illumos", and uname -r will return
+0.9.x (where x is an integer number of months since August 2010.)
+
+This is likely to cause some challenges.
+
+You can override the value back to legacy for a process and its children
+with puname(1). In this case it will revert to SunOS 5.11.  This is a
+workaround until software is updated.  Fix the software if you can.
+
+	- Garrett
+
+
+  BUSTED THINGS
+#################
+
+* lint - checks for Solaris 7 or newer
+  - lint defined to use $(SETALTUNAME)
+
+* cc (CC?) - checks for Solaris 7 or newer when building 64-bit
+  - the libc symbols test suite checks this and handles it
+  - the cw program is left alone, we use gcc and don't shadow compile
+  - use puname(1) with make or nightly if this causes too much grief
+
+* pkgdepend - vendor-packages/terminatorlib/cwd.py
+  - usr/src/pkg/Makefile edited so pkgdepend uses $(SETALTUNAME). (see #61)
+  - error is at /usr/lib/python2.6/vendor-packages/terminatorlib/cwd.py
+
+* hald - hald sets HAL_UNAME_S, and fails if it doesn't recognize it (SunOS)
+  - this causes an apparent hang in X
+  - hald will be ejected from this repo in the future (see #60)
+
+* DTrace test suite - printf/tst.str.d
+  - this is just a known answer test that expects sysname to be SunOS
+  - leaving this unfixed for now - not a runtime problem (see #62)

@@ -20,6 +20,8 @@
  */
 
 /*
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
+ *
  * Copyright (c) 2006, 2010, Oracle and/or its affiliates. All rights reserved.
  */
 
@@ -36,6 +38,7 @@
 #include <sys/syscall.h>
 #include <sys/systm.h>
 #include <sys/utsname.h>
+#include <sys/systeminfo.h>
 #include <fcntl.h>
 
 #include <sn1_brand.h>
@@ -59,21 +62,64 @@
  *   by default instead of native zones.
  */
 
+static const char *alt_sysname = "SunOS";
+static const char *alt_release = "5.11";
+static const char *alt_version = "synthetic";
+
 static long
 sn1_uname(sysret_t *rv, uintptr_t p1)
 {
 	struct utsname	un, *unp = (struct utsname *)p1;
-	int		rev, err;
+	int		err;
 
 	if ((err = __systemcall(rv, SYS_uname + 1024, &un)) != 0)
 		return (err);
 
-	rev = atoi(&un.release[2]);
-	brand_assert(rev >= 10);
-	(void) sprintf(un.release, "5.%d", rev - 1);
+	/*
+	 * Rather than "rollback" like this used to, we leave the sn1
+	 * running the old "SunOS 5.11" uname.
+	 */
+	(void) snprintf(un.sysname, sizeof (un.sysname), alt_sysname);
+	(void) snprintf(un.release, sizeof (un.release), alt_release);
+	(void) snprintf(un.version, sizeof (un.version), alt_version);
 
 	if (uucopy(&un, unp, sizeof (un)) != 0)
 		return (EFAULT);
+	return (0);
+}
+
+static int
+sn1_sysinfo(sysret_t *rv, int command, char *buf, long count)
+{
+	const char *value;
+	int len;
+
+	switch (command) {
+	case SI_RELEASE:
+		value = alt_release;
+		break;
+	case SI_SYSNAME:
+		value = alt_sysname;
+		break;
+	case SI_VERSION:
+		value = alt_version;
+		break;
+	default:
+		return (__systemcall(rv, SYS_systeminfo + 1024,
+		    command, buf, count));
+	}
+	len = strlen(value);
+	if (count > 0) {
+		if (brand_uucopystr(value, buf, count) != 0) {
+			return (EFAULT);
+		}
+		if ((len > count) &&
+		    (brand_uucopy("\0", buf + (count - 1), 1) != 0)) {
+			return (EFAULT);
+		}
+	}
+	rv->sys_rval1 = len;
+	rv->sys_rval2 = 0;
 	return (0);
 }
 
@@ -271,7 +317,7 @@ brand_sysent_table_t brand_sysent_table[] = {
 	NOSYS,					/* 136 */
 	NOSYS,					/* 137 */
 	NOSYS,					/* 138 */
-	NOSYS,					/* 139 */
+	EMULATE(sn1_sysinfo, 3 | RV_DEFAULT),	/* 139 */
 	NOSYS,					/* 140 */
 	NOSYS,					/* 141 */
 	NOSYS,					/* 142 */
