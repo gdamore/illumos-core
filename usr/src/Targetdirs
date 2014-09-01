@@ -60,8 +60,6 @@ sparc_DIRS=				\
 sparc_64ONLY= $(POUND_SIGN)
 64ONLY=  $($(MACH)_64ONLY)
 
-$(64ONLY) MACH32_DIRS=/usr/ucb/$(MACH32)
-
 DIRS= \
 	/boot \
 	/boot/solaris \
@@ -208,7 +206,6 @@ DIRS= \
 	/system/object \
 	/tmp \
 	/usr  \
-	/usr/4lib \
 	/usr/ast \
 	/usr/ast/bin \
 	/usr/bin \
@@ -321,7 +318,6 @@ DIRS= \
 	/usr/share/lib/xml/dtd \
 	/usr/share/man \
 	/usr/share/man/man1 \
-	/usr/share/man/man1b \
 	/usr/share/man/man1c \
 	/usr/share/man/man1m \
 	/usr/share/man/man2 \
@@ -403,9 +399,7 @@ DIRS= \
 	/usr/share/src \
 	/usr/snadm \
 	/usr/snadm/lib \
-	/usr/ucb \
 	$(MACH32_DIRS) \
-	/usr/ucblib \
 	/usr/xpg4 \
 	/usr/xpg4/bin \
 	/usr/xpg4/include \
@@ -542,8 +536,6 @@ DIRS64= \
 	/usr/lib/smbsrv/$(MACH64) \
 	/usr/lib/abi/$(MACH64) \
 	/usr/sbin/$(MACH64) \
-	/usr/ucb/$(MACH64) \
-	/usr/ucblib/$(MACH64) \
 	/usr/xpg4/lib/$(MACH64) \
 	/var/ld/$(MACH64)
 
@@ -581,7 +573,6 @@ SYM.DIRS= \
 	/usr/pub \
 	/usr/src \
 	/usr/tmp \
-	/usr/ucblib/32 \
 	/var/ld/32
 
 sparc_SYM.DIRS64=
@@ -601,8 +592,7 @@ SYM.DIRS64= \
 	/usr/lib/secure/64 \
 	/usr/lib/security/64 \
 	/usr/xpg4/lib/64 \
-	/var/ld/64 \
-	/usr/ucblib/64
+	/var/ld/64
 
 # prepend the ROOT prefix
 
@@ -692,7 +682,6 @@ $(ROOT)/usr/lib/link_audit/32:=		LINKDEST=.
 $(ROOT)/usr/lib/secure/32:=		LINKDEST=.
 $(ROOT)/usr/ccs/lib/link_audit:=	LINKDEST=../../lib/link_audit
 $(ROOT)/var/ld/32:=			LINKDEST=.
-$(ROOT)/usr/ucblib/32:=			LINKDEST=.
 
 
 $(BUILD64) $(ROOT)/lib/64:=		LINKDEST=$(MACH64)
@@ -709,7 +698,6 @@ $(BUILD64) $(ROOT)/usr/lib/secure/64:=	LINKDEST=$(MACH64)
 $(BUILD64) $(ROOT)/usr/lib/security/64:=	LINKDEST=$(MACH64)
 $(BUILD64) $(ROOT)/usr/xpg4/lib/64:=	LINKDEST=$(MACH64)
 $(BUILD64) $(ROOT)/var/ld/64:=		LINKDEST=$(MACH64)
-$(BUILD64) $(ROOT)/usr/ucblib/64:=	LINKDEST=$(MACH64)
 
 #
 # Installing a directory symlink calls for overriding INS.dir to install

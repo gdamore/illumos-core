@@ -18,6 +18,8 @@
 #
 # CDDL HEADER END
 #
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
+#
 # Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
@@ -35,8 +37,6 @@ FILEMODE= 0555
 all: $(PROG) 
 
 install: all $(ROOTUSRSBINPROG)
-	-$(RM) $(ROOTETCPROG)
-	-$(SYMLINK) ../usr/sbin/$(PROG) $(ROOTETCPROG)
 
 clean:
 

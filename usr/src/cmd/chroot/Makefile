@@ -20,7 +20,7 @@
 # CDDL HEADER END
 #
 #
-#ident	"%Z%%M%	%I%	%E% SMI"
+# COpyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 # Copyright (c) 1989 by Sun Microsystems, Inc.
 #
@@ -34,8 +34,6 @@ include ../Makefile.cmd
 all: $(PROG) 
 
 install: all $(ROOTUSRSBINPROG)
-	$(RM) $(ROOTETCPROG)
-	-$(SYMLINK) ../usr/sbin/$(PROG) $(ROOTETCPROG)
 
 clean:
 

@@ -21,9 +21,9 @@
 
 #
 # Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 
-set name=pkg.fmri value=pkg:/SUNWucbt@0.5.11,5.11-0.133
-set name=pkg.renamed value=true
+set name=pkg.fmri value=pkg:/SUNWucbt@$(PKGVERS)
+set name=pkg.obsolete value=true
 set name=variant.arch value=$(ARCH)
-depend fmri=pkg:/developer/apptrace/ucblib@0.5.11,5.11-0.133 type=require

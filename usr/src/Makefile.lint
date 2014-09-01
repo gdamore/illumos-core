@@ -182,6 +182,7 @@ COMMON_SUBDIRS = \
 	cmd/ldapcachemgr \
 	cmd/line \
 	cmd/link \
+	cmd/listusers \
 	cmd/locator \
 	cmd/localedef \
 	cmd/lockstat \
@@ -233,6 +234,7 @@ COMMON_SUBDIRS = \
 	cmd/pools \
 	cmd/power \
 	cmd/powertop \
+	cmd/printenv \
 	cmd/printf \
 	cmd/latencytop \
 	cmd/ppgsz \
@@ -464,16 +466,7 @@ COMMON_SUBDIRS = \
 	lib/udapl \
 	lib/watchmalloc \
 	psm \
-	test \
-	ucbcmd/biff \
-	ucbcmd/echo \
-	ucbcmd/groups \
-	ucbcmd/mkstr \
-	ucbcmd/printenv \
-	ucbcmd/sum \
-	ucbcmd/test \
-	ucbcmd/users \
-	ucbcmd/whoami
+	test
 
 i386_SUBDIRS= \
 	cmd/acpihpd \

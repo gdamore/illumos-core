@@ -20,6 +20,8 @@
 #
 
 #
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
+#
 # Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
@@ -40,9 +42,6 @@ ROOTLIBLP=	$(ROOTLIB)/lp
 ROOTBINLP=	$(ROOTBIN)/lp
 ROOTLIBLPPOST =	$(ROOTLIBLP)/postscript
 ROOTLIBLPLOCL =	$(ROOTLIBLP)/local
-
-ROOTUSRUCB=	$(ROOT)/usr/ucb
-
 
 #
 # $(EMODES): Modes for executables
@@ -109,13 +108,11 @@ _msg:=		TARGET= catalog
 ROOTLIBLPPROG=	$(PROG:%=$(ROOTLIBLP)/%)
 ROOTBINLPPROG=	$(PROG:%=$(ROOTBINLP)/%)
 ROOTETCLPPROG=	$(PROG:%=$(ROOTETCLP)/%)
-ROOTUSRUCBPROG=	$(PROG:%=$(ROOTUSRUCB)/%)
 ROOTLIBLPPOSTPROG=	$(PROG:%=$(ROOTLIBLPPOST)/%)
 ROOTLIBLPLOCLPROG=	$(PROG:%=$(ROOTLIBLPLOCL)/%)
 
 $(ROOTLIBLP)/%	\
 $(ROOTBINLP)/%	\
 $(ROOTETCLP)/%	\
-$(ROOTUSRUCB)/%	\
 $(ROOTLIBLPPOST)/% $(ROOTLIBLPLOCL)/%:	%
 		$(INS.file)

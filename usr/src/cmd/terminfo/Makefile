@@ -22,6 +22,7 @@
 # Use is subject to license terms.
 #
 # Copyright 2011 Nexenta Systems, Inc. All rights reserved.
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 
 PROG=		terminfo
@@ -40,8 +41,6 @@ ROOTTABDIR	= $(ROOTSHARELIBDIR)/tabset
 ROOTTERMDIR	= $(ROOTSHARELIBDIR)/terminfo
 DIRS		= $(ROOTTERMDIR) $(ROOTTABDIR)
 
-ROOTSYMLINK	= $(ROOTETC)/termcap
-RELROOTETC	= ../usr/share/lib
 ROOTLIBSYMLINK	= $(ROOTLIB)/tabset
 RELROOTLIB	= ../share/lib
 
@@ -66,9 +65,6 @@ $(ROOTSHARELIBDIR)/termcap:
 install:	all $(ROOTTERMDIR) $(ROOTTERMDIR)/s/sun $(ROOTTABDIR) \
 		$(ROOTTABSET) $(ROOTSHARELIBDIR)/termcap  $(ROOTSYMLINK) \
 		$(ROOTLIBSYMLINK)
-
-$(ROOTSYMLINK):
-		$(RM) $@; $(SYMLINK) $(RELROOTETC)/termcap $@
 
 $(ROOTLIBSYMLINK):
 		$(RM) $@; $(SYMLINK) $(RELROOTLIB)/tabset $@

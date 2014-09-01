@@ -304,7 +304,6 @@ file path=usr/lib/locale/C/LC_MESSAGES/SUNW_OST_OSCMD.po group=sys
 file path=usr/lib/locale/C/LC_MESSAGES/SUNW_OST_OSLIB.po group=sys
 file path=usr/lib/locale/C/LC_MESSAGES/SUNW_OST_SGS.po group=sys
 file path=usr/lib/locale/C/LC_MESSAGES/SUNW_OST_SYSOSPAM.po group=sys
-file path=usr/lib/locale/C/LC_MESSAGES/SUNW_OST_UCBCMD.po group=sys
 file path=usr/lib/locale/C/LC_MESSAGES/SUNW_OST_ZONEINFO.po group=sys
 file path=usr/lib/locale/C/LC_MESSAGES/ZFS.po
 file path=usr/lib/locale/C/LC_MESSAGES/libast group=sys

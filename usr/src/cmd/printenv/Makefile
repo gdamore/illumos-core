@@ -21,37 +21,21 @@
 #
 #
 # Copyright 2014 Garrett D'Amore <garrett@damore.org>
-#
-# Copyright 2004 Sun Microsystems, Inc.  All rights reserved.
-# Use is subject to license terms.
+# Copyright (c) 1989 by Sun Microsystems, Inc.
 #
 
-PROG=		id
-XPG4PROG=	id
-LINKS=		whoami
+PROG= printenv
 
 include ../Makefile.cmd
 
-ROOTLINKS=$(LINKS:%=$(ROOTBIN)/%)
-
 .KEEP_STATE:
 
-CFLAGS +=	$(CCVERBOSE)
-LDLIBS += -lproject
-$(XPG4) := CFLAGS += -DXPG4
+all: $(PROG) 
 
-all: $(PROG) $(XPG4) $(LINKS)
-
-install: all $(ROOTPROG) $(ROOTXPG4PROG) $(ROOTLINKS)
+install: all $(ROOTPROG)
 
 clean:
 
 lint:	lint_PROG
-
-$(LINKS): $(PROG)
-	@$(RM) $@; $(LN) $(PROG) $@
-
-$(ROOTLINKS):	$(ROOTPROG)
-	@$(RM) $@; $(LN) $(ROOTPROG) $@
 
 include ../Makefile.targ

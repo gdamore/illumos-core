@@ -1219,7 +1219,6 @@ file path=usr/lib/inet/inetd mode=0555
 file path=usr/lib/intrd mode=0555
 file path=usr/lib/isaexec mode=0555
 file path=usr/lib/kssladm mode=0555
-$(sparc_ONLY)file path=usr/lib/ld.so
 file path=usr/lib/libshare.so.1
 file path=usr/lib/makekey mode=0555
 file path=usr/lib/more.help
@@ -1590,6 +1589,7 @@ hardlink path=usr/bin/vedit target=../has/bin/edit
 hardlink path=usr/bin/w target=../../usr/lib/isaexec
 hardlink path=usr/bin/wait target=../../usr/bin/alias
 hardlink path=usr/bin/wc target=../../usr/bin/alias
+hardlink path=usr/bin/whoami target=../../usr/bin/id
 hardlink path=usr/has/bin/ex target=edit
 hardlink path=usr/has/bin/pfsh target=../../bin/pfexec
 hardlink path=usr/has/bin/vedit target=edit

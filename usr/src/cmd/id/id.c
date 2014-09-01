@@ -19,11 +19,11 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
+ *
  * Copyright 2007 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
-#pragma ident	"%Z%%M%	%I%	%E% SMI"
 
 /*	Copyright (c) 1984, 1986, 1987, 1988, 1989 AT&T	*/
 /*	  All Rights Reserved  	*/
@@ -70,7 +70,7 @@ main(int argc, char *argv[])
 {
 	gid_t *idp;
 	uid_t uid, euid;
-	gid_t gid, egid, prgid;
+	gid_t gid, egid, prgid = 0;
 	int c, aflag = 0, project_flag = 0;
 	struct passwd *pwp;
 	int i, j;
@@ -78,14 +78,25 @@ main(int argc, char *argv[])
 	gid_t *groupids = alloca(groupmax * sizeof (gid_t));
 	struct group *gr;
 	char *user = NULL;
+	const char *optflags;
 
 	(void) setlocale(LC_ALL, "");
 
 #if !defined(TEXT_DOMAIN)	/* Should be defined by cc -D */
 #define	TEXT_DOMAIN "SYS_TEST"
 #endif
+
 	(void) textdomain(TEXT_DOMAIN);
-	while ((c = getopt(argc, argv, "Ggunarp")) != EOF) {
+
+	if (((i = strlen(argv[0])) > 6) &&
+	    (strcmp(argv[0]+i-6, "whoami") == 0)) {
+		mode = USER;
+		nflag++;
+		argc = 1;	/* no options */
+	} else {
+		optflags = "Ggunarp";
+	}
+	while ((c = getopt(argc, argv, optflags)) != EOF) {
 		switch (c) {
 			case 'G':
 				if (mode != CURR)
@@ -136,15 +147,15 @@ main(int argc, char *argv[])
 	/* -a and -p cannot be combined with -[Ggu] */
 
 	if ((mode == CURR && (nflag || rflag)) ||
-		(mode == ALLGROUPS && rflag) ||
-		(argc != 1 && argc != 2) ||
-		(mode != CURR && (project_flag || aflag)))
+	    (mode == ALLGROUPS && rflag) ||
+	    (argc != 1 && argc != 2) ||
+	    (mode != CURR && (project_flag || aflag)))
 		return (usage());
 	if (argc == 2) {
 		if ((pwp = getpwnam(argv[1])) == PWNULL) {
 			(void) fprintf(stderr,
-				gettext("id: invalid user name: \"%s\"\n"),
-					argv[1]);
+			    gettext("id: invalid user name: \"%s\"\n"),
+			    argv[1]);
 			return (1);
 		}
 		user = argv[1];
@@ -205,9 +216,9 @@ main(int argc, char *argv[])
 				(void) printf(" groups=");
 				for (idp = groupids; i--; idp++) {
 					(void) printf("%u", *idp);
-					if (gr = getgrgid(*idp))
+					if ((gr = getgrgid(*idp)) != NULL)
 						(void) printf("(%s)",
-							gr->gr_name);
+						    gr->gr_name);
 					if (i)
 						(void) putchar(',');
 				}
@@ -243,9 +254,9 @@ main(int argc, char *argv[])
 					if (*idp == egid)
 						continue;
 					(void) printf("%u", *idp);
-					if (gr = getgrgid(*idp))
+					if ((gr = getgrgid(*idp)) != NULL)
 						(void) printf("(%s)",
-							gr->gr_name);
+						    gr->gr_name);
 					if (i)
 						(void) putchar(',');
 				}
@@ -347,6 +358,9 @@ prid(TYPE how, uid_t id)
 			s = " egid";
 			break;
 
+		default:
+			s = NULL;
+			break;
 	}
 	if (s != NULL)
 		(void) printf("%s=", s);

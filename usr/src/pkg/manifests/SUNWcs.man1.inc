@@ -12,6 +12,7 @@
 #
 # Copyright 2011, Richard Lowe
 # Copyright 2012 Nexenta Systems, Inc. All rights reserved.
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 
 file path=usr/share/man/man1/Intro.1
@@ -205,6 +206,7 @@ file path=usr/share/man/man1/wait.1
 file path=usr/share/man/man1/wc.1
 file path=usr/share/man/man1/which.1
 file path=usr/share/man/man1/who.1
+file path=usr/share/man/man1/whoami.1
 file path=usr/share/man/man1/write.1
 file path=usr/share/man/man1/xargs.1
 file path=usr/share/man/man1/xstr.1

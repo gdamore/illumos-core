@@ -233,6 +233,7 @@ COMMON_SUBDIRS=		\
 	link		\
 	dlmgmtd		\
 	listen		\
+	listusers	\
 	loadkeys	\
 	locale		\
 	localedef	\
@@ -314,6 +315,7 @@ COMMON_SUBDIRS=		\
 	pr		\
 	prctl		\
 	print		\
+	printenv	\
 	printf		\
 	priocntl	\
 	profiles	\

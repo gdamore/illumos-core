@@ -1,4 +1,6 @@
 #
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
+#
 # Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
@@ -64,6 +66,7 @@ $(PROG): $(OBJS)
 install: all $(DIRS) $(ROOTTZSRCD) $(ROOTTZTABD) $(ROOTUSRSBINPROG) \
 		$(ROOTLIBTZSRCFILES) $(ROOTLIBTZTABFILES) $(ROOTKSHPROG)
 	$(NPROG) -d $(ROOTTZD) $(TZFILES)
+	$(NPROG) -d $(ROOTTZD) -p US/Eastern
 
 $(NPROG): $(NATIVE) $(NOBJS)
 	$(NATIVECC) -o $@ $(NOBJS)

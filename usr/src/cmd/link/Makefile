@@ -45,8 +45,6 @@ $(PROG) $(XPG4): $$(OBJS)
 	$(POST_PROCESS)
 
 install: all $(ROOTUSRSBINPROG) $(ROOTXPG4PROG)
-	-$(RM) $(ROOTETCPROG)
-	-$(SYMLINK) ../usr/sbin/$(PROG) $(ROOTETCPROG)
 
 values-xpg4.o: ../../lib/common/common/values-xpg4.c
 	$(COMPILE.c) -o $@ ../../lib/common/common/values-xpg4.c

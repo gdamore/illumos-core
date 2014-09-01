@@ -292,6 +292,7 @@ MANFILES=	acctcom.1			\
 	 	preap.1				\
 	 	prex.1				\
 	 	print.1				\
+	 	printenv.1			\
 	 	printf.1			\
 	 	priocntl.1			\
 	 	proc.1				\
@@ -401,6 +402,7 @@ MANFILES=	acctcom.1			\
 	 	units.1				\
 	 	unix2dos.1			\
 	 	uptime.1			\
+	 	users.1				\
 	 	vacation.1			\
 	 	vgrind.1			\
 	 	volcheck.1			\
@@ -410,6 +412,7 @@ MANFILES=	acctcom.1			\
 	 	wc.1				\
 	 	which.1				\
 	 	who.1				\
+	 	whoami.1			\
 	 	whocalls.1			\
 	 	whois.1				\
 	 	write.1				\
