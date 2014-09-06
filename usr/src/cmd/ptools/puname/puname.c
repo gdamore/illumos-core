@@ -123,7 +123,7 @@ main(int argc, char **argv)
 				return (1);
 			}
 			if ((!WIFEXITED(gret)) || (WEXITSTATUS(gret) != 0)) {
-				return(1);
+				return (1);
 			}
 			(void) execvp(argv[0], argv);
 			(void) fprintf(stderr, "%s: cannot exec %s: %s\n",
@@ -134,7 +134,7 @@ main(int argc, char **argv)
 	}
 	if ((Pr = proc_arg_grab(pidarg, PR_ARG_PIDS, Fflag, &gret)) == NULL) {
 		(void) fprintf(stderr, "%s: cannot examine %s: %s\n",
-			    command, pidarg, Pgrab_error(gret));
+		    command, pidarg, Pgrab_error(gret));
 		return (1);
 	}
 	pid = Pstatus(Pr)->pr_pid;
