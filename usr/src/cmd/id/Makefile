@@ -40,7 +40,7 @@ CFLAGS +=	$(CCVERBOSE)
 LDLIBS += -lproject
 $(XPG4) := CFLAGS += -DXPG4
 
-all: $(PROG) $(XPG4) $(LINKS)
+all: $(PROG)
 
 install: all $(ROOTPROG) $(ROOTXPG4PROG) $(ROOTLINKS)
 
@@ -48,10 +48,10 @@ clean:
 
 lint:	lint_PROG
 
-$(LINKS): $(PROG)
-	@$(RM) $@; $(LN) $(PROG) $@
-
 $(ROOTLINKS):	$(ROOTPROG)
 	@$(RM) $@; $(LN) $(ROOTPROG) $@
+
+$(ROOTXPG4PROG):
+	@$(RM) $@; $(LN) -s ../../bin/$(XPG4PROG) $@
 
 include ../Makefile.targ

@@ -204,65 +204,30 @@ main(int argc, char *argv[])
 		if (gid != egid)
 			prid(EGID, egid);
 
-		if (aflag) {
-			if (user)
-				i = getusergroups(groupmax, groupids, user,
-				    prgid);
-			else
-				i = getgroups(groupmax, groupids);
-			if (i == -1)
-				perror("getgroups");
-			else if (i > 0) {
-				(void) printf(" groups=");
-				for (idp = groupids; i--; idp++) {
-					(void) printf("%u", *idp);
-					if ((gr = getgrgid(*idp)) != NULL)
-						(void) printf("(%s)",
-						    gr->gr_name);
-					if (i)
-						(void) putchar(',');
-				}
+		if (user)
+			i = getusergroups(groupmax, groupids, user, prgid);
+		else
+			i = getgroups(groupmax, groupids);
+		if (i == -1)
+			perror("getgroups");
+		else if (i > (aflag ? 0 : 1)) {
+			/*
+			 * POSIX says we do not duplicate the the effective
+			 * group id in the list.  However, if -a is given,
+			 * then we display it in full detail.
+			 */
+			(void) printf(" groups=");
+			for (idp = groupids; i--; idp++) {
+				if ((!aflag) && (*idp == egid))
+					continue;
+				(void) printf("%u", *idp);
+				if ((gr = getgrgid(*idp)) != NULL)
+					(void) printf("(%s)", gr->gr_name);
+				if (i)
+					(void) putchar(',');
 			}
 		}
-#ifdef XPG4
-		/*
-		 * POSIX requires us to show all supplementary groups
-		 * groups other than the effective group already listed.
-		 *
-		 * This differs from -a above, because -a always shows
-		 * all groups including the effective group in the group=
-		 * line.
-		 *
-		 * It would be simpler if SunOS could just adopt this
-		 * POSIX behavior, as it is so incredibly close to the
-		 * the norm already.
-		 *
-		 * Then the magic -a flag could just indicate whether or
-		 * not we are suppressing the effective group id.
-		 */
-		else {
-			if (user)
-				i = getusergroups(groupmax, groupids, user,
-				    prgid);
-			else
-				i = getgroups(groupmax, groupids);
-			if (i == -1)
-				perror("getgroups");
-			else if (i > 1) {
-				(void) printf(" groups=");
-				for (idp = groupids; i--; idp++) {
-					if (*idp == egid)
-						continue;
-					(void) printf("%u", *idp);
-					if ((gr = getgrgid(*idp)) != NULL)
-						(void) printf("(%s)",
-						    gr->gr_name);
-					if (i)
-						(void) putchar(',');
-				}
-			}
-		}
-#endif
+
 		if (project_flag) {
 			struct project proj;
 			void *projbuf;
