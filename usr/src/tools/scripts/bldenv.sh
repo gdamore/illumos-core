@@ -230,7 +230,7 @@ shift
 # must match the getopts in nightly.sh
 OPTIND=1
 NIGHTLY_OPTIONS="-${NIGHTLY_OPTIONS#-}"
-while getopts '+0ABCDdFfGIilMmNnpRrtUuwW' FLAG "$NIGHTLY_OPTIONS"
+while getopts '+0ABCDdFfGIilMmNnpRrtUuwW' FLAG $NIGHTLY_OPTIONS
 do
 	case "$FLAG" in
 	  t)	flags.t=true  ;;
