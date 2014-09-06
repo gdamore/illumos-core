@@ -128,7 +128,6 @@ file path=usr/share/man/man1/mach.1
 file path=usr/share/man/man1/machid.1
 file path=usr/share/man/man1/mail.1
 file path=usr/share/man/man1/mailx.1
-file path=usr/share/man/man1/makekey.1
 file path=usr/share/man/man1/mesg.1
 file path=usr/share/man/man1/mkdir.1
 file path=usr/share/man/man1/mktemp.1

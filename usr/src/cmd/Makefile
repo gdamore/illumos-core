@@ -252,7 +252,6 @@ COMMON_SUBDIRS=		\
 	machid		\
 	mail		\
 	mailx		\
-	makekey		\
 	man		\
 	mandoc		\
 	mdb		\
