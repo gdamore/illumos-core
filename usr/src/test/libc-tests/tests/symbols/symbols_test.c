@@ -62,7 +62,12 @@ const char *compilers[] = {
 	NULL
 };
 
-const char *compiler = NULL;
+const char *puname[] = {
+	"",
+	"/usr/bin/puname -S "
+};
+
+char *compiler = NULL;
 const char *c89flags = NULL;
 const char *c99flags = NULL;
 
@@ -656,22 +661,23 @@ find_compiler(void)
 	(void) fprintf(cf, "#endif\n}\n");
 	(void) fclose(cf);
 
-	for (i = 0; compilers[i] != NULL; i++) {
+	for (i = 0; compilers[i/2] != NULL; i++) {
 		char cmd[256];
 		int rv;
 
-		test_debugf(t, "trying %s", compilers[i]);
 		(void) snprintf(cmd, sizeof (cmd),
-		    "%s %s -o %s >/dev/null 2>&1",
-		    compilers[i], cfile, ofile);
+		    "%s%s %s %s -o %s >/dev/null 2>&1",
+		    puname[i%2], compilers[i/2], MFLAG, cfile, ofile);
+		test_debugf(t, "trying %s", cmd);
 		rv = system(cmd);
 
-		if (rv != 0) {
+		test_debugf(t, "result: %d", rv);
+
+		if ((rv < 0) || !WIFEXITED(rv) || WEXITSTATUS(rv) != 0)
 			continue;
-		}
 
 		rv = system(ofile);
-		if (WIFEXITED(rv)) {
+		if (rv >= 0 && WIFEXITED(rv)) {
 			rv = WEXITSTATUS(rv);
 		} else {
 			rv = -1;
@@ -680,31 +686,31 @@ find_compiler(void)
 		switch (rv) {
 		case 51:	/* STUDIO */
 			test_debugf(t, "Found Studio C");
-			compiler = compilers[i];
 			c89flags = "-Xc -errwarn=%all -v -xc99=%none " MFLAG;
 			c99flags = "-Xc -errwarn=%all -v -xc99=%all " MFLAG;
 			if (extra_debug) {
-				test_debugf(t, "compiler: %s", compiler);
 				test_debugf(t, "c89flags: %s", c89flags);
 				test_debugf(t, "c99flags: %s", c99flags);
 			}
 			test_passed(t);
-			return;
+			break;
 		case 52:	/* GCC */
 			test_debugf(t, "Found GNU C");
-			compiler = compilers[i];
 			c89flags = "-Wall -Werror -std=c89 " MFLAG;
 			c99flags = "-Wall -Werror -std=c99 " MFLAG;
 			if (extra_debug) {
-				test_debugf(t, "compiler: %s", compiler);
 				test_debugf(t, "c89flags: %s", c89flags);
 				test_debugf(t, "c99flags: %s", c99flags);
 			}
 			test_passed(t);
-			return;
+			break;
 		default:
 			continue;
 		}
+		(void) asprintf(&compiler,
+		    "%s%s", puname[i%2], compilers[i/2]);
+		test_debugf(t, "compiler: %s", compiler);
+		return;
 	}
 	test_failed(t, "No compiler found.");
 }

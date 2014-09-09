@@ -2,8 +2,9 @@
 # CDDL HEADER START
 #
 # The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
+# Common Development and Distribution License, Version 1.0 only
+# (the "License").  You may not use this file except in compliance
+# with the License.
 #
 # You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
 # or http://www.opensolaris.org/os/licensing.
@@ -19,32 +20,22 @@
 # CDDL HEADER END
 #
 #
-# Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
-# Use is subject to license terms.
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
+# Copyright (c) 1989 by Sun Microsystems, Inc.
 #
 
-PROG= listusers
-OBJS= users.o
-SRCS= $(OBJS:%.o=%.c)
+PROG= users
 
 include ../Makefile.cmd
 
-CERRWARN += -_gcc=-Wno-parentheses
-CERRWARN += -_gcc=-Wno-uninitialized
-
 .KEEP_STATE:
 
-all: $(PROG)
-
-$(PROG): $(OBJS)
-	$(LINK.c) $(OBJS) -o $@ $(LDLIBS)
-	$(POST_PROCESS)
+all: $(PROG) 
 
 install: all $(ROOTPROG)
 
 clean:
-	$(RM) $(OBJS)
 
-lint: lint_SRCS
+lint:	lint_PROG
 
 include ../Makefile.targ

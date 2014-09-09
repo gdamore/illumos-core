@@ -20,7 +20,7 @@
 # CDDL HEADER END
 #
 #
-# ident	"%Z%%M%	%I%	%E% SMI"
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 # Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
@@ -35,7 +35,6 @@ include 	../../Makefile.lp
 
 PROG=		lptest
 
-ROOTUSRUCBSYMLINK=	$(ROOTUSRUCB)/$(PROG)
 ROOTUSRBINPROG=		$(PROG:%=$(ROOTBIN)/%)
 
 SRCS= 		lptest.c
@@ -51,10 +50,7 @@ POFILE=		lp_cmd_lptest.po
 
 all:		$(PROG)
 
-install:	all .WAIT $(ROOTUSRBINPROG) $(ROOTUSRUCBSYMLINK)
-
-$(ROOTUSRUCBSYMLINK):	
-		$(RM) $@; $(SYMLINK) ../bin/$(PROG) $@
+install:	all .WAIT $(ROOTUSRBINPROG)
 
 clean:
 		$(RM) $(OBJS)

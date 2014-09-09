@@ -20,17 +20,19 @@
 # CDDL HEADER END
 #
 #
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
+#
 # Copyright 2004 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
 
-PROG= id
-XPG4PROG= id
+PROG=		id
+XPG4PROG=	id
+LINKS=		whoami
 
 include ../Makefile.cmd
 
-CERRWARN += -_gcc=-Wno-parentheses
-CERRWARN += -_gcc=-Wno-uninitialized
+ROOTLINKS=$(LINKS:%=$(ROOTBIN)/%)
 
 .KEEP_STATE:
 
@@ -38,12 +40,18 @@ CFLAGS +=	$(CCVERBOSE)
 LDLIBS += -lproject
 $(XPG4) := CFLAGS += -DXPG4
 
-all: $(PROG) $(XPG4)
+all: $(PROG)
 
-install: all $(ROOTPROG) $(ROOTXPG4PROG)
+install: all $(ROOTPROG) $(ROOTXPG4PROG) $(ROOTLINKS)
 
 clean:
 
 lint:	lint_PROG
+
+$(ROOTLINKS):	$(ROOTPROG)
+	@$(RM) $@; $(LN) $(ROOTPROG) $@
+
+$(ROOTXPG4PROG):
+	@$(RM) $@; $(LN) -s ../../bin/$(XPG4PROG) $@
 
 include ../Makefile.targ

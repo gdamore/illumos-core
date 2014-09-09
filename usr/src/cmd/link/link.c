@@ -20,11 +20,11 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
+ *
  * Copyright 2003 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
-#pragma ident	"%Z%%M%	%I%	%E% SMI"
 
 /*	Copyright (c) 1984, 1986, 1987, 1988, 1989 AT&T	*/
 /*	  All Rights Reserved  	*/
@@ -61,7 +61,7 @@ main(int argc, char *argv[])
 		exit(1);
 	}
 
-	if (res = link(argv[optind], argv[optind + 1]))
+	if ((res = link(argv[optind], argv[optind + 1])) != 0)
 		perror("link");
 
 	return (res);

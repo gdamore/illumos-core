@@ -19,11 +19,11 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
+ *
  * Copyright 2007 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
-#pragma ident	"%Z%%M%	%I%	%E% SMI"
 
 /*	Copyright (c) 1984, 1986, 1987, 1988, 1989 AT&T	*/
 /*	  All Rights Reserved  	*/
@@ -70,7 +70,7 @@ main(int argc, char *argv[])
 {
 	gid_t *idp;
 	uid_t uid, euid;
-	gid_t gid, egid, prgid;
+	gid_t gid, egid, prgid = 0;
 	int c, aflag = 0, project_flag = 0;
 	struct passwd *pwp;
 	int i, j;
@@ -78,14 +78,25 @@ main(int argc, char *argv[])
 	gid_t *groupids = alloca(groupmax * sizeof (gid_t));
 	struct group *gr;
 	char *user = NULL;
+	const char *optflags;
 
 	(void) setlocale(LC_ALL, "");
 
 #if !defined(TEXT_DOMAIN)	/* Should be defined by cc -D */
 #define	TEXT_DOMAIN "SYS_TEST"
 #endif
+
 	(void) textdomain(TEXT_DOMAIN);
-	while ((c = getopt(argc, argv, "Ggunarp")) != EOF) {
+
+	if (((i = strlen(argv[0])) > 6) &&
+	    (strcmp(argv[0]+i-6, "whoami") == 0)) {
+		mode = USER;
+		nflag++;
+		argc = 1;	/* no options */
+	} else {
+		optflags = "Ggunarp";
+	}
+	while ((c = getopt(argc, argv, optflags)) != EOF) {
 		switch (c) {
 			case 'G':
 				if (mode != CURR)
@@ -136,15 +147,15 @@ main(int argc, char *argv[])
 	/* -a and -p cannot be combined with -[Ggu] */
 
 	if ((mode == CURR && (nflag || rflag)) ||
-		(mode == ALLGROUPS && rflag) ||
-		(argc != 1 && argc != 2) ||
-		(mode != CURR && (project_flag || aflag)))
+	    (mode == ALLGROUPS && rflag) ||
+	    (argc != 1 && argc != 2) ||
+	    (mode != CURR && (project_flag || aflag)))
 		return (usage());
 	if (argc == 2) {
 		if ((pwp = getpwnam(argv[1])) == PWNULL) {
 			(void) fprintf(stderr,
-				gettext("id: invalid user name: \"%s\"\n"),
-					argv[1]);
+			    gettext("id: invalid user name: \"%s\"\n"),
+			    argv[1]);
 			return (1);
 		}
 		user = argv[1];
@@ -193,65 +204,30 @@ main(int argc, char *argv[])
 		if (gid != egid)
 			prid(EGID, egid);
 
-		if (aflag) {
-			if (user)
-				i = getusergroups(groupmax, groupids, user,
-				    prgid);
-			else
-				i = getgroups(groupmax, groupids);
-			if (i == -1)
-				perror("getgroups");
-			else if (i > 0) {
-				(void) printf(" groups=");
-				for (idp = groupids; i--; idp++) {
-					(void) printf("%u", *idp);
-					if (gr = getgrgid(*idp))
-						(void) printf("(%s)",
-							gr->gr_name);
-					if (i)
-						(void) putchar(',');
-				}
+		if (user)
+			i = getusergroups(groupmax, groupids, user, prgid);
+		else
+			i = getgroups(groupmax, groupids);
+		if (i == -1)
+			perror("getgroups");
+		else if (i > (aflag ? 0 : 1)) {
+			/*
+			 * POSIX says we do not duplicate the the effective
+			 * group id in the list.  However, if -a is given,
+			 * then we display it in full detail.
+			 */
+			(void) printf(" groups=");
+			for (idp = groupids; i--; idp++) {
+				if ((!aflag) && (*idp == egid))
+					continue;
+				(void) printf("%u", *idp);
+				if ((gr = getgrgid(*idp)) != NULL)
+					(void) printf("(%s)", gr->gr_name);
+				if (i)
+					(void) putchar(',');
 			}
 		}
-#ifdef XPG4
-		/*
-		 * POSIX requires us to show all supplementary groups
-		 * groups other than the effective group already listed.
-		 *
-		 * This differs from -a above, because -a always shows
-		 * all groups including the effective group in the group=
-		 * line.
-		 *
-		 * It would be simpler if SunOS could just adopt this
-		 * POSIX behavior, as it is so incredibly close to the
-		 * the norm already.
-		 *
-		 * Then the magic -a flag could just indicate whether or
-		 * not we are suppressing the effective group id.
-		 */
-		else {
-			if (user)
-				i = getusergroups(groupmax, groupids, user,
-				    prgid);
-			else
-				i = getgroups(groupmax, groupids);
-			if (i == -1)
-				perror("getgroups");
-			else if (i > 1) {
-				(void) printf(" groups=");
-				for (idp = groupids; i--; idp++) {
-					if (*idp == egid)
-						continue;
-					(void) printf("%u", *idp);
-					if (gr = getgrgid(*idp))
-						(void) printf("(%s)",
-							gr->gr_name);
-					if (i)
-						(void) putchar(',');
-				}
-			}
-		}
-#endif
+
 		if (project_flag) {
 			struct project proj;
 			void *projbuf;
@@ -347,6 +323,9 @@ prid(TYPE how, uid_t id)
 			s = " egid";
 			break;
 
+		default:
+			s = NULL;
+			break;
 	}
 	if (s != NULL)
 		(void) printf("%s=", s);

@@ -91,3 +91,4 @@ file path=usr/share/man/man7i/mixer.7i
 legacy pkg=SUNWaudd desc="SunOS audio device drivers" name="Audio Drivers"
 license cr_Sun license=cr_Sun
 license lic_CDDL license=lic_CDDL
+depend fmri=SUNWcs@$(PKGVERS) type=optional

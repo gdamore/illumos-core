@@ -18,6 +18,7 @@
 #
 # CDDL HEADER END
 #
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 # Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
@@ -55,8 +56,6 @@ CERRWARN +=	-_gcc=-Wno-parentheses
 CERRWARN +=	-_gcc=-Wno-clobbered
 CERRWARN +=	-_gcc=-Wno-uninitialized
 
-ROOTSYMLINK=	$(ROOT)/usr/ucb/$(PROG)
-
 # conditional assignments
 $(ROOTPROG) :=      FILEMODE=       04555
 
@@ -68,10 +67,7 @@ $(PROG): $(OBJS) $(KCMDOBJS) $(YOBJS) $(MAPFILE.NGB)
 	$(LINK.c) $(OBJS) $(KCMDOBJS) $(YOBJS) -o $@ $(LDLIBS)
 	$(POST_PROCESS)
 
-install: all $(ROOTPROG) $(ROOTSYMLINK)
-
-$(ROOTSYMLINK):
-	$(RM) $@; $(SYMLINK) ../bin/$(PROG) $@
+install: all $(ROOTPROG)
 
 clean:
 	$(RM) $(OBJS) $(KCMDOBJS) $(YOBJS)

@@ -20,6 +20,7 @@
  */
 
 /*
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
  * Copyright 2013 Nexenta Systems, Inc. All rights reserved.
  */
 
@@ -287,8 +288,16 @@ main(int argc, char *argv[])
 				errflg++;
 			}
 	} else { /* ln */
-		while ((c = getopt(argc, argv, "fns")) != EOF)
+		while ((c = getopt(argc, argv, "LPfns")) != EOF)
 			switch (c) {
+			case 'L':
+				Pflg = 0;
+				Lflg++;
+				break;
+			case 'P':
+				Lflg = 0;
+				Pflg++;
+				break;
 			case 'f':
 				silent++;
 				break;
@@ -490,10 +499,12 @@ lnkfil(char *source, char *target)
 	}
 
 	/*
-	 * hard link, call link() and return.
+	 * hard link, call linkat() and return.  We follow links by
+	 * default, unless -P is given.
 	 */
 
-	if (link(source, target) < 0) {
+	if (linkat(AT_FDCWD, source, AT_FDCWD, target,
+	    Pflg ? 0 : AT_SYMLINK_FOLLOW) < 0) {
 		if (errno == EXDEV)
 			(void) fprintf(stderr,
 			    gettext("%s: %s is on a different file system\n"),
@@ -1317,17 +1328,10 @@ usage(void)
 		    "       mv [-f] [-i] f1 ... fn d1\n"
 		    "       mv [-f] [-i] d1 d2\n"));
 	} else if (lnk) {
-#ifdef XPG4
 		(void) fprintf(stderr, gettext(
-		    "Usage: ln [-f] [-s] f1 [f2]\n"
-		    "       ln [-f] [-s] f1 ... fn d1\n"
+		    "Usage: ln [-f] [-s] [-L|-P] f1 [f2]\n"
+		    "       ln [-f] [-s] [-L|-P] f1 ... fn d1\n"
 		    "       ln [-f] -s d1 d2\n"));
-#else
-		(void) fprintf(stderr, gettext(
-		    "Usage: ln [-f] [-n] [-s] f1 [f2]\n"
-		    "       ln [-f] [-n] [-s] f1 ... fn d1\n"
-		    "       ln [-f] [-n] -s d1 d2\n"));
-#endif
 	} else if (cpy) {
 		(void) fprintf(stderr, gettext(
 		    "Usage: cp [-a] [-f] [-i] [-p] [-@] [-/] f1 f2\n"

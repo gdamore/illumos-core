@@ -20,6 +20,8 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
+ *
  * Copyright 2003 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
@@ -28,8 +30,6 @@
 /*	  All Rights Reserved	*/
 
 
-#pragma ident	"%Z%%M%	%I%	%E% SMI"
-
 #include <sys/param.h>
 #include <sys/types.h>
 #include <sys/sysmacros.h>
@@ -37,22 +37,34 @@
 #include <sys/errno.h>
 #include <sys/utsname.h>
 #include <sys/debug.h>
+#include <sys/proc.h>
+#include <sys/user.h>
 
 int
 uname(struct utsname *buf)
 {
-	char *name_to_use = uts_nodename();
+	const char *sysname, *version, *release;
+	const char *name_to_use = uts_nodename();
 
-	if (copyout(utsname.sysname, buf->sysname, strlen(utsname.sysname)+1)) {
+	if ((PTOU(curproc)->u_flags & U_FLAG_ALTUNAME) != 0) {
+		sysname = alt_sysname;
+		version = alt_version;
+		release = alt_release;
+	} else {
+		sysname = utsname.sysname;
+		version = utsname.version;
+		release = utsname.release;
+	}
+	if (copyout(sysname, buf->sysname, strlen(sysname)+1)) {
 		return (set_errno(EFAULT));
 	}
 	if (copyout(name_to_use, buf->nodename, strlen(name_to_use)+1)) {
 		return (set_errno(EFAULT));
 	}
-	if (copyout(utsname.release, buf->release, strlen(utsname.release)+1)) {
+	if (copyout(release, buf->release, strlen(release)+1)) {
 		return (set_errno(EFAULT));
 	}
-	if (copyout(utsname.version, buf->version, strlen(utsname.version)+1)) {
+	if (copyout(version, buf->version, strlen(version)+1)) {
 		return (set_errno(EFAULT));
 	}
 	if (copyout(utsname.machine, buf->machine, strlen(utsname.machine)+1)) {

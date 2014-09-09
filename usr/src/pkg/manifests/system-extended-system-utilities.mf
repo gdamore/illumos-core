@@ -22,6 +22,7 @@
 #
 # Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2012 Nexenta Systems, Inc. All rights reserved.
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 
 set name=pkg.fmri value=pkg:/system/extended-system-utilities@$(PKGVERS)
@@ -67,6 +68,7 @@ $(i386_ONLY)file path=usr/bin/$(ARCH32)/pstack mode=0555
 $(i386_ONLY)file path=usr/bin/$(ARCH32)/pstop mode=0555
 $(i386_ONLY)file path=usr/bin/$(ARCH32)/ptime mode=0555
 $(i386_ONLY)file path=usr/bin/$(ARCH32)/ptree mode=0555
+$(i386_ONLY)file path=usr/bin/$(ARCH32)/puname mode=0555
 $(i386_ONLY)file path=usr/bin/$(ARCH32)/pwait mode=0555
 $(i386_ONLY)file path=usr/bin/$(ARCH32)/pwdx mode=0555
 $(i386_ONLY)file path=usr/bin/$(ARCH32)/sort mode=0555
@@ -87,6 +89,7 @@ file path=usr/bin/$(ARCH64)/pstack mode=0555
 file path=usr/bin/$(ARCH64)/pstop mode=0555
 file path=usr/bin/$(ARCH64)/ptime mode=0555
 file path=usr/bin/$(ARCH64)/ptree mode=0555
+file path=usr/bin/$(ARCH64)/puname mode=0555
 file path=usr/bin/$(ARCH64)/pwait mode=0555
 file path=usr/bin/$(ARCH64)/pwdx mode=0555
 file path=usr/bin/$(ARCH64)/sort mode=0555
@@ -122,6 +125,7 @@ file path=usr/bin/nl mode=0555
 file path=usr/bin/pack mode=0555
 file path=usr/bin/pginfo mode=0555
 file path=usr/bin/pgstat mode=0555
+file path=usr/bin/printenv mode=0555
 file path=usr/bin/sdiff mode=0555
 file path=usr/bin/spell mode=0555
 file path=usr/bin/split mode=0555
@@ -130,6 +134,7 @@ file path=usr/bin/unexpand mode=0555
 file path=usr/bin/units mode=0555
 file path=usr/bin/unix2dos mode=0555
 file path=usr/bin/unpack mode=0555
+file path=usr/bin/users mode=0555
 file path=usr/bin/uudecode group=uucp mode=0555
 file path=usr/bin/uuencode group=uucp mode=0555
 file path=usr/bin/yes mode=0555
@@ -197,7 +202,9 @@ file path=usr/share/man/man1/pmap.1
 file path=usr/share/man/man1/ppgsz.1
 file path=usr/share/man/man1/ppriv.1
 file path=usr/share/man/man1/preap.1
+file path=usr/share/man/man1/printenv.1
 file path=usr/share/man/man1/ptree.1
+file path=usr/share/man/man1/puname.1
 file path=usr/share/man/man1/sdiff.1
 file path=usr/share/man/man1/sort.1
 file path=usr/share/man/man1/spell.1
@@ -205,6 +212,7 @@ file path=usr/share/man/man1/split.1
 file path=usr/share/man/man1/tcopy.1
 file path=usr/share/man/man1/units.1
 file path=usr/share/man/man1/unix2dos.1
+file path=usr/share/man/man1/users.1
 file path=usr/share/man/man1/yes.1
 file path=usr/share/man/man1m/adbgen.1m
 file path=usr/share/man/man1m/dmesg.1m
@@ -234,6 +242,7 @@ hardlink path=usr/bin/pstack target=../../usr/lib/isaexec
 hardlink path=usr/bin/pstop target=../../usr/lib/isaexec
 hardlink path=usr/bin/ptime target=../../usr/lib/isaexec
 hardlink path=usr/bin/ptree target=../../usr/lib/isaexec
+hardlink path=usr/bin/puname target=../../usr/lib/isaexec
 hardlink path=usr/bin/pwait target=../../usr/lib/isaexec
 hardlink path=usr/bin/pwdx target=../../usr/lib/isaexec
 hardlink path=usr/bin/sort target=../../usr/lib/isaexec
@@ -253,6 +262,8 @@ license usr/src/cmd/look/THIRDPARTYLICENSE \
     license=usr/src/cmd/look/THIRDPARTYLICENSE
 license usr/src/cmd/units/THIRDPARTYLICENSE \
     license=usr/src/cmd/units/THIRDPARTYLICENSE
+license usr/src/cmd/users/THIRDPARTYLICENSE \
+    license=usr/src/cmd/users/THIRDPARTYLICENSE
 link path=usr/bin/dmesg target=../sbin/dmesg
 link path=usr/bin/pcat target=./unpack
 link path=usr/bin/strace target=../sbin/strace

@@ -19,6 +19,8 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
+ *
  * Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
@@ -54,7 +56,7 @@ systeminfo(int command, char *buf, long count)
 {
 	int error = 0;
 	long strcnt, getcnt;
-	char *kstr;
+	const char *kstr;
 	char hostidp[HW_HOSTID_LEN];
 
 	if (count < 0 && command != SI_SET_HOSTNAME &&
@@ -66,16 +68,28 @@ systeminfo(int command, char *buf, long count)
 	 */
 	switch (command) {
 	case SI_SYSNAME:
-		kstr = utsname.sysname;
+		if (PTOU(curproc)->u_flags & U_FLAG_ALTUNAME) {
+			kstr = alt_sysname;
+		} else {
+			kstr = utsname.sysname;
+		}
 		break;
 	case SI_HOSTNAME:
 		kstr = uts_nodename();
 		break;
 	case SI_RELEASE:
-		kstr = utsname.release;
+		if (PTOU(curproc)->u_flags & U_FLAG_ALTUNAME) {
+			kstr = alt_release;
+		} else {
+			kstr = utsname.release;
+		}
 		break;
 	case SI_VERSION:
-		kstr = utsname.version;
+		if (PTOU(curproc)->u_flags & U_FLAG_ALTUNAME) {
+			kstr = alt_version;
+		} else {
+			kstr = utsname.version;
+		}
 		break;
 	case SI_MACHINE:
 		kstr = utsname.machine;

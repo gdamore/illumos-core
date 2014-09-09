@@ -19,6 +19,8 @@
 # CDDL HEADER END
 #
 #
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
+#
 # Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
@@ -74,16 +76,8 @@ $(BINPROGS) $(SBINPROGS) $(LIBPRINTPROGS):	$(BINPROGS:%=%.c) $(SBINPROGS:%=%.c) 
 	$(LINK.c) -o $@ $@.c common.o $(LDLIBS)
 	$(POST_PROCESS)
 
-#	ucb links (lptest is handled in usr/src/cmd/lp/cmd/Makefile)
-ROOTUSRUCB =		$(ROOT)/usr/ucb
-ROOTUCBSYMLINKS =	$(UCBPROGS:%=$(ROOTUSRUCB)/%)
-$(ROOTUSRUCB)/%:	$(ROOTUSRUCB) %
-
 $(ROOTLIBLPBIN)/%:	%
 	$(INS.file)
-
-$(ROOTUCBSYMLINKS):	
-	$(RM) $@; $(SYMLINK) ../bin/$(@F) $@
 
 #	usr/lib links
 ROOTUSRLIBSYMLINKS =	$(SBINPROGS:%=$(ROOTLIB)/%)
@@ -96,7 +90,7 @@ $(ROOTUSRLIBSYMLINKS):
 
 install:	$(ROOTLIBLPPROGS) \
 		$(ROOTLIBPRINT) $(ROOTLIBPRINTPROGS) $(ROOTMANIFEST) \
-		$(ROOTUCBSYMLINKS) $(ROOTUSRLIBSYMLINKS)
+		$(ROOTUSRLIBSYMLINKS)
 
 check:	$(CHKMANIFEST)
 

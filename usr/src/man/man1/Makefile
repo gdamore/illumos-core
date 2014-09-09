@@ -222,7 +222,6 @@ MANFILES=	acctcom.1			\
 	 	mailq.1				\
 	 	mailstats.1			\
 	 	mailx.1				\
-	 	makekey.1			\
 	 	man.1				\
 	 	mandoc.1			\
 	 	mconnect.1			\
@@ -292,6 +291,7 @@ MANFILES=	acctcom.1			\
 	 	preap.1				\
 	 	prex.1				\
 	 	print.1				\
+	 	printenv.1			\
 	 	printf.1			\
 	 	priocntl.1			\
 	 	proc.1				\
@@ -300,6 +300,7 @@ MANFILES=	acctcom.1			\
 	 	projects.1			\
 	 	ps.1				\
 	 	ptree.1				\
+	 	puname.1			\
 	 	pvs.1				\
 	 	pwd.1				\
 	 	ranlib.1			\
@@ -400,6 +401,7 @@ MANFILES=	acctcom.1			\
 	 	units.1				\
 	 	unix2dos.1			\
 	 	uptime.1			\
+	 	users.1				\
 	 	vacation.1			\
 	 	vgrind.1			\
 	 	volcheck.1			\
@@ -409,6 +411,7 @@ MANFILES=	acctcom.1			\
 	 	wc.1				\
 	 	which.1				\
 	 	who.1				\
+	 	whoami.1			\
 	 	whocalls.1			\
 	 	whois.1				\
 	 	write.1				\

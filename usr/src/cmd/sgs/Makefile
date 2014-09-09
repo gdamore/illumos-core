@@ -77,7 +77,6 @@ SUBDIRS-common= libconv		\
 		yacc
 
 SUBDIRS-i386=
-SUBDIRS-sparc=	rtld.4.x
 
 SUBDIRS=	$(SUBDIRS-common) $(SUBDIRS-$(MACH))
 

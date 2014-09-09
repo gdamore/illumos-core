@@ -12,6 +12,7 @@
 #
 # Copyright 2011 Nexenta Systems, Inc. All rights reserved.
 # Copyright (c) 2014 Joyent, Inc. All rights reserved.
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 
 set name=pkg.fmri \
@@ -699,5 +700,5 @@ hardlink path=usr/share/lib/zoneinfo/UTC target=Etc/UTC
 hardlink path=usr/share/lib/zoneinfo/Universal target=Etc/UTC
 hardlink path=usr/share/lib/zoneinfo/W-SU target=Europe/Moscow
 hardlink path=usr/share/lib/zoneinfo/Zulu target=Etc/UTC
+hardlink path=usr/share/lib/zoneinfo/posixrules target=US/Eastern
 license lic_CDDL license=lic_CDDL
-link path=usr/share/lib/zoneinfo/posixrules target=./US/Eastern

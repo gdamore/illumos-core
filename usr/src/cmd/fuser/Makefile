@@ -19,6 +19,7 @@
 #
 # CDDL HEADER END
 #
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 # Copyright 2003 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
@@ -31,16 +32,11 @@ include ../Makefile.cmd
 CERRWARN += -_gcc=-Wno-parentheses
 LDLIBS += -lkstat -ldevinfo
 
-ROOTSYMLINK= $(ROOTETCPROG)
-
 .KEEP_STATE:
 
 all: $(PROG) 
 
-install: all $(ROOTUSRSBINPROG) $(ROOTSYMLINK)
-
-$(ROOTSYMLINK):
-	$(RM) $@; $(SYMLINK) ../usr/sbin/$(PROG) $@
+install: all $(ROOTUSRSBINPROG)
 
 clean:
 

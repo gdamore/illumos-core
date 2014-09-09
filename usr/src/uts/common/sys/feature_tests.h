@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright 2013 Garrett D'Amore <garrett@damore.org>
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
  *
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
@@ -422,6 +422,12 @@ extern "C" {
  * integer that corresponds to the major version number for DTrace.
  */
 #define	_DTRACE_VERSION	1
+
+/*
+ * The following macro indicates that we are on illumos, and serves to
+ * distinguish us from other SunOS derived systems.
+ */
+#define	_ILLUMOS	1
 
 #ifdef	__cplusplus
 }

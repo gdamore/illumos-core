@@ -19,9 +19,7 @@
 #
 # CDDL HEADER END
 #
-#
-#ident	"%Z%%M%	%I%	%E% SMI"
-#
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 # Copyright (c) 1990 by Sun Microsystems, Inc.
 #
 # cmd/pwck/Makefile
@@ -31,17 +29,11 @@ PROG= 		pwck
 
 include ../Makefile.cmd
 
-RELUSRSBIN=	../usr/sbin
-ROOTSYMLINK=	$(ROOTETC)/$(PROG)
-
 .KEEP_STATE:
 
 all: $(PROG) 
 
-install: all $(ROOTUSRSBINPROG) $(ROOTSYMLINK)
-
-$(ROOTSYMLINK):
-	-$(RM) $@; $(SYMLINK) $(RELUSRSBIN)/$(PROG) $@
+install: all $(ROOTUSRSBINPROG)
 
 clean:
 

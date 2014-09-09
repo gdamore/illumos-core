@@ -22,6 +22,7 @@
 
 #
 # Copyright (c) 1999, 2010, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 
 #
@@ -273,10 +274,10 @@ sub ProcFile {
 	# Determine whether this ELF executable or shared object has a
 	# conforming mcs(1) comment section.  If the correct $(POST_PROCESS)
 	# macros are used, only a 3 or 4 line .comment section should exist
-	# containing one or two "@(#)SunOS" identifying comments (one comment
-	# for a non-debug build, and two for a debug build). The results of
-	# the following split should be three or four lines, the last empty
-	# line being discarded by the split.
+	# containing one or two "@(#)SunOS" or "@(#)illumos" identifying
+	# comments (one comment for a non-debug build, and two for a debug
+	# build). The results of the following split should be three or four
+	# lines, the last empty line being discarded by the split.
 	if ($opt{m}) {
 		my(@Mcs, $Con, $Dev);
 
@@ -286,11 +287,13 @@ sub ProcFile {
 		foreach my $Line (@Mcs) {
 			$Val++;
 
-			if (($Val == 3) && ($Line !~ /^@\(#\)SunOS/)) {
+			if (($Val == 3) &&
+			    ($Line !~ /^@\(#\)(SunOS|illumos)/)) {
 				$Con = 1;
 				last;
 			}
-			if (($Val == 4) && ($Line =~ /^@\(#\)SunOS/)) {
+			if (($Val == 4) &&
+			    ($Line =~ /^@\(#\)(SunOS|illumos)/)) {
 				$Dev = 1;
 				next;
 			}

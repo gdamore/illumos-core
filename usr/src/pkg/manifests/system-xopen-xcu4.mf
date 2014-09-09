@@ -53,8 +53,6 @@ file path=usr/xpg4/bin/file mode=0555
 file path=usr/xpg4/bin/find mode=0555
 file path=usr/xpg4/bin/getconf mode=0555
 file path=usr/xpg4/bin/grep mode=0555
-file path=usr/xpg4/bin/id mode=0555
-file path=usr/xpg4/bin/link mode=0555
 file path=usr/xpg4/bin/ls mode=0555
 file path=usr/xpg4/bin/m4 mode=0555
 file path=usr/xpg4/bin/more mode=0555
@@ -93,9 +91,11 @@ link path=usr/xpg4/bin/fc target=../../bin/alias
 link path=usr/xpg4/bin/fg target=../../bin/alias
 link path=usr/xpg4/bin/getopts target=../../bin/alias
 link path=usr/xpg4/bin/hash target=../../bin/alias
+link path=usr/xpg4/bin/id target=../../bin/id
 link path=usr/xpg4/bin/ipcs target=../../bin/ipcs
 link path=usr/xpg4/bin/jobs target=../../bin/alias
 link path=usr/xpg4/bin/kill target=../../bin/alias
+link path=usr/xpg4/bin/link target=../../bin/link
 link path=usr/xpg4/bin/od target=../../bin/od
 link path=usr/xpg4/bin/pfsh target=../../bin/pfexec
 link path=usr/xpg4/bin/read target=../../bin/alias

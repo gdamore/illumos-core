@@ -19,6 +19,7 @@
 # CDDL HEADER END
 #
 #
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 # Copyright (c) 1989, 2010, Oracle and/or its affiliates. All rights reserved.
 #
 # Definitions common to command source.
@@ -473,15 +474,6 @@ $(ROOTCCSBINLINKDIR)/%: %
 
 $(ROOTCCSBINLINKDIR64)/%: %
 	$(INS.ccsbinlink64)
-
-$(ROOTMAN1)/%: %.sunman
-	$(INS.rename)
-
-$(ROOTMAN1M)/%: %.sunman
-	$(INS.rename)
-
-$(ROOTMAN3)/%: %.sunman
-	$(INS.rename)
 
 $(ROOTVARSMB)/%: %
 	$(INS.file)

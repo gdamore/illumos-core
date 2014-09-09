@@ -20,6 +20,7 @@
 # CDDL HEADER END
 #
 #
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 # Copyright (c) 1989 by Sun Microsystems, Inc.
 #
 
@@ -35,6 +36,9 @@ ROOTDATA=	$(DATA:%=$(ROOTDATADIR)/%)
 #DIRS=		$(ROOTLIB) $(ROOTDATADIR)
 DIRS=		$(ROOTDATADIR)
 
+ROOTSYMLINK=	$(ROOT)/usr/dict
+$(ROOTSYMLINK)	:= INSLINKTARGET=share/lib/dict
+
 CERRWARN +=	-_gcc=-Wno-implicit-function-declaration
 
 FILEMODE=	755
@@ -48,10 +52,13 @@ $(ROOTDATADIR)/% : % $(ROOTDATADIR)
 
 all: $(PROG) $(DATA)
 
-install: all $(ROOTPROG) $(DIRS) $(ROOTDATA)
+install: all $(ROOTPROG) $(DIRS) $(ROOTDATA) $(ROOTSYMLINK)
 
 $(DIRS):
 	$(INS.dir)
+
+$(ROOTSYMLINK):
+	$(INS.symlink)
 
 clean:
 

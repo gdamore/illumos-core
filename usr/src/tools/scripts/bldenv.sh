@@ -23,6 +23,7 @@
 #
 # Copyright (c) 1999, 2010, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 # Uses supplied "env" file, based on /opt/onbld/etc/env, to set shell variables
 # before spawning a shell for doing a release-style builds interactively
@@ -229,7 +230,7 @@ shift
 # must match the getopts in nightly.sh
 OPTIND=1
 NIGHTLY_OPTIONS="-${NIGHTLY_OPTIONS#-}"
-while getopts '+0ABCDdFfGIilMmNnpRrtUuwW' FLAG "$NIGHTLY_OPTIONS"
+while getopts '+0ABCDdFfGIilMmNnpRrtUuwW' FLAG $NIGHTLY_OPTIONS
 do
 	case "$FLAG" in
 	  t)	flags.t=true  ;;
@@ -245,8 +246,13 @@ if [ -z "$RELEASE_DATE" ]; then
 fi
 BUILD_DATE=$(LC_ALL=C date +%Y-%b-%d)
 BASEWSDIR=$(basename -- "${CODEMGR_WS}")
-DEV_CM="\"@(#)SunOS Internal Development: $LOGNAME $BUILD_DATE [$BASEWSDIR]\""
+DEV_CM="\"@(#)illumos Development: $LOGNAME $BUILD_DATE [$BASEWSDIR]\""
 export DEV_CM RELEASE_DATE POUND_SIGN
+
+# illumos was announced August 3, 2010.  We use that as the starting
+# point.
+RELEASE_MICRO=$(( ($(date +%Y) * 12 + $(date +%m) - 1) - (2010 * 12 + 8 - 1) ))
+export RELEASE_MICRO
 
 print 'Build type   is  \c'
 if ${flags.d} ; then

@@ -18,6 +18,7 @@
 #
 # CDDL HEADER END
 #
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 # Copyright 2008 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
@@ -62,7 +63,7 @@ INSTALL_TARGET	= $(BINARY) $(ROOTMODULE) $(ROOT_CONFFILE)
 #
 CFLAGS += $(CCVERBOSE)
 CPPFLAGS += -DIPFILTER_LKM -DIPFILTER_LOG -DIPFILTER_LOOKUP 
-CPPFLAGS += -DSUNDDI -DSOLARIS2=$(RELEASE_MINOR) -DIRE_ILL_CN -DUSE_INET6
+CPPFLAGS += -DSUNDDI -DSOLARIS2=11 -DIRE_ILL_CN -DUSE_INET6
 LDFLAGS += -dy -Ndrv/ip -Nmisc/md5 -Nmisc/neti -Nmisc/hook -Nmisc/kcf
 
 INC_PATH += -I$(UTSBASE)/common/inet/ipf

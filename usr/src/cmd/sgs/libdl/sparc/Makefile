@@ -18,6 +18,7 @@
 #
 # CDDL HEADER END
 #
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 # Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
@@ -28,19 +29,6 @@ include		../Makefile.com
 
 DYNFLAGS +=	-F /usr/lib/ld.so.1
 
-# A symbolic link from /usr/4lib/libdl.so.1.0 is required for BCP.
-
-4VERS =		.0
-
-4DYNLIB =	libdl.so.1$(4VERS)
-ROOT4LIBDIR =	$(ROOT)/usr/4lib
-ROOT4LINKS =	$(ROOT4LIBDIR)/$(4DYNLIB)
-$(ROOT4LINKS):=	LIBLINKPATH = ../../lib/
-
-install:	all $(ROOTLIBDIR) .WAIT $(ROOTLIBS) $(ROOTLINKS) $(ROOTLINT) \
-		$(ROOT4LINKS)
-
-$(ROOT4LINKS):	$(ROOTFS_DYNLIB)
-		$(INS.liblink)
+install:	all $(ROOTLIBDIR) .WAIT $(ROOTLIBS) $(ROOTLINKS) $(ROOTLINT)
 
 include		$(SRC)/lib/Makefile.filter.targ

@@ -20,6 +20,7 @@
  */
 
 /*
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
  * Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
  */
 
@@ -28,8 +29,29 @@
 #include <fcntl.h>
 #include <sys/syscall.h>
 
-extern	int __xpg4; /* defined in port/gen/xpg4.c; 0 if not xpg4/xpg4v2 */
-
+/*
+ * A bit of history.  The link() function used to behave differently
+ * for XPGv4.  Specifically, it was modified so that under XPG4v2, it
+ * would follow symbolic links (which is also the BSD and SunOS 4 behavior),
+ * on the basis that the standard (XPG4v2) required it.
+ *
+ * However, after reading standards going back to SUSv2, I can find no such
+ * language in either the old standard or the new.  In fact XPG7 clears this
+ * up by specifically stating that whether link() follows symbolic links is
+ * implementation defined.
+ *
+ * Linux seems to have the same legacy behavior by default, and glibc
+ * documents the same historical thinking.
+ *
+ * Nonetheless, the behavior of following symbolic links is probably what
+ * the user expects.
+ *
+ * This is an area where the BSDs and Linux differ.  The caller should
+ * use linkat() if they need precise control.
+ *
+ * The ln(1) program also offers more precise control with -L and -P
+ * arguments.
+ */
 int
 linkat(int fd1, const char *path1, int fd2, const char *path2, int flag)
 {
@@ -40,25 +62,5 @@ linkat(int fd1, const char *path1, int fd2, const char *path2, int flag)
 int
 link(const char *path1, const char *path2)
 {
-	/*
-	 * XPG4v2 link() requires that the link count of a symbolic
-	 * link target be updated rather than the link itself.  This
-	 * matches SunOS 4.x and other BSD based implementations.
-	 * However, the SVR4 merge apparently introduced the change
-	 * that allowed link(src, dest) when "src" was a symbolic link,
-	 * to create "dest" as a hard link to "src".  Hence, the link
-	 * count of the symbolic link is updated rather than the target
-	 * of the symbolic link. This latter behavior remains for
-	 * non-XPG4 based environments. For a more detailed discussion,
-	 * see bug 1256170.
-	 */
-	if (__xpg4 != 0)
-		return (linkat(AT_FDCWD, path1, AT_FDCWD, path2,
-		    AT_SYMLINK_FOLLOW));
-
-#if defined(_RETAIN_OLD_SYSCALLS)
-	return (syscall(SYS_link, path1, path2));
-#else
-	return (linkat(AT_FDCWD, path1, AT_FDCWD, path2, 0));
-#endif
+	return (linkat(AT_FDCWD, path1, AT_FDCWD, path2, AT_SYMLINK_FOLLOW));
 }

@@ -99,6 +99,14 @@ extern int uname(struct utsname *);
  * Routine to retrieve the nodename as seen in the current process's zone.
  */
 extern char *uts_nodename(void);
+
+/*
+ * Alternate UNAME values to use if uarea->u_flags & U_FLAG_ALTUNAME is set.
+ */
+extern	const char *alt_sysname;
+extern	const char *alt_version;
+extern	const char *alt_release;
+
 #endif	/* !(_KERNEL) */
 
 #ifdef	__cplusplus

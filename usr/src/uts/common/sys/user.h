@@ -27,6 +27,7 @@
 /*	  All Rights Reserved	*/
 /*
  * Copyright (c) 2012 Joyent, Inc.  All rights reserved.
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
  */
 
 
@@ -222,6 +223,7 @@ typedef	struct	user {
 	mode_t	u_cmask;		/* mask for file creation */
 	char	u_acflag;		/* accounting flag */
 	char	u_systrap;		/* /proc: any syscall mask bits set? */
+	char	u_flags;		/* extra flags */
 	refstr_t *u_cwd;		/* cached string for cwd */
 
 	k_sysset_t u_entrymask;		/* /proc syscall stop-on-entry mask */
@@ -243,6 +245,9 @@ typedef	struct	user {
 
 	uf_info_t	u_finfo;	/* open file information */
 } user_t;
+
+/* flags for u_flags */
+#define	U_FLAG_ALTUNAME		1	/* Report alternate utsname fields */
 
 #include <sys/proc.h>			/* cannot include before user defined */
 

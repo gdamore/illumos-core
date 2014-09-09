@@ -20,6 +20,8 @@
 #
 
 #
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
+#
 # Copyright 2008 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
@@ -54,7 +56,8 @@ NEW_SUBDIRS =	\
 	plgrp	\
 	pmadvise \
 	ppriv	\
-	preap
+	preap	\
+	puname
 
 SUBDIRS = $(LEGACY_SUBDIRS) $(NEW_SUBDIRS)
 

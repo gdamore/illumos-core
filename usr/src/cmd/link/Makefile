@@ -20,6 +20,8 @@
 # CDDL HEADER END
 #
 #
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
+#
 # Copyright 2004 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
@@ -30,26 +32,18 @@ OBJS= link.o
 
 include ../Makefile.cmd
 
-clean $(XPG4) := OBJS += values-xpg4.o
-
 FILEMODE= 0555
-
-CERRWARN += -_gcc=-Wno-parentheses
 
 .KEEP_STATE:
 
-all: $(PROG) $(XPG4)
+all: $(PROG)
 
-$(PROG) $(XPG4): $$(OBJS)
-	$(LINK.c) -o $@ $(OBJS)
-	$(POST_PROCESS)
+$(ROOTXPG4PROG)	:=	INSLINKTARGET = ../../bin/$(XPG4PROG)
+
+$(ROOTXPG4PROG):
+	$(INS.symlink)
 
 install: all $(ROOTUSRSBINPROG) $(ROOTXPG4PROG)
-	-$(RM) $(ROOTETCPROG)
-	-$(SYMLINK) ../usr/sbin/$(PROG) $(ROOTETCPROG)
-
-values-xpg4.o: ../../lib/common/common/values-xpg4.c
-	$(COMPILE.c) -o $@ ../../lib/common/common/values-xpg4.c
 
 clean:
 	$(RM) $(OBJS)

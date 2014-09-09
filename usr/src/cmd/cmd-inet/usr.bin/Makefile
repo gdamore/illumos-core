@@ -24,6 +24,8 @@
 #
 # Copyright 2011 Nexenta Systems, Inc. All rights reserved.
 #
+# Copyrighg 2014 Garrett D'Amore <garrett@damore.org>
+#
 
 PROG=		dns-sd finger rdate ruptime rwho whois
 SUIDPROG=	rcp rlogin rsh
@@ -119,7 +121,6 @@ LINTXTRA=
 $(KCMDLINTS)	:=	LINTXTRA += $(COMMONSRCS)
 
 ROOTSUNWRCP=	$(ROOT)/usr/lib/sunw,rcp
-ROOTRSHSYMLINK=	$(ROOT)/usr/ucb/rsh
 ROOTREMSHSYMLINK=$(ROOT)/usr/bin/remsh
 
 .KEEP_STATE:
@@ -127,7 +128,7 @@ ROOTREMSHSYMLINK=$(ROOT)/usr/bin/remsh
 all: $(ALL) $(SUBDIRS)
 
 install: all .WAIT $(ROOTPROG) $(ROOTSUIDPROG) \
-	$(SUBDIRS) $(ROOTSUNWRCP) $(ROOTRSHSYMLINK) $(ROOTREMSHSYMLINK)
+	$(SUBDIRS) $(ROOTSUNWRCP) $(ROOTREMSHSYMLINK)
 
 # Messaging - copy $POFILES to $POFILE to work with the parent directory
 # Makefile's '_msg' target.
@@ -160,9 +161,6 @@ rsh: rsh.o $(COMMONOBJS)
  
 $(ROOTSUNWRCP):
 	$(RM) $@; $(SYMLINK) ../bin/rcp $@
-
-$(ROOTRSHSYMLINK):
-	$(RM) $@; $(SYMLINK) ../bin/rsh $@
 
 $(ROOTREMSHSYMLINK):
 	$(RM) $@; $(SYMLINK) rsh $@

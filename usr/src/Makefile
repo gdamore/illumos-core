@@ -35,7 +35,7 @@ include Makefile.master
 # it defines TARGETDIRS and ROOTDIRS.
 include Targetdirs
 
-COMMON_SUBDIRS=	uts lib cmd ucblib ucbcmd psm man test
+COMMON_SUBDIRS=	uts lib cmd psm man test
 sparc_SUBDIRS= stand
 i386_SUBDIRS= grub
 
@@ -69,13 +69,12 @@ CHKMFSTSUBDIRS=	cmd
 # And man page formats
 CHKMANSUBDIRS = man
 
-MSGSUBDIRS=	cmd ucbcmd lib
+MSGSUBDIRS=	cmd lib
 DOMAINS= \
 	SUNW_OST_ADMIN \
 	SUNW_OST_NETRPC \
 	SUNW_OST_OSCMD \
 	SUNW_OST_OSLIB \
-	SUNW_OST_UCBCMD \
 	SUNW_OST_ZONEINFO
 
 MSGDDIRS=       $(DOMAINS:%=$(MSGROOT)/%)
@@ -216,7 +215,7 @@ check:	$(CHKHDRSUBDIRS) $(CHKMFSTSUBDIRS) $(CHKMANSUBDIRS)
 # don't contain actual source code.
 #
 XRPRUNE = pkg prototypes
-XRINCDIRS = uts/common head ucbhead
+XRINCDIRS = uts/common head
 
 cscope.out tags: FRC
 	$(XREF) -f -x $@

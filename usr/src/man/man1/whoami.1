@@ -1,0 +1,64 @@
+.\" Copyright 2014 Garrett D'Amore <garrett@damore.org>
+.\" Copyright (c) 1992, Sun Microsystems, Inc.
+.\" The contents of this file are subject to the terms of the Common Development and Distribution License (the "License").  You may not use this file except in compliance with the License.
+.\" You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE or http://www.opensolaris.org/os/licensing.  See the License for the specific language governing permissions and limitations under the License.
+.\" When distributing Covered Code, include this CDDL HEADER in each file and include the License file at usr/src/OPENSOLARIS.LICENSE.  If applicable, add the following below this CDDL HEADER, with the fields enclosed by brackets "[]" replaced with your own identifying information: Portions Copyright [yyyy] [name of copyright owner]
+.Dd Sep 1, 2014
+.Dt WHOAMI 1
+.Os
+.Sh NAME
+.Nm whoami
+.Nd display the effective current username
+.Sh SYNOPSIS
+.Nm
+.Sh DESCRIPTION
+.Nm
+displays the login name corresponding to the current effective
+user ID. If you have used
+.Xr su 1M
+or
+.Xr pfexec 1
+to temporarily adopt another user,
+.Nm
+will report the login name associated with that user ID.
+The
+.Nm
+command gets its information from the
+.Xr geteuid 3C
+and
+.Xr getpwuid 3C
+library routines.
+.Sh FILES
+.Bl -tag -width Pa
+.It Pa /etc/passwd
+username data base
+.El
+.Sh USAGE
+The
+.Nm
+command is provided for compatibility with other systems.  It performs the
+same function
+as
+.Xr id 1
+with the
+.Fl n
+and
+.Fl u
+flags.  That is, the output from
+.Nm
+will be the same as from the following command.
+.Lp
+.D1 % Ic id Fl n Fl u
+.Lp
+Portable applications should use the
+.Xr id 1
+command instead.
+.Sh INTERFACE STABILITY
+.Sy Obsolete Committed .
+.Sh SEE ALSO
+.Xr id 1 ,
+.Xr pfexec 1 ,
+.Xr who 1 ,
+.Xr su 1M ,
+.Xr geteuid 2 ,
+.Xr getpwuid 3C
