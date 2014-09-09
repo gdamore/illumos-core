@@ -59,6 +59,3 @@ link path=usr/share/man/man1/whatis.1 target=apropos.1
 # dependency out.
 #depend fmri=compress/bzip2 type=require
 #depend fmri=compress/gzip type=require
-# less is the default (per user environment) pager.  We really should just
-# import this into illumos-gate.
-depend fmri=text/less type=require

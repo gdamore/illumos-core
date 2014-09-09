@@ -97,6 +97,7 @@
 ./usr/xpg4/bin/hash
 ./usr/xpg4/bin/jobs
 ./usr/xpg4/bin/kill
+./usr/xpg4/bin/more
 ./usr/xpg4/bin/od
 ./usr/xpg4/bin/read
 ./usr/xpg4/bin/sed

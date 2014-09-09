@@ -1,0 +1,42 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
+#
+
+less_OBJS =	main.o screen.o brac.o ch.o charset.o cmdbuf.o		\
+		command.o cvt.o decode.o edit.o filename.o forwback.o	\
+		help.o ifile.o input.o jump.o line.o linenum.o		\
+		lsystem.o mark.o optfunc.o option.o opttbl.o os.o	\
+		output.o pattern.o position.o prompt.o search.o		\
+		signal.o tags.o ttyin.o morehelp.o version.o
+
+lesskey_OBJS =	lesskey.o version.o
+
+less_LNS =	$(less_OBJS:%.o=%.ln)
+
+lesskey_LNS =	$(lesskey_OBJS:%.o=%.ln)
+
+C99MODE =	-xc99=%all
+C99LMODE =	-xC99=%all
+
+DEFS 	=	-D_FILE_OFFSET_BITS=64 \
+		-DSYSNAME=\"$(SYSNAME)\" \
+		-DRELEASE=\"$(RELEASE)\" \
+		-DVERSION=\"$(PATCHID)\" \
+		-DSYSDIR=\"/etc\"
+
+INCS 	=	-I$(ROOT)/usr/xpg4/include -I.
+CFLAGS 	+=	$(INCS) $(DEFS) $(CC_VERBOSE)
+LINTFLAGS +=	$(INCS) $(DEFS)
+
+less_LDLIBS +=	-L$(ROOT)/usr/xpg4/lib -R /usr/xpg4/lib -lcurses

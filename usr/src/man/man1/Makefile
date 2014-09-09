@@ -182,6 +182,8 @@ MANFILES=	acctcom.1			\
 	 	lari.1				\
 	 	last.1				\
 	 	lastcomm.1			\
+	 	less.1				\
+	 	lesskey.1			\
 	 	ld.1				\
 	 	ldap.1				\
 	 	ldapdelete.1			\

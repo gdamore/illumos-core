@@ -180,6 +180,7 @@ COMMON_SUBDIRS = \
 	cmd/last \
 	cmd/lastcomm \
 	cmd/ldapcachemgr \
+	cmd/less \
 	cmd/line \
 	cmd/link \
 	cmd/listusers \

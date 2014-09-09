@@ -232,6 +232,7 @@ COMMON_SUBDIRS=		\
 	line		\
 	link		\
 	dlmgmtd		\
+	less		\
 	listen		\
 	listusers	\
 	loadkeys	\
