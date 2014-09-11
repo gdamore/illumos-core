@@ -21,6 +21,7 @@
 
 #
 # Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 
 set name=pkg.fmri value=pkg:/system/xopen/xcu6@$(PKGVERS)
@@ -37,19 +38,19 @@ file path=usr/xpg6/bin/bc mode=0555
 file path=usr/xpg6/bin/crontab mode=4555
 file path=usr/xpg6/bin/dc mode=0555
 file path=usr/xpg6/bin/ed mode=0555
-file path=usr/xpg6/bin/edit mode=0555
 file path=usr/xpg6/bin/expr mode=0555
 file path=usr/xpg6/bin/getconf mode=0555
 file path=usr/xpg6/bin/ls mode=0555
-hardlink path=usr/xpg6/bin/ex target=../../../usr/xpg6/bin/edit
-hardlink path=usr/xpg6/bin/vedit target=../../../usr/xpg6/bin/edit
-hardlink path=usr/xpg6/bin/vi target=../../../usr/xpg6/bin/edit
-hardlink path=usr/xpg6/bin/view target=../../../usr/xpg6/bin/edit
 legacy pkg=SUNWxcu6 \
     desc="utilities providing conformance with XCU6 specifications" \
     name="XCU6 Utilities"
 license cr_Sun license=cr_Sun
 license lic_CDDL license=lic_CDDL
+link path=usr/xpg6/bin/edit target=../../bin/ex
+link path=usr/xpg6/bin/ex target=../../bin/ex
 link path=usr/xpg6/bin/stty target=../../bin/stty
 link path=usr/xpg6/bin/tr target=../../bin/tr
+link path=usr/xpg6/bin/vedit target=../../bin/ex
+link path=usr/xpg6/bin/vi target=../../bin/ex
+link path=usr/xpg6/bin/view target=../../bin/ex
 link path=usr/xpg6/bin/xargs target=../../bin/xargs

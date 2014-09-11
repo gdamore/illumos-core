@@ -221,7 +221,6 @@ link path=usr/share/man/man1/decrypt.1 target=encrypt.1
 link path=usr/share/man/man1/dirname.1 target=basename.1
 link path=usr/share/man/man1/dirs.1 target=cd.1
 link path=usr/share/man/man1/dumpkeys.1 target=loadkeys.1
-link path=usr/share/man/man1/edit.1 target=../../../has/man/man1has/edit.1has
 link path=usr/share/man/man1/errange.1 target=ckrange.1
 link path=usr/share/man/man1/errdate.1 target=ckdate.1
 link path=usr/share/man/man1/errgid.1 target=ckgid.1
@@ -323,6 +322,5 @@ link path=usr/share/man/man1/valtime.1 target=cktime.1
 link path=usr/share/man/man1/valuid.1 target=ckuid.1
 link path=usr/share/man/man1/valyorn.1 target=ckyorn.1
 link path=usr/share/man/man1/vax.1 target=machid.1
-link path=usr/share/man/man1/vedit.1 target=../../../has/man/man1has/vi.1has
 link path=usr/share/man/man1/whence.1 target=typeset.1
 link path=usr/share/man/man1/while.1 target=shell_builtins.1

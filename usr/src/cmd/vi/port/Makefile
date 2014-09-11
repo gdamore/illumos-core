@@ -20,6 +20,8 @@
 #
 
 #
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
+#
 # Copyright 2010 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
@@ -28,7 +30,6 @@
 
 PROG= ex
 XPG4PROG= ex
-XPG6PROG= ex
 LIBPROGS= expreserve exrecover
 XD4= exobjs.xpg4
 XD6= exobjs.xpg6
@@ -68,10 +69,10 @@ POFILES= $(EXOBJS:%.o=%.po) expreserve.po exrecover.po
 POFILE= port.po
 
 # Include all XPG4 and XPG4ONLY changes in the XPG4 version
-$(XPG4) := CFLAGS += -DXPG4 -DXPG4ONLY
+$(XPG4) 	:= CFLAGS += -DXPG4 -DXPG4ONLY
 
 # Include all XPG4 changes, but don't include XPG4ONLY in the XPG6 version
-$(XPG6) := CFLAGS += -DXPG4 -DXPG6 -I$(SRC)/lib/libc/inc
+$(XPG6) $(PROG)	:= CFLAGS += -DXPG4 -DXPG6 -I$(SRC)/lib/libc/inc
 
 CPPFLAGS +=  -DUSG -DSTDIO -DVMUNIX -DTABS=8 -DSINGLE -DTAG_STACK
 
@@ -80,29 +81,38 @@ CPPFLAGS +=  -DUSG -DSTDIO -DVMUNIX -DTABS=8 -DSINGLE -DTAG_STACK
 LDFLAGS +=	$(MAPFILE.NGB:%=-M%)
 
 CLOBBERFILES += $(LIBPROGS)
-ex :=		LDLIBS += -lmapmalloc -lcurses -lgen -lcrypt_i
-$(XPG4) :=	LDLIBS += -lmapmalloc -lcurses -lgen -lcrypt_i
-$(XPG6) :=	LDLIBS += -lmapmalloc -lcurses -lgen -lcrypt_i
-exrecover :=	LDLIBS += -lmapmalloc -lcrypt_i
-lint :=		LDLIBS += -lmapmalloc -lcurses -lgen -lcrypt
+ex :=			LDLIBS += -lmapmalloc -lcurses -lgen -lcrypt_i
+$(XPG4) :=		LDLIBS += -lmapmalloc -lcurses -lgen -lcrypt_i
+$(XPG6) $(PROG):=	LDLIBS += -lmapmalloc -lcurses -lgen -lcrypt_i
+exrecover :=		LDLIBS += -lmapmalloc -lcrypt_i
+lint :=			LDLIBS += -lmapmalloc -lcurses -lgen -lcrypt
 
 ROOTLIBPROGS= $(LIBPROGS:%=$(ROOTLIB)/%)
 
 # hard links to ex
-ROOTLINKS= $(ROOTBIN)/edit $(ROOTHASBIN)/edit $(ROOTBIN)/vedit \
-	$(ROOTHASBIN)/vedit $(ROOTHASBIN)/vi $(ROOTHASBIN)/view \
+ROOTLINKS= $(ROOTBIN)/edit $(ROOTBIN)/vedit $(ROOTBIN)/vi $(ROOTBIN)/view
+
+# has/bin/ ghetto
+ROOTHASLINKS = $(ROOTHASBIN)/edit $(ROOTHASBIN)/ex \
+	$(ROOTHASBIN)/vedit $(ROOTHASBIN)/vi $(ROOTHASBIN)/view
 
 ROOTXPG4LINKS= $(ROOTXPG4BIN)/vi $(ROOTXPG4BIN)/view $(ROOTXPG4BIN)/edit \
 	$(ROOTXPG4BIN)/vedit
 ROOTXPG6LINKS= $(ROOTXPG6BIN)/vi $(ROOTXPG6BIN)/view $(ROOTXPG6BIN)/edit \
-	$(ROOTXPG6BIN)/vedit
+	$(ROOTXPG6BIN)/ex $(ROOTXPG6BIN)/vedit
+
 .KEEP_STATE:
 
 .PARALLEL: $(OBJS)
 
 all: $(PROG) $(XPG4) $(XPG6) $(LIBPROGS)
 
-$(PROG): $(EXOBJS)
+# XPG6 by default.
+$(PROG): $(XD6) $(XPG6EXOBJS)
+	$(LINK.c) $(XPG6EXOBJS) -o $@ $(LDLIBS)
+	$(POST_PROCESS)
+
+$(PROG).old: $(EXOBJS)
 	$(LINK.c) $(EXOBJS) -o $@ $(LDLIBS)
 	$(POST_PROCESS)
 
@@ -110,9 +120,9 @@ ex.xpg4: $(XD4) $(XPG4EXOBJS)
 	$(LINK.c) $(XPG4EXOBJS) -o $@ $(LDLIBS)
 	$(POST_PROCESS)
 
-ex.xpg6: $(XD6) $(XPG6EXOBJS)
-	$(LINK.c) $(XPG6EXOBJS) -o $@ $(LDLIBS)
-	$(POST_PROCESS)
+#ex.xpg6: $(XD6) $(XPG6EXOBJS)
+#	$(LINK.c) $(XPG6EXOBJS) -o $@ $(LDLIBS)
+#	$(POST_PROCESS)
 
 $(XD4)/compile.o $(XD6)/compile.o: ../../expr/compile.c
 	$(COMPILE.c) -o $@ ../../expr/compile.c
@@ -150,20 +160,20 @@ $(POFILE): $(POFILES)
 	cat $(POFILES) > $@
 
 
-install: all $(ROOTHASBINPROG) $(ROOTLIBPROGS) $(ROOTLINKS) \
-	$(ROOTXPG4PROG) $(ROOTXPG4LINKS) $(ROOTXPG6PROG) $(ROOTXPG6LINKS)
+install: all $(ROOTPROG) $(ROOTLIBPROGS) $(ROOTHASLINKS) $(ROOTLINKS) \
+	$(ROOTXPG4PROG) $(ROOTXPG4LINKS) $(ROOTXPG6LINKS)
 
-$(ROOTLINKS): $(ROOTHASBINPROG)
+$(ROOTLINKS): $(ROOTPROG)
 	-$(RM) $@
-	-$(LN) -f $(ROOTHASBINPROG) $@
+	-$(LN) -f $(ROOTPROG) $@
 
 $(ROOTXPG4LINKS): $(ROOTXPG4PROG)
 	-$(RM) $@
 	-$(LN) -f $(ROOTXPG4PROG) $@
 
-$(ROOTXPG6LINKS): $(ROOTXPG6PROG)
+$(ROOTXPG6LINKS) $(ROOTHASLINKS): $(ROOTPROG)
 	-$(RM) $@
-	-$(LN) -f $(ROOTXPG6PROG) $@
+	-$(LN) -sf ../../bin/$(PROG) $@
 
 clean:
 	$(RM) $(OBJS)

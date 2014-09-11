@@ -370,7 +370,6 @@ file path=etc/inet/networks group=sys preserve=true
 file path=etc/inet/protocols group=sys preserve=true
 file path=etc/inet/services group=sys preserve=true
 file path=etc/inet/wanboot.conf.sample group=sys mode=0444
-file path=etc/init.d/PRESERVE group=sys mode=0744 preserve=true
 file path=etc/init.d/README group=sys preserve=true
 file path=etc/init.d/cachefs.daemon group=sys mode=0744 preserve=true
 file path=etc/init.d/ldap.client group=sys mode=0744
@@ -861,12 +860,8 @@ file path=usr/bin/wracct mode=0555
 file path=usr/bin/write group=tty mode=2555
 file path=usr/bin/xargs mode=0555
 file path=usr/bin/xstr mode=0555
-file path=usr/has/bin/edit mode=0555
 file path=usr/has/bin/sh mode=0555
-file path=usr/has/man/man1has/edit.1has
-file path=usr/has/man/man1has/ex.1has
 file path=usr/has/man/man1has/sh.1has
-file path=usr/has/man/man1has/vi.1has
 file path=usr/kernel/drv/$(ARCH64)/dump group=sys
 file path=usr/kernel/drv/$(ARCH64)/fssnap group=sys
 file path=usr/kernel/drv/$(ARCH64)/kstat group=sys
@@ -949,8 +944,6 @@ file path=usr/lib/devfsadm/linkmod/SUNW_tape_link.so group=sys
 file path=usr/lib/devfsadm/linkmod/SUNW_usb_link.so group=sys
 $(i386_ONLY)file path=usr/lib/devfsadm/linkmod/SUNW_xen_link.so group=sys
 file path=usr/lib/diffh mode=0555
-file path=usr/lib/expreserve mode=0555
-file path=usr/lib/exrecover mode=0555
 file path=usr/lib/fs/cachefs/cachefsd mode=0555
 file path=usr/lib/fs/cachefs/cachefslog mode=0555
 file path=usr/lib/fs/cachefs/cachefspack mode=0555
@@ -1473,7 +1466,6 @@ file path=var/spool/cron/crontabs/root group=sys mode=0600 preserve=true
 hardlink path=etc/rc2.d/S20sysetup target=../../etc/init.d/sysetup
 hardlink path=etc/rc2.d/S73cachefs.daemon \
     target=../../etc/init.d/cachefs.daemon
-hardlink path=etc/rc2.d/S89PRESERVE target=../../etc/init.d/PRESERVE
 $(sparc_ONLY)hardlink path=etc/svc/profile/platform_SUNW,Sun-Fire-V890.xml \
     target=./platform_SUNW,Sun-Fire-880.xml
 $(sparc_ONLY)hardlink \
@@ -1507,7 +1499,6 @@ hardlink path=usr/bin/decrypt target=../../usr/lib/isaexec
 hardlink path=usr/bin/digest target=../../usr/lib/isaexec
 hardlink path=usr/bin/dispgid target=../../usr/bin/ckgid
 hardlink path=usr/bin/dispuid target=../../usr/bin/ckuid
-hardlink path=usr/bin/edit target=../has/bin/edit
 hardlink path=usr/bin/encrypt target=../../usr/lib/isaexec
 hardlink path=usr/bin/fc target=../../usr/bin/alias
 hardlink path=usr/bin/fg target=../../usr/bin/alias
@@ -1586,16 +1577,11 @@ hardlink path=usr/bin/unalias target=../../usr/bin/alias
 hardlink path=usr/bin/uniq target=../../usr/bin/alias
 hardlink path=usr/bin/uptime target=../../usr/lib/isaexec
 hardlink path=usr/bin/vax target=../../usr/bin/i286
-hardlink path=usr/bin/vedit target=../has/bin/edit
 hardlink path=usr/bin/w target=../../usr/lib/isaexec
 hardlink path=usr/bin/wait target=../../usr/bin/alias
 hardlink path=usr/bin/wc target=../../usr/bin/alias
 hardlink path=usr/bin/whoami target=../../usr/bin/id
-hardlink path=usr/has/bin/ex target=edit
 hardlink path=usr/has/bin/pfsh target=../../bin/pfexec
-hardlink path=usr/has/bin/vedit target=edit
-hardlink path=usr/has/bin/vi target=edit
-hardlink path=usr/has/bin/view target=edit
 hardlink path=usr/lib/fs/hsfs/fstyp target=../../../sbin/fstyp
 hardlink path=usr/lib/fs/ufs/dcopy target=../../../../usr/lib/fs/ufs/clri
 hardlink path=usr/lib/fs/ufs/fstyp target=../../../sbin/fstyp
@@ -1896,3 +1882,7 @@ depend fmri=system/data/terminfo type=require
 # Depend on zoneinfo data.
 #
 depend fmri=system/data/zoneinfo type=require
+#
+# vi and friends moved
+#
+depend fmri=system/utilities/vi@$(PKGVERS) type=require

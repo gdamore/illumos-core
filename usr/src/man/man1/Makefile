@@ -109,6 +109,7 @@ MANFILES=	acctcom.1			\
 	 	dumpcs.1			\
 	 	echo.1				\
 	 	ed.1				\
+	 	edit.1				\
 	 	egrep.1				\
 	 	eject.1				\
 	 	elfdump.1			\
@@ -120,6 +121,7 @@ MANFILES=	acctcom.1			\
 	 	enhance.1			\
 	 	env.1				\
 	 	eqn.1				\
+	 	ex.1				\
 	 	exec.1				\
 	 	exit.1				\
 	 	expand.1			\
@@ -406,6 +408,7 @@ MANFILES=	acctcom.1			\
 	 	users.1				\
 	 	vacation.1			\
 	 	vgrind.1			\
+	 	vi.1				\
 	 	volcheck.1			\
 	 	volrmmount.1			\
 	 	w.1				\
@@ -440,7 +443,6 @@ MANLINKS=	batch.1		\
 	 	dirs.1		\
 	 	disable.1	\
 	 	dumpkeys.1	\
-		edit.1		\
 	 	errange.1	\
 		errdate.1	\
 		errgid.1	\
@@ -556,6 +558,7 @@ MANLINKS=	batch.1		\
 		valyorn.1	\
 		vax.1		\
 		vedit.1		\
+		view.1		\
 		whatis.1	\
 		whence.1	\
 		while.1		\
@@ -741,11 +744,8 @@ false.1		:= LINKSRC = true.1
 
 whence.1	:= LINKSRC = typeset.1
 
-# Links to usr/has/man
-
-edit.1		:= LINKSRC = ../../../has/man/man1has/edit.1has
-
-vedit.1		:= LINKSRC = ../../../has/man/man1has/vi.1has
+vedit.1		:= LINKSRC = vi.1
+view.1		:= LINKSRC = vi.1
 
 .KEEP_STATE:
 
