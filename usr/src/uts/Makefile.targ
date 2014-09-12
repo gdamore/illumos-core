@@ -20,6 +20,7 @@
 #
 #
 # Copyright (c) 1991, 2010, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 #	This Makefiles contains the common targets and definitions for
 #	all kernels. It is to be included in the Makefiles for specific
@@ -47,14 +48,11 @@ $(OBJECTS): $(INLINES)
 #
 #	Partially link .o files to generate the kmod. The fake dependency
 #	on modstubs simplifies things...
-#	ELFSIGN_MOD is defined in the individual KCF plug-in modules Makefiles,
-#	and will sign the ELF objects using elfsign(1).
 #
 $(BINARY):		$(OBJECTS)
 	$(LD) -r $(LDFLAGS) -o $@ $(OBJECTS)
 	$(CTFMERGE_UNIQUIFY_AGAINST_GENUNIX)
 	$(POST_PROCESS)
-	$(ELFSIGN_MOD)
 
 #
 #	This target checks each kmod for undefined entry points. It does not
