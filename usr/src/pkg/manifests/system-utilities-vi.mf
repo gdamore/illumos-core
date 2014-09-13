@@ -22,8 +22,6 @@ dir path=etc group=sys
 dir path=etc/init.d group=sys
 dir path=etc/rc2.d group=sys
 dir path=usr/bin
-dir path=usr/has
-dir path=usr/has/bin
 dir path=usr/lib
 dir path=usr/share
 dir path=usr/share/man
@@ -47,11 +45,6 @@ hardlink path=usr/bin/view target=../../usr/bin/ex
 license lic_CDDL license=lic_CDDL
 license usr/src/cmd/vi/THIRDPARTYLICENSE \
     license=usr/src/cmd/vi/THIRDPARTYLICENSE
-link path=usr/has/bin/edit target=../../bin/ex
-link path=usr/has/bin/ex target=../../bin/ex
-link path=usr/has/bin/vedit target=../../bin/ex
-link path=usr/has/bin/vi target=../../bin/ex
-link path=usr/has/bin/view target=../../bin/ex
 link path=usr/preserve target=../var/preserve
 link path=usr/share/man/man1/vedit.1 target=vi.1
 link path=usr/share/man/man1/view.1 target=vi.1

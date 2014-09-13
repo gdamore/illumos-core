@@ -22,6 +22,7 @@
 #
 # Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2011, Richard Lowe
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 
 #
@@ -76,7 +77,6 @@
 <transform file path=usr/share/lib/zoneinfo/.+ -> default mode 0644>
 <transform file path=usr/share/src/grub/.+ -> default mode 0644>
 <transform file path=usr/share/.+ -> default mode 0444>
-<transform file path=usr/has/man/.+ -> default mode 0444>
 
 <transform dir path=usr/share$ -> default group sys>
 <transform dir path=usr/share/lib$ -> default group sys>

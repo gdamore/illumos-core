@@ -10,7 +10,7 @@
 #
 
 # Copyright 2011, Richard Lowe
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 
 # Manual pages are documentation, and more specifically 'man' documentation
 <transform dir file link path=usr/share/man/.* -> default facet.doc.man true>
-<transform dir file link path=usr/has/man/.* -> default facet.doc.man true>

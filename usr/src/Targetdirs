@@ -215,11 +215,6 @@ DIRS= \
 	/usr/ccs/lib \
 	/usr/demo \
 	/usr/games \
-	/usr/has \
-	/usr/has/bin \
-	/usr/has/lib \
-        /usr/has/man \
-        /usr/has/man/man1has \
 	/usr/include \
 	/usr/include/ast \
 	/usr/include/fm \
