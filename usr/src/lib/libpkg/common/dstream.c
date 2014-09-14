@@ -42,7 +42,6 @@
 #include <sys/stat.h>
 #include <sys/statvfs.h>
 #include <fcntl.h>
-#include <openssl/err.h>
 #include "pkglib.h"
 #include "pkglibmsgs.h"
 #include "pkglocale.h"
@@ -622,7 +621,7 @@ ds_getnextvol(char *device)
 	(void) sprintf(prompt,
 	    pkg_gt("Insert %%v %d of %d into %%p"),
 	    ds_volno, ds_volcnt);
-	if (n = getvol(device, NULL, NULL, prompt))
+	if (n = getvol(device, NULL, 0, prompt))
 		return (n);
 	if ((ds_fd = open(device, O_RDONLY)) < 0)
 		return (-1);
@@ -715,73 +714,6 @@ ds_next(char *device, char *instdir)
 		return (0);
 	}
 	/*NOTREACHED*/
-}
-
-/*
- * Name:		BIO_ds_dump
- * Description:	Dumps all data from the static 'ds_fd' file handle into
- *		the supplied BIO.
- *
- * Arguments:	err - where to record any errors.
- *		device - Description of device being dumped into,
- *			for error reporting
- *		bio - BIO object to dump data into
- *
- * Returns :	zero - successfully dumped all data to EOF
- *		non-zero - some failure occurred.
- */
-int
-BIO_ds_dump(PKG_ERR *err, char *device, BIO *bio)
-{
-	int	amtread;
-	char	readbuf[BLK_SIZE];
-
-	/*
-	 * note this will read to the end of the device, so it won't
-	 * work for character devices since we don't know when the
-	 * end of the CPIO archive is
-	 */
-	while ((amtread = read(ds_fd, readbuf, BLK_SIZE)) != 0) {
-		if (BIO_write(bio, readbuf, amtread) != amtread) {
-			pkgerr_add(err, PKGERR_WRITE, ERR_WRITE, device,
-			    ERR_error_string(ERR_get_error(), NULL));
-			return (1);
-		}
-	}
-
-	return (0);
-	/*NOTREACHED*/
-}
-
-
-/*
- * Name:		BIO_ds_dump_header
- * Description:	Dumps all ds_headsize bytes from the
- *		static 'ds_header_raw' character array
- *		to the supplied BIO.
- *
- * Arguments:	err - where to record any errors.
- *		bio - BIO object to dump data into
- *
- * Returns :	zero - successfully dumped all raw
- *		header characters
- *		non-zero - some failure occurred.
- */
-int
-BIO_ds_dump_header(PKG_ERR *err, BIO *bio)
-{
-
-	char	zeros[BLK_SIZE];
-
-	(void) memset(zeros, 0, BLK_SIZE);
-
-	if (BIO_write(bio, ds_header_raw, ds_headsize) != ds_headsize) {
-		pkgerr_add(err, PKGERR_WRITE, ERR_WRITE, "bio",
-		    ERR_error_string(ERR_get_error(), NULL));
-		return (1);
-	}
-
-	return (0);
 }
 
 /*

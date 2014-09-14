@@ -37,8 +37,8 @@ OBJECTS=	\
 		pkgtrans.o   ppkgmap.o \
 		progerr.o    putcfile.o   rrmdir.o \
 		runcmd.o     srchcfile.o  tputcfent.o \
-		verify.o     security.o   pkgweb.o \
-		pkgerr.o     keystore.o   p12lib.o \
+		verify.o     \
+		pkgerr.o     \
 		vfpops.o     fmkdir.o     pkgstr.o \
 		handlelocalfs.o	pkgserv.o
 
@@ -64,7 +64,7 @@ $(LINTLIB):=	SRCS = $(SRCDIR)/$(LINTSRC)
 LIBS = $(DYNLIB) $(LINTLIB)
 
 
-LDLIBS +=	-lc -lssl -lwanboot -lcrypto -lscf -ladm
+LDLIBS +=	-lc -lscf -ladm
 
 CFLAGS +=	$(CCVERBOSE)
 CERRWARN +=	-_gcc=-Wno-unused-label

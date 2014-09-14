@@ -33,7 +33,6 @@ extern "C" {
 #endif
 
 #include <pkgerr.h>
-#include <keystore.h>
 #include "pkglib.h"
 #include "libinst.h"
 
@@ -57,18 +56,6 @@ extern	void		set_verbose(boolean_t);
 extern	boolean_t	get_verbose(void);
 /* lock.c */
 extern int		admin_lock(int, char **);
-/* listcert.c */
-extern int		listcert(int, char **);
-/* importcert.c */
-extern int		addcert(int, char **);
-/* removecert.c */
-extern int		removecert(int, char **);
-
-/* certs.c */
-extern int		load_cert_and_key(PKG_ERR *, FILE *,
-    keystore_encoding_format_t, char *, EVP_PKEY **, X509 **);
-extern int		load_all_certs(PKG_ERR *, FILE *,
-    keystore_encoding_format_t, char *, STACK_OF(X509) **);
 
 #define	PKGADM_DBSTATUS_TEXT	"text"
 

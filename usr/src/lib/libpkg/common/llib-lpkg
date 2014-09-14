@@ -28,9 +28,6 @@
 /* LINTLIBRARY */
 /* PROTOLIB1 */
 #include <cfext.h>
-#include <keystore.h>
-#include <p12lib.h>
 #include <pkgerr.h>
 #include <pkglib.h>
 #include <pkglocale.h>
-#include <pkgweb.h>

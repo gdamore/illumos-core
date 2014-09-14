@@ -35,7 +35,6 @@ ROOTLINKS=   $(ROOTUSRSBIN)/pkgask
 include $(SRC)/cmd/svr4pkg/Makefile.svr4pkg
 
 LDLIBS	+=	-lpkg -linstzones -ladm
-LDLIBS	+=	-lcrypto -lwanboot
 
 .KEEP_STATE:
 

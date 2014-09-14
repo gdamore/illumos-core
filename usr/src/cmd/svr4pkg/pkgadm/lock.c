@@ -70,7 +70,6 @@
 #include <libinst.h>
 #include <pkglib.h>
 #include <pkgerr.h>
-#include <keystore.h>
 #include "pkgadm.h"
 #include "pkgadm_msgs.h"
 

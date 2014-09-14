@@ -36,7 +36,6 @@
 #include <libintl.h>
 
 #include <pkglib.h>
-#include <pkgweb.h>
 #include <messages.h>
 
 #include <libadm.h>
@@ -304,17 +303,6 @@ quit(int a_retcode)
 		if (pkgdev.dirname != NULL) {
 			echoDebug(DBG_REMOVING_DSTREAM_TMPDIR, pkgdev.dirname);
 			(void) rrmdir(pkgdev.dirname);  /* from tempnam */
-		}
-		/*
-		 * cleanup after a web-based install.
-		 * web-based install failures
-		 * are indicated by exit codes 10-98
-		 * exit code 99 is fatal error exit.
-		 */
-		if (pkgdev.pathname != NULL && is_web_install() &&
-			(a_retcode == 0 ||
-				(a_retcode >= 10 && a_retcode < 99))) {
-			(void) web_cleanup();
 		}
 		(void) ds_close(1);
 	} else if (pkgdev.mount) {

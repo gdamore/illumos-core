@@ -412,8 +412,7 @@ main(int argc, char *argv[])
 				progerr(gettext(ERR_MKDIR), spooldir);
 				quit(99);
 			}
-			if (n = pkgtrans(device, spooldir, pkg, PT_SILENT,
-				NULL, NULL))
+			if (n = pkgtrans(device, spooldir, pkg, PT_SILENT))
 				quit(n);
 			if (catg_arg != NULL)
 				pkg = gpkglist(spooldir, all_pkgs, category);

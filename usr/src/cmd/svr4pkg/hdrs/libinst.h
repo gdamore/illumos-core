@@ -330,12 +330,6 @@ extern void	putConditionInfo __P((char *, char *));
 extern void		setadminFile __P((char *file));
 extern char		*setadminSetting __P((char *a_paramName,
 				char *a_paramValue));
-extern char		*set_keystore_admin __P((void));
-extern boolean_t	get_proxy_port_admin __P((char **, ushort_t *));
-extern boolean_t	check_keystore_admin __P((char **));
-extern int		web_ck_retries __P((void));
-extern int		web_ck_timeout __P((void));
-extern int		web_ck_authentication __P((void));
 
 /* setlist.c */
 extern char	*cl_iscript __P((int idx));

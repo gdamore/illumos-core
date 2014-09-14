@@ -56,7 +56,6 @@
  */
 
 #include <pkglib.h>
-#include <pkgweb.h>
 
 /*
  * local pkg command library includes

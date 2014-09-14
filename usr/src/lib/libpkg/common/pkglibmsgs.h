@@ -338,91 +338,18 @@ extern "C" {
 #define	ERR_EX_FAIL	"exec of %s failed, errno=%d"
 
 /* pkgweb errors */
-#define	MSG_DWNLD "\n## Downloading..."
-#define	ERR_DWNLD_FAILED "\n## After %d retries, unable to complete transfer"
-#define	MSG_DWNLD_TIMEOUT "\n## Timed out, retrying..."
-#define	MSG_DWNLD_CONNREF "\n## Connection to <%s> refused, retrying..."
-#define	MSG_DWNLD_HOSTDWN "\n## <%s> not responding, retrying..."
-#define	MSG_DWNLD_PART "\n## Found partially downloaded file <%s> of " \
-			"size <%ld> bytes.  To force a complete " \
-			"re-download, delete this file and try again"
-#define	MSG_DWNLD_PREV "\n## Using previously spooled package datastream <%s>"
-#define	MSG_DWNLD_CONT "\n## Continuing previously attempted download..."
-#define	MSG_DWNLD_COMPLETE "## Download Complete\n"
-
-#define	ERR_DWNLD_NO_CONT "unable to open partially downloaded file <%s> " \
-				"for appending"
-#define	ERR_BAD_PATH "unable to locate keystore."
-#define	ERR_EMPTYPATH "No valid path exists for the keystore file."
-#define	ERR_RETRIES "The number of server retries is not a valid " \
-	"value. Please specify a value within the range of %d - %d."
-#define	ERR_TIMEOUT "The network timeout value is not a valid " \
-	"value. Please specify a value within the range of %d - %d."
-#define	ERR_PARSE_URL "unable to parse the url <%s>."
 #define	ERR_MEM "unable to allocate memory."
-#define	ERR_HTTPS_PASSWD "unable set password for HTTPS connection."
-#define	ERR_HTTPS_CA "unable to set CA file for HTTPS connection."
-#define	ERR_HTTP "Failure occurred with http(s) negotiation: <%s>"
 #define	ERR_WRITE "Cannot write to file <%s> : <%s>"
 #define	ERR_READ "Cannot read from file <%s> : <%s>"
-#define	ERR_SVR_RESP "unable to establish a connection with the http(s) server."
-#define	ERR_INIT_CONN "unable to establish a connection with <%s>."
-#define	ERR_INIT_SESS "unable to intialize download session for <%s>."
-#define	ERR_INIT_CONN_PROXY "unable to establish a connection with <%s> " \
-	"using <%s> as the proxy"
-#define	ERR_CLOSE_CONN "unable to close the connection with <%s>."
-#define	ERR_NO_HEAD_VAL "HTTP Response did not include header <%s>."
-/* CSTYLED */
-#define	ERR_BAD_HEAD_VAL "HTTP Header value \"<%s>: <%s>\" unusable or " \
-			"unparseable."
 #define	ERR_BAD_CONTENT "The package <%s> attempting to be installed " \
 	"is illegal."
-#define	ERR_DWNLD "unable to download package datastream from <%s>."
 #define	ERR_OPEN_TMP "unable to open temporary file for writing."
 #define	ERR_WRITE_TMP "unable to write to temporary file."
 #define	ERR_DISK_SPACE "Not enough disk space is available to download " \
 	"package to\n%s. %llukb needed, %llukb available."
-#define	ERR_CERTS "unable to find a valid certificate in <%s>."
-#define	ERR_CERTCHAIN "unable to build certificate chain for subject <%s>:<%s>."
 #define	ERR_ILL_ENV "The environment variable <%s=%s> is illegal"
-#define	ERR_BAD_PROXY "Invalid proxy specification: <%s>"
 #define	ERR_TMPDIR "unable to find temporary directory <%s>"
 #define	ERR_MEM "unable to allocate memory."
-#define	ERR_NO_DWNLD_DIR "No download directory available."
-#define	MSG_OCSP_VERIFY "## Contacting OCSP Responder <%s> for " \
-			"certificate <%s> status"
-#define	MSG_OCSP_VERIFY_PROXY "## Contacting OCSP Responder <%s> through " \
-				"proxy <%s:%d> for certificate <%s> status"
-#define	ERR_OCSP_PARSE "OCSP Responder URL <%s> invalid or unparseable"
-#define	ERR_OCSP_RESP_PARSE "OCSP Response <%s> unparseable or empty"
-#define	ERR_OCSP_RESP_NOTOK "OCSP Request failed.  Expected status " \
-			"<%d>, got <%d>, Reason=<%s>"
-#define	WRN_OCSP_RESP_NONCE "WARNING: Invalid or no nonce found in " \
-			"OCSP response."
-#define	ERR_OCSP_RESP_TYPE "OCSP response message type invalid: <%s>, " \
-			"expecting <%s>"
-#define	ERR_OCSP_CONNECT "Cannot connect to OCSP Responder <%s> port <%d>"
-#define	ERR_OCSP_SEND "Cannot send OCSP request to OCSP Responder <%s>"
-#define	ERR_OCSP_READ "Cannot read OCSP response from OCSP Responder <%s>"
-#define	ERR_OCSP_RESPONDER "OCSP Responder cannot process OCSP Request"
-#define	ERR_OCSP_UNSUP "Unsupported OCSP Option <%s>"
-#define	ERR_OCSP_VERIFY_NOTIME "Cannot access system time() to determine " \
-				"OCSP Response validity"
-#define	ERR_OCSP_VERIFY_SIG "OCSP Response, signed by <%s>, cannot be " \
-			"verified: <%s>"
-#define	ERR_OCSP_VERIFY_FAIL "unable to validate response from OCSP " \
-			"Responder <%s>"
-#define	ERR_OCSP_VERIFY_NO_STATUS "OCSP Responder did not supply validity " \
-				"of certificate <%s> "
-#define	ERR_OCSP_VERIFY_VALIDITY_NOTBEFORE "OCSP Response is only valid " \
-			"after <%s>.  Current time is <%s>."
-#define	ERR_OCSP_VERIFY_VALIDITY "OCSP Response is only valid from <%s> " \
-			"to <%s>.  Current time is <%s>."
-#define	ERR_OCSP_VERIFY_STATUS "OCSP Responder indicates certificate <%s> " \
-			"status is <%s>"
-#define	ERR_OCSP_VERIFY "OCSP Responder rejected certificate, or did not " \
-			"recognize"
-#define	ERR_OCSP_NO_URI "No OCSP Responder URL"
 
 #define	MSG_BASE_USED   "Using <%s> as the package base directory."
 

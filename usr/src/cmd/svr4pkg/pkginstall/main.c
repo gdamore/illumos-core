@@ -51,7 +51,6 @@
 #include <assert.h>
 #include <instzones_api.h>
 #include <pkglib.h>
-#include <pkgweb.h>
 #include <install.h>
 #include <libinst.h>
 #include <libadm.h>
@@ -379,10 +378,6 @@ main(int argc, char *argv[])
 		 * default is /usr/sadm/install/bin.
 		 */
 		case 'b':
-			if (!path_valid(optarg)) {
-				progerr(ERR_PATH, optarg);
-				exit(1);
-			}
 			if (isdir(optarg) != 0) {
 				char *p = strerror(errno);
 				progerr(ERR_CANNOT_USE_DIR, optarg, p);

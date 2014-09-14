@@ -32,6 +32,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <sys/types.h>
+#include <stdlib.h>
 #include "pkglib.h"
 #include "pkglibmsgs.h"
 #include "pkglocale.h"

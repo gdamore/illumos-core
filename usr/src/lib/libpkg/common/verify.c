@@ -435,7 +435,7 @@ averify(int fix, char *ftype, char *path, struct ainfo *ainfo)
 			if (strcmp(cd, c) == 0)
 				(void) strcpy(cd, "/");
 			else
-				*c = NULL;
+				*c = 0;
 
 			if (chdir(cd) != 0) {
 				reperr(pkg_gt(ERR_CHDIR), cd);
@@ -695,7 +695,7 @@ averify(int fix, char *ftype, char *path, struct ainfo *ainfo)
 					return (VE_FAIL);
 				}
 			} else if (*ftype == 'p') {
-				if (mknod(path, ainfo->mode | S_IFIFO, NULL) ||
+				if (mknod(path, ainfo->mode | S_IFIFO, 0) ||
 				    (stat(path, &status) < 0)) {
 					reperr(pkg_gt(ERR_PIPEFAIL));
 					return (VE_FAIL);

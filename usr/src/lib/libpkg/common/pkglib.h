@@ -40,12 +40,8 @@ extern "C" {
 #include <stdio.h>
 #include <pkgdev.h>
 #include <pkgstrct.h>
-#include <openssl/bio.h>
-#include <openssl/x509.h>
 #include <netdb.h>
-#include <boot_http.h>
 #include "pkgerr.h"
-#include "keystore.h"
 #include "cfext.h"
 
 /*
@@ -358,9 +354,6 @@ struct dstr {
 #define	MED_DWNLD		(10 * 1024 * 1024) /* 10 MB */
 #define	LARGE_DWNLD		(5 * MED_DWNLD) /* 50 MB */
 
-#define	HTTP			"http://"
-#define	HTTPS			"https://"
-
 #define	PKGADD			"pkgadd"
 
 /* Settings for network admin defaults */
@@ -435,9 +428,6 @@ extern int	ds_getpkg(char *device, int n, char *dstdir);
 extern int	ds_ginit(char *device);
 extern boolean_t	ds_fd_open(void);
 extern int	ds_init(char *device, char **pkg, char *norewind);
-extern int	BIO_ds_dump_header(PKG_ERR *, BIO *);
-extern int	BIO_ds_dump(PKG_ERR *, char *, BIO *);
-extern int	BIO_dump_cmd(char *cmd, BIO *bio);
 extern int	ds_next(char *, char *);
 extern int	ds_readbuf(char *device);
 extern int	epclose(FILE *pp);
@@ -463,8 +453,7 @@ extern int	pkgexecv(char *filein, char *fileout, char *uname, char *gname,
 extern int	pkghead(char *device);
 extern int	pkgmount(struct pkgdev *devp, char *pkg, int part, int nparts,
 			int getvolflg);
-extern int	pkgtrans(char *device1, char *device2, char **pkg,
-			int options, keystore_handle_t, char *);
+extern int	pkgtrans(char *device1, char *device2, char **pkg, int options);
 extern int	pkgumount(struct pkgdev *devp);
 extern int	ppkgmap(struct cfent *ept, FILE *fp);
 extern int	putcfile(struct cfent *ept, FILE *fp);
@@ -510,15 +499,6 @@ extern void	set_nonABI_symlinks(void);
 extern int	nonABI_symlinks(void);
 extern void	disable_attribute_check(void);
 extern int	get_disable_attribute_check(void);
-
-/* security.c */
-extern void	sec_init(void);
-extern char	*get_subject_display_name(X509 *);
-extern char	*get_issuer_display_name(X509 *);
-extern char	*get_serial_num(X509 *);
-extern char	*get_fingerprint(X509 *, const EVP_MD *);
-extern int	get_cert_chain(PKG_ERR *, X509 *, STACK_OF(X509) *,
-    STACK_OF(X509) *, STACK_OF(X509) **);
 
 /* pkgstr.c */
 void		pkgstrConvertUllToTimeString_r(unsigned long long a_time,

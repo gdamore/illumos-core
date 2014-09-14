@@ -88,7 +88,7 @@ ecleanup(void)
 {
 	if (errfile[0]) {
 		(void) unlink(errfile);
-		errfile[0] = NULL;
+		errfile[0] = 0;
 	}
 }
 
