@@ -23,6 +23,8 @@
 # Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
+#
 
 #
 #	This makefile drives the production of the openeepr driver
@@ -56,7 +58,6 @@ ALL_TARGET	= $(BINARY) $(SRC_CONFILE)
 LINT_TARGET	= $(MODULE).lint
 INSTALL_TARGET	= $(BINARY) $(ROOTMODULE) $(ROOT_CONFFILE)
 
-CPPFLAGS +=	-I$(SRC)/common/net/wanboot/crypt
 LDFLAGS +=	-dy -Ndacf/consconfig_dacf
 
 #

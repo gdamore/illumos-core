@@ -101,8 +101,6 @@ SUBDIRS += \
 	libdns_sd	\
 	libefi		\
 	libfstyp	\
-	libwanboot	\
-	libwanbootutil	\
 	libcryptoutil	\
 	libinetutil	\
 	libipadm	\
@@ -347,8 +345,6 @@ MSGSUBDIRS=		\
 	libuutil	\
 	libvrrpadm	\
 	libvscan	\
-	libwanboot	\
-	libwanbootutil	\
 	libzfs		\
 	libzonecfg	\
 	lvm		\
@@ -464,8 +460,6 @@ HDRSUBDIRS=		\
 	libumem		\
 	libunistat	\
 	libuutil	\
-	libwanboot	\
-	libwanbootutil	\
 	libwrap		\
 	libxcurses2	\
 	libzfs		\
@@ -592,7 +586,7 @@ libuuid:	libdlpi
 libinetutil:	libsocket
 libipsecutil:	libtecla libsocket
 libinstzones:	libzonecfg libcontract
-libpkg:		libwanboot libscf libadm
+libpkg:		libscf libadm
 libnwam:	libscf
 libsecdb:	libnsl
 libsasl:	libgss libsocket pkcs11 libmd
@@ -616,9 +610,6 @@ libproject:	libpool libproc libsecdb
 libtermcap:	libcurses
 libtsnet:	libnsl libtsol libsecdb
 libwrap:	libnsl libsocket
-libwanboot:	libnvpair libresolv libnsl libsocket libdevinfo libinetutil \
-		libdhcputil
-libwanbootutil:	libnsl
 pam_modules:	libproject passwdutil smbsrv
 libscf:		libuutil libmd libgen libsmbios libnsl
 libinetsvc:	libscf

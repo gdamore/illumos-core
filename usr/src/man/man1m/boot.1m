@@ -1,10 +1,11 @@
 '\" te
+.\" Copyright 2014 Garrett D'Amore <garrett@damore.org>
 .\" Copyright (c) 2008 Sun Microsystems, Inc. All Rights Reserved
 .\" Copyright 1989 AT&T
 .\" The contents of this file are subject to the terms of the Common Development and Distribution License (the "License"). You may not use this file except in compliance with the License. You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE or http://www.opensolaris.org/os/licensing.
 .\" See the License for the specific language governing permissions and limitations under the License. When distributing Covered Code, include this CDDL HEADER in each file and include the License file at usr/src/OPENSOLARIS.LICENSE. If applicable, add the following below this CDDL HEADER, with the
 .\" fields enclosed by brackets "[]" replaced with your own identifying information: Portions Copyright [yyyy] [name of copyright owner]
-.TH BOOT 1M "Mar 2, 2009"
+.TH BOOT 1M "Sep 15, 2014"
 .SH NAME
 boot \- start the system kernel or a standalone program
 .SH SYNOPSIS
@@ -23,8 +24,6 @@ boot \- start the system kernel or a standalone program
 .fi
 
 .SH DESCRIPTION
-.sp
-.LP
 Bootstrapping is the process of loading and executing a standalone program. For
 the purpose of this discussion, bootstrapping means the process of loading and
 executing the bootable operating system. Typically, the standalone program is
@@ -32,58 +31,46 @@ the operating system kernel (see \fBkernel\fR(1M)), but any standalone program
 can be booted instead. On a SPARC-based system, the diagnostic monitor for a
 machine is a good example of a standalone program other than the operating
 system that can be booted.
-.sp
 .LP
 If the standalone is identified as a dynamically-linked executable, \fBboot\fR
 will load the interpreter (linker/loader) as indicated by the executable format
 and then transfer control to the interpreter. If the standalone is
 statically-linked, it will jump directly to the standalone.
-.sp
 .LP
 Once the kernel is loaded, it starts the UNIX system, mounts the necessary file
 systems (see \fBvfstab\fR(4)), and runs \fB/sbin/init\fR to bring the system to
 the "initdefault" state specified in \fB/etc/inittab\fR. See \fBinittab\fR(4).
 .SS "SPARC Bootstrap Procedure"
-.sp
-.LP
 On SPARC based systems, the bootstrap procedure on most machines consists of
 the following basic phases.
-.sp
 .LP
 After the machine is turned on, the system firmware (in PROM) executes power-on
 self-test (POST). The form and scope of these tests depends on the version of
 the firmware in your system.
-.sp
 .LP
 After the tests have been completed successfully, the firmware attempts to
 autoboot if the appropriate flag has been set in the non-volatile storage area
 used by the firmware. The name of the file to load, and the device to load it
 from can also be manipulated.
-.sp
 .LP
 These flags and names can be set using the \fBeeprom\fR(1M) command from the
 shell, or by using \fBPROM\fR commands from the \fBok\fR prompt after the
 system has been halted.
-.sp
 .LP
 The second level program is either a fileystem-specific boot block (when
-booting from a disk), or \fBinetboot\fR or \fBwanboot\fR (when booting across
+booting from a disk), or \fBinetboot\fR (when booting across
 the network).
-.sp
-.LP
-Network Booting
-.sp
-.LP
+.
+.SS "Network Booting"
+.
 Network booting occurs in two steps: the client first obtains an IP address and
 any other parameters necessary to permit it to load the second-stage booter.
 The second-stage booter in turn loads the boot archive from the boot device.
-.sp
 .LP
 An IP address can be obtained in one of three ways: RARP, DHCP, or manual
 configuration, depending on the functions available in and configuration of the
 PROM. Machines of the \fBsun4u\fR and \fBsun4v\fR kernel architectures have
 DHCP-capable PROMs.
-.sp
 .LP
 The boot command syntax for specifying the two methods of network booting are:
 .sp
@@ -106,16 +93,13 @@ boot net
 .in -2
 .sp
 
-.sp
 .LP
 without a \fBrarp\fR or \fBdhcp\fR specifier, invokes the default method for
 network booting over the network interface for which \fBnet\fR is an alias.
-.sp
 .LP
 The sequence of events for network booting using RARP/\fBbootparams\fR is
 described in the following paragraphs. The sequence for DHCP follows the
 RARP/\fBbootparams\fR description.
-.sp
 .LP
 When booting over the network using RARP/\fBbootparams\fR, the PROM begins by
 broadcasting a reverse ARP request until it receives a reply. When a reply is
@@ -126,328 +110,39 @@ reverse ARP to fetch its IP address, then broadcast \fBbootparams\fR RPC calls
 (see \fBbootparams\fR(4)) to locate configuration information and its root file
 system. \fBinetboot\fR then loads the boot archive by means of NFS and
 transfers control to that archive.
-.sp
 .LP
 When booting over the network using DHCP, the PROM broadcasts the hardware
 address and kernel architecture and requests an IP address, boot parameters,
 and network configuration information. After a DHCP server responds and is
 selected (from among potentially multiple servers), that server sends to the
-client an IP address and all other information needed to boot the client. After
-receipt of this information, the client PROM examines the name of the file to
-be loaded, and will behave in one of two ways, depending on whether the file's
-name appears to be an HTTP URL. If it does not, the PROM downloads
+client an IP address and all other information needed to boot the client.
+Next, the PROM downloads
 \fBinetboot\fR, loads that file into memory, and executes it. \fBinetboot\fR
 loads the boot archive, which takes over the machine and releases
 \fBinetboot\fR. Startup scripts then initiate the DHCP agent (see
 \fBdhcpagent\fR(1M)), which implements further DHCP activities.
-.sp
-.LP
-If the file to be loaded is an HTTP URL, the PROM will use HTTP to load the
-referenced file. If the client has been configured with an HMAC SHA-1 key, it
-will check the integrity of the loaded file before proceeding to execute it.
-The file is expected to be the \fBwanboot\fR binary. The WAN boot process can
-be configured to use either DHCP or NVRAM properties to discover the install
-server and router and the proxies needed to connect to it. When \fBwanboot\fR
-begins executing, it determines whether sufficient information is available to
-it to allow it to proceed. If any necessary information is missing, it will
-either exit with an appropriate error or bring up a command interpreter and
-prompt for further configuration information. Once \fBwanboot\fR has obtained
-the necessary information, it loads the boot loader into memory by means of
-HTTP. If an encryption key has been installed on the client, \fBwanboot\fR will
-verify the boot loader's signature and its accompanying hash. Presence of an
-encryption key but no hashing key is an error.
-.sp
-.LP
-The \fBwanboot\fR boot loader can communicate with the client using either HTTP
-or secure HTTP. If the former, and if the client has been configured with an
-HMAC SHA-1 key, the boot loader will perform an integrity check of the root
-file system. Once the root file system has been loaded into memory (and
-possibly had an integrity check performed), the boot archive is transferred
-from the server. If provided with a \fBboot_logger\fR URL by means of the
-\fBwanboot.conf\fR(4) file, \fBwanboot\fR will periodically log its progress.
-.sp
-.LP
-Not all PROMs are capable of consuming URLs. You can determine whether a client
-is so capable using the \fBlist-security-keys\fR OBP command (see
-\fBmonitor\fR(1M)).
-.sp
-.LP
-WAN booting is not currently available on the x86 platform.
-.sp
-.LP
-The \fBwanboot\fR Command Line
-.sp
-.LP
-When the client program is \fBwanboot\fR, it accepts \fBclient-program-args\fR
-of the form:
-.sp
-.in +2
-.nf
-boot ... -o \fIopt1\fR[,\fIopt2\fR[,...]]
-.fi
-.in -2
-.sp
-
-.sp
-.LP
-where each option may be an action:
-.sp
-.ne 2
-.na
-\fB\fBdhcp\fR\fR
-.ad
-.sp .6
-.RS 4n
-Require \fBwanboot\fR to obtain configuration parameters by means of DHCP.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBprompt\fR\fR
-.ad
-.sp .6
-.RS 4n
-Cause \fBwanboot\fR to enter its command interpreter.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fI<cmd>\fR\fR
-.ad
-.sp .6
-.RS 4n
-One of the interpreter commands listed below.
-.RE
-
-.sp
-.LP
-\&...or an assignment, using the interpreter's parameter names listed below.
-.sp
-.LP
-The \fBwanboot\fR Command Interpreter
-.sp
-.LP
-The \fBwanboot\fR command interpreter is invoked by supplying a
-\fBclient-program-args\fR of "\fB-o prompt\fR" when booting. Input consists of
-single commands or assignments, or a comma-separated list of commands or
-assignments. The configuration parameters are:
-.sp
-.ne 2
-.na
-\fB\fBhost-ip\fR\fR
-.ad
-.sp .6
-.RS 4n
-IP address of the client (in dotted-decimal notation)
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBrouter-ip\fR\fR
-.ad
-.sp .6
-.RS 4n
-IP address of the default router (in dotted-decimal notation)
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBsubnet-mask\fR\fR
-.ad
-.sp .6
-.RS 4n
-subnet mask (in dotted-decimal notation)
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBclient-id\fR\fR
-.ad
-.sp .6
-.RS 4n
-DHCP client identifier (a quoted ASCII string or hex ASCII)
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBhostname\fR\fR
-.ad
-.sp .6
-.RS 4n
-hostname to request in DHCP transactions (ASCII)
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBhttp-proxy\fR\fR
-.ad
-.sp .6
-.RS 4n
-HTTP proxy server specification (IPADDR[:PORT])
-.RE
-
-.sp
-.LP
-The key names are:
-.sp
-.ne 2
-.na
-\fB\fB3des\fR\fR
-.ad
-.sp .6
-.RS 4n
-the triple DES encryption key (48 hex ASCII characters)
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBaes\fR\fR
-.ad
-.sp .6
-.RS 4n
-the AES encryption key (32 hex ASCII characters)
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBsha1\fR\fR
-.ad
-.sp .6
-.RS 4n
-the HMAC SHA-1 signature key (40 hex ASCII characters)
-.RE
-
-.sp
-.LP
-Finally, the URL or the WAN boot CGI is referred to by means of:
-.sp
-.ne 2
-.na
-\fB\fBbootserver\fR\fR
-.ad
-.sp .6
-.RS 4n
-URL of WAN boot's CGI (the equivalent of OBP's \fBfile\fR parameter)
-.RE
-
-.sp
-.LP
-The interpreter accepts the following commands:
-.sp
-.ne 2
-.na
-\fB\fBhelp\fR\fR
-.ad
-.sp .6
-.RS 4n
-Print a brief description of the available commands
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fB\fIvar\fR=\fIval\fR\fR\fR
-.ad
-.sp .6
-.RS 4n
-Assign \fIval\fR to \fIvar\fR, where \fIvar\fR is one of the configuration
-parameter names, the key names, or \fBbootserver\fR.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fB\fIvar\fR=\fR\fR
-.ad
-.sp .6
-.RS 4n
-Unset parameter \fIvar\fR.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBlist\fR\fR
-.ad
-.sp .6
-.RS 4n
-List all parameters and their values (key values retrieved by means of OBP are
-never shown).
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBprompt\fR\fR
-.ad
-.sp .6
-.RS 4n
-Prompt for values for unset parameters. The name of each parameter and its
-current value (if any) is printed, and the user can accept this value (press
-Return) or enter a new value.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBgo\fR\fR
-.ad
-.sp .6
-.RS 4n
-Once the user is satisfied that all values have been entered, leave the
-interpreter and continue booting.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBexit\fR\fR
-.ad
-.sp .6
-.RS 4n
-Quit the boot interpreter and return to OBP's \fBok\fR prompt.
-.RE
-
-.sp
-.LP
-Any of these assignments or commands can be passed on the command line as part
-of the \fB-o\fR options, subject to the OBP limit of 128 bytes for boot
-arguments. For example, \fB-o\fR \fBlist,go\fR would simply list current
-(default) values of the parameters and then continue booting.
+.
 .SS "iSCSI Boot"
-.sp
-.LP
+.
 iSCSI boot is currently supported only on x86. The host being booted must be
 equipped with NIC(s) capable of iBFT (iSCSI Boot Firmware Table) or have the
 mainboard's BIOS be iBFT-capable. iBFT, defined in the Advanced Configuration
 and Power Interface (ACPI) 3.0b specification, specifies a block of information
 that contains various parameters that are useful to the iSCSI Boot process.
-.sp
 .LP
 Firmware implementing iBFT presents an iSCSI disk in the BIOS during startup as
 a bootable device by establishing the connection to the iSCSI target. The rest
 of the process of iSCSI booting is the same as booting from a local disk.
-.sp
 .LP
 To configure the iBFT properly, users need to refer to the documentation from
 their hardware vendors.
+.
 .SS "Booting from Disk"
-.sp
-.LP
+.
 When booting from disk, the OpenBoot PROM firmware reads the boot blocks from
 blocks 1 to 15 of the partition specified as the boot device. This standalone
 booter usually contains a file system-specific reader capable of reading the
 boot archive.
-.sp
 .LP
 If the pathname to the standalone is relative (does not begin with a slash),
 the second level boot will look for the standalone in a platform-dependent
@@ -457,24 +152,21 @@ platform-specific path entry \fB/platform/\fR\fIhardware-class-name\fR. See
 \fBfilesystem\fR(5). If the pathname is absolute, \fBboot\fR will use the
 specified path. The \fBboot\fR program then loads the standalone at the
 appropriate address, and then transfers control.
-.sp
 .LP
 Once the boot archive has been transferred from the boot device, Solaris can
 initialize and take over control of the machine. This process is further
 described in the "Boot Archive Phase," below, and is identical on all
 platforms.
-.sp
 .LP
 If the filename is not given on the command line or otherwise specified, for
 example, by the \fBboot-file\fR NVRAM variable, \fBboot\fR chooses an
 appropriate default file to load based on what software is installed on the
 system and the capabilities of the hardware and firmware.
-.sp
 .LP
 The path to the kernel must not contain any whitespace.
+.
 .SS "Booting from ZFS"
-.sp
-.LP
+.
 Booting from ZFS differs from booting from UFS in that, with ZFS, a device
 specifier identifies a storage pool, not a single root file system. A storage
 pool can contain multiple bootable datasets (that is, root file systems).
@@ -484,9 +176,9 @@ identified by the boot device. By default, the dataset selected for booting is
 the one identified by the pool's \fBbootfs\fR property. This default selection
 can be overridden by specifying an alternate bootable dataset with the \fB-Z\fR
 option.
+.
 .SS "Boot Archive Phase"
-.sp
-.LP
+.
 The boot archive contains a file system image that is mounted using an
 in-memory disk. The image is self-describing, specifically containing a file
 system reader in the boot block. This file system reader mounts and opens the
@@ -500,20 +192,16 @@ default, this kernel is in:
 .in -2
 .sp
 
-.sp
 .LP
 If booting from ZFS, the pathnames of both the archive and the kernel file are
 resolved in the root file system (that is, dataset) selected for booting as
 described in the previous section.
-.sp
 .LP
 The initialization of the kernel continues by loading necessary drivers and
 modules from the in-memory filesystem until I/O can be turned on and the root
 filesystem mounted. Once the root filesystem is mounted, the in-memory
 filesystem is no longer needed and is discarded.
 .SS "OpenBoot PROM \fBboot\fR Command Behavior"
-.sp
-.LP
 The OpenBoot \fBboot\fR command takes arguments of the following form:
 .sp
 .in +2
@@ -543,11 +231,9 @@ typically uses the \fIboot-file\fR or \fIdiag-file\fR \fBNVRAM\fR variable as
 default \fBboot\fR arguments. (If the system is in diagnostics mode,
 \fIdiag-device\fR and \fIdiag-file\fR are used instead of \fIboot-device\fR and
 \fIboot-file\fR).
-.sp
 .LP
 \fIarguments\fR may include more than one string. All \fIargument\fR strings
 are passed to the secondary booter; they are not interpreted by OpenBoot.
-.sp
 .LP
 If any \fIarguments\fR are specified on the \fBboot\fR command line, then
 neither the \fIboot-file\fR nor the \fIdiag-file\fR \fBNVRAM\fR variable is
@@ -585,14 +271,11 @@ boot. In most cases, it is best to allow the \fBboot\fR command to choose an
 appropriate default based upon the system type, system hardware and firmware,
 and upon what is installed on the root file system. Changing \fIboot-file\fR or
 \fIdiag-file\fR can generate unexpected results in certain circumstances.
-.sp
 .LP
 This behavior is found on most OpenBoot 2.x and 3.x based systems. Note that
 differences may occur on some platforms.
-.sp
 .LP
 The command:
-.sp
 .LP
 ok \fBboot cdrom\fR
 .sp
@@ -601,19 +284,10 @@ ok \fBboot cdrom\fR
 to the 64-bit kernel filename and you attempt to boot the installation CD or
 DVD with \fBboot cdrom\fR, boot will fail if the installation media contains
 only a 32-bit kernel.
-.sp
 .LP
 Because the contents of \fIboot-file\fR or \fIdiag-file\fR can be ignored
 depending on the form of the \fBboot\fR command used, reliance upon
 \fIboot-file\fR should be discouraged for most production systems.
-.sp
-.LP
-When executing a WAN boot from a local (CD or DVD) copy of wanboot, one must
-use:
-.sp
-.LP
-ok \fBboot cdrom -F wanboot - install\fR
-.sp
 .LP
 Modern PROMs have enhanced the network boot support package to support the
 following syntax for arguments to be processed by the package:
@@ -650,7 +324,7 @@ IP address of the TFTP server
 .ad
 .sp .6
 .RS 4n
-file to download using TFTP or URL for WAN boot
+file to download using TFTP
 .RE
 
 .sp
@@ -701,16 +375,6 @@ DHCP client identifier
 .sp .6
 .RS 4n
 hostname to use in DHCP transactions
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBhttp-proxy\fR\fR
-.ad
-.sp .6
-.RS 4n
-HTTP proxy server specification (IPADDR[:PORT])
 .RE
 
 .sp
@@ -795,9 +459,7 @@ The TFTP RRQ is unicast to the server if one is specified as an argument or in
 the DHCP response. Otherwise, the TFTP RRQ is broadcast.
 .sp
 .LP
-\fIfile\fR specifies the file to be loaded by TFTP from the TFTP server, or the
-URL if using HTTP. The use of HTTP is triggered if the file name is a URL, that
-is, the file name starts with \fBhttp:\fR (case-insensitive).
+\fIfile\fR specifies the file to be loaded by TFTP from the TFTP server.
 .sp
 .LP
 When using RARP and TFTP, the default file name is the ASCII hexadecimal
@@ -815,17 +477,6 @@ node's \fBname\fR property, with commas (,) replaced by periods (.).
 .LP
 When specified on the command line, the filename must not contain slashes
 (\fB/\fR).
-.sp
-.LP
-The format of URLs is described in RFC 2396. The HTTP server must be specified
-as an IP address (in standard IPv4 dotted-decimal notation). The optional port
-number is specified in decimal. If a port is not specified, port 80 (decimal)
-is implied.
-.sp
-.LP
-The URL presented must be "safe-encoded", that is, the package does not apply
-escape encodings to the URL presented. URLs containing commas must be presented
-as a quoted string. Quoting URLs is optional otherwise.
 .sp
 .LP
 \fBhost-ip\fR specifies the IP address (in standard IPv4 dotted-decimal
@@ -866,31 +517,25 @@ The ASCII hexadecimal representation of the identifier, or
 .el o
 a quoted string
 .RE
-.sp
 .LP
 Thus, \fBclient-id="openboot"\fR and \fBclient-id=6f70656e626f6f74\fR both
 represent a DHCP client identifier of 6F70656E626F6F74.
-.sp
 .LP
 Identifiers specified on the command line must must not include slash (\fB/\fR)
 or spaces.
-.sp
 .LP
 The maximum length of the DHCP client identifier is 32 bytes, or 64 characters
 representing 32 bytes if using the ASCII hexadecimal form. If the latter form
 is used, the number of characters in the identifier must be an even number.
 Valid characters are 0-9, a-f, and A-F.
-.sp
 .LP
 For correct identification of clients, the client identifier must be unique
 among the client identifiers used on the subnet to which the client is
 attached. System administrators are responsible for choosing identifiers that
 meet this requirement.
-.sp
 .LP
 Specifying a client identifier on a command line takes precedence over any
 other DHCP mechanism of specifying identifiers.
-.sp
 .LP
 \fBhostname\fR (specified as a string) specifies the hostname to be used in
 DHCP transactions. The name might or might not be qualified with the local
@@ -904,35 +549,16 @@ that the client provide the desired hostname to the DHCP server. Clients
 provide the desired hostname to the DHCP server, which can then register the
 hostname and IP address assigned to the client with DNS.
 .RE
-.sp
 .LP
-\fBhttp-proxy\fR is specified in the following standard notation for a host:
-.sp
-.in +2
-.nf
-\fIhost\fR [":"" \fIport\fR]
-.fi
-.in -2
-.sp
 
-.sp
-.LP
-\&...where \fIhost\fR is specified as an IP ddress (in standard IPv4
-dotted-decimal notation) and the optional \fIport\fR is specified in decimal.
-If a port is not specified, port 8080 (decimal) is implied.
-.sp
-.LP
 \fBtftp-retries\fR is the maximum number of retries (specified in decimal)
 attempted before the TFTP process is determined to have failed. Defaults to
 using infinite retries.
-.sp
 .LP
 \fBdhcp-retries\fR is the maximum number of retries (specified in decimal)
 attempted before the DHCP process is determined to have failed. Defaults to of
 using infinite retries.
 .SS "x86 Bootstrap Procedure"
-.sp
-.LP
 On x86 based systems, the bootstrapping process consists of two conceptually
 distinct phases, kernel loading and kernel initialization. Kernel loading is
 implemented in GRUB (GRand Unified Bootloader) using the BIOS ROM on the system
@@ -942,7 +568,6 @@ supported by the ROM on the network adapter, the BIOS can also download the
 \fBpxegrub\fR binary from a network boot server. Once GRUB is located, it
 executes a command in a menu to load the \fBunix\fR kernel and a
 pre-constructed boot archive containing kernel modules and data.
-.sp
 .LP
 If the device identified by GRUB as the boot device contains a ZFS storage
 pool, the \fBmenu.lst\fR file used to create the GRUB menu will be found in the
@@ -951,7 +576,6 @@ the same name as the pool itself. There is always exactly one such dataset in a
 pool, and so this dataset is well-suited for pool-wide data such as the
 \fBmenu.lst\fR file. After the system is booted, this dataset is mounted at
 /\fIpoolname\fR in the root file system.
-.sp
 .LP
 There can be multiple bootable datasets (that is, root file systems) within a
 pool. By default, the file system in which file name entries in a
@@ -960,7 +584,6 @@ pool. By default, the file system in which file name entries in a
 can contain a \fBbootfs\fR command, which specifies an alternate dataset in the
 pool. In this way, the \fBmenu.lst\fR file can contain entries for multiple
 root file systems within the pool.
-.sp
 .LP
 Kernel initialization starts when GRUB finishes loading the boot archive and
 hands control over to the \fBunix\fR binary. At this point, GRUB becomes
@@ -970,13 +593,10 @@ the root file system on the real root device. At this point, the kernel regains
 storage I/O, mounts additional file systems (see \fBvfstab\fR(4)), and starts
 various operating system services (see \fBsmf\fR(5)).
 .SS "Failsafe Mode"
-.sp
-.LP
 A requirement of booting from a root filesystem image built into a boot archive
 then remounting root onto the actual root device is that the contents of the
 boot archive and the root filesystem must be consistent. Otherwise, the proper
 operation and integrity of the machine cannot be guaranteed.
-.sp
 .LP
 The term "consistent" means that all files and modules in the root filesystem
 are also present in the boot archive and have identical contents. Since the
@@ -987,7 +607,6 @@ root filesystem. Without such consistency, it is possible that the system could
 be running with a kernel module or parameter setting applied to the root device
 before reboot, but not yet updated in the root archive. This inconsistency
 could result in system instability or data loss.
-.sp
 .LP
 Once the root filesystem is mounted, and before relinquishing the in-memory
 filesystem, Solaris performs a consistency verification against the two file
@@ -999,25 +618,21 @@ kernel is booted and functioning for the archive rebuild process.
 Alternatively, the administrator can elect to clear the inconsistent boot
 archive service state and continue system bring-up if the inconsistency is such
 that correct system operation will not be impaired. See \fBsvcadm\fR(1M).
-.sp
 .LP
 If the boot archive service is cleared and system bring-up is continued (the
 second alternative above), the system may be running with unloadable kernel
 drivers or other modules that are out-of-date with respect to the root
 filesystem. As such, correct system operation may be compromised.
-.sp
 .LP
 To ensure that the boot archive is consistent, the normal system shutdown
 process, as initiated by \fBreboot\fR(1M) and \fBshutdown\fR(1M), checks for
 and applies updates to the boot archive at the conclusion of the
 \fBumountall\fR(1M) milestone.
-.sp
 .LP
 An update to any kernel file, driver, module or driver configuration file that
 needs to be included in the boot archive after the \fBumountall\fR service is
 complete will result in a failed boot archive consistency check during the next
 boot. To avoid this, it is recommended to always shut down a machine cleanly.
-.sp
 .LP
 If an update is required to the kernel after completion of the \fBumountall\fR
 service, the administrator may elect to rebuild the archive by invoking:
@@ -1027,18 +642,13 @@ service, the administrator may elect to rebuild the archive by invoking:
 # \fBbootadm update-archive\fR
 .fi
 .in -2
-.sp
 
 .SS "Failsafe Boot Archive"
-.sp
-.LP
 The failsafe archive can be used to boot the machine at any time for
 maintenance or troubleshooting. The failsafe boot archive is installed on the
 machine, sourced from the miniroot archive. Booting the failsafe archive causes
 the machine to boot using the in-memory filesystem as the root device.
 .SS "SPARC"
-.sp
-.LP
 The SPARC failsafe archive is:
 .sp
 .in +2
@@ -1072,8 +682,6 @@ ok \fBboot [\fIdevice-specifier\fR] -Z \fIdataset\fR -F failsafe\fR
 .sp
 
 .SS "x86"
-.sp
-.LP
 The x86 failsafe archive is:
 .sp
 .in +2
@@ -1083,14 +691,11 @@ The x86 failsafe archive is:
 .in -2
 .sp
 
-.sp
 .LP
 \&...and can be booted by selecting the \fBSolaris failsafe\fR item from the
 GRUB menu.
 .SH OPTIONS
 .SS "SPARC"
-.sp
-.LP
 The following SPARC options are supported:
 .sp
 .ne 2
@@ -1127,7 +732,7 @@ exported by the \fBboot\fR program.
 .RS 4n
 Boot using the named object. The object must be either an ELF executable or
 bootable object containing a boot block. The primary use is to boot the
-failsafe or \fBwanboot\fR boot archive.
+failsafe.
 .RE
 
 .sp
@@ -1214,8 +819,6 @@ Boot from the root file system in the specified ZFS dataset.
 .RE
 
 .SS "x86"
-.sp
-.LP
 The following x86 options are supported:
 .sp
 .ne 2
@@ -1267,8 +870,6 @@ the machine.
 .RE
 
 .SH X86 BOOT SEQUENCE DETAILS
-.sp
-.LP
 After a PC-compatible machine is turned on, the system firmware in the \fBBIOS
 ROM\fR executes a power-on self test (POST), runs \fBBIOS\fR extensions in
 peripheral board \fBROMs,\fR and invokes software interrupt INT 19h, Bootstrap.
@@ -1277,8 +878,6 @@ consists of trying to read the first physical sector from the first diskette
 drive, or, if that fails, from the first hard disk. The processor then jumps to
 the first byte of the sector image in memory.
 .SH X86 PRIMARY BOOT
-.sp
-.LP
 The first sector on a floppy disk contains the master boot block (GRUB
 \fBstage1\fR). The stage 1 is responsible for loading GRUB \fBstage2\fR. Now
 GRUB is fully functional. It reads and executes the menu file
@@ -1320,8 +919,6 @@ Protocol (TFTP). The BIOS executes the \fBpxegrub\fR by jumping to its first
 byte in memory. The \fBpxegrub\fR program downloads a menu file and presents
 the entries to user.
 .SH X86 KERNEL STARTUP
-.sp
-.LP
 The kernel startup process is independent of the kernel loading process. During
 kernel startup, console I/O goes to the device specified by the \fBconsole\fR
 property.
@@ -1346,7 +943,6 @@ and \fBkeyboard\fR. The root device defaults to \fBramdisk\fR and the file
 system defaults to \fBufs\fR.
 .SH EXAMPLES
 .SS "SPARC"
-.LP
 \fBExample 1 \fRTo Boot the Default Kernel In Single-User Interactive Mode
 .sp
 .LP
@@ -1424,25 +1020,7 @@ boot support package processes arguments in \fBnetwork-boot-arguments\fR.
 .in -2
 .sp
 
-.LP
-\fBExample 3 \fRUsing \fBwanboot\fR with Older PROMs
-.sp
-.LP
-The command below results in the \fBwanboot\fR binary being loaded from DVD or
-CD, at which time \fBwanboot\fR will perform DHCP and then drop into its
-command interpreter to allow the user to enter keys and any other necessary
-configuration.
-
-.sp
-.in +2
-.nf
-\fBboot cdrom -F wanboot -o dhcp,prompt\fR
-.fi
-.in -2
-.sp
-
 .SS "x86 (32-bit)"
-.LP
 \fBExample 4 \fRTo Boot the Default Kernel In 32-bit Single-User Interactive
 Mode
 .sp
@@ -1459,7 +1037,6 @@ kernel /platform/i86pc/kernel/unix -as
 .sp
 
 .SS "x86 (64-bit Only)"
-.LP
 \fBExample 5 \fRTo Boot the Default Kernel In 64-bit Single-User Interactive
 Mode
 .sp
@@ -1486,7 +1063,7 @@ to \fB/boot/grub/menu.lst\fR, and use the \fBset-menu\fR subcommand of
 \fBbootadm set-menu\fR.
 
 .SH FILES
-.sp
+
 .ne 2
 .na
 \fB\fB/platform/\fR\fIplatform-name\fR\fB/ufsboot\fR\fR
@@ -1517,7 +1094,7 @@ Program that brings the system to the \fBinitdefault\fR state
 .RE
 
 .SS "64-bit SPARC Only"
-.sp
+
 .ne 2
 .na
 \fB\fB/platform/\fR\fIplatform-name\fR\fB/kernel/sparcv9/unix\fR\fR
@@ -1528,7 +1105,7 @@ Default program to boot system.
 .RE
 
 .SS "x86 Only"
-.sp
+
 .ne 2
 .na
 \fB\fB/boot\fR\fR
@@ -1559,7 +1136,6 @@ Menu of bootable operating systems displayed by GRUB.
 .RE
 
 .SS "64-bit x86 Only"
-.sp
 .ne 2
 .na
 \fB\fB/platform/i86pc/kernel/amd64/unix\fR\fR
@@ -1570,13 +1146,11 @@ Menu of bootable operating systems displayed by GRUB.
 .RE
 
 .SH SEE ALSO
-.sp
-.LP
 \fBkmdb\fR(1), \fBuname\fR(1), \fBbootadm\fR(1M), \fBeeprom\fR(1M),
 \fBinit\fR(1M), \fBinstallboot\fR(1M), \fBkernel\fR(1M), \fBmonitor\fR(1M),
 \fBshutdown\fR(1M), \fBsvcadm\fR(1M), \fBumountall\fR(1M), \fBzpool\fR(1M),
 \fBuadmin\fR(2), \fBbootparams\fR(4), \fBinittab\fR(4), \fBvfstab\fR(4),
-\fBwanboot.conf\fR(4), \fBfilesystem\fR(5)
+\fBfilesystem\fR(5)
 .sp
 .LP
 RFC 903, \fIA Reverse Address Resolution Protocol\fR,
@@ -1591,10 +1165,6 @@ RFC 2132, \fIDHCP Options and BOOTP Vendor Extensions\fR,
 \fBhttp://www.ietf.org/rfc/rfc2132.txt\fR
 .sp
 .LP
-RFC 2396, \fIUniform Resource Identifiers (URI): Generic Syntax\fR,
-\fBhttp://www.ietf.org/rfc/rfc2396.txt\fR
-.sp
-.LP
 \fI\fR
 .sp
 .LP
@@ -1603,19 +1173,14 @@ RFC 2396, \fIUniform Resource Identifiers (URI): Generic Syntax\fR,
 .LP
 \fIOpenBoot Command Reference Manual\fR
 .SH WARNINGS
-.sp
-.LP
 The \fBboot\fR utility is unable to determine which files can be used as
 bootable programs. If the booting of a file that is not bootable is requested,
 the \fBboot\fR utility loads it and branches to it. What happens after that is
 unpredictable.
 .SH NOTES
-.sp
-.LP
 \fIplatform-name\fR can be found using the \fB-i\fR option of \fBuname\fR(1).
 \fIhardware-class-name\fR can be found using the \fB-m\fR option of
 \fBuname\fR(1).
-.sp
 .LP
 The current release of the Solaris operating system does not support machines
 running an UltraSPARC-I CPU.

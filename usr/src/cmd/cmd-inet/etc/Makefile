@@ -19,13 +19,14 @@
 # CDDL HEADER END
 #
 # Copyright (c) 1990, 2010, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 
 SYMPROG= hosts inetd.conf networks protocols services netmasks
 
 # New /etc/inet files shouldn't have /etc entries.
 EDITPROG= ipaddrsel.conf ipsecalgs
 PROG= datemsk.ndpd ipsecinit.sample ipqosconf.1.sample ipqosconf.2.sample \
-    ipqosconf.3.sample wanboot.conf.sample
+    ipqosconf.3.sample
 ETCPROG= $(SYMPROG) $(EDITPROG) $(PROG)
 SUBDIRS= default dhcp init.d ike nca ppp secret sock2path.d
 

@@ -21,6 +21,8 @@
 /*
  * Copyright 2010 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
+ *
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
  */
 
 /*
@@ -53,7 +55,6 @@
 #include <sys/promif.h>
 #include <sys/sysmacros.h>	/* offsetof */
 #include <sys/nvpair.h>
-#include <sys/wanboot_impl.h>
 #include <sys/zone.h>
 #include <sys/consplat.h>
 #include <sys/bootconf.h>
@@ -497,13 +498,6 @@ opromioctl_cb(void *avp, int has_changed)
 			return (EPERM);
 		}
 		break;
-
-#if !defined(__i386) && !defined(__amd64)
-	case WANBOOT_SETKEY:
-		if (!(mode & FWRITE))
-			return (EPERM);
-		break;
-#endif	/* !__i386 && !defined(__amd64) */
 
 	default:
 		return (EINVAL);
@@ -1018,67 +1012,6 @@ opromioctl_cb(void *avp, int has_changed)
 
 	}	/* case OPROMREADY64 */
 
-	case WANBOOT_SETKEY: {
-		struct wankeyio *wp;
-		int reslen;
-		int status;
-		int rv;
-		int i;
-
-		/*
-		 * The argument is a struct wankeyio.  Validate it as best
-		 * we can.
-		 */
-		if (userbufsize != (sizeof (struct wankeyio))) {
-			error = EINVAL;
-			break;
-		}
-		if (copyin(((caddr_t)arg + sizeof (uint_t)),
-		    opp->oprom_array, sizeof (struct wankeyio)) != 0) {
-			error = EFAULT;
-			break;
-		}
-		wp = (struct wankeyio *)opp->oprom_array;
-
-		/* check for key name and key size overflow */
-		for (i = 0; i < WANBOOT_MAXKEYNAMELEN; i++)
-			if (wp->wk_keyname[i] == '\0')
-				break;
-		if ((i == WANBOOT_MAXKEYNAMELEN) ||
-		    (wp->wk_keysize > WANBOOT_MAXKEYLEN)) {
-			error = EINVAL;
-			break;
-		}
-
-		rv = prom_set_security_key(wp->wk_keyname, wp->wk_u.key,
-		    wp->wk_keysize, &reslen, &status);
-		if (rv)
-			error = EIO;
-		else
-			switch (status) {
-				case 0:
-					error = 0;
-					break;
-
-				case -2:	/* out of key storage space */
-					error = ENOSPC;
-					break;
-
-				case -3:	/* key name or value too long */
-					error = EINVAL;
-					break;
-
-				case -4:	/* can't delete:  no such key */
-					error = ENOENT;
-					break;
-
-				case -1:	/* unspecified error */
-				default:	/* this should not happen */
-					error = EIO;
-					break;
-			}
-		break;
-	}	/* case WANBOOT_SETKEY */
 #endif	/* !__i386 && !__amd64 */
 	}	/* switch (cmd)	*/
 

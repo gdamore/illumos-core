@@ -20,10 +20,11 @@
 #
 # CDDL HEADER END
 #
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
+#
 # Copyright 2007 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
-#ident	"%Z%%M%	%I%	%E% SMI"
 
 #
 # Please KEEP THIS (reasonably) ALPHABETIZED BY FILENAME
@@ -50,7 +51,6 @@ find_files "s.*" usr/src/common/exacct
 find_files "s.*" usr/src/common/fs
 find_files "s.*" usr/src/common/mapfiles
 find_files "s.*" usr/src/common/mdesc
-find_files "s.*" usr/src/common/net/wanboot/crypt
 find_files "s.*" usr/src/common/nvpair
 find_files "s.*" usr/src/common/pci
 find_files "s.*" usr/src/common/smbios
