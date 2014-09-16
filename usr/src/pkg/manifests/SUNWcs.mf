@@ -516,8 +516,6 @@ file path=lib/svc/manifest/network/rpc/bind.xml group=sys mode=0444
 file path=lib/svc/manifest/network/rpc/keyserv.xml group=sys mode=0444
 file path=lib/svc/manifest/network/shares/group.xml group=sys mode=0444
 file path=lib/svc/manifest/network/shares/reparsed.xml group=sys mode=0444
-file path=lib/svc/manifest/network/socket-filter-kssl.xml group=sys mode=0444
-file path=lib/svc/manifest/network/ssl/kssl-proxy.xml group=sys mode=0444
 file path=lib/svc/manifest/system/auditd.xml group=sys mode=0444
 file path=lib/svc/manifest/system/auditset.xml group=sys mode=0444
 file path=lib/svc/manifest/system/boot-archive-update.xml group=sys mode=0444
@@ -1205,7 +1203,6 @@ file path=usr/lib/inet/certrldb mode=0555
 file path=usr/lib/inet/inetd mode=0555
 file path=usr/lib/intrd mode=0555
 file path=usr/lib/isaexec mode=0555
-file path=usr/lib/kssladm mode=0555
 file path=usr/lib/libshare.so.1
 file path=usr/lib/more.help
 file path=usr/lib/newsyslog group=sys mode=0555
@@ -1336,7 +1333,6 @@ file path=usr/sbin/ipsecconf mode=0555
 file path=usr/sbin/ipseckey mode=0555
 file path=usr/sbin/keyserv group=sys mode=0555
 file path=usr/sbin/killall mode=0555
-file path=usr/sbin/ksslcfg mode=0555
 file path=usr/sbin/link mode=0555
 file path=usr/sbin/locator mode=0555
 file path=usr/sbin/lofiadm mode=0555

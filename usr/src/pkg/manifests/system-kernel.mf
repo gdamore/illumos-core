@@ -168,7 +168,6 @@ driver name=kb8042 alias=pnpPNP,303
 driver name=keysock perms="keysock 0666 root sys" \
     policy="read_priv_set=sys_ip_config write_priv_set=sys_ip_config"
 driver name=kmdb
-driver name=kssl perms="* 0666 root sys"
 driver name=llc1 clone_perms="llc1 0666 root sys"
 driver name=lofi perms="* 0600 root sys" perms="ctl 0644 root sys"
 driver name=log perms="conslog 0666 root sys" perms="log 0640 root sys"
@@ -364,7 +363,6 @@ file path=kernel/drv/$(ARCH64)/iwscn group=sys
 file path=kernel/drv/$(ARCH64)/kb8042 group=sys
 file path=kernel/drv/$(ARCH64)/keysock group=sys
 file path=kernel/drv/$(ARCH64)/kmdb group=sys
-file path=kernel/drv/$(ARCH64)/kssl group=sys
 file path=kernel/drv/$(ARCH64)/llc1 group=sys
 file path=kernel/drv/$(ARCH64)/lofi group=sys
 file path=kernel/drv/$(ARCH64)/log group=sys
@@ -480,8 +478,6 @@ $(i386_ONLY)file path=kernel/drv/keysock group=sys
 file path=kernel/drv/keysock.conf group=sys
 $(i386_ONLY)file path=kernel/drv/kmdb group=sys
 file path=kernel/drv/kmdb.conf group=sys
-$(i386_ONLY)file path=kernel/drv/kssl group=sys
-file path=kernel/drv/kssl.conf group=sys
 $(i386_ONLY)file path=kernel/drv/llc1 group=sys
 file path=kernel/drv/llc1.conf group=sys
 $(i386_ONLY)file path=kernel/drv/lofi group=sys
@@ -748,10 +744,8 @@ file path=kernel/sched/$(ARCH64)/TS_DPTBL group=sys mode=0755
 $(i386_ONLY)file path=kernel/sched/SDC group=sys mode=0755
 $(i386_ONLY)file path=kernel/sched/TS group=sys mode=0755
 $(i386_ONLY)file path=kernel/sched/TS_DPTBL group=sys mode=0755
-file path=kernel/socketmod/$(ARCH64)/ksslf group=sys mode=0755
 file path=kernel/socketmod/$(ARCH64)/socksctp group=sys mode=0755
 file path=kernel/socketmod/$(ARCH64)/trill group=sys mode=0755
-$(i386_ONLY)file path=kernel/socketmod/ksslf group=sys mode=0755
 $(i386_ONLY)file path=kernel/socketmod/socksctp group=sys mode=0755
 $(i386_ONLY)file path=kernel/socketmod/trill group=sys mode=0755
 file path=kernel/strmod/$(ARCH64)/bufmod group=sys mode=0755

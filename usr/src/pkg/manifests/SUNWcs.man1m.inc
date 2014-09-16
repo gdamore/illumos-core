@@ -138,7 +138,6 @@ file path=usr/share/man/man1m/ipsecconf.1m
 file path=usr/share/man/man1m/ipseckey.1m
 file path=usr/share/man/man1m/keyserv.1m
 file path=usr/share/man/man1m/killall.1m
-file path=usr/share/man/man1m/ksslcfg.1m
 file path=usr/share/man/man1m/labelit.1m
 file path=usr/share/man/man1m/labelit_hsfs.1m
 file path=usr/share/man/man1m/labelit_ufs.1m

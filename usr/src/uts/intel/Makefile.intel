@@ -266,7 +266,6 @@ DRV_KMODS	+= iwp
 DRV_KMODS	+= iwscn
 DRV_KMODS	+= kb8042
 DRV_KMODS	+= keysock
-DRV_KMODS	+= kssl
 DRV_KMODS	+= kstat
 DRV_KMODS	+= ksyms
 DRV_KMODS	+= kmdb
@@ -688,7 +687,6 @@ SOCKET_KMODS	+= sockpfp
 SOCKET_KMODS	+= socksctp
 SOCKET_KMODS    += socksdp
 SOCKET_KMODS	+= sockrds
-SOCKET_KMODS	+= ksslf
 
 #
 #	kiconv modules (/kernel/kiconv):

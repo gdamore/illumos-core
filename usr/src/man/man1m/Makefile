@@ -255,7 +255,6 @@ _MANFILES=	6to4relay.1m		\
 		kpropd.1m		\
 		kproplog.1m		\
 		krb5kdc.1m		\
-		ksslcfg.1m		\
 		kstat.1m		\
 		ktkt_warnd.1m		\
 		labelit.1m		\
