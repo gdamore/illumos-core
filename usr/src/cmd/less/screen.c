@@ -303,7 +303,7 @@ get_term(void)
 		term = DEFAULT_TERM;
 	hardcopy = 0;
 
-	if (setupterm(term, 0, NULL) < 0) {
+	if (setupterm(term, 1, NULL) < 0) {
 		hardcopy = 1;
 	}
 	if (ltgetflag("hc"))
