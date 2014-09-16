@@ -554,7 +554,6 @@ _MANFILES=	6to4relay.1m		\
 		vscand.1m		\
 		wall.1m			\
 		whodo.1m		\
-		wificonfig.1m		\
 		wpad.1m			\
 		wracct.1m		\
 		ypbind.1m		\

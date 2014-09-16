@@ -64,11 +64,11 @@ SRCS=		$(PROGSRCS) $(OTHERSRC)
 SUBDIRS=	ifconfig ilbadm in.rdisc in.routed \
 		in.talkd inetadm inetconv ipadm ipmpstat ipqosconf ipsecutils \
 		nwamadm nwamcfg ping routeadm \
-		snoop sppptun traceroute wificonfig
+		snoop sppptun traceroute
 
 MSGSUBDIRS=	ifconfig ilbadm in.routed in.talkd \
 		inetadm inetconv ipadm ipmpstat ipqosconf ipsecutils \
-		nwamadm nwamcfg routeadm sppptun snoop wificonfig
+		nwamadm nwamcfg routeadm sppptun snoop
 
 # As programs get lint-clean, add them here and to the 'lint' target.
 # Eventually this hack should go away, and all in PROG should be
@@ -82,8 +82,7 @@ LINTCLEAN=	6to4relay arp in.rlogind in.rshd in.telnetd in.tftpd \
 # for the lint rule.
 LINTSUBDIRS=	ilbadm in.rdisc in.routed in.talkd inetadm \
 		inetconv ipmpstat ipqosconf ipsecutils \
-		nwamadm nwamcfg ping routeadm sppptun traceroute \
-		wificonfig
+		nwamadm nwamcfg ping routeadm sppptun traceroute
 # And as programs are verified not to attempt to write into constants,
 # -xstrconst should be used to ensure they stay that way.
 CONSTCLEAN=
