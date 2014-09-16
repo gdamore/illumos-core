@@ -122,17 +122,17 @@ def git_parent_branch(branch):
     if not branch:
         return None
 
-    p = git("for-each-ref --format=%(refname:short) %(upstream:short) " +
-            "refs/heads/")
+    p = git(["for-each-ref", "--format=%(refname:short) %(upstream:short)",
+            "refs/heads/"])
 
     if not p:
         sys.stderr.write("Failed finding git parent branch\n")
         sys.exit(err)
 
     for line in p:
-        # Git 1.7 will leave a ' ' trailing any non-tracking branch
-        if ' ' in line and not line.endswith(' \n'):
-            local, remote = line.split()
+	arr = line.split()
+	if len(arr) > 1:
+            local, remote = arr[0], arr[1]
             if local == branch:
                 return remote
     return 'origin/master'
