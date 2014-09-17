@@ -18,12 +18,13 @@
 #
 # CDDL HEADER END
 #
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 # Copyright 2008 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
 
-SUBDIR =	sunos	
+SUBDIR =	illumos	
 
 HAL_PROG =	hal-device hal-find-by-capability hal-find-by-property \
 		hal-get-property hal-set-property lshal

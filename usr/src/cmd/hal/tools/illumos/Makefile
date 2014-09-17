@@ -18,18 +18,19 @@
 #
 # CDDL HEADER END
 #
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 # Copyright 2008 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
-# ident	"%Z%%M%	%I%	%E% SMI"
-#
 
-HAL_PROGS =	hal-system-lcd-set-brightness-sunos \
-		hal-system-lcd-get-brightness-sunos
+HAL_PROGS =	hal-system-lcd-set-brightness-illumos \
+		hal-system-lcd-get-brightness-illumos
 
-HAL_SCRIPTS =	hal-system-power-reboot-sunos hal-system-power-suspend-sunos \
-		hal-system-power-hibernate-sunos hal-system-power-shutdown-sunos
+HAL_SCRIPTS =	hal-system-power-reboot-illumos \
+		hal-system-power-suspend-illumos \
+		hal-system-power-hibernate-illumos \
+		hal-system-power-shutdown-illumos
 
 OBJS =		$(HAL_PROG:%=%.o)
 
@@ -45,7 +46,7 @@ CPPFLAGS += -I$(ROOT)/usr/include/hal
 CPPFLAGS += -I$(ROOT)/usr/include/libpolkit
 C99MODE = $(C99_ENABLE)
 
-ROOTCMDDIR =		$(ROOTLIB_HAL)/sunos 
+ROOTCMDDIR =		$(ROOTLIB_HAL)/illumos 
 ROOTCMD =		$(HAL_PROGS:%=$(ROOTCMDDIR)/%) \
 			$(HAL_SCRIPTS:%=$(ROOTCMDDIR)/%)
 

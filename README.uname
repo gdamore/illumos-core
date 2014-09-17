@@ -39,10 +39,14 @@ workaround until software is updated.  Fix the software if you can.
   - usr/src/pkg/Makefile edited so pkgdepend uses $(SETALTUNAME). (see #61)
   - error is at /usr/lib/python2.6/vendor-packages/terminatorlib/cwd.py
 
-* hald - hald sets HAL_UNAME_S, and fails if it doesn't recognize it (SunOS)
-  - this causes an apparent hang in X
-  - hald will be ejected from this repo in the future (see #60)
-
 * DTrace test suite - printf/tst.str.d
   - this is just a known answer test that expects sysname to be SunOS
   - leaving this unfixed for now - not a runtime problem (see #62)
+
+* hald
+  - there is an input file /etc/hal/fdi/preprobe/10osvendor/10-x11-input.fdi
+    this file must be edited to change SunOS to illumos.  Else you will
+    not have any input devices.  This file is not delivered by this
+    consolidation, but rather by X.  If you fix the file, then X works
+    fine; else it will appear to hang (lack of input devices).
+
