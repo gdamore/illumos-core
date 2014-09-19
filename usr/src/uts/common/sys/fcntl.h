@@ -87,6 +87,9 @@ extern "C" {
 #define	O_NOFOLLOW	0x20000	/* don't follow symlinks */
 #define	O_NOLINKS	0x40000	/* don't allow multiple hard links */
 #define	O_CLOEXEC	0x800000	/* set the close-on-exec flag */
+#if defined(_XPG7) || !defined(_STRICT_SYMBOLS)
+#define	O_TTY_INIT	0	/* ttys are always opened conforming */
+#endif
 
 /*
  * fcntl(2) requests
