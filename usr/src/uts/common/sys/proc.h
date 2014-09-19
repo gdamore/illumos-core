@@ -20,6 +20,7 @@
  */
 
 /*
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
  * Copyright (c) 1988, 2010, Oracle and/or its affiliates. All rights reserved.
  */
 
@@ -180,6 +181,7 @@ typedef struct	proc {
 	uint_t	p_proc_flag;		/* /proc-related flags */
 	uint_t	p_flag;			/* protected while set. */
 					/* flags defined below */
+	kthread_t *p_exec_thread;	/* thread doing prexecstart */
 	clock_t	p_utime;		/* user time, this process */
 	clock_t	p_stime;		/* system time, this process */
 	clock_t	p_cutime;		/* sum of children's user time */

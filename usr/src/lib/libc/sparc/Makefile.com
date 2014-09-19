@@ -22,7 +22,7 @@
 # Copyright (c) 1989, 2010, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2012, Joyent, Inc.  All rights reserved.
 # Copyright (c) 2013, OmniTI Computer Consulting, Inc. All rights reserved.
-# Copyright 2013 Garrett D'Amore <garrett@damore.org>
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 # Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
 # Use is subject to license terms.
@@ -930,6 +930,7 @@ PORTSYS=			\
 	execle.o		\
 	execv.o			\
 	fcntl.o			\
+	fexecve.o		\
 	getpagesizes.o		\
 	getpeerucred.o		\
 	inst_sync.o		\

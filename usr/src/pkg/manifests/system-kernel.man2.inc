@@ -183,6 +183,7 @@ link path=usr/share/man/man2/fchmod.2 target=chmod.2
 link path=usr/share/man/man2/fchown.2 target=chown.2
 link path=usr/share/man/man2/fchownat.2 target=chown.2
 link path=usr/share/man/man2/fchroot.2 target=chroot.2
+link path=usr/share/man/man2/fexecve.2 target=exec.2
 link path=usr/share/man/man2/fgetlabel.2 target=getlabel.2
 link path=usr/share/man/man2/fork1.2 target=fork.2
 link path=usr/share/man/man2/forkall.2 target=fork.2
@@ -219,8 +220,8 @@ link path=usr/share/man/man2/pset_getattr.2 target=pset_setattr.2
 link path=usr/share/man/man2/putacct.2 target=getacct.2
 link path=usr/share/man/man2/putpmsg.2 target=putmsg.2
 link path=usr/share/man/man2/pwrite.2 target=write.2
-link path=usr/share/man/man2/readv.2 target=read.2
 link path=usr/share/man/man2/readlinkat.2 target=readlink.2
+link path=usr/share/man/man2/readv.2 target=read.2
 link path=usr/share/man/man2/renameat.2 target=rename.2
 link path=usr/share/man/man2/sbrk.2 target=brk.2
 link path=usr/share/man/man2/semtimedop.2 target=semop.2

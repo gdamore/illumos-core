@@ -20,6 +20,7 @@
  */
 
 /*
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
  * Copyright (c) 1988, 2010, Oracle and/or its affiliates. All rights reserved.
  */
 
@@ -1109,10 +1110,12 @@ execpermissions(struct vnode *vp, struct vattr *vattrp, struct uarg *args)
 		return (error);
 	/*
 	 * Check the access mode.
-	 * If VPROC, ask /proc if the file is an object file.
+	 * If VPROC, check the underlying real type.  (procfs gives us the
+	 * underlying file type in the attributes.)
 	 */
 	if ((error = VOP_ACCESS(vp, VEXEC, 0, p->p_cred, NULL)) != 0 ||
-	    !(vp->v_type == VREG || (vp->v_type == VPROC && pr_isobject(vp))) ||
+	    !((vp->v_type == VREG) ||
+	    (vp->v_type == VPROC && vattrp->va_type == VREG)) ||
 	    (vp->v_vfsp->vfs_flag & VFS_NOEXEC) != 0 ||
 	    (vattrp->va_mode & (VEXEC|(VEXEC>>3)|(VEXEC>>6))) == 0) {
 		if (error == 0)

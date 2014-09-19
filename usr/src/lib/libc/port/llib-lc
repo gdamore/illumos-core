@@ -423,6 +423,9 @@ int fattach(int fildes, const char *path);
 /* fdetach.c */
 int fdetach(const char *path);
 
+/* fexecve.c */
+int fexecve(int, char *const argv[], char *const envp[]);
+
 /* ffs.c */
 int ffs(int field);
 

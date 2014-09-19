@@ -473,6 +473,7 @@ prexecstart(void)
 	prbarrier(p);
 	lwp->lwp_nostop++;
 	p->p_proc_flag |= P_PR_EXEC;
+	p->p_exec_thread = curthread;
 }
 
 /*
@@ -507,6 +508,7 @@ prexecend(void)
 	/*
 	 * Wake up anyone waiting in /proc for the process to complete exec().
 	 */
+	p->p_exec_thread = NULL;
 	p->p_proc_flag &= ~P_PR_EXEC;
 	if ((vp = p->p_trace) != NULL) {
 		pcp = VTOP(vp)->pr_common;
@@ -774,9 +776,11 @@ again:
 
 	/*
 	 * If process is undergoing an exec(), wait for
-	 * completion and then start all over again.
+	 * completion and then start all over again.  But, if we are
+	 * are the exec thread, we can still get in (needed for fexecve,
+	 * which want to exec a /proc/$$/fd/ file.
 	 */
-	if (p->p_proc_flag & P_PR_EXEC) {
+	if (p->p_proc_flag & P_PR_EXEC && p->p_exec_thread != curthread) {
 		pcp = pnp->pr_pcommon;	/* Put on the correct sleep queue */
 		mutex_enter(&pcp->prc_mutex);
 		prunlock(pnp);
