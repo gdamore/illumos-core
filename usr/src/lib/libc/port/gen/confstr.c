@@ -24,8 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"%Z%%M%	%I%	%E% SMI"
-
 #pragma	weak _confstr = confstr
 
 #include "lint.h"
@@ -86,6 +84,25 @@ static const config	default_conf[] = {
 	{ _CS_POSIX_V6_LPBIG_OFFBIG_CFLAGS, "-xarch=generic64" 		},
 	{ _CS_POSIX_V6_LPBIG_OFFBIG_LDFLAGS, "-xarch=generic64"		},
 	{ _CS_POSIX_V6_LPBIG_OFFBIG_LIBS, ""				},
+
+	{ _CS_POSIX_V7_ILP32_OFF32_CFLAGS,	""			},
+	{ _CS_POSIX_V7_ILP32_OFF32_LDFLAGS,	""			},
+	{ _CS_POSIX_V7_ILP32_OFF32_LIBS,	""			},
+	{ _CS_POSIX_V7_ILP32_OFFBIG_CFLAGS,
+"-Xa -Usun -Usparc -Uunix -Ui386 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64" },
+	{ _CS_POSIX_V7_ILP32_OFFBIG_LDFLAGS,	""			},
+	{ _CS_POSIX_V7_ILP32_OFFBIG_LIBS,	""			},
+	{ _CS_POSIX_V7_LP64_OFF64_CFLAGS, "-xarch=generic64"		},
+	{ _CS_POSIX_V7_LP64_OFF64_LDFLAGS, "-xarch=generic64"		},
+	{ _CS_POSIX_V7_LP64_OFF64_LIBS,	""				},
+	{ _CS_POSIX_V7_LPBIG_OFFBIG_CFLAGS, "-xarch=generic64" 		},
+	{ _CS_POSIX_V7_LPBIG_OFFBIG_LDFLAGS, "-xarch=generic64"		},
+	{ _CS_POSIX_V7_LPBIG_OFFBIG_LIBS, ""				},
+	{ _CS_POSIX_V7_WIDTH_RESTRICTED_ENVS,
+		"POSIX_V7_ILP32_OFF32\nPOSIX_V7_ILP32_OFFBIG\n"
+		"POSIX_V7_LP64_OFF64\nPOSIX_V7_LPBIG_OFFBIG"		},
+	{ _CS_POSIX_V7_THREADS_CFLAGS, ""				},
+	{ _CS_POSIX_V7_THREADS_LDFLAGS, ""				},
 };
 
 #define	CS_ENTRY_COUNT (sizeof (default_conf) / sizeof (config))

@@ -130,20 +130,15 @@ MANLINKS=	ANSI.5		\
 		ISO.5		\
 		MT-Level.5	\
 		POSIX.1.5	\
-		POSIX.2.5	\
 		POSIX.5		\
 		RBAC.5		\
 		SUS.5		\
 		SUSv2.5		\
 		SUSv3.5		\
-		SVID.5		\
-		SVID3.5		\
+		SUSv4.5		\
 		XNS.5		\
-		XNS4.5		\
 		XNS5.5		\
 		XPG.5		\
-		XPG3.5		\
-		XPG4.5		\
 		XPG4v2.5	\
 		advance.5	\
 		architecture.5	\
@@ -176,19 +171,13 @@ C++.5		:= LINKSRC = standards.5
 C.5		:= LINKSRC = standards.5
 ISO.5		:= LINKSRC = standards.5
 POSIX.1.5	:= LINKSRC = standards.5
-POSIX.2.5	:= LINKSRC = standards.5
 POSIX.5		:= LINKSRC = standards.5
 SUS.5		:= LINKSRC = standards.5
 SUSv2.5		:= LINKSRC = standards.5
 SUSv3.5		:= LINKSRC = standards.5
-SVID.5		:= LINKSRC = standards.5
-SVID3.5		:= LINKSRC = standards.5
 XNS.5		:= LINKSRC = standards.5
-XNS4.5		:= LINKSRC = standards.5
 XNS5.5		:= LINKSRC = standards.5
 XPG.5		:= LINKSRC = standards.5
-XPG3.5		:= LINKSRC = standards.5
-XPG4.5		:= LINKSRC = standards.5
 XPG4v2.5	:= LINKSRC = standards.5
 
 teclarc.5	:= LINKSRC = tecla.5
