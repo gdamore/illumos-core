@@ -20,14 +20,13 @@
 # CDDL HEADER END
 #
 #
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 # Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
 
-# NOTE: awk is oawk.
-
-PROG= nawk
+PROG= awk
 
 OBJ1= b.o lib.o main.o parse.o proctab.o run.o tran.o
 OBJ2= awk.g.o awk.lx.o
@@ -55,6 +54,7 @@ YFLAGS += -d
 LDLIBS += -lm
 LINTFLAGS += -u
 CLEANFILES= maketab proctab.c awk.g.c awk.lx.c y.tab.h
+ROOTLINK = $(ROOTBIN)/nawk
 
 .KEEP_STATE:
 
@@ -95,5 +95,9 @@ awk.lx.c: awk.lx.l
 proctab.o: proctab.c
 	$(COMPILE.c) proctab.c
 	$(POST_PROCESS_O)
+
+$(ROOTLINK): $(ROOTPROG)
+	$(RM) $@
+	$(LN) $(ROOTPROG) $@
 
 include ../Makefile.targ

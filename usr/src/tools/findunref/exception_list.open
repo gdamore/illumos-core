@@ -35,7 +35,6 @@
 # Ignore oddly-named text files scattered about -- someday these should be
 # suffixed with .txt so we don't have to list them.
 #
-./usr/src/cmd/oawk/EXPLAIN
 ./usr/src/cmd/vi/port/ex.news
 ./usr/src/cmd/ssh/doc
 

@@ -118,7 +118,6 @@ file path=usr/bin/lastcomm mode=0555
 file path=usr/bin/lgrpinfo mode=0555
 file path=usr/bin/look mode=0755
 file path=usr/bin/mkfifo mode=0555
-file path=usr/bin/nawk mode=0555
 file path=usr/bin/newform mode=0555
 file path=usr/bin/news mode=0555
 file path=usr/bin/nl mode=0555
@@ -190,7 +189,6 @@ file path=usr/share/man/man1/lgrpinfo.1
 file path=usr/share/man/man1/look.1
 file path=usr/share/man/man1/madv.so.1.1
 file path=usr/share/man/man1/mpss.so.1.1
-file path=usr/share/man/man1/nawk.1
 file path=usr/share/man/man1/newform.1
 file path=usr/share/man/man1/news.1
 file path=usr/share/man/man1/nl.1
@@ -224,7 +222,7 @@ file path=usr/share/man/man1m/mount_pcfs.1m
 file path=usr/share/man/man1m/projadd.1m
 file path=usr/share/man/man1m/projdel.1m
 file path=usr/share/man/man1m/projmod.1m
-hardlink path=usr/bin/oawk target=../../usr/bin/awk
+hardlink path=usr/bin/nawk target=../../usr/bin/awk
 hardlink path=usr/bin/pargs target=../../usr/lib/isaexec
 hardlink path=usr/bin/pcred target=../../usr/lib/isaexec
 hardlink path=usr/bin/pfiles target=../../usr/lib/isaexec
@@ -283,6 +281,7 @@ link path=usr/proc/bin/pwait target=../../bin/pwait
 link path=usr/proc/bin/pwdx target=../../bin/pwdx
 link path=usr/share/man/man1/hashcheck.1 target=spell.1
 link path=usr/share/man/man1/hashmake.1 target=spell.1
+link path=usr/share/man/man1/nawk.1 target=awk.1
 link path=usr/share/man/man1/pcat.1 target=pack.1
 link path=usr/share/man/man1/spellin.1 target=spell.1
 link path=usr/share/man/man1/uncompress.1 target=compress.1
