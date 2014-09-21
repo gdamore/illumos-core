@@ -20,14 +20,14 @@
  */
 
 /*
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
+ *
  * Copyright 2008 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
 /*	Copyright (c) 1988 AT&T	*/
 /*	  All Rights Reserved  	*/
-
-#pragma ident	"%Z%%M%	%I%	%E% SMI"
 
 /*
  * readdir_r -- C library extension routine
@@ -38,6 +38,9 @@
 #if !defined(_LP64)
 #pragma weak _readdir64_r = readdir64_r
 #endif
+
+/* define this so that we can get the legacy version */
+#define	_SUNOS_SOURCE
 
 #include "lint.h"
 #include "libc.h"

@@ -20,6 +20,7 @@
  */
 
 /*
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
  * Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
  */
 #include <alloca.h>
@@ -2618,7 +2619,7 @@ static void
 zsd_refresh_procs(zsd_ctl_t *ctl, boolean_t init)
 {
 	DIR *dir;
-	struct dirent *dent;
+	struct dirent *dent, *dresult;
 	psinfo_t psinfo;
 	int fd, ret;
 	zsd_proc_t *proc, *pproc, *tmp, *next;
@@ -2666,7 +2667,7 @@ zsd_refresh_procs(zsd_ctl_t *ctl, boolean_t init)
 	(void) memset(dent, 0, ctl->zsctl_procfs_dent_size);
 
 	/* Walk all processes and compute each zone's usage on each pset. */
-	while (readdir_r(dir, dent) != 0) {
+	while (readdir_r(dir, dent, &dresult) != 0) {
 
 		if (strcmp(dent->d_name, ".") == 0 ||
 		    strcmp(dent->d_name, "..") == 0)

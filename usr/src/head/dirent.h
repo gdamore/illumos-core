@@ -154,6 +154,11 @@ extern int alphasort64(const struct dirent64 **, const struct dirent64 **);
  * In the LP64 compilation environment, all APIs are already large file,
  * and since there are no 64-bit applications that can have seen the
  * draft implementation, again, we use the final POSIX specification.
+ *
+ * We do require the end-user define _SUNOS_SOURCE as well, to get this
+ * legacy version.  Really, everyone in modern times wants the new one.
+ * Some day we'd like to just throw this level of source compatibility
+ * away.
  */
 
 #if	defined(__EXTENSIONS__) || defined(_REENTRANT) || \
@@ -161,9 +166,9 @@ extern int alphasort64(const struct dirent64 **, const struct dirent64 **);
 	defined(_POSIX_PTHREAD_SEMANTICS)
 
 #if	!defined(_LP64) && _FILE_OFFSET_BITS == 32
-
-#if	(_POSIX_C_SOURCE - 0 >= 199506L) || defined(_POSIX_PTHREAD_SEMANTICS)
-
+#if	(_POSIX_C_SOURCE - 0 >= 199506L) || \
+	defined(_POSIX_PTHREAD_SEMANTICS) || \
+	!defined(_SUNOS_SOURCE)
 #ifdef	__PRAGMA_REDEFINE_EXTNAME
 #pragma	redefine_extname readdir_r	__posix_readdir_r
 extern int readdir_r(DIR *_RESTRICT_KYWD, struct dirent *_RESTRICT_KYWD,
@@ -176,18 +181,22 @@ extern int __posix_readdir_r(DIR *_RESTRICT_KYWD,
 #ifdef	__lint
 #define	readdir_r	__posix_readdir_r
 #else	/* !__lint */
-
 static int
 readdir_r(DIR *_RESTRICT_KYWD __dp, struct dirent *_RESTRICT_KYWD __ent,
 		struct dirent **_RESTRICT_KYWD __res) {
 	return (__posix_readdir_r(__dp, __ent, __res));
 }
-
 #endif /* !__lint */
+
 #endif /* __PRAGMA_REDEFINE_EXTNAME */
 
 #else  /* (_POSIX_C_SOURCE - 0 >= 199506L) || ... */
 
+/*
+ * NB: The only way to get this older definition is to request for
+ * _SUNOS_SOURCE, and _REENTRANT (POSIX options all exclude it), and
+ * be in a pure 32-bit compilation environment.
+ */
 extern struct dirent *readdir_r(DIR *__dp, struct dirent *__ent);
 
 #endif  /* (_POSIX_C_SOURCE - 0 >= 199506L) || ... */
