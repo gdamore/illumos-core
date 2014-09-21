@@ -50,6 +50,7 @@ link path=usr/share/man/man5/RBAC.5 target=rbac.5
 link path=usr/share/man/man5/SUS.5 target=standards.5
 link path=usr/share/man/man5/SUSv2.5 target=standards.5
 link path=usr/share/man/man5/SUSv3.5 target=standards.5
+link path=usr/share/man/man5/SUSv4.5 target=standards.5
 link path=usr/share/man/man5/XNS.5 target=standards.5
 link path=usr/share/man/man5/XNS5.5 target=standards.5
 link path=usr/share/man/man5/XPG.5 target=standards.5

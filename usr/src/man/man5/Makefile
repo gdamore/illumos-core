@@ -175,6 +175,7 @@ POSIX.5		:= LINKSRC = standards.5
 SUS.5		:= LINKSRC = standards.5
 SUSv2.5		:= LINKSRC = standards.5
 SUSv3.5		:= LINKSRC = standards.5
+SUSv4.5		:= LINKSRC = standards.5
 XNS.5		:= LINKSRC = standards.5
 XNS5.5		:= LINKSRC = standards.5
 XPG.5		:= LINKSRC = standards.5
