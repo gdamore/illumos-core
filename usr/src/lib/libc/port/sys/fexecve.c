@@ -17,6 +17,9 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <assert.h>
+
+#define	FDFILE	"/proc/%u/fd/%u"
 
 /*
  * fexecve.c - implements the fexecve function.
@@ -24,23 +27,17 @@
  * We implement in terms of the execve() system call, but use the file
  * descriptor file located in /proc/<pid>/fd/<fd>.  This depends on
  * procfs and the exece system call support for exec'ing such files.
- *
- * POSIX: Returns EBAD if fd is not a valid file descriptor open for
- * for executing (i.e. O_EXEC).
  */
 int
 fexecve(int fd, char *const argv[], char *const envp[])
 {
 	char path[32];	/* 10 for "/proc//fd/", 10*2 for %u, + \0 == 31 */
-	int fl;
 
-	if ((fl = fcntl(fd, F_GETFL)) < 0) {
+	if (fcntl(fd, F_GETFL) < 0) {
+		/* This will have the effect of returning EBADF */
 		return (-1);
 	}
-	if ((fl & O_EXEC) == 0) {
-		errno = EBADF;
-		return (-1);
-	}
-	(void) snprintf(path, sizeof (path), "/proc/%u/fd/%u", getpid(), fd);
+	assert(snprintf(NULL, 0, FDFILE, getpid(), fd) < (sizeof (path) - 1));
+	(void) snprintf(path, sizeof (path), FDFILE, getpid(), fd);
 	return (execve(path, argv, envp));
 }

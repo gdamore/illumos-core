@@ -147,11 +147,7 @@ case_notexec(void)
 		(void) printf("rv is not -1\n");
 		(void) exit(0);
 	}
-	if (errno != EBADF) {
-		(void) printf("err %d(%s) != EBADF\n", errno, strerror(errno));
-		(void) exit(0);
-	}
-	(void) printf("GOOD\n");
+	(void) printf("FAILURE\n");
 	(void) exit(0);
 }
 
@@ -202,7 +198,7 @@ test_fexecve_badf(void)
 void
 test_fexecve_notexec(void)
 {
-	forkit("fexecve (not O_EXEC)", "GOOD\n", case_notexec);
+	forkit("fexecve (not O_EXEC)", un.sysname, case_notexec);
 }
 
 void
