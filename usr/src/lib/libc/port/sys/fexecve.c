@@ -13,6 +13,7 @@
  * Copyright 2014 Garrett D'Amore <garrett@damore.org>
  */
 
+#include "lint.h"
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
