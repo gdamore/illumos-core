@@ -792,7 +792,6 @@ file path=usr/bin/mkdir mode=0555
 file path=usr/bin/mkpwdict mode=0555
 file path=usr/bin/mktemp mode=0555
 file path=usr/bin/moe mode=0555
-file path=usr/bin/more mode=0555
 file path=usr/bin/mpstat mode=0555
 file path=usr/bin/mt mode=0555
 file path=usr/bin/netstat mode=0555
@@ -1204,7 +1203,6 @@ file path=usr/lib/inet/inetd mode=0555
 file path=usr/lib/intrd mode=0555
 file path=usr/lib/isaexec mode=0555
 file path=usr/lib/libshare.so.1
-file path=usr/lib/more.help
 file path=usr/lib/newsyslog group=sys mode=0555
 file path=usr/lib/passmgmt group=sys mode=0555
 file path=usr/lib/pci/pcidr mode=0555
@@ -1511,10 +1509,10 @@ hardlink path=usr/bin/mc68010 target=../../usr/bin/i286
 hardlink path=usr/bin/mc68020 target=../../usr/bin/i286
 hardlink path=usr/bin/mc68030 target=../../usr/bin/i286
 hardlink path=usr/bin/mc68040 target=../../usr/bin/i286
+hardlink path=usr/bin/more target=../../usr/bin/less
 hardlink path=usr/bin/mv target=../../usr/bin/cp
 hardlink path=usr/bin/newtask target=../../usr/lib/isaexec
 hardlink path=usr/bin/nohup target=../../usr/lib/isaexec
-hardlink path=usr/bin/page target=../../usr/bin/more
 hardlink path=usr/bin/paste target=../../usr/bin/alias
 hardlink path=usr/bin/pdp11 target=../../usr/bin/i286
 hardlink path=usr/bin/pfbash target=../../usr/bin/pfexec

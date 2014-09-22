@@ -489,7 +489,6 @@ MANLINKS=	batch.1		\
 		neqn.1		\
 		notify.1	\
 		onintr.1	\
-		page.1		\
 		pcat.1		\
 		pcred.1		\
 		pdp11.1		\
@@ -683,8 +682,6 @@ u3b5.1		:= LINKSRC = machid.1
 vax.1		:= LINKSRC = machid.1
 
 rmail.1		:= LINKSRC = mail.1
-
-page.1		:= LINKSRC = more.1
 
 snca.1		:= LINKSRC = nca.1
 

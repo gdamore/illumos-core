@@ -263,7 +263,6 @@ link path=usr/share/man/man1/jsh.1 target=ksh93.1
 link path=usr/share/man/man1/ksh.1 target=ksh93.1
 link path=usr/share/man/man1/notify.1 target=jobs.1
 link path=usr/share/man/man1/onintr.1 target=trap.1
-link path=usr/share/man/man1/page.1 target=more.1
 link path=usr/share/man/man1/pcred.1 target=proc.1
 link path=usr/share/man/man1/pdp11.1 target=machid.1
 link path=usr/share/man/man1/pfcsh.1 target=pfexec.1

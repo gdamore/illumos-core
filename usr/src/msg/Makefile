@@ -49,7 +49,6 @@ MSGDIRFILES_LOCAL= \
 MSGDIRFILES_REMOTE= \
 	magic \
 	mailx.help \
-	more.help \
 	priv_names
 
 MSGDIRFILES= $(MSGDIRFILES_LOCAL) $(MSGDIRFILES_REMOTE)
