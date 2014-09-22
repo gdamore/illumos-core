@@ -221,6 +221,26 @@ exec_mca(void)
 	case A_EXAMINE:
 		if (secure)
 			break;
+
+		/* POSIX behavior, but possibly generally useful */
+		if (strlen(cbuf) == 0) {
+			reopen_curr_ifile();
+			jump_back(1);
+			break;
+		}
+		/* POSIX behavior - probably not generally useful */
+		if (less_is_more && (strcmp(cbuf, "#") == 0)) {
+			if (ntags()) {
+				error("No previous file", NULL_PARG);
+				break;
+			}
+			if (edit_prev(1)) {
+				error("No previous file", NULL_PARG);
+			} else {
+				jump_back(1);
+			}
+			break;
+		}
 		edit_list(cbuf);
 		/* If tag structure is loaded then clean it up. */
 		cleantags();
