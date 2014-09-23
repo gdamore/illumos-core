@@ -24,7 +24,7 @@
 #define	CONFIG		"man.cf"
 #define	DEFMANDIR	"/usr/share/man"
 #define	INDENT		24
-#define	PAGER		"less -ins"
+#define	PAGER		"more -s"
 #define	WHATIS		"whatis"
 #define	PRECONV		"/usr/lib/mandoc_preconv"
 
