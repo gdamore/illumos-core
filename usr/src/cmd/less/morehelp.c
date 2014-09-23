@@ -155,7 +155,7 @@ const char morehelpdata[] = {
 	"\n"
 	"        These options may be used on the command line.\n"
 	"\n"
-	"  -?  ........  Display help.\n"
+	"  -h  ........  Display help.\n"
 	"  -d  ........  Beginner mode (displays verbose prompt, silences "
 	"the bell.)\n"
 	"  -c  ........  Repaint by clearing rather than scrolling.\n"

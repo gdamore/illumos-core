@@ -105,7 +105,7 @@
 
         These options may be used on the command line.
 
-  -?  ........  Display help.
+  -h  ........  Display help.
   -d  ........  Beginner mode (displays verbose prompt, silences the bell.)
   -c  ........  Repaint by clearing rather than scrolling.
   -e  ........  Quit at end of file.
