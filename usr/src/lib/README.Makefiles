@@ -622,7 +622,7 @@ outlined in this document:
 	  Example of a simple 32-bit only library that obtains its sources
 	  from multiple directories.
 
-	lib/ncad_addr
+	lib/watchmalloc
 
 	  Example of a simple loadable module.
 

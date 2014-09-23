@@ -3,6 +3,7 @@
 # other comments are removed.
 ##
 ## Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
+## Copyright 2014 Garrett D'Amore <garett@damore.org>
 ##
 ## CDDL HEADER START
 ##
@@ -580,17 +581,8 @@ label=AUE_CLOSE
     comment=1, file descriptor, "fd"
 
 label=AUE_CONFIGKSSL
-  case=Adding KSSL entry.
-    format=text1:inaddr2:text3:text4
-      comment=opcode, KSSL_ADD_ENTRY:
-      comment=local IP address:
-      comment=SSL port number:
-      comment=proxy port number
-  case=Deleting KSSL entry.
-    format=text1:inaddr2:text3
-      comment=opcode, KSSL_DELETE_ENTRY:
-      comment=local IP address:
-      comment=SSL port number
+  # obsolete
+  skip=Not used.
 
 label=AUE_CONNECT
 # cases "no vnode" not fully confirmed

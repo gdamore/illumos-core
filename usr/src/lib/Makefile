@@ -134,7 +134,6 @@ SUBDIRS += \
 	libproject	\
 	libsendfile	\
 	nametoaddr	\
-	ncad_addr	\
 	hbaapi		\
 	smhba		\
 	sun_fc		\

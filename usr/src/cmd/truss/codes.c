@@ -25,6 +25,7 @@
  * Copyright 2011 Nexenta Systems, Inc. All rights reserved.
  * Copyright (c) 2012, Joyent, Inc. All rights reserved.
  * Copyright (c) 2014, OmniTI Computer Consulting, Inc. All rights reserved.
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
  */
 
 /*	Copyright (c) 1984, 1986, 1987, 1988, 1989 AT&T	*/
@@ -90,7 +91,6 @@
 #include <net/simnet.h>
 #include <sys/vnic.h>
 #include <sys/fs/zfs.h>
-#include <inet/kssl/kssl.h>
 #include <sys/dkio.h>
 #include <sys/fdio.h>
 #include <sys/cdio.h>
@@ -1270,12 +1270,6 @@ const struct ioc {
 		"zfs_cmd_t" },
 	{ (uint_t)ZFS_IOC_DESTROY_BOOKMARKS,	"ZFS_IOC_DESTROY_BOOKMARKS",
 		"zfs_cmd_t" },
-
-	/* kssl ioctls */
-	{ (uint_t)KSSL_ADD_ENTRY,		"KSSL_ADD_ENTRY",
-		"kssl_params_t"},
-	{ (uint_t)KSSL_DELETE_ENTRY,		"KSSL_DELETE_ENTRY",
-		"sockaddr_in"},
 
 	/* disk ioctls - (0x04 << 8) - dkio.h */
 	{ (uint_t)DKIOCGGEOM,		"DKIOCGGEOM",

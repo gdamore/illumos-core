@@ -450,7 +450,6 @@ COMMON_SUBDIRS = \
 	lib/madv \
 	lib/mpss \
 	lib/nametoaddr \
-	lib/ncad_addr \
 	lib/nsswitch \
 	lib/pam_modules \
 	lib/passwdutil \

@@ -33,10 +33,10 @@ ALL=		$(PROG) $(SUIDPROG)
 SRCS=		$(ALL:%=%.c)
 KCMDPROGS=	rcp rlogin rsh
 
-SUBDIRS=	chat ftp nc nca netstat \
+SUBDIRS=	chat ftp nc netstat \
 		pppd pppdump pppstats rdist talk telnet tftp
 SUBDIR1=	talk 
-MSGSUBDIRS=	nca talk
+MSGSUBDIRS=	talk
 
 # As programs get lint-clean, add them here.  Eventually.
 # This hack should go away, and all in PROG should be lint-clean.
@@ -46,7 +46,7 @@ LINTCLEAN=	rlogin.c rsh.c rcp.c rdate.c rwho.c whois.c
 # they're all clean, replace the dependency of the lint target
 # with SUBDIRS.  Also (sigh) deal with the commented-out build lines
 # for the lint rule.
-LINTSUBDIRS=	nca netstat pppd pppstats tftp
+LINTSUBDIRS=	netstat pppd pppstats tftp
 
 include ../../Makefile.cmd
 include ../Makefile.cmd-inet

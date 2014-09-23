@@ -45,7 +45,6 @@
 #include <inet/ipclassifier.h>
 #include <fs/sockfs/sockcommon.h>
 #include <fs/sockfs/sockfilter_impl.h>
-#include <fs/sockfs/nl7c.h>
 #include <fs/sockfs/socktpi.h>
 #include <fs/sockfs/sodirect.h>
 #include <inet/ip.h>

@@ -22,6 +22,7 @@
 /*
  * Copyright (c) 1992, 2010, Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 2013, Joyent, Inc. All rights reserved.
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
  */
 
 #include <sys/asm_linkage.h>
@@ -494,7 +495,6 @@ fcnname/**/_info:							\
 	NO_UNLOAD_STUB(sockfs, sosendfile64,  	nomod_zero);
 	NO_UNLOAD_STUB(sockfs, snf_segmap,  	nomod_einval);
 	NO_UNLOAD_STUB(sockfs, sock_getfasync,  nomod_zero);
-	NO_UNLOAD_STUB(sockfs, nl7c_sendfilev,  nomod_zero);
 	NO_UNLOAD_STUB(sockfs, sotpi_sototpi,  nomod_zero);
 	NO_UNLOAD_STUB(sockfs, socket_sendmblk,  nomod_zero);
 	NO_UNLOAD_STUB(sockfs, socket_setsockopt,  nomod_zero);
@@ -985,7 +985,6 @@ fcnname/**/_info:							\
 	NO_UNLOAD_STUB(c2audit, audit_devpolicy,	nomod_zero);
 	NO_UNLOAD_STUB(c2audit, audit_setfsat_path,	nomod_zero);
 	NO_UNLOAD_STUB(c2audit, audit_cryptoadm,	nomod_zero);
-	NO_UNLOAD_STUB(c2audit, audit_kssl,		nomod_zero);
 	NO_UNLOAD_STUB(c2audit, audit_pf_policy,	nomod_zero);
 	NO_UNLOAD_STUB(c2audit, au_doormsg,		nomod_zero);
 	NO_UNLOAD_STUB(c2audit, au_uwrite,		nomod_zero);

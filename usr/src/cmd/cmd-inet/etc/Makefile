@@ -28,7 +28,7 @@ EDITPROG= ipaddrsel.conf ipsecalgs
 PROG= datemsk.ndpd ipsecinit.sample ipqosconf.1.sample ipqosconf.2.sample \
     ipqosconf.3.sample
 ETCPROG= $(SYMPROG) $(EDITPROG) $(PROG)
-SUBDIRS= default dhcp init.d ike nca ppp secret sock2path.d
+SUBDIRS= default dhcp init.d ike ppp secret sock2path.d
 
 include ../../Makefile.cmd
 

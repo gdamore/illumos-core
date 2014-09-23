@@ -247,9 +247,6 @@ MANFILES=	acctcom.1			\
 	 	mt.1				\
 	 	mv.1				\
 	 	nc.1				\
-	 	nca.1				\
-	 	ncab2clf.1			\
-	 	ncakmod.1			\
 	 	newform.1			\
 	 	newgrp.1			\
 	 	news.1				\
@@ -523,7 +520,6 @@ MANLINKS=	batch.1		\
 		setenv.1	\
 		settime.1	\
 		sh.1		\
-		snca.1		\
 		source.1	\
 		sparc.1		\
 		spellin.1	\
@@ -682,8 +678,6 @@ u3b5.1		:= LINKSRC = machid.1
 vax.1		:= LINKSRC = machid.1
 
 rmail.1		:= LINKSRC = mail.1
-
-snca.1		:= LINKSRC = nca.1
 
 pcat.1		:= LINKSRC = pack.1
 unpack.1	:= LINKSRC = pack.1

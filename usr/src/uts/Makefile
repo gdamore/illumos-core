@@ -141,8 +141,6 @@ COMMON_HDRDIRS= common/avs \
 		common/klm \
 		common/inet \
 		common/inet/ipf/netinet \
-		common/inet/kssl \
-		common/inet/nca \
 		common/inet/sockmods/netpacket \
 		common/io/bpf/net \
 		common/io/fibre-channel/fca/qlc \

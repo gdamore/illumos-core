@@ -335,7 +335,6 @@ _MANFILES=	6to4relay.1m		\
 		mpstat.1m		\
 		msgid.1m		\
 		mvdir.1m		\
-		ncaconfd.1m		\
 		ncheck.1m		\
 		ncheck_ufs.1m		\
 		ndd.1m			\

@@ -20,6 +20,7 @@
  */
 /*
  * Copyright (c) 1992, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
  */
 
 #ifndef _BSM_AUDIT_KEVENTS_H
@@ -328,7 +329,7 @@ extern "C" {
 #define	AUE_MODDEVPLCY		290	/* =as modctl(2) */
 #define	AUE_MODADDPRIV		291	/* =as modctl(2) */
 #define	AUE_CRYPTOADM		292	/* =as kernel cryptographic framework */
-#define	AUE_CONFIGKSSL		293	/* =as kernel SSL */
+#define	AUE_CONFIGKSSL		293	/* =no obsolete */
 #define	AUE_BRANDSYS		294	/* =ot */
 #define	AUE_PF_POLICY_ADDRULE	295	/* =as Add IPsec policy rule */
 #define	AUE_PF_POLICY_DELRULE	296	/* =as Delete IPsec policy rule */
