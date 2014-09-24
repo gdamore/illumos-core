@@ -99,6 +99,8 @@ uint_t auxv_hwcap32_2 = 0;	/* 32-bit version of auxv_hwcap2 */
 
 #define	PSUIDFLAGS		(SNOCD|SUGID)
 
+#define	DEVFD			"/dev/fd/"
+
 /*
  * exece() - system call wrapper around exec_common()
  */
@@ -199,7 +201,22 @@ exec_common(const char *fname, const char **argp, const char **envp,
 	if ((error = pn_get((char *)fname, UIO_USERSPACE, &pn)) != 0)
 		goto out;
 	pn_alloc(&resolvepn);
-	if ((error = lookuppn(&pn, &resolvepn, FOLLOW, &dir, &vp)) != 0) {
+
+	if (strncmp(pn.pn_path, DEVFD, strlen(DEVFD)) == 0) {
+		/* looks like a /dev/fd node */
+		char *p = pn.pn_path + strlen(DEVFD);
+		int fd = stoi(&p);
+		if ((fd < 0) || (*p != 0) || (p == pn.pn_path)) {
+			error = EBADF;
+			goto out;
+		}
+		if ((error = fgetstartvp(fd, NULL, &vp)) != 0) {
+			goto out;	/* error will be EBADF */
+		}
+		(void) pn_set(&resolvepn, pn.pn_path);
+
+	} else if ((error =
+	    lookuppn(&pn, &resolvepn, FOLLOW, &dir, &vp)) != 0) {
 		pn_free(&resolvepn);
 		pn_free(&pn);
 		if (error != EINVAL)

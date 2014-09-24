@@ -20,25 +20,26 @@
 #include <errno.h>
 #include <assert.h>
 
-#define	FDFILE	"/proc/%u/fd/%u"
+#define	FDFILE	"/dev/fd/%u"
 
 /*
  * fexecve.c - implements the fexecve function.
  *
- * We implement in terms of the execve() system call, but use the file
- * descriptor file located in /proc/<pid>/fd/<fd>.  This depends on
- * procfs and the exece system call support for exec'ing such files.
+ * We implement in terms of the execve() system call, but use the path
+ * /dev/fd/<fd>.  This depends on special handling in the execve system
+ * call; note that /dev/fd files are not normally directly executable.
+ * This does not actually use the fd filesystem mounted on /dev/fd.
  */
 int
 fexecve(int fd, char *const argv[], char *const envp[])
 {
-	char path[32];	/* 10 for "/proc//fd/", 10*2 for %u, + \0 == 31 */
+	char path[32];	/* 8 for "/dev/fd/", 10 for %u, + \0 == 19 */
 
 	if (fcntl(fd, F_GETFL) < 0) {
 		/* This will have the effect of returning EBADF */
 		return (-1);
 	}
-	assert(snprintf(NULL, 0, FDFILE, getpid(), fd) < (sizeof (path) - 1));
-	(void) snprintf(path, sizeof (path), FDFILE, getpid(), fd);
+	assert(snprintf(NULL, 0, FDFILE, fd) < (sizeof (path) - 1));
+	(void) snprintf(path, sizeof (path), FDFILE, fd);
 	return (execve(path, argv, envp));
 }
