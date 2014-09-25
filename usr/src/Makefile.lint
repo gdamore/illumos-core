@@ -56,7 +56,6 @@ COMMON_SUBDIRS = \
 	cmd/cal \
 	cmd/captoinfo \
 	cmd/cat \
-	cmd/cdrw \
 	cmd/cfgadm \
 	cmd/checkeq \
 	cmd/checknr \
@@ -117,13 +116,11 @@ COMMON_SUBDIRS = \
 	cmd/dumpadm \
 	cmd/dumpcs \
 	cmd/echo \
-	cmd/eject \
 	cmd/emul64ioctl \
 	cmd/env \
 	cmd/expand \
 	cmd/fcinfo \
 	cmd/fdetach \
-	cmd/fdformat \
 	cmd/fdisk \
 	cmd/fgrep \
 	cmd/file \
@@ -260,7 +257,6 @@ COMMON_SUBDIRS = \
 	cmd/renice \
 	cmd/rm \
 	cmd/rmdir \
-	cmd/rmformat \
 	cmd/rmt \
 	cmd/roles \
 	cmd/rpcgen \

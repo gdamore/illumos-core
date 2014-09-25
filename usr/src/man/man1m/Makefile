@@ -167,11 +167,6 @@ _MANFILES=	6to4relay.1m		\
 		growfs.1m		\
 		gsscred.1m		\
 		gssd.1m			\
-		hal-device.1m		\
-		hal-fdi-validate.1m	\
-		hal-find.1m		\
-		hal-get-property.1m	\
-		hald.1m			\
 		halt.1m			\
 		hextoalabel.1m		\
 		hostconfig.1m		\
@@ -367,7 +362,6 @@ _MANFILES=	6to4relay.1m		\
 		plockstat.1m		\
 		pmadm.1m		\
 		pmconfig.1m		\
-		polkit-is-privileged.1m \
 		pooladm.1m		\
 		poolbind.1m		\
 		poolcfg.1m		\
@@ -416,9 +410,7 @@ _MANFILES=	6to4relay.1m		\
 		remove_allocatable.1m	\
 		removef.1m		\
 		repquota.1m		\
-		rmmount.1m		\
 		rmt.1m			\
-		rmvolmgr.1m		\
 		roleadd.1m		\
 		roledel.1m		\
 		rolemod.1m		\
@@ -609,9 +601,6 @@ MANLINKS=	acctcon1.1m			\
 		fcadm.1m			\
 		fingerd.1m			\
 		grpck.1m			\
-		hal-find-by-capability.1m	\
-		hal-find-by-property.1m		\
-		hal-set-property.1m		\
 		intro.1m			\
 		kadmin.local.1m			\
 		lastlogin.1m			\
@@ -706,11 +695,6 @@ devfsadmd.1m			:= LINKSRC = devfsadm.1m
 fcadm.1m			:= LINKSRC = fcinfo.1m
 
 wtmpfix.1m			:= LINKSRC = fwtmp.1m
-
-hal-find-by-capability.1m	:= LINKSRC = hal-find.1m
-hal-find-by-property.1m		:= LINKSRC = hal-find.1m
-
-hal-set-property.1m		:= LINKSRC = hal-get-property.1m
 
 poweroff.1m			:= LINKSRC = halt.1m
 

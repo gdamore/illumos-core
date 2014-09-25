@@ -161,7 +161,6 @@ SUBDIRS += \
 	libadt_jni	\
 	abi		\
 	auditd_plugins	\
-	libvolmgt	\
 	libdevice	\
 	libdevid	\
 	libc_db		\
@@ -235,8 +234,6 @@ SUBDIRS += \
 	pysolaris	\
 	libmapid	\
 	brand		\
-	policykit	\
-	hal		\
 	libshare	\
 	libsqlite	\
 	libidmap	\
@@ -455,7 +452,6 @@ HDRSUBDIRS=		\
 	libtsnet	\
 	libtsol		\
 	libvrrpadm	\
-	libvolmgt	\
 	libumem		\
 	libunistat	\
 	libuutil	\
@@ -466,8 +462,6 @@ HDRSUBDIRS=		\
 	libzfs_jni	\
 	libzoneinfo	\
 	libzonestat	\
-	hal		\
-	policykit	\
 	lvm		\
 	pkcs11		\
 	passwdutil	\

@@ -77,7 +77,6 @@ SUBDIRS=	man1		\
 		man3tnf		\
 		man3tsol	\
 		man3uuid	\
-		man3volmgt	\
 		man3xcurses	\
 		man3xnet	\
 		man4		\

@@ -50,7 +50,6 @@ MANFILES=	Intro.5			\
 		fsattr.5		\
 		grub.5			\
 		gss_auth_rules.5	\
-		hal.5			\
 		iconv.5			\
 		iconv_unicode.5		\
 		ieee802.3.5		\

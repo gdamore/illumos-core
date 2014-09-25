@@ -62,7 +62,6 @@ _MANFILES=	Intro.4				\
 		ds.log.4			\
 		ethers.4			\
 		exec_attr.4			\
-		fdi.4				\
 		format.dat.4			\
 		fspec.4				\
 		fstypes.4			\

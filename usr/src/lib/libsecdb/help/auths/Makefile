@@ -20,6 +20,7 @@
 #
 
 # Copyright (c) 1999, 2010, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 
 #
 # lib/libsecdb/help/auths/Makefile
@@ -32,7 +33,6 @@ HTMLENTS = \
 	DevAllocHeader.html \
 	DevAllocate.html \
 	DevConfig.html \
-	DevCDRW.html \
 	DevGrant.html \
 	DevRevoke.html \
         HotplugHeader.html \

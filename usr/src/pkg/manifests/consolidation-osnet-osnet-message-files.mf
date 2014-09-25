@@ -73,7 +73,6 @@ file path=usr/lib/help/auths/locale/AuthRoleWrite.html
 file path=usr/lib/help/auths/locale/BindStates.html
 file path=usr/lib/help/auths/locale/DevAllocHeader.html
 file path=usr/lib/help/auths/locale/DevAllocate.html
-file path=usr/lib/help/auths/locale/DevCDRW.html
 file path=usr/lib/help/auths/locale/DevConfig.html
 file path=usr/lib/help/auths/locale/DevGrant.html
 file path=usr/lib/help/auths/locale/DevRevoke.html

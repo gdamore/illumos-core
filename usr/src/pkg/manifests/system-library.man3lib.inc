@@ -76,7 +76,6 @@ file path=usr/share/man/man3lib/libtsnet.3lib
 file path=usr/share/man/man3lib/libtsol.3lib
 file path=usr/share/man/man3lib/libumem.3lib
 file path=usr/share/man/man3lib/libuuid.3lib
-file path=usr/share/man/man3lib/libvolmgt.3lib
 file path=usr/share/man/man3lib/libw.3lib
 file path=usr/share/man/man3lib/libxnet.3lib
 file path=usr/share/man/man3lib/liby.3lib

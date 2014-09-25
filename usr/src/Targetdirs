@@ -87,8 +87,6 @@ DIRS= \
 	/etc/crypto \
 	/etc/crypto/certs \
 	/etc/crypto/crls \
-	/etc/dbus-1 \
-	/etc/dbus-1/system.d \
 	/etc/default \
 	/etc/devices  \
 	/etc/dev  \
@@ -98,20 +96,6 @@ DIRS= \
 	/etc/fs/nfs  \
 	/etc/fs/zfs \
 	/etc/ftpd  \
-	/etc/hal \
-	/etc/hal/fdi \
-	/etc/hal/fdi/information \
-	/etc/hal/fdi/information/10freedesktop \
-	/etc/hal/fdi/information/20thirdparty \
-	/etc/hal/fdi/information/30user \
-	/etc/hal/fdi/policy \
-	/etc/hal/fdi/policy/10osvendor \
-	/etc/hal/fdi/policy/20thirdparty \
-	/etc/hal/fdi/policy/30user \
-	/etc/hal/fdi/preprobe \
-	/etc/hal/fdi/preprobe/10osvendor \
-	/etc/hal/fdi/preprobe/20thirdparty \
-	/etc/hal/fdi/preprobe/30user \
 	/etc/ipadm \
 	/etc/iscsi \
 	/etc/rpcsec	\
@@ -219,10 +203,8 @@ DIRS= \
 	/usr/include/ast \
 	/usr/include/fm \
 	/usr/include/gssapi \
-	/usr/include/hal \
 	/usr/include/kerberosv5 \
 	/usr/include/libmilter \
-	/usr/include/libpolkit \
 	/usr/include/sasl \
 	/usr/include/scsi \
 	/usr/include/security \
@@ -256,7 +238,6 @@ DIRS= \
 	/usr/lib/fs/smb \
 	/usr/lib/fs/zfs \
 	/usr/lib/gss \
-	/usr/lib/hal \
 	/usr/lib/inet \
 	/usr/lib/inet/ilb \
 	/usr/lib/inet/$(MACH32) \
@@ -373,7 +354,6 @@ DIRS= \
 	/usr/share/man/man3tnf \
 	/usr/share/man/man3tsol \
 	/usr/share/man/man3uuid \
-	/usr/share/man/man3volmgt \
 	/usr/share/man/man3xcurses \
 	/usr/share/man/man3xnet \
 	/usr/share/man/man4 \

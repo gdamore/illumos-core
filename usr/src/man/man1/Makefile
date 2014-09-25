@@ -50,7 +50,6 @@ MANFILES=	acctcom.1			\
 	 	cancel.1			\
 	 	cat.1				\
 	 	cd.1				\
-	 	cdrw.1				\
 	 	checknr.1			\
 	 	chgrp.1				\
 	 	chkey.1				\
@@ -111,7 +110,6 @@ MANFILES=	acctcom.1			\
 	 	ed.1				\
 	 	edit.1				\
 	 	egrep.1				\
-	 	eject.1				\
 	 	elfdump.1			\
 	 	elfedit.1			\
 	 	elfsign.1			\
@@ -128,7 +126,6 @@ MANFILES=	acctcom.1			\
 	 	expr.1				\
 	 	exstr.1				\
 	 	factor.1			\
-	 	fdformat.1			\
 	 	fgrep.1				\
 	 	file.1				\
 	 	filesync.1			\
@@ -315,8 +312,6 @@ MANFILES=	acctcom.1			\
 	 	rev.1				\
 	 	rlogin.1			\
 	 	rm.1				\
-	 	rmformat.1			\
-	 	rmmount.1			\
 	 	roffbib.1			\
 	 	roles.1				\
 	 	rpcgen.1			\
@@ -405,8 +400,6 @@ MANFILES=	acctcom.1			\
 	 	vacation.1			\
 	 	vgrind.1			\
 	 	vi.1				\
-	 	volcheck.1			\
-	 	volrmmount.1			\
 	 	w.1				\
 	 	wait.1				\
 	 	wc.1				\
@@ -515,7 +508,6 @@ MANLINKS=	batch.1		\
 		rksh93.1	\
 		rmail.1		\
 		rmdir.1		\
-		rmumount.1	\
 		select.1	\
 		setenv.1	\
 		settime.1	\
@@ -701,8 +693,6 @@ pwait.1		:= LINKSRC = proc.1
 pwdx.1		:= LINKSRC = proc.1
 
 rmdir.1		:= LINKSRC = rm.1
-
-rmumount.1	:= LINKSRC = rmmount.1
 
 remote_shell.1	:= LINKSRC = rsh.1
 remsh.1		:= LINKSRC = rsh.1

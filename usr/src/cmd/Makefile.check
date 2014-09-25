@@ -57,7 +57,6 @@ MANIFEST_TOPDIRS=			\
 	pools				\
 	power				\
 	rexd				\
-	rmvolmgr			\
 	rpcbind				\
 	rpcsvc				\
 	sa				\
@@ -104,8 +103,6 @@ MANIFEST_SUBDIRS=			\
 	fs.d/nfs/svc			\
 	fs.d/smbclnt/svc		\
 	gss/gssd			\
-	hal/addons/network-devices	\
-	hal/hald/solaris		\
 	halt/smf.$(MACH)		\
 	hostid/smf			\
 	idmap/idmapd			\

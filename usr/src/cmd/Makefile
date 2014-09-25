@@ -82,7 +82,6 @@ COMMON_SUBDIRS=		\
 	calendar	\
 	captoinfo	\
 	cat		\
-	cdrw		\
 	cfgadm		\
 	checkeq		\
 	checknr		\
@@ -139,7 +138,6 @@ COMMON_SUBDIRS=		\
 	ed		\
 	eeprom		\
 	egrep		\
-	eject		\
 	emul64ioctl	\
 	enhance		\
 	env		\
@@ -152,7 +150,6 @@ COMMON_SUBDIRS=		\
 	fcinfo		\
 	fcoesvc		\
 	fdetach		\
-	fdformat	\
 	fdisk		\
 	filesync	\
 	fgrep		\
@@ -187,7 +184,6 @@ COMMON_SUBDIRS=		\
 	groups		\
 	grpck		\
 	gss		\
-	hal		\
 	halt		\
 	head		\
 	hostid		\
@@ -303,7 +299,6 @@ COMMON_SUBDIRS=		\
 	pgrep		\
 	picl		\
 	plimit		\
-	policykit	\
 	pools		\
 	power		\
 	powertop	\
@@ -343,10 +338,7 @@ COMMON_SUBDIRS=		\
 	rexd		\
 	rm		\
 	rmdir		\
-	rmformat	\
-	rmmount		\
 	rmt		\
-	rmvolmgr	\
 	roles		\
 	rpcbind		\
 	rpcgen		\
@@ -435,8 +427,6 @@ COMMON_SUBDIRS=		\
 	valtools	\
 	vgrind		\
 	vi		\
-	volcheck	\
-	volrmmount	\
 	vrrpadm		\
 	vscan		\
 	vt		\
@@ -524,7 +514,6 @@ MSGSUBDIRS=		\
 	busstat		\
 	cal		\
 	cat		\
-	cdrw		\
 	cfgadm		\
 	checkeq		\
 	checknr		\
@@ -560,7 +549,6 @@ MSGSUBDIRS=		\
 	du		\
 	dumpcs		\
 	ed		\
-	eject		\
 	env		\
 	eqn		\
 	expand		\
@@ -661,9 +649,6 @@ MSGSUBDIRS=		\
 	roles		\
 	rm		\
 	rmdir		\
-	rmformat	\
-	rmmount		\
-	rmvolmgr	\
 	sasinfo		\
 	sbdadm		\
 	scadm		\
@@ -709,8 +694,6 @@ MSGSUBDIRS=		\
 	valtools	\
 	vgrind		\
 	vi		\
-	volcheck	\
-	volrmmount	\
 	vrrpadm		\
 	vscan		\
 	w		\
