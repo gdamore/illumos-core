@@ -2667,7 +2667,7 @@ zsd_refresh_procs(zsd_ctl_t *ctl, boolean_t init)
 	(void) memset(dent, 0, ctl->zsctl_procfs_dent_size);
 
 	/* Walk all processes and compute each zone's usage on each pset. */
-	while (readdir_r(dir, dent, &dresult) != 0) {
+	while (readdir_r(dir, dent, &dresult) == 0) {
 
 		if (strcmp(dent->d_name, ".") == 0 ||
 		    strcmp(dent->d_name, "..") == 0)
