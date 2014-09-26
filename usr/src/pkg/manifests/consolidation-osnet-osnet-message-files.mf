@@ -52,9 +52,6 @@ dir path=usr/share/lib
 dir path=usr/share/lib/locale
 dir path=usr/share/lib/locale/com
 dir path=usr/share/lib/locale/com/sun
-dir path=usr/share/lib/locale/com/sun/admin
-dir path=usr/share/lib/locale/com/sun/admin/pm
-dir path=usr/share/lib/locale/com/sun/admin/pm/client
 dir path=usr/share/lib/locale/com/sun/slp
 file path=usr/lib/help/auths/locale/AllSolAuthsHeader.html
 file path=usr/lib/help/auths/locale/AuditHeader.html
@@ -316,10 +313,6 @@ file path=usr/lib/locale/C/LC_MESSAGES/priv_names group=sys
 file path=usr/lib/locale/C/LC_MESSAGES/uxlibc.src group=sys
 file path=usr/lib/locale/C/LC_TIME/SUNW_OST_OSCMD.po group=sys
 file path=usr/lib/locale/C/LC_TIME/SUNW_OST_OSLIB.po group=sys
-file path=usr/share/lib/locale/com/sun/admin/pm/client/pmHelpResources.java \
-    group=lp
-file path=usr/share/lib/locale/com/sun/admin/pm/client/pmResources.java \
-    group=lp
 file path=usr/share/lib/locale/com/sun/slp/ClientLib_en.properties group=sys
 file path=usr/share/lib/locale/com/sun/slp/Server_en.properties group=sys
 legacy pkg=SUNW0on arch=all \

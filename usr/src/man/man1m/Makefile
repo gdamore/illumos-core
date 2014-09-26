@@ -370,7 +370,6 @@ _MANFILES=	6to4relay.1m		\
 		ports.1m		\
 		powerd.1m		\
 		powertop.1m		\
-		ppdmgr.1m		\
 		pppd.1m			\
 		pppdump.1m		\
 		pppoec.1m		\
@@ -378,7 +377,6 @@ _MANFILES=	6to4relay.1m		\
 		pppstats.1m		\
 		praudit.1m		\
 		print-service.1m	\
-		printmgr.1m		\
 		projadd.1m		\
 		projdel.1m		\
 		projmod.1m		\

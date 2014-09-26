@@ -18,6 +18,7 @@
 #
 # CDDL HEADER END
 #
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 # Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
@@ -27,14 +28,10 @@ include			../Makefile.sp
 
 ROOTPRINTLIB = 		$(ROOTLIB)/print
 ROOTLIBLPBIN =		$(ROOTLIBLP)/bin
-ROOTVARLP =		$(ROOTVAR)/lp
-ROOTVARLPPPD =		$(ROOTVARLP)/ppd
-
-$(ROOTVARLP)		:= DIRMODE=0775
 
 FILEMODE =		0755
 
-MSGFILES =              lpadmin ppdmgr
+MSGFILES =              lpadmin
 POFILE =                scripts.po
 
 PROG =			conv_lp conv_lpd Makefile.yp
@@ -42,7 +39,7 @@ ROOTLIBPRINTPROG=	$(PROG:%=$(ROOTPRINTLIB)/%)
 $(ROOTLIBPRINTPROG)	:= FILEMODE=0555
 $(ROOTPRINTLIB)/Makefile.yp		:= FILEMODE=0444
 
-USRSBINPROG=		lpsystem ppdmgr
+USRSBINPROG=		lpsystem
 ROOTUSRSBINPROG=	$(USRSBINPROG:%=$(ROOTUSRSBIN)/%)
 $(ROOTUSRSBINPROG)		:= FILEMODE=555
 
@@ -50,11 +47,7 @@ PCONF=	 		printers.conf
 ROOTPCONF=		$(PCONF:%=$(ROOTETC)/%)
 $(ROOTPCONF)		:= FILEMODE=644
 
-MANUFALIASES= 		manufaliases
-ROOTMANUFALIASES=	$(MANUFALIASES:%=$(ROOTVARLPPPD)/%)
-$(ROOTMANUFALIASES)	:= FILEMODE=444
-
-LIBLPPROGS=	 	getmakes getmodels getppdfile getppds ppdfilename2mmp \
+LIBLPPROGS=	 	\
 			lpadmin \
 			desktop-print-management \
 			desktop-print-management-applet \
@@ -88,16 +81,13 @@ $(ROOTLIB)/print/%:	%
 $(ROOTLIBLPBIN)/%: %
 	$(INS.file)
 
-$(ROOTVARLPPPD)/%: %
-	$(INS.file)
-
 $(ROOTAPPDIR)/%:	%
 	$(INS.file)
 
 $(ROOTAUTODIR)/%:	%
 	$(INS.file)
 
-$(ROOTUSRSBIN) $(ROOTVARSPOOLPRINT) $(ROOTVARLP) $(ROOTVARLPPPD):
+$(ROOTUSRSBIN) $(ROOTVARSPOOLPRINT):
 	$(INS.dir)
 
 $(ROOTLIB)/lpadmin:
@@ -131,8 +121,6 @@ install:		$(ROOTLNKPROGS) \
 			$(ROOTUSRSBIN) $(ROOTUSRSBINPROG) \
 			$(ROOTVARSPOOLPRINT) $(ROOTPCONF) \
 			$(ROOTLIBLPPROGS) $(LIBLINKS) \
-			$(ROOTVARLP) $(ROOTVARLPPPD) \
-			$(ROOTMANUFALIASES) \
 			$(ROOTAPPFILES) $(ROOTAUTOFILES)
 
 $(SYMLINKS1):
