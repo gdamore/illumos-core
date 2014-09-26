@@ -1005,6 +1005,13 @@ top:
 		else
 			excl = NONEXCL;
 
+		/*
+		 * POSIX is a little unclear here, this seems like the only
+		 * sane interpretation though.
+		 */
+		if (filemode & FDIRECTORY)
+			return (EINVAL);
+
 		if (error =
 		    vn_createat(pnamep, seg, &vattr, excl, mode, &vp, crwhy,
 		    (filemode & ~(FTRUNC|FEXCL)), umask, startvp))
@@ -1085,10 +1092,10 @@ top:
 		if (error = VOP_ACCESS(vp, mode, accessflags, CRED(), NULL))
 			goto out;
 		/*
-		 * Require FSEARCH to return a directory.
+		 * Require FSEARCH or FDIRECTORY to return a directory.
 		 * Require FEXEC to return a regular file.
 		 */
-		if ((filemode & FSEARCH) && vp->v_type != VDIR) {
+		if ((filemode & (FSEARCH|FDIRECTORY)) && vp->v_type != VDIR) {
 			error = ENOTDIR;
 			goto out;
 		}

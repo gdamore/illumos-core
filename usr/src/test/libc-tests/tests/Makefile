@@ -11,7 +11,7 @@
 
 #
 # Copyright (c) 2012 by Delphix. All rights reserved.
-# Copyright 2015 Garrett D'Amore <garrett@damore.org>
+# Copyright 2018 Garrett D'Amore <garrett@damore.org>
 # Copyright 2016 Joyent, Inc.
 #
 
@@ -20,6 +20,7 @@ SUBDIRS = \
 	fpround \
 	newlocale \
 	nl_langinfo \
+	open \
 	priv_gettext \
 	random \
 	regex \

@@ -20,6 +20,8 @@
  */
 
 /*
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
+ *
  * Copyright (c) 1989, 2010, Oracle and/or its affiliates. All rights reserved.
  */
 
@@ -118,6 +120,7 @@ typedef struct fpollinfo {
 #define	FEXEC		0x400000	/* O_EXEC = 0x400000 */
 
 #define	FCLOEXEC	0x800000	/* O_CLOEXEC = 0x800000 */
+#define	FDIRECTORY	0x1000000	/* O_DIRECTORY = 0x1000000 */
 
 #ifdef _KERNEL
 

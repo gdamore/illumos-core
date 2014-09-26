@@ -100,6 +100,9 @@ file path=opt/libc-tests/tests/newlocale_test.$(ARCH64) mode=0555
 file path=opt/libc-tests/tests/nl_langinfo_test mode=0555
 file path=opt/libc-tests/tests/nl_langinfo_test.$(ARCH) mode=0555
 file path=opt/libc-tests/tests/nl_langinfo_test.$(ARCH64) mode=0555
+file path=opt/libc-tests/tests/open_test mode=0555
+file path=opt/libc-tests/tests/open_test.$(ARCH) mode=0555
+file path=opt/libc-tests/tests/open_test.$(ARCH64) mode=0555
 file path=opt/libc-tests/tests/printf-6961.64 mode=0555
 file path=opt/libc-tests/tests/printf-9511.32 mode=0555
 file path=opt/libc-tests/tests/printf-9511.64 mode=0555
