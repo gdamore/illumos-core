@@ -733,10 +733,12 @@ file path=usr/bin/dumpkeys mode=0555
 file path=usr/bin/echo mode=0555
 file path=usr/bin/ed mode=0555
 file path=usr/bin/egrep mode=0555
+file path=usr/bin/eject mode=0555
 file path=usr/bin/env mode=0555
 file path=usr/bin/expr mode=0555
 file path=usr/bin/false mode=0555
 file path=usr/bin/fdetach mode=0555
+file path=usr/bin/fdformat mode=4555
 file path=usr/bin/fgrep mode=0555
 file path=usr/bin/file mode=0555
 file path=usr/bin/find mode=0555

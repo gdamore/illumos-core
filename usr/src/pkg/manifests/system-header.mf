@@ -1652,6 +1652,7 @@ file path=usr/include/vm/seg_spt.h
 file path=usr/include/vm/seg_vn.h
 file path=usr/include/vm/vpage.h
 file path=usr/include/vm/vpm.h
+file path=usr/include/volmgt.h
 file path=usr/include/wait.h
 file path=usr/include/wchar.h
 file path=usr/include/wchar_impl.h

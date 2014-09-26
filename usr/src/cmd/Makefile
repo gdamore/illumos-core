@@ -138,6 +138,7 @@ COMMON_SUBDIRS=		\
 	ed		\
 	eeprom		\
 	egrep		\
+	eject		\
 	emul64ioctl	\
 	enhance		\
 	env		\
@@ -150,6 +151,7 @@ COMMON_SUBDIRS=		\
 	fcinfo		\
 	fcoesvc		\
 	fdetach		\
+	fdformat	\
 	fdisk		\
 	filesync	\
 	fgrep		\
@@ -549,6 +551,7 @@ MSGSUBDIRS=		\
 	du		\
 	dumpcs		\
 	ed		\
+	eject		\
 	env		\
 	eqn		\
 	expand		\

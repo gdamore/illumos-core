@@ -110,6 +110,7 @@ MANFILES=	acctcom.1			\
 	 	ed.1				\
 	 	edit.1				\
 	 	egrep.1				\
+		eject.1				\
 	 	elfdump.1			\
 	 	elfedit.1			\
 	 	elfsign.1			\
@@ -126,6 +127,7 @@ MANFILES=	acctcom.1			\
 	 	expr.1				\
 	 	exstr.1				\
 	 	factor.1			\
+		fdformat.1			\
 	 	fgrep.1				\
 	 	file.1				\
 	 	filesync.1			\

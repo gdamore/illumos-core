@@ -354,6 +354,7 @@ DIRS= \
 	/usr/share/man/man3tnf \
 	/usr/share/man/man3tsol \
 	/usr/share/man/man3uuid \
+	/usr/share/man/man3volmgt \
 	/usr/share/man/man3xcurses \
 	/usr/share/man/man3xnet \
 	/usr/share/man/man4 \

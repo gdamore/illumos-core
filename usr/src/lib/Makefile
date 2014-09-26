@@ -161,6 +161,7 @@ SUBDIRS += \
 	libadt_jni	\
 	abi		\
 	auditd_plugins	\
+	libvolmgt	\
 	libdevice	\
 	libdevid	\
 	libc_db		\
@@ -452,6 +453,7 @@ HDRSUBDIRS=		\
 	libtsnet	\
 	libtsol		\
 	libvrrpadm	\
+	libvolmgt	\
 	libumem		\
 	libunistat	\
 	libuutil	\

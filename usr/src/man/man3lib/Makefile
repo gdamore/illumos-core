@@ -12,7 +12,6 @@
 #
 # Copyright 2011, Richard Lowe
 # Copyright 2013 Nexenta Systems, Inc.  All rights reserved.
-# Copyright 2014 Garrett D'Aomre <garrett@damore.org>
 #
 
 include		$(SRC)/Makefile.master
@@ -103,6 +102,7 @@ MANFILES= 	libMPAPI.3lib		\
 	 	libtsol.3lib		\
 	 	libumem.3lib		\
 	 	libuuid.3lib		\
+	 	libvolmgt.3lib		\
 	 	libw.3lib		\
 	 	libxnet.3lib		\
 	 	liby.3lib

@@ -23,7 +23,6 @@
 # Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
 # Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2012 OmniTI Computer Consulting, Inc.  All rights reserved.
-# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 
 set name=pkg.fmri value=pkg:/developer/library/lint@$(PKGVERS)
@@ -231,6 +230,7 @@ file path=usr/lib/$(ARCH64)/llib-lsip.ln
 file path=usr/lib/$(ARCH64)/llib-lsldap.ln
 file path=usr/lib/$(ARCH64)/llib-lsmbios.ln
 $(sparc_ONLY)file path=usr/lib/$(ARCH64)/llib-lv12n.ln
+file path=usr/lib/$(ARCH64)/llib-lvolmgt.ln
 file path=usr/lib/$(ARCH64)/llib-lwrap.ln
 file path=usr/lib/$(ARCH64)/llib-lzoneinfo.ln
 file path=usr/lib/$(ARCH64)/values-Xa.o
@@ -312,6 +312,8 @@ file path=usr/lib/llib-lsmbios
 file path=usr/lib/llib-lsmbios.ln
 $(sparc_ONLY)file path=usr/lib/llib-lv12n
 $(sparc_ONLY)file path=usr/lib/llib-lv12n.ln
+file path=usr/lib/llib-lvolmgt
+file path=usr/lib/llib-lvolmgt.ln
 file path=usr/lib/llib-lwrap
 file path=usr/lib/llib-lwrap.ln
 file path=usr/lib/llib-lzoneinfo
