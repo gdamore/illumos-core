@@ -64,6 +64,8 @@
 
 #pragma weak _ttyname = ttyname
 
+#define _SUNOS_SOURCE
+
 #include "lint.h"
 #include "mtlib.h"
 #include "libc.h"

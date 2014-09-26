@@ -646,7 +646,7 @@ extern int	lockf64(int, int, off64_t);
 	!defined(__XOPEN_OR_POSIX) || (_POSIX_C_SOURCE - 0 >= 199506L) || \
 	defined(_POSIX_PTHREAD_SEMANTICS)
 
-#if	(_POSIX_C_SOURCE - 0 >= 199506L) || defined(_POSIX_PTHREAD_SEMANTICS)
+#if	!defined(_SUNOS_SOURCE)
 
 #ifndef	__USE_LEGACY_LOGNAME__
 #ifdef	__PRAGMA_REDEFINE_EXTNAME
@@ -700,7 +700,7 @@ ttyname_r(int __fildes, char *__buf, size_t __size)
 #endif /* !__lint */
 #endif /* __PRAGMA_REDEFINE_EXTNAME */
 
-#else  /* (_POSIX_C_SOURCE - 0 >= 199506L) || ... */
+#else  /* _SUNOS_SOURCE */
 
 #ifndef	__USE_LEGACY_LOGNAME__
 #ifdef	__PRAGMA_REDEFINE_EXTNAME
@@ -714,7 +714,7 @@ extern char *getlogin_r(char *, int);
 
 extern char *ttyname_r(int, char *, int);
 
-#endif /* (_POSIX_C_SOURCE - 0 >= 199506L) || ... */
+#endif /* _SUNOS_SOURCE */
 
 #endif /* defined(__EXTENSIONS__) || defined(_REENTRANT)... */
 

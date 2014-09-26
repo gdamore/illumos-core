@@ -20,14 +20,14 @@
  */
 
 /*
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
+ *
  * Copyright 2008 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
 /*	Copyright (c) 1988 AT&T	*/
 /*	  All Rights Reserved  	*/
-
-#pragma ident	"%Z%%M%	%I%	%E% SMI"
 
 /*
  * Return the number of the slot in the utmp file
@@ -68,11 +68,11 @@ ttyslot(void)
 	 */
 	(void) pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &cancel_state);
 
-	if ((p = ttyname_r(0, ttynm, 128)) != NULL ||
-	    (p = ttyname_r(1, ttynm, 128)) != NULL ||
-	    (p = ttyname_r(2, ttynm, 128)) != NULL) {
-		if (strncmp(p, "/dev/", 5) == 0)
-			p += 5;
+	if ((ttyname_r(0, ttynm, 128)) == 0 ||
+	    (ttyname_r(1, ttynm, 128)) == 0 ||
+	    (ttyname_r(2, ttynm, 128)) == 0) {
+		if (strncmp(ttynm, "/dev/", 5) == 0)
+			p = ttynm + 5;
 		if (strcmp(p, "console") == 0)
 			console = TRUE;
 		s = 0;

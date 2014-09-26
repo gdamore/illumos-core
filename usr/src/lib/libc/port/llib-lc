@@ -493,7 +493,7 @@ char *getlogin(void);
 #ifdef	getlogin_r
 #undef	getlogin_r
 #endif	/* getlogin_r */
-char *getlogin_r(char *, int);
+int getlogin_r(char *, size_t);
 
 /* getmntent.c */
 int getmntany(FILE *fd, struct mnttab *mgetp, struct mnttab *mrefp);
@@ -1069,7 +1069,7 @@ void twalk(const void *rt, void (*action)());
 /* ttyname.c */
 char *ttyname(int f);
 char *_ttyname_dev(dev_t rdev, char *buffer, size_t buflen);
-char *ttyname_r(int, char *, int);
+int ttyname_r(int, char *, size_t);
 
 /* ttyslot.c */
 int ttyslot(void);

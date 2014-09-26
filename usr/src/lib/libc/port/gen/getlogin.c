@@ -32,6 +32,7 @@
 #pragma weak _getlogin = getloginx
 #pragma weak _getlogin_r = getloginx_r
 
+#define	_SUNOS_SOURCE
 #include "lint.h"
 #include <sys/types.h>
 #include <sys/stat.h>

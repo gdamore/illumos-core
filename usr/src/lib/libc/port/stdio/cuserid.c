@@ -20,14 +20,14 @@
  */
 
 /*
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
+ *
  * Copyright 2008 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
 /*	Copyright (c) 1988 AT&T	*/
 /*	  All Rights Reserved  	*/
-
-#pragma ident	"%Z%%M%	%I%	%E% SMI"
 
 #pragma weak _cuserid = cuserid
 
@@ -48,7 +48,6 @@ cuserid(char *s)
 	struct passwd pwd;
 	char buffer[BUFSIZ];
 	char utname[L_cuserid];
-	char *p;
 	int cancel_state;
 
 	/*
@@ -59,8 +58,8 @@ cuserid(char *s)
 
 	if (s == NULL)
 		s = res;
-	if ((p = getlogin_r(utname, L_cuserid)) != NULL) {
-		(void) strlcpy(s, p, L_cuserid);
+	if ((getlogin_r(utname, L_cuserid)) == 0) {
+		(void) strlcpy(s, utname, L_cuserid);
 	} else if ((pw = getpwuid_r(getuid(), &pwd, buffer, BUFSIZ)) != NULL) {
 		(void) strlcpy(s, pw->pw_name, L_cuserid);
 	} else {

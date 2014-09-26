@@ -1,4 +1,4 @@
-'\" te
+.\" Copyright 2014 Garrett D'Amore <garrett@damore.org>
 .\" Copyright (c) 2013 Gary Mills
 .\" Copyright (c) 2004 Sun Microsystems, Inc.  All Rights Reserved.
 .\" Copyright 1989 AT&T
@@ -10,229 +10,263 @@
 .\" The contents of this file are subject to the terms of the Common Development and Distribution License (the "License").  You may not use this file except in compliance with the License.
 .\" You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE or http://www.opensolaris.org/os/licensing.  See the License for the specific language governing permissions and limitations under the License.
 .\" When distributing Covered Code, include this CDDL HEADER in each file and include the License file at usr/src/OPENSOLARIS.LICENSE.  If applicable, add the following below this CDDL HEADER, with the fields enclosed by brackets "[]" replaced with your own identifying information: Portions Copyright [yyyy] [name of copyright owner]
-.TH GETLOGIN 3C "Mar 15, 2014"
-.SH NAME
-getlogin, getlogin_r \- get login name
-.SH SYNOPSIS
-.LP
-.nf
-#include <unistd.h>
-
-\fBchar *\fR\fBgetlogin\fR(\fBvoid\fR);
-.fi
-
-.LP
-.nf
-\fBchar *\fR\fBgetlogin_r\fR(\fBchar *\fR\fIname\fR, \fBint\fR \fInamelen\fR);
-.fi
-
-.SS "Standard conforming"
-.LP
-.nf
-cc [ \fIflag \fR... ] \fIfile\fR... \fB-D_POSIX_PTHREAD_SEMANTICS\fR [ \fIlibrary \fR... ]
-
-\fBint\fR \fBgetlogin_r\fR(\fBchar *\fR\fIname\fR, \fBsize_t\fR \fInamesize\fR);
-.fi
-
-.SH DESCRIPTION
-.sp
-.LP
-The \fBgetlogin()\fR function returns a pointer to the login name as found in
-\fB/var/adm/utmpx\fR. It can be used in conjunction with \fBgetpwnam\fR(3C) to
-locate the correct password file entry when the same user \fBID\fR is shared by
+.Dd Sep 25, 2014
+.Dt GETLOGIN 3C
+.Os
+.
+.Sh NAME
+.
+.Nm getlogin ,
+.Nm getlogin_r
+.Nd get login name
+.
+.Sh SYNOPSIS
+.
+.In unistd.h
+.
+.Ft "char *"
+.Fn getlogin void
+.
+.Ft int
+.Fo getlogin_r
+.Fa "char *name"
+.Fa "size_t namesize"
+.Fc
+.
+.Sh DESCRIPTION
+.
+The
+.Fn getlogin
+function returns a pointer to the login name as found in
+.Pa /var/adm/utmpx .
+It can be used in conjunction with
+.Xr getpwnam 3C
+to locate the correct password file entry when the same user ID is shared by
 several login names.
-.sp
-.LP
+.Lp
 The login name plus the terminating null byte can be up to 33 characters
 in length.
-Newly-compiled programs should use the \fBLOGIN_NAME_MAX\fR symbol,
-defined in <\fBlimits.h\fR>, to size the buffer.
-Older programs that call \fBgetlogin()\fR  expect only the legacy
-9-character length.
-These automatically link to a version of the \fBgetlogin()\fR functions that
-truncates longer login names.
+Newly-compiled programs should use the
+.Dv LOGIN_NAME_MAX
+symbol, defined in
+.In limits.h ,
+to size the buffer.
+Older programs that call
+.Fn getlogin
+expect only the legacy 9-character length.
+These automatically link to a version of the
+.Fn getlogin
+functions that truncates longer login names.
 It's also possible to compile new programs that link to truncating versions
-of these functions by defining \fB__USE_LEGACY_LOGNAME__\fR in the
-compile environment.
-.sp
-.LP
+of these functions by defining the macro
+.Dv __USE_LEGACY_LOGNAME__
+before including
+.In unistd.h .
+.Lp
 Some older programs will correctly handle long login names returned
-by the \fBgetlogin()\fR function.
+by the
+.Fn getlogin
+function.
 For this case, the user compatibility library
-\fB/usr/lib/getloginx.so.1\fR redirects to a version of the \fBgetlogin()\fR
+.Pa /usr/lib/getloginx.so.1
+redirects to a version of the
+.Fn getlogin
 function that returns the long name.
-This library should be added to such an application
-at runtime using \fBLD_PRELOAD\fR.
-.sp
-.LP
-If \fBgetlogin()\fR is called within a process that is not attached to a
-terminal, it returns a null pointer. The correct procedure for determining the
-login name is to call \fBcuserid\fR(3C), or to call \fBgetlogin()\fR and if it
-fails to call \fBgetpwuid\fR(3C).
-.sp
-.LP
-
-The \fBgetlogin_r()\fR function has the same functionality as \fBgetlogin()\fR
-except that the caller must supply a buffer \fIname\fR with length \fInamelen\fR
-to store the result.  The \fIname\fR buffer should be at least
-\fBLOGIN_NAME_MAX\fR bytes in size (defined in <\fBlimits.h\fR>). The POSIX
-version (see \fBstandards\fR(5)) of \fBgetlogin_r()\fR takes a \fInamesize\fR
-parameter of type \fBsize_t\fR. If the size of the supplied buffer is less than
-the size of \fBLOGIN_NAME_MAX\fR and the name, including the null
+This library should be added to such an application at runtime using
+.Dv LD_PRELOAD .
+.Lp
+If
+.Fn getlogin
+is called within a process that is not attached to a terminal,
+it returns a null pointer.
+The correct procedure for determining the login name is to call
+.Xr cuserid 3C ,
+or to call
+.Fn getlogin
+and if it fails to call
+.Xr getpwuid 3C .
+.Lp
+The
+.Fn getlogin_r
+function has the same functionality as
+.Fn getlogin
+except that the caller must supply a buffer
+.Fa name
+with length
+.Fa namesize
+to store the result.
+The
+.Fa name
+buffer should be at least
+.Dv LOGIN_NAME_MAX
+bytes in size
+.Pq defined in In limits.h .
+If the size of the supplied buffer is less than
+.Dv LOGIN_NAME_MAX
+and the name, including the null
 terminator, does not fit inside the buffer, than an error will be generated.
-Otherwise, the buffer \fIname\fR will be updated with the login name.
-
-.SH RETURN VALUES
-.sp
-.LP
-Upon successful completion, \fBgetlogin()\fR returns a pointer to the login
-name or a null pointer if the user's login name cannot be found.  Otherwise it
-returns a null pointer and sets \fBerrno\fR to indicate the error.
-.sp
-.LP
-The standard-conforming \fBgetlogin_r()\fR returns \fB0\fR if successful, or
-the error number upon failure.
-.SH ERRORS
-.sp
-.LP
-The \fBgetlogin_r()\fR function will fail if:
-.sp
-.ne 2
-.na
-\fB\fBERANGE\fR\fR
-.ad
-.RS 10n
-The size of the buffer is smaller than the result to be returned.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEINVAL\fR\fR
-.ad
-.RS 10n
-And entry for the current user was not found in the \fB/var/adm/utmpx\fR file.
-.RE
-
-.sp
-.LP
-The \fBgetlogin()\fR and \fBgetlogin_r()\fR functions may fail if:
-.sp
-.ne 2
-.na
-\fB\fBEMFILE\fR\fR
-.ad
-.RS 10n
-There are {\fBOPEN_MAX\fR} file descriptors currently open in the calling
-process.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBENFILE\fR\fR
-.ad
-.RS 10n
-The maximum allowable number of files is currently open in the system.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBENXIO\fR\fR
-.ad
-.RS 10n
-The calling process has no controlling terminal.
-.RE
-
-.sp
-.LP
-The \fBgetlogin_r()\fR function may fail if:
-.sp
-.ne 2
-.na
-\fB\fBERANGE\fR\fR
-.ad
-.RS 10n
-The size of the buffer is smaller than the result to be returned.
-.RE
-
-.SH USAGE
-.sp
-.LP
-The return value of \fBgetlogin()\fR points to thread-specific data whose
-content is overwritten on each call by the same thread.
-.sp
-.LP
-Three names associated with the current process can be determined:
-\fBgetpwuid(\fR\fBgeteuid()\fR\fB)\fR returns the name associated with the
-effective user ID of the process; \fBgetlogin()\fR returns the name associated
-with the current login activity; and \fBgetpwuid(\fR\fBgetuid()\fR\fB)\fR
-returns the name associated with the real user ID of the process.
-.SH FILES
-.sp
-.ne 2
-.na
-\fB\fB/var/adm/utmpx\fR\fR
-.ad
-.RS 18n
+Otherwise, the buffer
+.Fa name
+will be updated with the login name.
+.
+.Sh RETURN VALUES
+.
+Upon successful completion,
+.Fn getlogin
+returns a pointer to the login
+name or a null pointer if the user's login name cannot be found.
+ Otherwise it returns a null pointer and sets
+.Va errno
+to indicate the error.
+.Lp
+The
+.Fn getlogin_r
+returns 0 if successful, or the error number upon failure.
+.
+.Sh FILES
+.
+.Bl -tag -width Pa
+.It Pa /var/adm/utmpx
 user access and administration information
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fB/usr/lib/getloginx.so.1\fR\fR
-.ad
-.RS 18n
+.
+.It Pa /usr/lib/getloginx.so.1
 A compatibility library that returns long login names to older applications.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fB/usr/lib/64/getloginx.so.1\fR\fR
-.ad
-.RS 18n
+.
+.It Pa /usr/lib/64/getloginx.so.1
 A 64-bit compatibility library to return long login names.
-.RE
-
-.SH ATTRIBUTES
-.sp
-.LP
-See \fBattributes\fR(5) for descriptions of the following attributes:
-.sp
-
-.sp
-.TS
-box;
-c | c
-l | l .
-ATTRIBUTE TYPE	ATTRIBUTE VALUE
-_
-Interface Stability	Standard
-_
-MT-Level	See below.
-.TE
-
-.SH SEE ALSO
-.sp
-.LP
-\fBgeteuid\fR(2), \fBgetuid\fR(2), \fBcuserid\fR(3C), \fBgetgrnam\fR(3C),
-\fBgetpwnam\fR(3C), \fBgetpwuid\fR(3C), \fButmpx\fR(4), \fBattributes\fR(5),
-\fBstandards\fR(5)
-.SH NOTES
-.sp
-.LP
-When compiling multithreaded programs, see \fBIntro\fR(3).
-.sp
-.LP
-The \fBgetlogin()\fR function is safe to use in multithreaded applications, but
-is discouraged. The \fBgetlogin_r()\fR function should be used instead.
-.sp
-.LP
-Solaris 2.4 and earlier releases provided a \fBgetlogin_r()\fR as specified in
-POSIX.1c Draft 6. The final POSIX.1c standard changed the interface as
-described above. Support for the Draft 6 interface is provided for
-compatibility only and may not be supported in future releases. New
-applications and libraries should use the standard-conforming interface.
+.
+.El
+.
+.Sh ERRORS
+.
+The
+.Fn getlogin_r
+function will fail if:
+.Bl -tag -width Er
+.It Bq Er ERANGE
+The size of the buffer is smaller than the result to be returned.
+.It Bq Er EINVAL
+An entry for the current user was not found in the
+.Pa /var/adm/utmpx
+file.
+.El
+.Lp
+The
+.Fn getlogin
+and
+.Fn getlogin_r
+functions may fail if:
+.
+.Bl -tag -width Er
+.It Bq Er EMFILE
+There are
+.Brq Dv OPEN_MAX
+file descriptors currently open in the calling process.
+.
+.It Bq Er ENFILE
+The maximum allowable number of files is currently open in the system.
+.
+.It Bq Er ENXIO
+The calling process has no controlling terminal.
+.El
+.Lp
+The
+.Fn getlogin_r
+function may fail if:
+.Bl -tag -width Er
+.It Bq Er ERANGE
+The size of the buffer is smaller than the result to be returned.
+.El
+.
+.Sh USAGE
+.
+The return value of
+.Fn getlogin
+points to thread-specific data whose
+content is overwritten on each call by the same thread.
+.Lp
+Three names associated with the current process can be determined:
+.Fo getpwuid
+.Fn  geteuid
+.Fc
+returns the name associated with the
+effective user ID of the process;
+.Fn getlogin
+returns the name associated
+with the current login activity; and
+.Fo getpwuid
+.Fn getuid
+.Fc
+returns the name associated with the real user ID of the process.
+.
+.Sh INTERFACE STABILITY
+.
+.Sy Standard .
+.
+.Sh MT-LEVEL
+.
+The
+.Fn getlogin
+function is
+.Sy Safe ,
+but portable applications must not depend on this.
+The
+.Fn getlogin_r
+function is
+.Sy MT-Safe .
+.
+.Sh SEE ALSO
+.Xr geteuid 2 ,
+.Xr getuid 2 ,
+.Xr cuserid 3C ,
+.Xr getgrnam 3C ,
+.Xr getpwnam 3C ,
+.Xr getpwuid 3C ,
+.Xr utmpx 4 ,
+.Xr standards 5
+.
+.Sh STANDARDS
+.
+These functions are available in the following compilation environments.
+See
+.Xr standards 5 .
+.Ss Fn getlogin
+.Bl -bullet -compact
+.It
+.St -p1003.1
+.It
+.St -p1003.1-2001
+.It
+.St -p1003.1-2008
+.It
+.St -xpg4.2
+.It
+.St -susv2
+.It
+.St -susv3
+.El
+.Ss Fn getlogin_r
+.
+.Bl -bullet -compact
+.It
+.St -p1003.1c-95
+.It
+.St -p1003.1-2001
+.It
+.St -p1003.1-2008
+.It
+.St -susv2
+.It
+.St -susv3
+.El
+.
+.
+.Sh NOTES
+.
+Solaris provided a
+.Fn getlogin_r
+as specified in
+POSIX.1c Draft 6.
+The final POSIX.1c standard changed the interface as described above.
+Applications compiled using the Draft 6 interface in Solaris will continue
+to function, but new applications must use the standard-conforming interface.
