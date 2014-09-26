@@ -88,6 +88,7 @@ extern "C" {
 #define	O_NOLINKS	0x40000	/* don't allow multiple hard links */
 #define	O_CLOEXEC	0x800000	/* set the close-on-exec flag */
 #if defined(_XPG7) || !defined(_STRICT_SYMBOLS)
+#define	O_DIRECTORY	0x1000000	/* fail unless directory */
 #define	O_TTY_INIT	0	/* ttys are always opened conforming */
 #endif
 

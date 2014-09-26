@@ -10,11 +10,12 @@
 #
 
 #
-# Copyright (c) 2012 by Delphix. All rights reserved.
 # Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 
-SUBDIRS = fexecve open newlocale nl_langinfo symbols wcsrtombs
-
 include $(SRC)/Makefile.master
-include $(SRC)/test/Makefile.com
+
+PROG = open_test
+ARCHPROG = open_test
+
+include ../Makefile.com

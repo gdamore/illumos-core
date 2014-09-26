@@ -29,7 +29,7 @@ $(OBJS_OVERRIDE)SRCS = $(PROG).c ../common/test_common.c
 
 C99MODE = -xc99=%all
 LINTFLAGS += -I../common -DARCH=\"ARCH\" -DLINT
-CPPFLAGS += -I../common
+CPPFLAGS += -I$(ROOT)/usr/include -I../common
 
 ROOTOPTPKG = $(ROOT)/opt/libc-tests
 TESTDIR = $(ROOTOPTPKG)/tests/$(TESTSUBDIR)
