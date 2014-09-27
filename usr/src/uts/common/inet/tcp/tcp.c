@@ -4277,6 +4277,7 @@ tcp_do_connect(conn_t *connp, const struct sockaddr *sa, socklen_t len,
 	syn_mp = tcp_xmit_mp(tcp, NULL, 0, NULL, NULL,
 	    tcp->tcp_iss, B_FALSE, NULL, B_FALSE);
 	if (syn_mp != NULL) {
+		tcph_t *tcph;
 		/*
 		 * We must bump the generation before sending the syn
 		 * to ensure that we use the right generation in case
@@ -4287,11 +4288,12 @@ tcp_do_connect(conn_t *connp, const struct sockaddr *sa, socklen_t len,
 		 * DTrace sending the first SYN as a
 		 * tcp:::connect-request event.
 		 */
+		tcph = (void *)
+		    &syn_mp->b_rptr[connp->conn_ixa->ixa_ip_hdr_length];
 		DTRACE_TCP5(connect__request, mblk_t *, NULL,
 		    ip_xmit_attr_t *, connp->conn_ixa,
 		    void_ip_t *, syn_mp->b_rptr, tcp_t *, tcp,
-		    tcph_t *,
-		    &syn_mp->b_rptr[connp->conn_ixa->ixa_ip_hdr_length]);
+		    tcph_t *, tcph);
 		tcp_send_data(tcp, syn_mp);
 	}
 
