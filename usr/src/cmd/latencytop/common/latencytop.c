@@ -21,6 +21,8 @@
 /*
  * Copyright (c) 2008-2009, Intel Corporation.
  * All Rights Reserved.
+ *
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
  */
 
 #include <unistd.h>
@@ -31,6 +33,7 @@
 #include <limits.h>
 #include <libgen.h>
 #include <signal.h>
+#include <assert.h>
 #include "latencytop.h"
 
 #define	CMPOPT(a, b)	strncmp((a), (b), sizeof (b))
@@ -80,8 +83,6 @@ check_opt_dup(lt_cmd_option_id_t id, uint64_t value) {
 		"-f [no]low is set more than once with different values.",
 		"-s is set more than once with different values."
 	};
-
-	g_assert(sizeof (errmsg)/sizeof (errmsg[0]) == (int)LT_CMDOPT__LAST);
 
 	if (!opt_set[(int)id]) {
 		opt_set[(int)id] = TRUE;

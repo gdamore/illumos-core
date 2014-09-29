@@ -21,6 +21,8 @@
 /*
  * Copyright (c) 2008-2009, Intel Corporation.
  * All Rights Reserved.
+ *
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
  */
 
 #include <stdlib.h>
@@ -29,18 +31,19 @@
 #include <string.h>
 #include <limits.h>
 #include <sys/stat.h>
+#include <assert.h>
+#include <note.h>
 
 #include "latencytop.h"
 
 /* Statistics for each process/thread. */
 typedef struct _lt_stat_collection lt_stat_collection_t;
-typedef gboolean (*check_child_func_t) (gpointer key,
-    lt_stat_collection_t *stat, void *user);
+typedef int (*check_child_func_t)(void *key, void *stat, void *user);
 
 typedef struct {
 	lt_stat_entry_t lt_grp_summary;
 	/* cause_id -> stat entry */
-	GHashTable *lt_grp_cidlist;
+	lt_hash_t lt_grp_cidlist;
 } lt_datagroup_t;
 
 #define	NGROUPS			2
@@ -63,7 +66,7 @@ struct _lt_stat_collection {
 	 * lt_sc_check_child_func maintain the tree structure.
 	 */
 	lt_stat_collection_t *lt_sc_parent;		/* Parent node */
-	GHashTable *lt_sc_children;	/* pid/tid -> lt_stat_collection_t */
+	lt_hash_t lt_sc_children;	/* pid/tid -> lt_stat_collection_t */
 	check_child_func_t lt_sc_check_child_func; /* Release dead children */
 };
 
@@ -97,27 +100,30 @@ typedef struct {
 	char lt_so_string[32];	/* Enough to hold "%s: 0x%llX" */
 } lt_sobj_t;
 
-static GHashTable *sobj_table = NULL;
+static lt_hash_t sobj_table = NULL;
 static int sobj_table_len = 0;
 
 /*
  * Lower 32-bit of the address of synchronization objects is used to hash
  * them.
  */
-static guint
-sobj_id_hash(lt_sobj_id_t *id)
+static unsigned
+sobj_id_hash(const void *a)
 {
-	g_assert(id != NULL);
+	const lt_sobj_id_t *id = a;
+	assert(id != NULL);
 	return (id->lt_soi_addr & 0xFFFFFFFF);
 }
 
 /*
  * Test if two synchronization objects are the same.
  */
-static gboolean
-sobj_id_equal(lt_sobj_id_t *a, lt_sobj_id_t *b)
+static int
+sobj_id_equal(const void *a1, const void *b1)
 {
-	g_assert(a != NULL && b != NULL);
+	const lt_sobj_id_t *a = a1;
+	const lt_sobj_id_t *b = b1;
+	assert(a != NULL && b != NULL);
 	return (a->lt_soi_type == b->lt_soi_type &&
 	    a->lt_soi_addr == b->lt_soi_addr);
 }
@@ -140,21 +146,19 @@ lookup_sobj(lt_sobj_id_t *id)
 		"User_PI",
 		"Shuttle"
 	};
-	const int stype_str_len =
-	    sizeof (stype_str) / sizeof (stype_str[0]);
+	const int stype_str_len = sizeof (stype_str) / sizeof (stype_str[0]);
 	lt_sobj_t *ret = NULL;
-	g_assert(id != NULL);
+	assert(id != NULL);
 
 	if (id->lt_soi_type < 0 || id->lt_soi_type >= stype_str_len) {
 		return (NULL);
 	}
 
 	if (sobj_table != NULL) {
-		ret = (lt_sobj_t *)g_hash_table_lookup(sobj_table, id);
+		ret = lt_hash_lookup(sobj_table, id);
 	} else {
-		sobj_table = g_hash_table_new_full(
-		    (GHashFunc)sobj_id_hash, (GEqualFunc)sobj_id_equal,
-		    NULL, (GDestroyNotify)free);
+		sobj_table = lt_hash_new(sobj_id_hash, sobj_id_equal,
+		    NULL, free);
 		lt_check_null(sobj_table);
 	}
 
@@ -166,7 +170,7 @@ lookup_sobj(lt_sobj_id_t *id)
 		ret->lt_so_oid.lt_soi_type = id->lt_soi_type;
 		ret->lt_so_oid.lt_soi_addr = id->lt_soi_addr;
 
-		g_hash_table_insert(sobj_table, &ret->lt_so_oid, ret);
+		lt_hash_insert(sobj_table, &ret->lt_so_oid, ret);
 	}
 
 	return (ret);
@@ -175,39 +179,44 @@ lookup_sobj(lt_sobj_id_t *id)
 /*
  * Check if a process exists by using /proc/pid
  */
-/* ARGSUSED */
-static gboolean
-check_process(gpointer key, lt_stat_collection_t *stat, void *user)
+static int
+check_process(void *key, void *val, void *user)
 {
+	lt_stat_collection_t *stat = val;
 	char name[PATH_MAX];
+	NOTE(ARGUNUSED(user));
+	NOTE(ARGUNUSED(key));
 
 	(void) snprintf(name, PATH_MAX, "/proc/%u", stat->lt_sc_id);
-	return (lt_file_exist(name) ? FALSE : TRUE);
+	return (lt_file_exist(name) ? LTH_WALK_CONTINUE : LTH_WALK_REMOVE);
 }
 
 /*
  * Check if a thread exists by using /proc/pid/lwp/tid
  */
-/* ARGSUSED */
-static gboolean
-check_thread(gpointer key, lt_stat_collection_t *stat, void *user)
+static int
+check_thread(void *key, void *val, void *user)
 {
 	char name[PATH_MAX];
+	lt_stat_collection_t *stat = val;
+	NOTE(ARGUNUSED(key));
+	NOTE(ARGUNUSED(user));
 
-	g_assert(stat->lt_sc_parent != NULL);
-	g_assert(stat->lt_sc_parent->lt_sc_level == LT_LEVEL_PROCESS);
+	assert(stat->lt_sc_parent != NULL);
+	assert(stat->lt_sc_parent->lt_sc_level == LT_LEVEL_PROCESS);
 
 	(void) snprintf(name, PATH_MAX, "/proc/%u/lwp/%u",
 	    stat->lt_sc_parent->lt_sc_id, stat->lt_sc_id);
-	return (lt_file_exist(name) ? FALSE : TRUE);
+	return (lt_file_exist(name) ? LTH_WALK_CONTINUE : LTH_WALK_REMOVE);
 }
 
 /*
  * Helper function to free a stat node.
  */
 static void
-free_stat(lt_stat_collection_t *stat)
+free_stat(void *arg)
 {
+	lt_stat_collection_t *stat = arg;
 	int i;
 
 	if (stat == NULL) {
@@ -216,13 +225,12 @@ free_stat(lt_stat_collection_t *stat)
 
 	for (i = 0; i < NGROUPS; ++i) {
 		if (stat->lt_sc_groups[i].lt_grp_cidlist != NULL) {
-			g_hash_table_destroy(stat->lt_sc_groups[i].
-			    lt_grp_cidlist);
+			lt_hash_free(stat->lt_sc_groups[i].lt_grp_cidlist);
 		}
 	}
 
 	if (stat->lt_sc_children != NULL) {
-		g_hash_table_destroy(stat->lt_sc_children);
+		lt_hash_free(stat->lt_sc_children);
 	}
 
 	if (stat->lt_sc_name != NULL) {
@@ -235,18 +243,19 @@ free_stat(lt_stat_collection_t *stat)
 /*
  * Helper function to initialize a stat node.
  */
-/* ARGSUSED */
-static void
-clear_stat(gpointer key, lt_stat_collection_t *stat, void *user)
+static int
+clear_stat(void *key, void *val, void *arg)
 {
+	lt_stat_collection_t *stat = val;
 	int i;
+	NOTE(ARGUNUSED(key));
+	NOTE(ARGUNUSED(arg));
 
-	g_assert(stat != NULL);
+	assert(stat != NULL);
 
 	for (i = 0; i < NGROUPS; ++i) {
 		if (stat->lt_sc_groups[i].lt_grp_cidlist != NULL) {
-			g_hash_table_destroy(stat->lt_sc_groups[i].
-			    lt_grp_cidlist);
+			lt_hash_free(stat->lt_sc_groups[i].lt_grp_cidlist);
 			stat->lt_sc_groups[i].lt_grp_cidlist = NULL;
 		}
 
@@ -256,11 +265,11 @@ clear_stat(gpointer key, lt_stat_collection_t *stat, void *user)
 	}
 
 	if (stat->lt_sc_children != NULL) {
-		g_hash_table_foreach_remove(stat->lt_sc_children,
-		    (GHRFunc)stat->lt_sc_check_child_func, NULL);
-		g_hash_table_foreach(stat->lt_sc_children,
-		    (GHFunc)clear_stat, NULL);
+		lt_hash_walk(stat->lt_sc_children,
+		    stat->lt_sc_check_child_func, NULL);
+		lt_hash_walk(stat->lt_sc_children, clear_stat, NULL);
 	}
+	return (LTH_WALK_CONTINUE);
 }
 
 /*
@@ -282,12 +291,11 @@ update_stat_entry(lt_stat_collection_t *stat, int cause_id,
 	group = &(stat->lt_sc_groups[group_to_use]);
 
 	if (group->lt_grp_cidlist != NULL) {
-		entry = (lt_stat_entry_t *)g_hash_table_lookup(
+		entry = (lt_stat_entry_t *)lt_hash_lookup(
 		    group->lt_grp_cidlist, LT_INT_TO_POINTER(cause_id));
 	} else   {
-		group->lt_grp_cidlist = g_hash_table_new_full(
-		    g_direct_hash, g_direct_equal,
-		    NULL, (GDestroyNotify)free);
+		group->lt_grp_cidlist = lt_hash_new(
+		    lt_defhash, lt_defcmp, NULL, free);
 		lt_check_null(group->lt_grp_cidlist);
 	}
 
@@ -315,7 +323,7 @@ update_stat_entry(lt_stat_collection_t *stat, int cause_id,
 			break;
 		}
 
-		g_hash_table_insert(group->lt_grp_cidlist,
+		lt_hash_insert(group->lt_grp_cidlist,
 		    LT_INT_TO_POINTER(cause_id), entry);
 	}
 
@@ -347,8 +355,8 @@ find_cause(char *stack, int *cause_id, int *cause_priority)
 	int priority = 0;
 	int found = 0;
 
-	g_assert(cause_id != NULL);
-	g_assert(cause_priority != NULL);
+	assert(cause_id != NULL);
+	assert(cause_priority != NULL);
 
 	while (stack != NULL) {
 		char *sep;
@@ -406,13 +414,12 @@ new_collection(lt_stat_level_t level, unsigned int id, char *name,
 		ret->lt_sc_parent = parent;
 
 		if (parent->lt_sc_children == NULL) {
-			parent->lt_sc_children = g_hash_table_new_full(
-			    g_direct_hash, g_direct_equal,
-			    NULL, (GDestroyNotify)free_stat);
+			parent->lt_sc_children = lt_hash_new(
+			    lt_defhash, lt_defcmp, NULL, free_stat);
 			lt_check_null(parent->lt_sc_children);
 		}
 
-		g_hash_table_insert(parent->lt_sc_children,
+		lt_hash_insert(parent->lt_sc_children,
 		    LT_INT_TO_POINTER((int)id), ret);
 	}
 
@@ -433,7 +440,7 @@ get_stat_c(pid_t pid, id_t tid)
 		    PID_SYS_GLOBAL, lt_strdup("SYSTEM"), NULL, check_process);
 	} else if (stat_system->lt_sc_children != NULL) {
 		stat_p = (lt_stat_collection_t *)
-		    g_hash_table_lookup(stat_system->lt_sc_children,
+		    lt_hash_lookup(stat_system->lt_sc_children,
 		    LT_INT_TO_POINTER(pid));
 	}
 
@@ -453,7 +460,7 @@ get_stat_c(pid_t pid, id_t tid)
 		    (unsigned int)pid, fname, stat_system, check_thread);
 	} else if (stat_p->lt_sc_children != NULL) {
 		stat_t = (lt_stat_collection_t *)
-		    g_hash_table_lookup(stat_p->lt_sc_children,
+		    lt_hash_lookup(stat_p->lt_sc_children,
 		    LT_INT_TO_POINTER(tid));
 	}
 
@@ -560,11 +567,11 @@ void
 lt_stat_clear_all(void)
 {
 	if (stat_system != NULL) {
-		clear_stat(NULL, stat_system, NULL);
+		(void) clear_stat(NULL, stat_system, NULL);
 	}
 
 	if (sobj_table != NULL) {
-		g_hash_table_destroy(sobj_table);
+		lt_hash_free(sobj_table);
 		sobj_table = NULL;
 	}
 }
@@ -581,9 +588,26 @@ lt_stat_free_all(void)
 	}
 
 	if (sobj_table != NULL) {
-		g_hash_table_destroy(sobj_table);
+		lt_hash_free(sobj_table);
 		sobj_table = NULL;
 	}
+}
+
+struct walk_entries_arg {
+	lt_stat_entry_t **entries;
+	int curidx;
+	int maxidx;
+};
+
+static int
+walk_entries(void *k, void *v, void *a)
+{
+	struct walk_entries_arg *arg = a;
+	NOTE(ARGUNUSED(k));
+
+	assert(arg->curidx < arg->maxidx);
+	arg->entries[arg->curidx++] = (lt_stat_entry_t *)v;
+	return (LTH_WALK_CONTINUE);
 }
 
 /*
@@ -595,18 +619,18 @@ void *
 lt_stat_list_create(lt_list_type_t list_type, lt_stat_level_t level,
     pid_t pid, id_t tid, int count, lt_sort_t sort_by)
 {
-	GCompareFunc func;
-	GList *list, *walk;
+	int (*func)(const void *, const void *);
 	lt_stat_collection_t *stat_c = NULL;
 	lt_stat_list_t *ret;
 	lt_datagroup_t *group;
+	struct walk_entries_arg wea;
 
 	if (level == LT_LEVEL_GLOBAL) {
 		/* Use global entry */
 		stat_c = stat_system;
 	} else if (stat_system != NULL && stat_system->lt_sc_children != NULL) {
 		/* Find process entry first */
-		stat_c = (lt_stat_collection_t *)g_hash_table_lookup(
+		stat_c = (lt_stat_collection_t *)lt_hash_lookup(
 		    stat_system->lt_sc_children, LT_INT_TO_POINTER(pid));
 
 		if (level == LT_LEVEL_THREAD) {
@@ -616,7 +640,7 @@ lt_stat_list_create(lt_list_type_t list_type, lt_stat_level_t level,
 			 */
 			if (stat_c != NULL && stat_c->lt_sc_children != NULL) {
 				stat_c = (lt_stat_collection_t *)
-				    g_hash_table_lookup(stat_c->lt_sc_children,
+				    lt_hash_lookup(stat_c->lt_sc_children,
 				    LT_INT_TO_POINTER(tid));
 			} else {
 				/*
@@ -650,28 +674,35 @@ lt_stat_list_create(lt_list_type_t list_type, lt_stat_level_t level,
 
 	ret->lt_sl_gtotal = group->lt_grp_summary.lt_se_data.lt_s_total;
 
-	list = g_hash_table_get_values(group->lt_grp_cidlist);
+
+	wea.maxidx = lt_hash_size(group->lt_grp_cidlist);
+	wea.curidx = 0;
+	wea.entries = lt_zalloc(sizeof (*wea.entries) * wea.maxidx);
+	lt_hash_walk(group->lt_grp_cidlist, walk_entries, &wea);
+	assert(wea.curidx == wea.maxidx);
 
 	switch (sort_by) {
 	case LT_SORT_TOTAL:
-		func = (GCompareFunc)lt_sort_by_total_desc;
+		func = lt_sort_by_total_desc;
 		break;
 	case LT_SORT_MAX:
-		func = (GCompareFunc)lt_sort_by_max_desc;
+		func = lt_sort_by_max_desc;
 		break;
 	case LT_SORT_AVG:
-		func = (GCompareFunc)lt_sort_by_avg_desc;
+		func = lt_sort_by_avg_desc;
 		break;
 	case LT_SORT_COUNT:
-		func = (GCompareFunc)lt_sort_by_count_desc;
+		func = lt_sort_by_count_desc;
 		break;
+	default:
+		func = NULL;
+		assert(0);
 	}
-	list = g_list_sort(list, func);
+	qsort(wea.entries, wea.maxidx, sizeof (*wea.entries), func);
 
-	for (walk = list;
-	    walk != NULL && count > 0;
-	    walk = g_list_next(walk), --count) {
-		lt_stat_entry_t *data = (lt_stat_entry_t *)walk->data;
+	for (int i = 0; (i < wea.maxidx) && (count > 0); i++, --count) {
+
+		lt_stat_entry_t *data = wea.entries[i];
 
 		if (list_type == LT_LIST_CAUSE &&
 		    data->lt_se_type == STAT_CAUSE &&
@@ -694,7 +725,7 @@ lt_stat_list_create(lt_list_type_t list_type, lt_stat_level_t level,
 		ret->lt_sl_entries[ret->lt_sl_entry_count++] = data;
 	}
 
-	g_list_free(list);
+	free(wea.entries);
 
 	return (ret);
 }
@@ -751,7 +782,7 @@ lt_stat_list_get_reason(void *ptr, int i)
 		return (NULL);
 	}
 
-	g_assert(list->lt_sl_entries[i]->lt_se_string != NULL);
+	assert(list->lt_sl_entries[i]->lt_se_string != NULL);
 
 	return (list->lt_sl_entries[i]->lt_se_string);
 }
@@ -830,9 +861,55 @@ lt_stat_list_get_gtotal(void *ptr)
  * Helper function, sort by PID/TID ascend.
  */
 static int
-sort_id(lt_stat_collection_t *a, lt_stat_collection_t *b)
+sort_id(const void *a1, const void *b1)
 {
+#if 1
+	const lt_stat_collection_t *a = *(const lt_stat_collection_t **)a1;
+	const lt_stat_collection_t *b = *(const lt_stat_collection_t **)b1;
+#else
+	const lt_stat_collection_t *a = a1;
+	const lt_stat_collection_t *b = b1;
+#endif
 	return ((int)(a->lt_sc_id - b->lt_sc_id));
+}
+
+struct walk_children_arg {
+	lt_stat_collection_t **children;
+	int curidx;
+	int maxidx;
+};
+
+static int
+walk_children(void *k, void *v, void *a)
+{
+	struct walk_children_arg *arg = a;
+	NOTE(ARGUNUSED(k));
+
+	assert(arg->curidx < arg->maxidx);
+	arg->children[arg->curidx++] = (lt_stat_collection_t *)v;
+	return (LTH_WALK_CONTINUE);
+}
+
+/* Returns a sorted array of children */
+static lt_stat_collection_t **
+get_children(lt_stat_collection_t *parent, int *count)
+{
+	struct walk_children_arg wca;
+
+	if ((parent == NULL) || (parent->lt_sc_children == NULL) ||
+	    ((wca.maxidx = lt_hash_size(parent->lt_sc_children)) == 0)) {
+		*count = 0;
+		return (NULL);
+	}
+
+	wca.curidx = 0;
+	wca.children = lt_zalloc(sizeof (*wca.children) * wca.maxidx);
+
+	lt_hash_walk(parent->lt_sc_children, walk_children, &wca);
+	assert(wca.curidx == wca.maxidx);
+	qsort(wca.children, wca.maxidx, sizeof (*wca.children), sort_id);
+	*count = wca.maxidx;
+	return (wca.children);
 }
 
 /*
@@ -842,40 +919,34 @@ sort_id(lt_stat_collection_t *a, lt_stat_collection_t *b)
 static int
 plist_create(pid_t ** list)
 {
-	GList *pid_list, *walk;
-	int ret, count;
+	int nprocs, count;
+	lt_stat_collection_t **procs;
 
-	ret = g_hash_table_size(stat_system->lt_sc_children);
-	*list = (pid_t *)lt_malloc(sizeof (pid_t) * ret);
-
-	pid_list = g_hash_table_get_values(stat_system->lt_sc_children);
-	pid_list = g_list_sort(pid_list, (GCompareFunc)sort_id);
-
-	for (walk = pid_list, count = 0;
-	    walk != NULL && count < ret;
-	    walk = g_list_next(walk), ++count) {
-		(*list)[count] = (int)
-		    ((lt_stat_collection_t *)(walk->data))->lt_sc_id;
+	procs = get_children(stat_system, &nprocs);
+	*list = lt_malloc(sizeof (pid_t) * nprocs);
+	for (count = 0; count < nprocs; count++) {
+		(*list)[count] = (pid_t)(procs[count]->lt_sc_id);
 	}
-
-	g_list_free(pid_list);
-
-	return (ret);
+	free(procs);
+	return (nprocs);
 }
 
 /*
  * Count the no. of threads currently present in a process.
  * Only thread that have SSLEEP are counted.
  */
-/* ARGSUSED */
-static void
-count_threads(gpointer key, lt_stat_collection_t *stat_c, int *ret)
+static int
+count_threads(void *key, void *val, void *arg)
 {
-	g_assert(ret != NULL);
+	lt_stat_collection_t *stat_c = val;
+	int *ret = arg;
+	NOTE(ARGUNUSED(key));
+	assert(ret != NULL);
 
 	if (stat_c->lt_sc_children != NULL) {
-		*ret += g_hash_table_size(stat_c->lt_sc_children);
+		*ret += lt_hash_size(stat_c->lt_sc_children);
 	}
+	return (LTH_WALK_CONTINUE);
 }
 
 /*
@@ -885,47 +956,36 @@ count_threads(gpointer key, lt_stat_collection_t *stat_c, int *ret)
 static int
 tlist_create(pid_t ** plist, id_t ** tlist)
 {
-	GList *pid_list, *walk_p;
-	GList *tid_list, *walk_t;
 	int ret = 0;
 	int count = 0;
+	int nprocs;
+	lt_stat_collection_t **procs;
 
-	g_hash_table_foreach(stat_system->lt_sc_children,
-	    (GHFunc)count_threads, &ret);
+	lt_hash_walk(stat_system->lt_sc_children, count_threads, &ret);
 
 	*plist = (pid_t *)lt_malloc(sizeof (pid_t) * ret);
 	*tlist = (id_t *)lt_malloc(sizeof (id_t) * ret);
 
-	pid_list = g_hash_table_get_values(stat_system->lt_sc_children);
-	pid_list = g_list_sort(pid_list, (GCompareFunc)sort_id);
+	procs = get_children(stat_system, &nprocs);
 
-	for (walk_p = pid_list; walk_p != NULL;
-	    walk_p = g_list_next(walk_p)) {
-		lt_stat_collection_t *stat_p =
-		    (lt_stat_collection_t *)walk_p->data;
+	for (int i = 0; i < nprocs; i++) {
+		int nthrs;
+		lt_stat_collection_t **thrs;
+		lt_stat_collection_t *stat_p = procs[i];
 
-		if (stat_p->lt_sc_children == NULL) {
-			continue;
-		}
-
-		tid_list = g_hash_table_get_values(stat_p->lt_sc_children);
-		tid_list = g_list_sort(tid_list, (GCompareFunc)sort_id);
-
-		for (walk_t = tid_list; walk_t != NULL;
-		    walk_t = g_list_next(walk_t)) {
-			lt_stat_collection_t *stat_t =
-			    (lt_stat_collection_t *)walk_t->data;
-
-			(*plist)[count] = (int)stat_p->lt_sc_id;
-			(*tlist)[count] = (int)stat_t->lt_sc_id;
-
+		thrs = get_children(stat_p, &nthrs);
+		for (int j = 0; j < nthrs; j++) {
+			lt_stat_collection_t *stat_t = thrs[j];
+			(*plist)[count] = (pid_t)stat_p->lt_sc_id;
+			(*tlist)[count] = (id_t)stat_t->lt_sc_id;
 			++count;
 		}
-		g_list_free(tid_list);
+		free(thrs);
 	}
 
-	g_list_free(pid_list);
-	g_assert(count == ret);
+	free(procs);
+
+	assert(count == ret);
 
 	return (ret);
 }
@@ -984,7 +1044,7 @@ lt_stat_proc_get_name(pid_t pid)
 		return (NULL);
 	}
 
-	stat_p = (lt_stat_collection_t *)g_hash_table_lookup(
+	stat_p = (lt_stat_collection_t *)lt_hash_lookup(
 	    stat_system->lt_sc_children, LT_INT_TO_POINTER(pid));
 
 	if (stat_p != NULL) {
@@ -1006,11 +1066,11 @@ lt_stat_proc_get_nthreads(pid_t pid)
 		return (0);
 	}
 
-	stat_p = (lt_stat_collection_t *)g_hash_table_lookup(
+	stat_p = (lt_stat_collection_t *)lt_hash_lookup(
 	    stat_system->lt_sc_children, LT_INT_TO_POINTER(pid));
 
 	if (stat_p != NULL) {
-		return (g_hash_table_size(stat_p->lt_sc_children));
+		return (lt_hash_size(stat_p->lt_sc_children));
 	} else   {
 		return (0);
 	}

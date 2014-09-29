@@ -21,6 +21,8 @@
 /*
  * Copyright (c) 2008-2009, Intel Corporation.
  * All Rights Reserved.
+ *
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
  */
 
 #include <stdio.h>
@@ -33,28 +35,36 @@
 #include <fcntl.h>
 #include <limits.h>
 #include <unistd.h>
+#include <assert.h>
 
 #include "latencytop.h"
+#include "lthash.h"
 
-static GHashTable *proc_table = NULL; /* pid -> char * */
-static GHashTable *klog_table = NULL; /* char * -> uint64_t total */
+static lt_hash_t proc_table = NULL; /* pid -> char * */
+static lt_hash_t klog_table = NULL; /* char * -> uint64_t total */
 static char klog_filename[PATH_MAX] = DEFAULT_KLOG_FILE;
 static int klog_level = LT_KLOG_LEVEL_NONE;
 
-static void
-print_proc(void *key, const char *args, FILE *fp)
+static int
+print_proc(void *key, void *val, void *arg)
 {
+	const char *args = val;
+	FILE *fp = arg;
 	(void) fprintf(fp, "%-8ld \"%s\"\n", (long)key, args);
+	return (LTH_WALK_CONTINUE);
 }
 
-static void
-print_stat(const char *key, lt_stat_data_t *log, FILE *fp)
+static int
+print_stat(void *key, void *val, void *arg)
 {
+	lt_stat_data_t *log = val;
+	FILE *fp = arg;
 	(void) fprintf(fp, "%lld, %lld, %lld, %s\n",
 	    (long long)log->lt_s_total,
 	    (long long)log->lt_s_count,
 	    (long long)log->lt_s_max,
-	    key);
+	    (char *)key);
+	return (LTH_WALK_CONTINUE);
 }
 
 /*
@@ -67,12 +77,10 @@ lt_klog_init(void)
 		return;
 	}
 
-	klog_table = g_hash_table_new_full(g_str_hash, g_str_equal,
-	    (GDestroyNotify)free, (GDestroyNotify)free);
+	klog_table = lt_hash_new(lt_strhash, lt_strcmp, free, free);
 	lt_check_null(klog_table);
 
-	proc_table = g_hash_table_new_full(g_direct_hash, g_direct_equal,
-	    NULL, (GDestroyNotify)free);
+	proc_table = lt_hash_new(lt_defhash, lt_defcmp, NULL, free);
 	lt_check_null(proc_table);
 }
 
@@ -85,7 +93,7 @@ lt_klog_set_log_file(const char *filename)
 	FILE *fp;
 	int file_exist;
 
-	g_assert(strlen(filename) < sizeof (klog_filename));
+	assert(strlen(filename) < sizeof (klog_filename));
 
 	file_exist = lt_file_exist(filename);
 	/* Test if we can write to the file */
@@ -135,7 +143,7 @@ lt_klog_write(void)
 		return;
 	}
 
-	g_assert(klog_table != NULL && proc_table != NULL);
+	assert(klog_table != NULL && proc_table != NULL);
 	fp = fopen(klog_filename, "a");
 
 	if (fp == NULL) {
@@ -147,11 +155,11 @@ lt_klog_write(void)
 	(void) fprintf(fp, "# Log generated at %s by %s\n", buffer, TITLE);
 	(void) fprintf(fp, "# List of processes\n");
 	(void) fprintf(fp, "PID, CMD\n");
-	g_hash_table_foreach(proc_table, (GHFunc)print_proc, fp);
+	lt_hash_walk(proc_table, print_proc, fp);
 
 	(void) fprintf(fp, "# Statistics\n");
 	(void) fprintf(fp, "TOTAL, COUNT, MAX, PID, KSTACK\n");
-	g_hash_table_foreach(klog_table, (GHFunc)print_stat, fp);
+	lt_hash_walk(klog_table, print_stat, fp);
 
 	(void) fclose(fp);
 }
@@ -163,12 +171,12 @@ void
 lt_klog_deinit(void)
 {
 	if (klog_table != NULL) {
-		g_hash_table_destroy(klog_table);
+		lt_hash_free(klog_table);
 		klog_table = NULL;
 	}
 
 	if (proc_table != NULL) {
-		g_hash_table_destroy(proc_table);
+		lt_hash_free(proc_table);
 		proc_table = NULL;
 	}
 }
@@ -191,10 +199,8 @@ lt_klog_log(int level, pid_t pid, char *stack,
 		return;
 	}
 
-	g_assert(klog_table != NULL && proc_table != NULL);
-	psargs = (char *)g_hash_table_lookup(proc_table,
-	    LT_INT_TO_POINTER(pid));
-
+	assert(klog_table != NULL && proc_table != NULL);
+	psargs = lt_hash_lookup(proc_table, LT_INT_TO_POINTER(pid));
 	if (psargs == NULL) {
 		psargs = lt_get_proc_field(pid, LT_FIELD_PSARGS);
 
@@ -206,18 +212,17 @@ lt_klog_log(int level, pid_t pid, char *stack,
 			return;
 		}
 
-		g_hash_table_insert(proc_table,
-		    LT_INT_TO_POINTER(pid), psargs);
+		lt_hash_insert(proc_table, LT_INT_TO_POINTER(pid), psargs);
 	}
 
 	str_len = strlen(stack) + 20;
 	str = lt_malloc(str_len);
 	(void) snprintf(str, str_len, "%ld, \"%s\"", pid, stack);
-	entry = (lt_stat_data_t *)g_hash_table_lookup(klog_table, str);
 
+	entry = lt_hash_lookup(klog_table, str);
 	if (entry == NULL) {
 		entry = (lt_stat_data_t *)lt_zalloc(sizeof (lt_stat_data_t));
-		g_hash_table_insert(klog_table, str, entry);
+		lt_hash_insert(klog_table, str, entry);
 	} else {
 		free(str);
 	}

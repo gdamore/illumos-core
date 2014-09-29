@@ -18,13 +18,14 @@
 #
 # CDDL HEADER END
 #
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 # Copyright (c) 2008-2009, Intel Corporation.
 # All Rights Reserved.
 #
 
 PROG = latencytop
-OBJS = latencytop.o display.o dwrapper.o klog.o stat.o table.o util.o
+OBJS = latencytop.o display.o dwrapper.o klog.o stat.o table.o util.o ltlist.o lthash.o
 SRCS = $(OBJS:%.o=../common/%.c)
 
 include ../../Makefile.cmd
@@ -32,13 +33,12 @@ include ../../Makefile.cmd
 CFLAGS += $(CCVERBOSE)
 CFLAGS64 += $(CCVERBOSE)
 
-CERRWARN += -_gcc=-Wno-uninitialized
-
-CPPFLAGS += -DEMBED_CONFIGS -I$(ADJUNCT_PROTO)/usr/include/glib-2.0 \
-	-I$(ADJUNCT_PROTO)/usr/lib/glib-2.0/include
+CPPFLAGS += -DEMBED_CONFIGS \
+	-I$(ADJUNCT_PROTO)/usr/lib/glib-2.0/include \
+	-DSYSNAME_STR=\"$(SYSNAME)\" -DRELEASE_STR=\"$(RELEASE)\"
+	-DSYSNAME_STR=\"$(SYSNAME)\" -DRELEASE=\"$(RELEASE)\"
 C99MODE = $(C99_ENABLE)
 LDLIBS += -lcurses -ldtrace
-all install	:= LDLIBS += -lglib-2.0
 
 LINTFLAGS += -erroff=E_NAME_USED_NOT_DEF2
 LINTFLAGS += -erroff=E_FUNC_RET_ALWAYS_IGNOR2

@@ -21,6 +21,8 @@
 /*
  * Copyright (c) 2008-2009, Intel Corporation.
  * All Rights Reserved.
+ *
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
  */
 
 #include <unistd.h>
@@ -33,6 +35,8 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <assert.h>
+#include <limits.h>
 
 #include "latencytop.h"
 
@@ -58,7 +62,6 @@ lt_check_null(void *p)
 {
 	if (p == NULL) {
 		(void) fprintf(stderr, "Out of memory!\n");
-		g_assert(0);
 		exit(2);
 	}
 }
@@ -190,9 +193,11 @@ lt_update_stat_value(lt_stat_data_t *entry,
  * Helper function to sort on total.
  */
 int
-lt_sort_by_total_desc(lt_stat_entry_t *a, lt_stat_entry_t *b)
+lt_sort_by_total_desc(const void *a1, const void *b1)
 {
-	g_assert(a != NULL && b != NULL);
+	const lt_stat_entry_t *a = *(const lt_stat_entry_t **)a1;
+	const lt_stat_entry_t *b = *(const lt_stat_entry_t **)b1;
+	assert(a != NULL && b != NULL);
 	/*
 	 * lt_s_total is of type int64_t, so we can't simply return
 	 * (b->lt_se_data.lt_s_total - a->lt_se_data.lt_s_total).
@@ -210,9 +215,11 @@ lt_sort_by_total_desc(lt_stat_entry_t *a, lt_stat_entry_t *b)
  * Helper function to sort on max.
  */
 int
-lt_sort_by_max_desc(lt_stat_entry_t *a, lt_stat_entry_t *b)
+lt_sort_by_max_desc(const void *a1, const void *b1)
 {
-	g_assert(a != NULL && b != NULL);
+	const lt_stat_entry_t *a = *(const lt_stat_entry_t **)a1;
+	const lt_stat_entry_t *b = *(const lt_stat_entry_t **)b1;
+	assert(a != NULL && b != NULL);
 
 	if (b->lt_se_data.lt_s_max > a->lt_se_data.lt_s_max) {
 		return (1);
@@ -227,9 +234,11 @@ lt_sort_by_max_desc(lt_stat_entry_t *a, lt_stat_entry_t *b)
  * Helper function to sort on count.
  */
 int
-lt_sort_by_count_desc(lt_stat_entry_t *a, lt_stat_entry_t *b)
+lt_sort_by_count_desc(const void *a1, const void *b1)
 {
-	g_assert(a != NULL && b != NULL);
+	const lt_stat_entry_t *a = *(const lt_stat_entry_t **)a1;
+	const lt_stat_entry_t *b = *(const lt_stat_entry_t **)b1;
+	assert(a != NULL && b != NULL);
 
 	if (b->lt_se_data.lt_s_count > a->lt_se_data.lt_s_count) {
 		return (1);
@@ -244,11 +253,13 @@ lt_sort_by_count_desc(lt_stat_entry_t *a, lt_stat_entry_t *b)
  * Helper function to sort on average.
  */
 int
-lt_sort_by_avg_desc(lt_stat_entry_t *a, lt_stat_entry_t *b)
+lt_sort_by_avg_desc(const void *a1, const void *b1)
 {
+	const lt_stat_entry_t *a = *(const lt_stat_entry_t **)a1;
+	const lt_stat_entry_t *b = *(const lt_stat_entry_t **)b1;
 	double avg_a, avg_b;
 
-	g_assert(a != NULL && b != NULL);
+	assert(a != NULL && b != NULL);
 
 	avg_a = (double)a->lt_se_data.lt_s_total / a->lt_se_data.lt_s_count;
 	avg_b = (double)b->lt_se_data.lt_s_total / b->lt_se_data.lt_s_count;

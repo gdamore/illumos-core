@@ -21,6 +21,8 @@
 /*
  * Copyright (c) 2008-2009, Intel Corporation.
  * All Rights Reserved.
+ *
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
  */
 
 #include <stdlib.h>
@@ -28,8 +30,12 @@
 #include <memory.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <assert.h>
+#include <note.h>
 
 #include "latencytop.h"
+#include "ltlist.h"
+#include "lthash.h"
 
 /*
  * Structure that holds detail of a cause.
@@ -49,15 +55,15 @@ typedef struct  {
 } lt_match_t;
 
 /* All lt_cause_t that are created. */
-static GHashTable *cause_lookup = NULL;
-static GPtrArray *causes_array = NULL;
+static lt_hash_t cause_lookup = NULL;
+static lt_hash_t causes_array = NULL;
 static int causes_array_len = 0;
 
 /*
  * This hash table maps a symbol to a cause.
  * key is of type "char *" and value is of type "lt_match_t *".
  */
-static GHashTable *symbol_lookup_table = NULL;
+static lt_hash_t symbol_lookup_table = NULL;
 
 /*
  * The dtrace translation rules we get from the script
@@ -73,24 +79,25 @@ typedef struct {
 } lt_dmacro_t;
 
 typedef struct {
-	GSequence *lt_pr_cmd_disable;
-	GHashTable *lt_pr_dmacro;
+	lt_list_t *lt_pr_cmd_disable;
+	lt_hash_t lt_pr_dmacro;
 } lt_parser_t;
 
-/* ARGSUSED */
 static void
-free_cause(lt_cause_t *cause, void *user)
+free_cause(void *v)
 {
-	g_assert(cause != NULL && cause->lt_c_name != NULL);
+	lt_cause_t *cause = v;
+	assert(cause != NULL && cause->lt_c_name != NULL);
 
 	free(cause->lt_c_name);
 	free(cause);
 }
 
 static void
-free_dmacro(lt_dmacro_t *d)
+free_dmacro(void *a)
 {
-	g_assert(d->lt_dm_macro != NULL);
+	lt_dmacro_t *d = a;
+	assert(d->lt_dm_macro != NULL);
 	free(d->lt_dm_macro);
 	free(d);
 }
@@ -103,15 +110,16 @@ new_cause(char *name, int flags)
 {
 	lt_cause_t *entry;
 
-	g_assert(name != NULL);
+	assert(name != NULL);
 
 	entry = (lt_cause_t *)lt_malloc(sizeof (lt_cause_t));
 	entry->lt_c_flags = flags;
 	entry->lt_c_name = name;
 	entry->lt_c_cause_id = causes_array_len;
 
-	g_ptr_array_add(causes_array, entry);
-	++causes_array_len;
+	lt_hash_insert(causes_array, LT_INT_TO_POINTER(causes_array_len),
+	    entry);
+	causes_array_len++;
 
 	return (entry);
 }
@@ -119,16 +127,18 @@ new_cause(char *name, int flags)
 /*
  * Set a cause to "disabled" state.
  */
-static void
-disable_cause(char *cause_str, GHashTable *cause_table)
+static int
+disable_cause(void *data, lt_list_node_t *node, void *arg)
 {
+	char *cause_str = data;
+	lt_hash_t cause_table = arg;
 	lt_cause_t *cause;
+	NOTE(ARGUNUSED(node));
 
-	cause = (lt_cause_t *)g_hash_table_lookup(cause_table, cause_str);
-
-	if (cause != NULL) {
+	if ((cause = lt_hash_lookup(cause_table, cause_str)) != NULL) {
 		cause->lt_c_flags |= CAUSE_FLAG_DISABLED;
 	}
+	return (0);
 }
 
 /*
@@ -138,7 +148,7 @@ static int
 read_line_from_mem(const char *mem, int mem_len, char *line, int line_len,
     int *index)
 {
-	g_assert(mem != NULL && line != NULL && index != NULL);
+	assert(mem != NULL && line != NULL && index != NULL);
 
 	if (line_len <= 0 || mem_len <= 0) {
 		return (0);
@@ -165,7 +175,7 @@ read_line_from_mem(const char *mem, int mem_len, char *line, int line_len,
 /*
  * Parse special command from configuration file. Special command
  * has the following format :
-
+ *
  *	disable_cause <cause name>
  */
 static int
@@ -203,8 +213,7 @@ parse_config_cmd(char *begin, lt_parser_t *parser)
 			++begin;
 		}
 
-		g_sequence_append(parser->lt_pr_cmd_disable,
-		    lt_strdup(begin));
+		lt_list_append(parser->lt_pr_cmd_disable, lt_strdup(begin));
 	} else   {
 		*tmp = old_chr;
 		lt_display_error(
@@ -281,10 +290,8 @@ parse_sym_trans(char *begin)
 	match = begin;
 
 	/* Check if we have mapped this function before. */
-	match_entry = (lt_match_t *)
-	    g_hash_table_lookup(symbol_lookup_table, match);
-
-	if (match_entry != NULL &&
+	match_entry = lt_hash_lookup(symbol_lookup_table, match);
+	if ((match_entry != NULL) &&
 	    HIGHER_PRIORITY(match_entry->lt_mt_priority, priority)) {
 		/* We already have a higher entry. Ignore this. */
 		return (0);
@@ -307,13 +314,10 @@ parse_sym_trans(char *begin)
 	cause_str = begin;
 
 	/* Check if we have mapped this cause before. */
-	cause = (lt_cause_t *)
-	    g_hash_table_lookup(cause_lookup, cause_str);
-
-	if (cause == NULL) {
+	if ((cause = lt_hash_lookup(cause_lookup, cause_str)) == NULL) {
 		char *cause_dup = lt_strdup(cause_str);
 		cause = new_cause(cause_dup, 0);
-		g_hash_table_insert(cause_lookup, cause_dup, cause);
+		lt_hash_insert(cause_lookup, cause_dup, cause);
 	}
 
 	match_entry = (lt_match_t *)lt_malloc(sizeof (lt_match_t));
@@ -321,8 +325,7 @@ parse_sym_trans(char *begin)
 	match_entry->lt_mt_cause_id = cause->lt_c_cause_id;
 	match_dup = lt_strdup(match);
 
-	g_hash_table_insert(symbol_lookup_table, match_dup,
-	    match_entry);
+	lt_hash_insert(symbol_lookup_table, match_dup, match_entry);
 
 	return (0);
 }
@@ -426,13 +429,10 @@ parse_dmacro(char *begin, lt_parser_t *parser)
 	dmacro = NULL;
 
 	/* Check if we have mapped this cause before. */
-	cause = (lt_cause_t *)
-	    g_hash_table_lookup(cause_lookup, cause_str);
-
-	if (cause == NULL) {
+	if ((cause = lt_hash_lookup(cause_lookup, cause_str)) == NULL) {
 		char *cause_dup = lt_strdup(cause_str);
 		cause = new_cause(cause_dup, 0);
-		g_hash_table_insert(cause_lookup, cause_dup, cause);
+		lt_hash_insert(cause_lookup, cause_dup, cause);
 	}
 
 	(void) snprintf(buf, sizeof (buf), "\nTRANSLATE(%s, %s, \"%s\", %d)\n",
@@ -441,17 +441,16 @@ parse_dmacro(char *begin, lt_parser_t *parser)
 	(void) snprintf(probepair, sizeof (probepair), "%s %s", entryprobe,
 	    returnprobe);
 
-	g_assert(cause != NULL);
-	g_assert(parser->lt_pr_dmacro != NULL);
+	assert(cause != NULL);
+	assert(parser->lt_pr_dmacro != NULL);
 
-	dmacro = g_hash_table_lookup(parser->lt_pr_dmacro, probepair);
-
+	dmacro = lt_hash_lookup(parser->lt_pr_dmacro, probepair);
 	if (dmacro == NULL) {
 		dmacro = (lt_dmacro_t *)lt_malloc(sizeof (lt_dmacro_t));
 		dmacro->lt_dm_priority = priority;
 		dmacro->lt_dm_macro = lt_strdup(buf);
-		g_hash_table_insert(parser->lt_pr_dmacro, lt_strdup(probepair),
-		    dmacro);
+		lt_hash_insert(parser->lt_pr_dmacro,
+		    lt_strdup(probepair), dmacro);
 	} else if (dmacro->lt_dm_priority < priority) {
 		free(dmacro->lt_dm_macro);
 		dmacro->lt_dm_priority = priority;
@@ -465,10 +464,18 @@ parse_dmacro(char *begin, lt_parser_t *parser)
  * Helper function to collect TRANSLATE() macros.
  */
 /* ARGSUSED */
-static void
-genscript(void *key, lt_dmacro_t *dmacro, GString *str)
+static int
+genscript(void *key, void *val, void *arg)
 {
-	g_string_append(str, dmacro->lt_dm_macro);
+	lt_dmacro_t *dmacro = val;
+	char *str;
+	char **sp = arg;
+
+	(void) asprintf(&str, "%s%s", *sp, dmacro->lt_dm_macro);
+	lt_check_null(str);
+	free(*sp);
+	*sp = str;
+	return (LTH_WALK_CONTINUE);
 }
 
 /*
@@ -491,16 +498,15 @@ parse_config(const char *work, int work_len)
 	lt_parser_t parser;
 	int ret = 0;
 	char flag;
-	GString *script;
 
-	cause_lookup = g_hash_table_new(g_str_hash, g_str_equal);
+	cause_lookup = lt_hash_new(lt_strhash, lt_strcmp, free, free);
 	lt_check_null(cause_lookup);
 
-	parser.lt_pr_cmd_disable = g_sequence_new((GDestroyNotify)free);
+	parser.lt_pr_cmd_disable = lt_list_new(free);
 	lt_check_null(parser.lt_pr_cmd_disable);
 
-	parser.lt_pr_dmacro = g_hash_table_new_full(g_str_hash,
-	    g_str_equal, (GDestroyNotify)free, (GDestroyNotify)free_dmacro);
+	parser.lt_pr_dmacro = lt_hash_new(lt_strhash, lt_strcmp,
+	    free, free_dmacro);
 	lt_check_null(parser.lt_pr_dmacro);
 
 	while (read_line_from_mem(work, work_len, line, sizeof (line),
@@ -577,24 +583,22 @@ parse_config(const char *work, int work_len)
 		}
 	}
 
-	script = g_string_new(NULL);
-	g_hash_table_foreach(parser.lt_pr_dmacro, (GHFunc)genscript, script);
-	dtrans = g_string_free(script, FALSE);
+	dtrans = lt_strdup("");
+	lt_hash_walk(parser.lt_pr_dmacro, genscript, &dtrans);
 
 	if (dtrans != NULL && strlen(dtrans) == 0) {
 		free(dtrans);
 		dtrans = NULL;
 	}
 
-	g_sequence_foreach(parser.lt_pr_cmd_disable, (GFunc)disable_cause,
-	    cause_lookup);
-	g_sequence_free(parser.lt_pr_cmd_disable);
+	lt_list_walk(parser.lt_pr_cmd_disable, disable_cause, cause_lookup);
+	lt_list_free(parser.lt_pr_cmd_disable);
 
 	return (0);
 
 err:
-	g_sequence_free(parser.lt_pr_cmd_disable);
-	g_hash_table_destroy(parser.lt_pr_dmacro);
+	lt_list_free(parser.lt_pr_cmd_disable);
+	lt_hash_free(parser.lt_pr_dmacro);
 	return (-1);
 
 }
@@ -652,16 +656,14 @@ lt_table_init(void)
 	}
 
 	lt_table_deinit();
-	causes_array = g_ptr_array_new();
+	causes_array = lt_hash_new(lt_defhash, lt_defcmp, NULL, free_cause);
 	lt_check_null(causes_array);
 
 	/* 0 is not used, but it is kept as a place for bugs etc. */
 	cause = new_cause(lt_strdup("Nothing"), CAUSE_FLAG_DISABLED);
-	g_assert(cause->lt_c_cause_id == INVALID_CAUSE);
+	assert(cause->lt_c_cause_id == INVALID_CAUSE);
 
-	symbol_lookup_table = g_hash_table_new_full(
-	    g_str_hash, g_str_equal,
-	    (GDestroyNotify)free, (GDestroyNotify)free);
+	symbol_lookup_table = lt_hash_new(lt_strhash, lt_strcmp, free, free);
 	lt_check_null(symbol_lookup_table);
 
 	if (work_len != 0 && parse_config(work, work_len) != 0) {
@@ -689,11 +691,10 @@ lt_table_cause_from_name(char *name, int auto_create, int flags)
 	lt_cause_t *cause = NULL;
 
 	if (cause_lookup == NULL) {
-		cause_lookup = g_hash_table_new(g_str_hash, g_str_equal);
+		cause_lookup = lt_hash_new(lt_strhash, lt_strcmp, free, free);
 		lt_check_null(cause_lookup);
 	} else   {
-		cause = (lt_cause_t *)
-		    g_hash_table_lookup(cause_lookup, name);
+		cause = lt_hash_lookup(cause_lookup, name);
 	}
 
 	if (cause == NULL && auto_create) {
@@ -705,7 +706,7 @@ lt_table_cause_from_name(char *name, int auto_create, int flags)
 
 		cause_dup = lt_strdup(name);
 		cause = new_cause(cause_dup, flags);
-		g_hash_table_insert(cause_lookup, cause_dup, cause);
+		lt_hash_insert(cause_lookup, cause_dup, cause);
 	}
 
 	return (cause == NULL ? INVALID_CAUSE : cause->lt_c_cause_id);
@@ -720,23 +721,21 @@ lt_table_cause_from_name(char *name, int auto_create, int flags)
 int
 lt_table_cause_from_stack(const char *module_func, int *cause_id, int *priority)
 {
-	lt_match_t *match;
+	lt_match_t *match = NULL;
 
-	g_assert(module_func != NULL && cause_id != NULL && priority != NULL);
+	assert(module_func != NULL && cause_id != NULL && priority != NULL);
 
 	if (symbol_lookup_table == NULL) {
 		return (0);
 	}
 
-	match = (lt_match_t *)
-	    g_hash_table_lookup(symbol_lookup_table, module_func);
-
+	match = lt_hash_lookup(symbol_lookup_table, module_func);
 	if (match == NULL) {
+
 		char *func = strchr(module_func, '`');
 
 		if (func != NULL) {
-			match = (lt_match_t *)
-			    g_hash_table_lookup(symbol_lookup_table, func);
+			match = lt_hash_lookup(symbol_lookup_table, func);
 		}
 	}
 
@@ -757,14 +756,9 @@ lt_table_cause_from_stack(const char *module_func, int *cause_id, int *priority)
 const char *
 lt_table_get_cause_name(int cause_id)
 {
-	lt_cause_t *cause;
+	lt_cause_t *cause = NULL;
 
-	if (cause_id < 0 || cause_id >= causes_array_len) {
-		return (NULL);
-	}
-
-	cause = (lt_cause_t *)g_ptr_array_index(causes_array, cause_id);
-
+	cause = lt_hash_lookup(causes_array, LT_INT_TO_POINTER(cause_id));
 	if (cause == NULL) {
 		return (NULL);
 	} else {
@@ -781,12 +775,7 @@ lt_table_get_cause_flag(int cause_id, int flag)
 {
 	lt_cause_t *cause;
 
-	if (cause_id < 0 || cause_id >= causes_array_len) {
-		return (0);
-	}
-
-	cause = (lt_cause_t *)g_ptr_array_index(causes_array, cause_id);
-
+	cause = lt_hash_lookup(causes_array, LT_INT_TO_POINTER(cause_id));
 	if (cause == NULL) {
 		return (0);
 	} else {
@@ -817,24 +806,22 @@ void
 lt_table_deinit(void)
 {
 	if (symbol_lookup_table != NULL) {
-		g_hash_table_destroy(symbol_lookup_table);
+		lt_hash_free(symbol_lookup_table);
 		symbol_lookup_table = NULL;
 	}
 
 	if (cause_lookup != NULL) {
-		g_hash_table_destroy(cause_lookup);
+		lt_hash_free(cause_lookup);
 		cause_lookup = NULL;
 	}
 
 	if (causes_array != NULL) {
-		g_ptr_array_foreach(causes_array, (GFunc)free_cause, NULL);
-		g_ptr_array_free(causes_array, TRUE);
+		lt_hash_free(causes_array);
 		causes_array = NULL;
-		causes_array_len = 0;
 	}
 
 	if (dtrans != NULL) {
-		g_free(dtrans);
+		free(dtrans);
 		dtrans = NULL;
 	}
 }

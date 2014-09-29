@@ -21,6 +21,8 @@
 /*
  * Copyright (c) 2008-2009, Intel Corporation.
  * All Rights Reserved.
+ *
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
  */
 
 #ifndef _LATENCYTOP_H
@@ -28,20 +30,19 @@
 
 #include <sys/types.h>
 
-#include <glib.h>
+#include "ltlist.h"
+#include "lthash.h"
 
 #ifdef	__cplusplus
 extern "C" {
 #endif
 
-/*
- * Without this lint seems to be confused by glib header file.
- */
-#ifdef __lint
-#undef g_assert
-#define	g_assert(x)	((void)(x))
-#undef TRUE
-#define	TRUE		1
+#ifndef	TRUE
+#define	TRUE	1
+#endif
+
+#ifndef	FALSE
+#define	FALSE	0
 #endif
 
 /*
@@ -49,7 +50,7 @@ extern "C" {
  */
 #define	LT_INT_TO_POINTER(a)	((void *)(unsigned long)(a))
 
-#define	TITLE			"LatencyTOP for OpenSolaris, version 1.0"
+#define	TITLE		"LatencyTOP for " SYSNAME_STR ", version " RELEASE_STR
 #define	COPYRIGHT		"Copyright (c) 2008-2009, Intel Corporation."
 #define	DEFAULT_KLOG_FILE	"/var/log/latencytop.log"
 
@@ -256,10 +257,10 @@ extern void lt_check_null(void *);
 extern void lt_time_str(char *, int);
 extern char *lt_get_proc_field(pid_t, lt_field_t);
 extern void lt_update_stat_value(lt_stat_data_t *, lt_stat_type_t, uint64_t);
-extern int lt_sort_by_total_desc(lt_stat_entry_t *, lt_stat_entry_t *);
-extern int lt_sort_by_max_desc(lt_stat_entry_t *, lt_stat_entry_t *);
-extern int lt_sort_by_count_desc(lt_stat_entry_t *, lt_stat_entry_t *);
-extern int lt_sort_by_avg_desc(lt_stat_entry_t *, lt_stat_entry_t *);
+extern int lt_sort_by_total_desc(const void *, const void *);
+extern int lt_sort_by_max_desc(const void *, const void *);
+extern int lt_sort_by_count_desc(const void *, const void *);
+extern int lt_sort_by_avg_desc(const void *, const void *);
 extern void lt_gpipe_init(void);
 extern void lt_gpipe_deinit(void);
 extern void lt_gpipe_break(const char *);
