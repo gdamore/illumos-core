@@ -122,7 +122,6 @@ MANIFEST_SUBDIRS=			\
 	picl/picld			\
 	pools/poold			\
 	print/bsd-sysv-commands		\
-	print/ppdmgr			\
 	rcap/rcapd			\
 	rpcsvc/rpc.bootparamd		\
 	sendmail/lib			\
