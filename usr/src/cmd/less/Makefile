@@ -35,7 +35,7 @@ $(ROOTXPG4PROG)	:= INSLINKTARGET = ../../bin/less
 all:		$(PROGS)
 
 less:		$(less_OBJS)
-		$(LINK.c) $(less_OBJS) -o $@ $(LDLIBS) $($(@)_LDLIBS)
+		$(LINK.c) $(less_OBJS) -o $@ $($(@)_LDLIBS) $(LDLIBS)
 		$(POST_PROCESS)
 
 lesskey:	$(lesskey_OBJS)

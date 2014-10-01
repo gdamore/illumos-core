@@ -165,32 +165,6 @@ raw_mode(int on)
  */
 static int hardcopy;
 
-static int
-ltgetflag(char *capname)
-{
-	if (hardcopy)
-		return (0);
-	return (tigetflag(capname) > 0 ? 1 : 0);
-}
-
-static int
-ltgetnum(char *capname)
-{
-	if (hardcopy)
-		return (-1);
-	return (tigetnum(capname));
-}
-
-static char *
-ltgetstr(char *capname)
-{
-	char *s;
-	if (hardcopy)
-		return (NULL);
-	s = tigetstr(capname);
-	return ((s == (char *)-1) ? NULL : s);
-}
-
 /*
  * Get size of the output screen.
  */
@@ -223,7 +197,7 @@ scrsize(void)
 		sc_height = sys_height;
 	else if ((s = lgetenv("LINES")) != NULL)
 		sc_height = atoi(s);
-	else if ((n = ltgetnum("lines")) > 0)
+	else if (!hardcopy && (n = lines) > 0)
 		sc_height = n;
 	if (sc_height <= 0)
 		sc_height = DEF_SC_HEIGHT;
@@ -232,7 +206,7 @@ scrsize(void)
 		sc_width = sys_width;
 	else if ((s = lgetenv("COLUMNS")) != NULL)
 		sc_width = atoi(s);
-	else if ((n = ltgetnum("cols")) > 0)
+	else if (!hardcopy && (n = columns) > 0)
 		sc_width = n;
 	if (sc_width <= 0)
 		sc_width = DEF_SC_WIDTH;
@@ -247,33 +221,36 @@ special_key_str(int key)
 	char *s;
 	static char ctrlk[] = { CONTROL('K'), 0 };
 
+	if (hardcopy)
+		return (NULL);
+
 	switch (key) {
 	case SK_RIGHT_ARROW:
-		s = ltgetstr("kcuf1");
+		s = key_right;
 		break;
 	case SK_LEFT_ARROW:
-		s = ltgetstr("kcub1");
+		s = key_left;
 		break;
 	case SK_UP_ARROW:
-		s = ltgetstr("kcuu1");
+		s = key_up;
 		break;
 	case SK_DOWN_ARROW:
-		s = ltgetstr("kcud1");
+		s = key_down;
 		break;
 	case SK_PAGE_UP:
-		s = ltgetstr("kpp");
+		s = key_ppage;
 		break;
 	case SK_PAGE_DOWN:
-		s = ltgetstr("knp");
+		s = key_npage;
 		break;
 	case SK_HOME:
-		s = ltgetstr("khome");
+		s = key_home;
 		break;
 	case SK_END:
-		s = ltgetstr("kend");
+		s = key_end;
 		break;
 	case SK_DELETE:
-		s = ltgetstr("kdch1");
+		s = key_dc;
 		if (s == NULL) {
 			s = "\177\0";
 		}
@@ -306,7 +283,7 @@ get_term(void)
 	if (setupterm(term, 1, NULL) < 0) {
 		hardcopy = 1;
 	}
-	if (ltgetflag("hc"))
+	if (hard_copy == 1)
 		hardcopy = 1;
 
 	/*
@@ -315,10 +292,10 @@ get_term(void)
 	scrsize();
 	pos_init();
 
-	auto_wrap = ltgetflag("am");
-	ignaw = ltgetflag("xenl");
-	above_mem = ltgetflag("da");
-	below_mem = ltgetflag("db");
+	auto_wrap = hardcopy ? 0 : auto_right_margin;
+	ignaw = hardcopy ? 0 : eat_newline_glitch;
+	above_mem = hardcopy ? 0 : memory_above;
+	below_mem = hardcopy ? 0 : memory_below;
 
 	/*
 	 * Assumes termcap variable "sg" is the printing width of:
@@ -326,7 +303,7 @@ get_term(void)
 	 * the underline sequence, the end underline sequence,
 	 * the boldface sequence, and the end boldface sequence.
 	 */
-	if ((so_s_width = ltgetnum("xmc")) < 0)
+	if (hardcopy || (so_s_width = magic_cookie_glitch) < 0)
 		so_s_width = 0;
 	so_e_width = so_s_width;
 
@@ -348,41 +325,42 @@ get_term(void)
 	 * Get various string-valued capabilities.
 	 */
 
-	sc_s_keypad = ltgetstr("smkx");
-	if (sc_s_keypad == NULL)
+	sc_s_keypad = keypad_xmit;
+	if (hardcopy || sc_s_keypad == NULL)
 		sc_s_keypad = "";
-	sc_e_keypad = ltgetstr("rmkx");
-	if (sc_e_keypad == NULL)
+	sc_e_keypad = keypad_local;
+	if (hardcopy || sc_e_keypad == NULL)
 		sc_e_keypad = "";
 
-	sc_init = ltgetstr("smcup");
-	if (sc_init == NULL)
+	sc_init = enter_ca_mode;
+	if (hardcopy || sc_init == NULL)
 		sc_init = "";
 
-	sc_deinit = ltgetstr("rmcup");
-	if (sc_deinit == NULL)
+	sc_deinit = exit_ca_mode;
+	if (hardcopy || sc_deinit == NULL)
 		sc_deinit = "";
 
-	sc_eol_clear = ltgetstr("el");
-	if (sc_eol_clear == NULL || *sc_eol_clear == '\0') {
+	sc_eol_clear = clr_eol;
+	if (hardcopy || sc_eol_clear == NULL || *sc_eol_clear == '\0') {
 		missing_cap = 1;
 		sc_eol_clear = "";
 	}
 
-	sc_eos_clear = ltgetstr("ed");
-	if (below_mem && (sc_eos_clear == NULL || *sc_eos_clear == '\0')) {
+	sc_eos_clear = clr_eos;
+	if (below_mem &&
+	    (hardcopy || sc_eos_clear == NULL || *sc_eos_clear == '\0')) {
 		missing_cap = 1;
 		sc_eos_clear = "";
 	}
 
-	sc_clear = ltgetstr("clear");
-	if (sc_clear == NULL || *sc_clear == '\0') {
+	sc_clear = clear_screen;
+	if (hardcopy || sc_clear == NULL || *sc_clear == '\0') {
 		missing_cap = 1;
 		sc_clear = "\n\n";
 	}
 
-	sc_move = ltgetstr("cup");
-	if (sc_move == NULL || *sc_move == '\0') {
+	sc_move = cursor_address;
+	if (hardcopy || sc_move == NULL || *sc_move == '\0') {
 		/*
 		 * This is not an error here, because we don't
 		 * always need sc_move.
@@ -394,13 +372,17 @@ get_term(void)
 		can_goto_line = 1;
 	}
 
-	tmodes("smso", "rmso", &sc_s_in, &sc_s_out, "", "");
-	tmodes("smul", "rmul", &sc_u_in, &sc_u_out, sc_s_in, sc_s_out);
-	tmodes("bold", "sgr0", &sc_b_in, &sc_b_out, sc_s_in, sc_s_out);
-	tmodes("blink", "sgr0", &sc_bl_in, &sc_bl_out, sc_s_in, sc_s_out);
+	tmodes(enter_standout_mode, exit_standout_mode, &sc_s_in, &sc_s_out,
+	    "", "");
+	tmodes(enter_underline_mode, exit_underline_mode, &sc_u_in, &sc_u_out,
+	    sc_s_in, sc_s_out);
+	tmodes(enter_bold_mode, exit_attribute_mode, &sc_b_in, &sc_b_out,
+	    sc_s_in, sc_s_out);
+	tmodes(enter_blink_mode, exit_attribute_mode, &sc_bl_in, &sc_bl_out,
+	    sc_s_in, sc_s_out);
 
-	sc_visual_bell = ltgetstr("flash");
-	if (sc_visual_bell == NULL)
+	sc_visual_bell = flash_screen;
+	if (hardcopy || sc_visual_bell == NULL)
 		sc_visual_bell = "";
 
 	sc_backspace = "\b";
@@ -409,8 +391,8 @@ get_term(void)
 	 * Choose between using "ho" and "cm" ("home" and "cursor move")
 	 * to move the cursor to the upper left corner of the screen.
 	 */
-	t1 = ltgetstr("home");
-	if (t1 == NULL)
+	t1 = cursor_home;
+	if (hardcopy || t1 == NULL)
 		t1 = "";
 	if (*sc_move == '\0') {
 		t2 = "";
@@ -423,8 +405,8 @@ get_term(void)
 	 * Choose between using "ll" and "cm"  ("lower left" and "cursor move")
 	 * to move the cursor to the lower left corner of the screen.
 	 */
-	t1 = ltgetstr("ll");
-	if (t1 == NULL)
+	t1 = cursor_to_ll;
+	if (hardcopy || t1 == NULL)
 		t1 = "";
 	if (*sc_move == '\0') {
 		t2 = "";
@@ -437,20 +419,19 @@ get_term(void)
 	/*
 	 * Get carriage return string.
 	 */
-	sc_return = ltgetstr("cr");
-	if (sc_return == NULL)
+	sc_return = carriage_return;
+	if (hardcopy || sc_return == NULL)
 		sc_return = "\r";
 
 	/*
-	 * Choose between using "il1" or "ri" ("insert 1 line" or
-	 * "reverse insert")
+	 * Choose between using insert_line or scroll_reverse
 	 * to add a line at the top of the screen.
 	 */
-	t1 = ltgetstr("il1");
-	if (t1 == NULL)
+	t1 = insert_line;
+	if (hardcopy || t1 == NULL)
 		t1 = "";
-	t2 = ltgetstr("ri");
-	if (t2 == NULL)
+	t2 = scroll_reverse;
+	if (hardcopy || t2 == NULL)
 		t2 = "";
 	if (above_mem)
 		sc_addline = t1;
@@ -513,7 +494,15 @@ static void
 tmodes(char *incap, char *outcap, char **instr, char **outstr,
     char *def_instr, char *def_outstr)
 {
-	*instr = ltgetstr(incap);
+	if (hardcopy) {
+		*instr = "";
+		*outstr = "";
+		return;
+	}
+
+	*instr = incap;
+	*outstr = outcap;
+
 	if (*instr == NULL) {
 		/* Use defaults. */
 		*instr = def_instr;
@@ -521,12 +510,11 @@ tmodes(char *incap, char *outcap, char **instr, char **outstr,
 		return;
 	}
 
-	*outstr = ltgetstr(outcap);
 	if (*outstr == NULL)
-		/* No specific out capability; use "sgr0". */
-		*outstr = ltgetstr("sgr0");
+		/* No specific out capability; use exit_attribute_mode. */
+		*outstr = exit_attribute_mode;
 	if (*outstr == NULL)
-		/* Don't even have "sgr0"; use a null string. */
+		/* Don't even have that, use an empty string */
 		*outstr = "";
 }
 
