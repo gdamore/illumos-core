@@ -1,0 +1,75 @@
+.\"
+.\" This file and its contents are supplied under the terms of the
+.\" Common Development and Distribution License ("CDDL"), version 1.0.
+.\" You may only use this file in accordance with the terms of version
+.\" 1.0 of the CDDL.
+.\"
+.\" A full copy of the text of the CDDL should have accompanied this
+.\" source.  A copy of the CDDL is also available via the Internet at
+.\" http://www.illumos.org/license/CDDL.
+.\"
+.\"
+.\" Copyright 2014 Garrett D'Amore <garrett@damore.org>
+.\"
+.Dd "Oct 2, 2014"
+.Dt PTHREAD_MUTEX_CONSISTENT 3C
+.Os
+.Sh NAME
+.Nm pthread_mutex_consistent
+.Nd mark state protected by robust mutex consistent
+.Sh SYNOPSIS
+.In pthread.h
+.
+.Ft int
+.Fo pthread_mutex_consistent
+.Fa "pthread_mutex_t *mutex"
+.Fc
+.
+.Sh DESCRIPTION
+The
+.Fn pthread_mutex_consistent
+function notifies the system that the state protected by
+.Fa mutex
+is consistent, and that the caller is ready to recover the
+mutex.
+.
+.Lp
+This operation is performed after an application holding a mutex with the
+.Dv PTHREAD_MUTEX_ROBUST
+attribute exits or is terminated.  When the application restarts, it can
+inform the system that it is ready to recover the mutex.
+.Lp
+If this operation is not performed on a
+.Dv PTHREAD_MUTEX_ROBUST ,
+and an application holding the mutex exits or is terminated while holding
+the mutex, then future attempts to acquire or release the mutex will
+fail with the error value
+.Bq Er ENOTRECOVERABLE .
+.
+.Sh RETURN VALUES
+On success, the
+.Fn pthread_mutex_unlock
+returns 0.  Otherwise an error number is returned.
+.Sh ERRORS
+The
+.Fn pthread_mutex_unlock
+function will fail if:
+.Bl -tag -width Er
+.It Bq Er EINVAL
+The
+.Fa mutex
+is invalid or not in an inconsistent state.
+.El
+.Sh INTERFACE STABILITY
+.Sy Standard .
+.Sh MT-LEVEL
+.Sy MT-Safe .
+.Sh SEE ALSO
+.Xr ptrhead_mutex_lock 3C ,
+.Xr pthread_mutexattr_getrobust 3C ,
+.Xr standards 5
+.Sh STANDARDS
+The
+.Fn pthread_mutex_consistent
+function was introduced in
+.St -p1003.1-2008 .

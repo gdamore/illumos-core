@@ -1,0 +1,103 @@
+.\"
+.\" This file and its contents are supplied under the terms of the
+.\" Common Development and Distribution License ("CDDL"), version 1.0.
+.\" You may only use this file in accordance with the terms of version
+.\" 1.0 of the CDDL.
+.\"
+.\" A full copy of the text of the CDDL should have accompanied this
+.\" source.  A copy of the CDDL is also available via the Internet at
+.\" http://www.illumos.org/license/CDDL.
+.\"
+.\"
+.\" Copyright 2014 Garrett D'Amore <garrett@damore.org>
+.\"
+.Dd "Oct 2, 2014"
+.Dt PTHREAD_MUTEX_CONSISTENT 3C
+.Os
+.Sh NAME
+.Nm pthread_mutexattr_getrobust ,
+.Nm pthread_mutexattr_setrobust ,
+.Nd set or get robust state for a mutex
+.Sh SYNOPSIS
+.In pthread.h
+.
+.Ft int
+.Fo pthread_mutexattr_getrobust
+.Fa "const pthread_mutexattr_t *restrict attr"
+.Fa "int *restrict robustp"
+.Fc
+.
+.Ft int
+.Fo pthread_mutexattr_setrobust
+.Fa "pthread_mutexattr_t *attr"
+.Fa "int robust"
+.Fc
+.
+.Sh DESCRIPTION
+The
+.Fn pthread_mutexattr_getrobust
+function retrieves the robust attribute of the mutex attributes
+.Fa attr .
+.
+.Lp
+The
+.Fn pthread_mutexattr_setrobust
+function sets the robust mutex attributes of the mutex attributes
+.Fa attr .
+.
+.Lp
+.
+The value of
+.Fa robust
+and and the value pointed to by
+.Fa robustp
+can take the the following values:
+.Bl -tag -width Dv
+.It Dv PTHREAD_MUTEX_STALLED
+No special action is taken if the holder of the mutex exits or
+terminates while holding the mutex.  Note that this can lead to
+deadlocks if no other thread is present that can unlock the mutex.  This
+is the default behavior.
+.It Dv PTHREAD_MUTEX_ROBUST
+If the thread holding a mutex exits or terminates, the next thread to
+attempt to acquire the mutex will be notified by receiving the error
+number
+.Bq Er EOWNERDEAD .
+.Lp
+That thread may then, at its option, attempt to recover the protected
+state, and mark the state consistent with
+.Xr pthread_mutex_consistent 3C .  Failure to do this will lead to future
+attempts to acquire the mutex to fail with the error number
+.Bq Er ENOTRECOVERABLE .
+.El
+.
+.Sh RETURN VALUES
+.
+On success, the
+.Fn pthread_mutex_unlock
+returns 0.  Otherwise an error number is returned.
+.Sh ERRORS
+The
+.Fn pthread_mutexattr_setrobust
+function will fail if:
+.Bl -tag -width Er
+.It Bq Er EINVAL
+The
+.Fa robust
+value is invalid.
+.El
+.Sh INTERFACE STABILITY
+.Sy Standard .
+.Sh MT-LEVEL
+.Sy MT-Safe .
+.Sh SEE ALSO
+.Xr ptrhead_mutex_init 3C ,
+.Xr pthread_mutex_consistent 3C ,
+.Xr standards 5
+.Sh STANDARDS
+The
+.Fn pthread_mutexattr_getrobust ,
+and
+.Fn pthread_mutexattr_setrobust
+funtions were introduced in
+.St -p1003.1-2008 .
