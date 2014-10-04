@@ -20,11 +20,11 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2014 Garrett D'Amore <garrett@damore.org>
+ *
  * Copyright (c) 1995-1998 by Sun Microsystems, Inc.
  * All rights reserved.
  */
-
-#pragma ident	"%Z%%M%	%I%	%E% SMI"
 
 /* LINTLIBRARY */
 
@@ -36,15 +36,6 @@
  * Copyright 1990, 1995 by Mortice Kern Inc.  All rights reserved.
  *
  */
-
-#ifdef M_RCSID
-#ifndef lint
-static char rcsID[] =
-"$Header: /team/ps/sun_xcurses/archive/local_changes/xcurses/src/lib/"
-"libxcurses/src/libc/xcurses/rcs/tgetent.c 1.2 1998/06/08 17:06:25 "
-"cbates Exp $";
-#endif
-#endif
 
 #include <private.h>
 #include <string.h>
@@ -62,10 +53,10 @@ tgetent(char *buffer, const char *name)
 {
 	int	code;
 
-	if (strcmp(cur_term->_term, name) == 0)
+	if (cur_term != NULL && strcmp(cur_term->_term, name) == 0)
 		return (OK);
-	(void) __m_setupterm((char *)name, cur_term->_ifd, cur_term->_ofd,
-		&code);
+	if (setupterm((char *)name, 1, &code) >= 0)
+		(void) reset_shell_mode();
 
 	return (code);
 }
