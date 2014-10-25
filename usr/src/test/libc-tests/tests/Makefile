@@ -14,7 +14,7 @@
 # Copyright 2014 Garrett D'Amore <garrett@damore.org>
 #
 
-SUBDIRS = fexecve open newlocale nl_langinfo symbols wcsrtombs
+SUBDIRS = fexecve open newlocale nl_langinfo symbols wcsrtombs wctype
 
 include $(SRC)/Makefile.master
 include $(SRC)/test/Makefile.com
