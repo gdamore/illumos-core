@@ -1864,10 +1864,10 @@ depend fmri=system/data/terminfo type=require
 #
 depend fmri=system/data/zoneinfo type=require
 #
-# vi and friends moved
-#
-depend fmri=system/utilities/vi@$(PKGVERS) type=require
-#
 # The mailx binary calls /usr/lib/sendmail provided by mailwrapper
 #
 depend fmri=system/network/mailwrapper type=require
+#
+# vi and friends moved
+#
+depend fmri=system/utilities/vi@$(PKGVERS) type=require
