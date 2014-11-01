@@ -114,7 +114,6 @@ _MANFILES=	aac.7d		\
 		ses.7d		\
 		sfe.7d		\
 		sgen.7d		\
- 	 	skd.7d		\
 		srpt.7d		\
 		st.7d		\
 		sv.7d		\
@@ -226,6 +225,7 @@ i386_MANFILES=	ahci.7d		\
 		sda.7d		\
 		sdhost.7d	\
 		si3124.7d	\
+ 	 	skd.7d		\
 		smbios.7d	\
 		uath.7d		\
 		ural.7d		\
