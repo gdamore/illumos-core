@@ -774,6 +774,7 @@ MANLINKS=	SIZEOF_PTR.9f				\
 	 	ddi_umem_unlock.9f			\
 	 	ddi_unmap_regs.9f			\
 	 	desballoc.9f				\
+	 	dev_err.9f				\
 	 	devmap_load.9f				\
 	 	devmap_umem_setup.9f			\
 	 	dlerrorack.9f				\
@@ -1075,6 +1076,7 @@ MANLINKS=	SIZEOF_PTR.9f				\
 	 	va_end.9f				\
 	 	va_start.9f				\
 	 	vcmn_err.9f				\
+	 	vzcmn_err.9f				\
 	 	wr.9f					\
 	 	zcmn_err.9f
 
@@ -1216,7 +1218,9 @@ atomic_swap_uint.9f			:= LINKSRC = atomic_swap.9f
 atomic_swap_ulong.9f			:= LINKSRC = atomic_swap.9f
 atomic_swap_ushort.9f			:= LINKSRC = atomic_swap.9f
 
+dev_err.9f				:= LINKSRC = cmn_err.9f
 vcmn_err.9f				:= LINKSRC = cmn_err.9f
+vzcmn_err.9f				:= LINKSRC = cmn_err.9f
 zcmn_err.9f				:= LINKSRC = cmn_err.9f
 
 cv_broadcast.9f				:= LINKSRC = condvar.9f

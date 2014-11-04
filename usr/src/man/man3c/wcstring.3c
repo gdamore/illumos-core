@@ -381,8 +381,6 @@ MT-Level	MT-Safe
 \fBwcscasecmp\fR(3C),
 \fBwcsdup\fR(3C),
 \fBwcslen\fR(3C),
-\fBwcsstr\fR(3C),
-\fBwcswcs\fR(3C),
 \fBwcswidth\fR(3C),
 \fBwcwidth\fR(3C),
 \fBattributes\fR(5),
