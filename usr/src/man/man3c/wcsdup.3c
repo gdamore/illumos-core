@@ -11,12 +11,12 @@
 .\"
 .\" Copyright 2014 Garrett D'Amore <garrett@damore.org>
 .\"
-.Dd "Jul 27, 2014"
+.Dd "Nov 4, 2014"
 .Dt WCSDUP 3C
 .Os
 .Sh NAME
 .Nm wcsdup
-.Nd duplicate wide character string
+.Nd duplicate wide-character string
 .Sh SYNOPSIS
 .In wchar.h
 .
@@ -37,10 +37,10 @@ The resulting copy is returned.  It may be deallocated with
 .Xr free 3C
 when it is no longer needed.  The
 .Fn wcsdup
-is the wide-character equivalent of
+function is the wide-character equivalent of
 .Xr strdup 3C .
 .Sh RETURN VALUES
-On success, the functions
+On success, the function
 .Fn wcsdup
 returns the newly allocated copy of the string; on failure it
 returns

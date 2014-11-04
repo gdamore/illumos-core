@@ -11,7 +11,7 @@
 .\"
 .\" Copyright 2014 Garrett D'Amore <garrett@damore.org>
 .\"
-.Dd Aug 17, 2014
+.Dd Nov 4, 2014
 .Dt WCSLEN 3C
 .Os
 .Sh NAME
@@ -37,10 +37,10 @@ The
 .Fn wcslen
 and
 .Fn wcsnlen
-functions count the number of wide-characters that are present
+functions count the number of wide-characters that are present in
 .Fa string .
 They stop counting when they encounter a null wide-character.
-The terminating null wide-character is not included in the NULL.
+The terminating null wide-character is not included in the count.
 .Lp
 Additionally,
 .Fn wcsnlen

@@ -11,7 +11,7 @@
 .\"
 .\" Copyright 2014 Garrett D'Amore <garrett@damore.org>
 .\"
-.Dd "Jul 27, 2014"
+.Dd "Nov 4, 2014"
 .Dt WCSCASECMP 3C
 .Os
 .Sh NAME
@@ -19,7 +19,7 @@
 .Nm wcscasecmp_l ,
 .Nm wcsncasecmp ,
 .Nm wcsncasecmp_l
-.Nd case-insensitive wide-character string comparision
+.Nd case-insensitive wide-character string comparison
 .Sh SYNOPSIS
 .In wchar.h
 .
@@ -60,8 +60,8 @@ Pairs of wide-characters from each of
 .Fa ws1
 and
 .Fa ws2
-are compared consecutively, ignoring differences in case (in the
-.\"POSIX\." upper case characters are treated as lower case).  If
+are compared consecutively, ignoring differences in case (if the
+.\"POSIX\." locale upper case characters are treated as lower case).  If
 the two values are different, the comparision stops and either
 a negative value is returned if the character from
 .Fa ws1
