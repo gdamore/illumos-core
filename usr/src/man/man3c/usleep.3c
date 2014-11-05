@@ -66,18 +66,6 @@ function is available in the following compilation environments.  See
 .Xr standards 5 .
 .Lp
 .Bl -bullet -compact
-.\".It
-.\".St -p1003.1-90
-.\".It
-.\".St -p1003.1b-93
-.\".It
-.\".St -p1003.1c-95
-.\".It
-.\".St -p1003.1-2001
-.\".It
-.\".St -xpg3
-.\".It
-.\".St -xpg4
 .It
 .St -xpg4.2
 .It

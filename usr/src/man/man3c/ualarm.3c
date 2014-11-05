@@ -22,7 +22,8 @@ function causes the
 .Dv SIGALRM
 signal to be generated for
 the calling process after the number of real-time microseconds specified by the
-.Fa useconds argument has elapsed.  When the
+.Fa useconds
+argument has elapsed.  When the
 .Fa interval
 argument is
 non-zero, repeated timeout notification occurs with a period in microseconds
