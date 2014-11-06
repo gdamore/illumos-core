@@ -31,3 +31,19 @@ outputdir = /var/tmp/test_results
 [/opt/libc-tests/tests/wcsrtombs_test]
 
 [/opt/libc-tests/tests/wctype_test]
+
+[/opt/libc-tests/tests/symbols]
+pre = setup
+tests = [
+	'dirent_h',
+	'fcntl_h',
+	'locale_h',
+	'netdb_h',
+	'signal_h',
+	'stdio_h',
+	'sys_stat_h',
+	'sys_time_h',
+	'unistd_h',
+	'wchar_h',
+	'wctype_h'
+	 ]
