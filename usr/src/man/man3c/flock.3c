@@ -1,0 +1,86 @@
+.\"
+.\" This file and its contents are supplied under the terms of the
+.\" Common Development and Distribution License ("CDDL"), version 1.0.
+.\" You may only use this file in accordance with the terms of version
+.\" 1.0 of the CDDL.
+.\"
+.\" A full copy of the text of the CDDL should have accompanied this
+.\" source.  A copy of the CDDL is also available via the Internet at
+.\" http://www.illumos.org/license/CDDL.
+.\"
+.\"
+.\" Copyright 2014 Garrett D'Amore <garrett@damore.org>
+.\"
+.Dd "Nov 13, 2014"
+.Dt FLOCK 3C
+.Os
+.Sh NAME
+.Nm flock
+.Nd BSD-compatible file locking
+.Sh SYNOPSIS
+.In sys/file.h
+.
+.Ft int
+.Fo flock
+.Fa "int fd"
+.Fa "int operation"
+.Fc
+.
+.Sh DESCRIPTION
+The
+.Fn flock
+function provides a BSD compatibility interface for file locking,
+and is implemented in terms of
+.Xr fcntl 2 .
+.
+.Pp
+The
+.Fa fd
+is a file descriptor that references a regular file.  The
+.Fa operation
+is one of the following.
+.Bl -tag -width Dv
+.It Dv LOCK_SH
+Acquire a shared (non-exclusive) lock.  There may be multiple shared
+locks on a file simultaneously.
+.It Dv LOCK_EX
+Acquire an exclusive lock.
+.It Dv LOCK_UN
+Release the lock.
+.El
+.Pp
+In addition, the value
+.Dv LOCK_NB
+can be added to the operation (bitwise-OR) to indicate that the
+operation should fail immediately rather than blocking if the
+lock cannot be acquired.
+.
+.Sh RETURN VALUES
+.Rv -std
+.Sh ERRORS
+The
+.Fn flock
+function will fail if:
+.Bl -tag -width Er
+.It Er EBADF
+The
+.Fa fd
+argument is not an open file descriptor.
+.
+.It Er EINVAL
+The
+.Fa fd
+argument does not reference a regular file, or an invalid
+.Fa operation
+has been supplied.
+.
+.It Er EWOULDBLOCK
+A lock cannot be immediately acquired due to other conflicting lock(s).
+.El
+.Sh INTERFACE STABILITY
+.Sy Obsolete Committed.
+.Sh MT-LEVEL
+.Sy MT-Safe .
+.Sh SEE ALSO
+.Xr fcntl 2 ,
+.Xr lockf 3C
