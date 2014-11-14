@@ -186,9 +186,11 @@ extern double yn __P((int, double));
 	_XOPEN_SOURCE - 0 >= 500 || \
 	defined(_XOPEN_SOURCE) && _XOPEN_SOURCE_EXTENDED - 0 == 1
 /*
- * SVID & XPG 4.2/5
+ * SVID & XPG 4.2/5 - removed from XPG7.
  */
-extern double scalb __P((double, double));
+#if !defined(_STRICT_SYMBOLS) || !defined(_XPG7)
+extern double scalb(double, double);
+#endif
 
 #if defined(__MATHERR_ERRNO_DONTCARE)
 #pragma does_not_read_global_data(scalb)

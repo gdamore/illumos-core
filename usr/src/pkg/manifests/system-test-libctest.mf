@@ -36,6 +36,7 @@ file path=opt/libc-tests/cfg/compilation.cfg mode=0444
 file path=opt/libc-tests/cfg/symbols/dirent_h.cfg mode=0444
 file path=opt/libc-tests/cfg/symbols/fcntl_h.cfg mode=0444
 file path=opt/libc-tests/cfg/symbols/locale_h.cfg mode=0444
+file path=opt/libc-tests/cfg/symbols/math_h.cfg mode=0444
 file path=opt/libc-tests/cfg/symbols/netdb_h.cfg mode=0444
 file path=opt/libc-tests/cfg/symbols/pthread_h.cfg mode=0444
 file path=opt/libc-tests/cfg/symbols/signal_h.cfg mode=0444
@@ -77,6 +78,7 @@ file path=opt/libc-tests/tests/wctype_test.$(ARCH64) mode=0555
 hardlink path=opt/libc-tests/tests/symbols/dirent_h target=setup
 hardlink path=opt/libc-tests/tests/symbols/fcntl_h target=setup
 hardlink path=opt/libc-tests/tests/symbols/locale_h target=setup
+hardlink path=opt/libc-tests/tests/symbols/math_h target=setup
 hardlink path=opt/libc-tests/tests/symbols/netdb_h target=setup
 hardlink path=opt/libc-tests/tests/symbols/pthread_h target=setup
 hardlink path=opt/libc-tests/tests/symbols/signal_h target=setup

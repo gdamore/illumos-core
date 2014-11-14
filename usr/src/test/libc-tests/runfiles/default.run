@@ -42,6 +42,7 @@ tests = [
 	'dirent_h',
 	'fcntl_h',
 	'locale_h',
+	'math_h',
 	'netdb_h',
 	'pthread_h',
 	'signal_h',
