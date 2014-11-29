@@ -42,7 +42,6 @@ dir path=lib/svc/manifest/network/security group=sys
 dir path=usr group=sys
 dir path=usr/lib
 dir path=usr/lib/krb5
-dir path=usr/lib/krb5/ListResourceBundle
 dir path=usr/lib/security
 dir path=usr/sbin
 dir path=usr/share
