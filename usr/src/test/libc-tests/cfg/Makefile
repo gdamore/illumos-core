@@ -21,6 +21,7 @@ CFGS = README \
 	symbols/dirent_h.cfg \
 	symbols/fcntl_h.cfg \
 	symbols/locale_h.cfg \
+	symbols/math_h.cfg \
 	symbols/netdb_h.cfg \
 	symbols/pthread_h.cfg \
 	symbols/signal_h.cfg \
