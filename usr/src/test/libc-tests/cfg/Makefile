@@ -18,6 +18,7 @@ include $(SRC)/Makefile.master
 
 CFGS = README \
 	compilation.cfg \
+	symbols/ctype_h.cfg \
 	symbols/dirent_h.cfg \
 	symbols/fcntl_h.cfg \
 	symbols/locale_h.cfg \

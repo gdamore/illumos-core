@@ -19,6 +19,7 @@ TESTSUBDIR = symbols
 PROG = symbols_test
 KSHPROG = setup
 SYMTESTS = \
+	ctype_h \
 	dirent_h \
 	fcntl_h \
 	locale_h \

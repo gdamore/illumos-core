@@ -39,6 +39,7 @@ outputdir = /var/tmp/test_results
 [/opt/libc-tests/tests/symbols]
 pre = setup
 tests = [
+	'ctype_h',
 	'dirent_h',
 	'fcntl_h',
 	'locale_h',
