@@ -1362,6 +1362,8 @@ fas_quiesce_bus(struct fas *fas)
 			(void) fas_istart(fas);
 			if (fas->f_quiesce_timeid != 0) {
 				mutex_exit(FAS_MUTEX(fas));
+				(void) untimeout(fas->f_quiesce_timeid);
+				fas->f_quiesce_timeid = 0;
 				return (-1);
 			}
 			mutex_exit(FAS_MUTEX(fas));
@@ -2565,7 +2567,6 @@ fas_prepare_pkt(struct fas *fas, struct fas_cmd *sp)
 	sp->cmd_actual_cdblen = sp->cmd_cdblen;
 
 #ifdef FAS_TEST
-#ifndef __lock_lint
 	if (fas_test_untagged > 0) {
 		if (TAGGED(Tgt(sp))) {
 			int slot = sp->cmd_slot;
@@ -2580,7 +2581,6 @@ fas_prepare_pkt(struct fas *fas, struct fas_cmd *sp)
 			fas_test_untagged = -10;
 		}
 	}
-#endif
 #endif
 
 #ifdef FASDEBUG
@@ -6962,6 +6962,8 @@ fas_create_arq_pkt(struct fas *fas, struct scsi_address *ap)
 	rqpktp->cmd_pkt->pkt_ha_private = rqpktp;
 	fas->f_arq_pkt[slot] = rqpktp;
 
+	rqpktp->cmd_pkt->pkt_comp =
+	    (void (*)(struct scsi_pkt *))fas_complete_arq_pkt;
 	return (0);
 }
 
