@@ -184,51 +184,6 @@ static bool_t svc_exit_done = TRUE;
 
 /* END PROTECTED BY svc_exit_mutex */
 
-/*
- * Warlock section
- */
-
-/* VARIABLES PROTECTED BY svc_mutex:
-	svc_thr_total, svc_thr_active, svc_pending_fds, svc_next_pending,
-	svc_last_pending, svc_total_pending, svc_thr_total_creates,
-	svc_thr_total_create_errors,
-	svcxprt_list_t::next, svcxprt_ext_t::my_xlist,
-	svc_thr_max, svc_waiters
- */
-
-/* VARIABLES PROTECTED BY svc_fd_lock:
-	svc_xports, svc_fdset, svc_nfds, svc_nfds_set, svc_max_fd,
-	svc_pollfd, svc_npollfds, svc_npollfds_set, svc_max_pollfd
- */
-
-/* VARIABLES PROTECTED BY svc_thr_mutex:
-	svc_pollset, svc_pollfds, svc_next_pollfd, svc_polling
-	svc_pollset_allocd, svc_polled
- */
-
-/* VARIABLES PROTECTED BY svc_exit_mutex:
-	svc_exit_done
- */
-
-/* VARIABLES READABLE WITHOUT LOCK:
-	svc_thr_total, svc_thr_active, svc_thr_total_creates,
-	svc_thr_total_create_errors,
-	svc_xports, svc_nfds, svc_nfds_set, svc_max_fd,
-	svc_npollfds, svc_npollfds_set, svc_max_pollfd,
-	svc_pollfds, svc_next_pollfd, svc_exit_done, svc_polling,
-	svc_thr_max, svc_waiters
- */
-
-/* VARIABLES PROTECTED BY "program_logic":
-	rpc_msg::, svc_req::, svcxprt_ext_t::flags, svc_mt_mode,
-	svcxprt_ext_t::parent
- */
-
-/* LOCK ORDER:
-	svc_exit_mutex, svc_thr_mutex, svc_mutex, svc_fd_lock
- */
-
-
 void
 svc_run(void)
 {

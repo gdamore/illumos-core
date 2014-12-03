@@ -150,14 +150,6 @@ typedef struct si_port_state {
 
 } si_port_state_t;
 
-/* Warlock annotation */
-_NOTE(MUTEX_PROTECTS_DATA(si_port_state_t::siport_mutex, si_port_state_t))
-_NOTE(READ_ONLY_DATA(si_port_state_t::siport_prbpool_dma_handle))
-_NOTE(READ_ONLY_DATA(si_port_state_t::siport_sgbpool_dma_handle))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(si_port_state_t::siport_ctlp))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(si_port_state_t::siport_port_num))
-
-
 typedef struct si_ctl_state {
 
 	dev_info_t *sictl_devinfop;
@@ -195,16 +187,6 @@ typedef struct si_ctl_state {
 
 } si_ctl_state_t;
 
-/* Warlock annotation */
-_NOTE(MUTEX_PROTECTS_DATA(si_ctl_state_t::sictl_mutex,
-					si_ctl_state_t::sictl_ports))
-_NOTE(MUTEX_PROTECTS_DATA(si_ctl_state_t::sictl_mutex,
-					si_ctl_state_t::sictl_power_level))
-_NOTE(MUTEX_PROTECTS_DATA(si_ctl_state_t::sictl_mutex,
-					si_ctl_state_t::sictl_flags))
-_NOTE(MUTEX_PROTECTS_DATA(si_ctl_state_t::sictl_mutex,
-					si_ctl_state_t::sictl_timeout_id))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(si_ctl_state_t::sictl_ports))
 /*
  * flags for si_flags
  */

@@ -138,18 +138,6 @@ typedef struct usb_as_state {
 	char			dstr[64];
 } usb_as_state_t;
 
-/* warlock directives, stable data */
-_NOTE(MUTEX_PROTECTS_DATA(usb_as_state_t::usb_as_mutex, usb_as_state_t))
-_NOTE(MUTEX_PROTECTS_DATA(usb_as_state_t::usb_as_mutex, usb_as_power_t))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_as_state_t::usb_as_dip))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_as_state_t::usb_as_pm))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_as_state_t::usb_as_instance))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_as_state_t::usb_as_default_ph))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_as_state_t::usb_as_isoc_ph))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_as_state_t::usb_as_log_handle))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_as_state_t::usb_as_dev_data))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_as_state_t::usb_as_ser_acc))
-
 typedef struct usb_as_tq_arg {
 	usb_as_state_t	*usb_as_tq_arg_statep;
 	int		usb_as_tq_arg_cr;

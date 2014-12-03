@@ -484,10 +484,6 @@ static void			print_modify_qp(char *prefix,
 				    ibt_qp_info_t *qp_attr);
 #endif
 
-/*	Warlock annotations */
-
-_NOTE(READ_ONLY_DATA(ibt_arej_info_u))
-
 /*
  * ibcm_process_incoming_mad:
  *	The CM callback that is invoked by IBMF, when a valid CM MAD arrives
@@ -4261,9 +4257,7 @@ ibcm_process_tlist()
 		}
 	}
 
-#ifndef	__lock_lint
 	CALLB_CPR_EXIT(&cprinfo);	/* mutex_exit */
-#endif
 }
 
 

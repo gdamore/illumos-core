@@ -87,12 +87,6 @@ static int aac_query_disk(struct aac_softstate *, intptr_t, int);
 static int aac_delete_disk(struct aac_softstate *, intptr_t, int);
 static int aac_supported_features(struct aac_softstate *, intptr_t, int);
 
-/*
- * Warlock directives
- */
-_NOTE(SCHEME_PROTECTS_DATA("unique to each handling function", aac_features
-    aac_pci_info aac_query_disk aac_revision aac_umem_sge))
-
 int
 aac_do_ioctl(struct aac_softstate *softs, dev_t dev, int cmd, intptr_t arg,
     int mode)

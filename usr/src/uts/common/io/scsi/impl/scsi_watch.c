@@ -630,11 +630,7 @@ done:
 static int sw_cmd_count = 0;
 static int sw_cpr_flag = 0;
 static callb_cpr_t cpr_info;
-#ifndef __lock_lint
 static kmutex_t cpr_mutex;
-#else
-extern kmutex_t cpr_mutex;
-#endif
 
 #if !defined(lint)
 _NOTE(MUTEX_PROTECTS_DATA(cpr_mutex, cpr_info))
@@ -854,10 +850,8 @@ head:
 	 */
 	sw.sw_thread = 0;
 	mutex_exit(&sw.sw_mutex);
-#ifndef __lock_lint
 	mutex_enter(&cpr_mutex);
 	CALLB_CPR_EXIT(&cpr_info);
-#endif
 	mutex_destroy(&cpr_mutex);
 	SW_DEBUG((dev_info_t *)NULL, sw_label, SCSI_DEBUG,
 	    "scsi_watch_thread: Exiting ...\n");

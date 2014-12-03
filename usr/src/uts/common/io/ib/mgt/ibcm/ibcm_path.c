@@ -4675,32 +4675,3 @@ get_ip_alt_path_done:
 
 	return (retval);
 }
-
-
-/* Routines for warlock */
-
-/* ARGSUSED */
-static void
-ibcm_dummy_path_handler(void *arg, ibt_status_t retval, ibt_path_info_t *paths,
-    uint8_t num_path)
-{
-	ibcm_path_tqargs_t	dummy_path;
-
-	dummy_path.func = ibcm_dummy_path_handler;
-
-	IBTF_DPRINTF_L5(cmlog, "ibcm_dummy_path_handler: "
-	    "dummy_path.func %p", dummy_path.func);
-}
-
-/* ARGSUSED */
-static void
-ibcm_dummy_ip_path_handler(void *arg, ibt_status_t retval,
-    ibt_path_info_t *paths, uint8_t num_path, ibt_path_ip_src_t *src_ip)
-{
-	ibcm_ip_path_tqargs_t	dummy_path;
-
-	dummy_path.func = ibcm_dummy_ip_path_handler;
-
-	IBTF_DPRINTF_L5(cmlog, "ibcm_dummy_ip_path_handler: "
-	    "dummy_path.func %p", dummy_path.func);
-}

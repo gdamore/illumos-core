@@ -306,16 +306,6 @@ typedef struct ohci_intrs_stats {
 #define	OHCI_ISOC_STATS(ohci)	\
 	(KSTAT_IO_PTR((ohci)->ohci_count_stats[USB_EP_ATTR_ISOCH]))
 
-/* warlock directives, stable data */
-_NOTE(MUTEX_PROTECTS_DATA(ohci_state_t::ohci_int_mutex, ohci_state_t))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(ohci_state_t::ohci_intr_pri))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(ohci_state_t::ohci_dip))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(ohci_state_t::ohci_regsp))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(ohci_state_t::ohci_instance))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(ohci_state_t::ohci_vendor_id))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(ohci_state_t::ohci_device_id))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(ohci_state_t::ohci_rev_id))
-
 /* this may not be stable data in the future */
 _NOTE(DATA_READABLE_WITHOUT_LOCK(ohci_state_t::ohci_td_pool_addr))
 _NOTE(DATA_READABLE_WITHOUT_LOCK(ohci_state_t::ohci_td_pool_mem_handle))
@@ -474,9 +464,6 @@ typedef struct ohci_pipe_private {
 	 */
 	usb_opaque_t		pp_client_periodic_in_reqp;
 } ohci_pipe_private_t;
-
-/* warlock directives, stable data */
-_NOTE(MUTEX_PROTECTS_DATA(ohci_state_t::ohci_int_mutex, ohci_pipe_private_t))
 
 /*
  * Pipe states

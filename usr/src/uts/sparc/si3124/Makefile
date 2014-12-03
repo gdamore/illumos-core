@@ -43,11 +43,8 @@ UTSBASE	= ../..
 MODULE		= si3124
 OBJECTS		= $(SI3124_OBJS:%=$(OBJS_DIR)/%)
 LINTS		= $(SI3124_OBJS:%.o=$(LINTS_DIR)/%.ln)
-WARLOCK_OUT     = $(SI3124_OBJS:%.o=%.ll)
-WARLOCK_OK      = $(MODULE).ok
 ROOTMODULE	= $(ROOT_DRV_DIR)/$(MODULE)
 CONF_SRCDIR     = $(UTSBASE)/common/io/sata/adapters/si3124
-WLCMD_DIR       = $(UTSBASE)/common/io/warlock
 
 #
 #	Include common rules.
@@ -84,10 +81,8 @@ def:		$(DEF_DEPS)
 all:		$(ALL_DEPS)
 
 clean:		$(CLEAN_DEPS)
-		$(RM) $(WARLOCK_OUT) $(WARLOCK_OK)
 
 clobber:	$(CLOBBER_DEPS)
-		$(RM) $(WARLOCK_OUT) $(WARLOCK_OK)
 
 lint:		$(LINT_DEPS)
 
@@ -101,47 +96,3 @@ install:	$(INSTALL_DEPS)
 #	Include common targets.
 #
 include $(UTSBASE)/sparc/Makefile.targ
-
-
-#
-#	Defines for local commands.
-#
-WARLOCK		= warlock
-WLCC		= wlcc
-TOUCH		= touch
-TEST		= test
-
-SD_FILES = $(SD_OBJS:%.o=../sd/%.ll)
-SATA_FILES = $(SATA_OBJS:%.o=-l ../sata/%.ll)
-SCSI_FILES = $(SCSI_OBJS:%.o=-l ../scsi/%.ll)
-CMLB_FILES = $(CMLB_OBJS:%.o=-l ../cmlb/%.ll)
-
-warlock: $(WARLOCK_OK)
-
-$(WARLOCK_OK): $(WLCMD_DIR)/si3124.wlcmd $(WARLOCK_OUT) warlock_ddi.files \
-	sata.files scsi.files sd.files cmlb.files
-	$(WARLOCK) -c $(WLCMD_DIR)/si3124.wlcmd $(WARLOCK_OUT) \
-	$(SD_FILES) \
-	$(SCSI_FILES) \
-	$(CMLB_FILES) \
-        $(SATA_FILES) \
-	-l ../warlock/ddi_dki_impl.ll
-	$(TOUCH) $@
-
-%.ll: $(UTSBASE)/common/io/sata/adapters/si3124/%.c
-	$(WLCC) $(CPPFLAGS) -D DEBUG -D __sparcv9 -o $@ $<
-
-sata.files:
-	@cd ../sata; pwd; $(MAKE) warlock
-
-scsi.files:
-	@cd ../scsi; pwd; $(MAKE) warlock
-
-sd.files: 
-	@cd ../sd; pwd; $(MAKE) warlock_alone
-
-cmlb.files:
-	@cd ../cmlb; pwd; $(MAKE) warlock
-
-warlock_ddi.files:
-	@cd ../warlock; pwd; $(MAKE) warlock

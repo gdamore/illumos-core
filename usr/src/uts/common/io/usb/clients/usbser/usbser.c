@@ -200,11 +200,6 @@ _NOTE(SCHEME_PROTECTS_DATA("unshared", usb_intr_req_t))
 extern pri_t minclsyspri;
 
 /*
- * tell warlock not to worry about STREAMS structures
- */
-_NOTE(SCHEME_PROTECTS_DATA("unique per call", iocblk datab msgb queue copyreq))
-
-/*
  * modload support
  */
 extern struct mod_ops mod_miscops;

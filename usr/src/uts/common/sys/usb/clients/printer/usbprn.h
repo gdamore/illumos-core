@@ -124,26 +124,6 @@ typedef struct usbprn_state {
 	usb_ugen_hdl_t	usbprn_ugen_hdl;		/* ugen support */
 } usbprn_state_t;
 
-/* warlock directives, stable data */
-_NOTE(MUTEX_PROTECTS_DATA(usbprn_state_t::usbprn_mutex, usbprn_state_t))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usbprn_state_t::usbprn_dip))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usbprn_state_t::usbprn_ugen_hdl))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usbprn_state_t::usbprn_pm))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usbprn_state_t::usbprn_instance))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usbprn_state_t::usbprn_log_handle))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usbprn_state_t::usbprn_if_descr))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usbprn_state_t::usbprn_dev_data))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usbprn_state_t::usbprn_ser_acc))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usbprn_state_t::usbprn_write_acc))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usbprn_state_t::usbprn_dev_acc))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usbprn_state_t::usbprn_def_ph))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usbprn_state_t::usbprn_device_id))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usbprn_state_t::usbprn_device_id_len))
-_NOTE(SCHEME_PROTECTS_DATA("stable data", usb_pipe_policy))
-_NOTE(SCHEME_PROTECTS_DATA("unshared data", mblk_t))
-_NOTE(SCHEME_PROTECTS_DATA("unshared data", usb_bulk_req))
-
-
 /* Values for usbprn_flags */
 #define	USBPRN_LOCKS_INIT_DONE	0x01	/* locks have been init'ed */
 #define	USBPRN_OPEN		0x02	/* Device is open */

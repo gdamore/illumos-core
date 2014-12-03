@@ -36,11 +36,6 @@
 ./usr/closed/uts/sun4v/io/ncp/Makefile
 
 #
-# Ignore files that are only used for warlock
-#
-./usr/closed/uts/sparc/marvell88sx/Makefile
-
-#
 # An unfortunate artifact of the bridged, split gate is that closed-source
 # deleted files go where findunref can accidentally find them...
 #

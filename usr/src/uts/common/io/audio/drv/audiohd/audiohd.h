@@ -977,20 +977,4 @@ struct audiohd_codec_info {
 }
 #endif
 
-/* Warlock annotation */
-_NOTE(DATA_READABLE_WITHOUT_LOCK(audiohd_ctrl::statep))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(audiohd_state::inmask))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(audiohd_state::adev))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(audiohd_state::sample_bit_depth))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(audiohd_state::sample_rate))
-_NOTE(READ_ONLY_DATA(audiohd_state::hda_reg_handle))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(audiohd_widget::codec))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(audiohd_widget::wid_wid))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(hda_codec::index))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(hda_codec::statep))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(hda_codec::vid))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(audiohd_port::nchan))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(audiohd_port::statep))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(audiohd_port::sync_dir))
-
 #endif	/* _SYS_AUDIOHD_IMPL_H_ */

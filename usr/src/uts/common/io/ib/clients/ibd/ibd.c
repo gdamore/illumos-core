@@ -620,10 +620,6 @@ ibd_print_warn(ibd_state_t *state, char *fmt, ...)
 }
 
 /*
- * Warlock directives
- */
-
-/*
  * id_lso_lock
  *
  * state->id_lso->bkt_nfree may be accessed without a lock to
@@ -1263,11 +1259,7 @@ ibd_async_work(ibd_state_t *state)
 					break;
 				case IBD_ASYNC_EXIT:
 					mutex_enter(&state->id_acache_req_lock);
-#ifndef __lock_lint
 					CALLB_CPR_EXIT(&cprinfo);
-#else
-					mutex_exit(&state->id_acache_req_lock);
-#endif
 					return;
 				case IBD_ASYNC_RC_TOO_BIG:
 					ibd_async_rc_process_too_big(state,
@@ -1290,7 +1282,6 @@ free_req_and_continue:
 
 			mutex_enter(&state->id_acache_req_lock);
 		} else {
-#ifndef __lock_lint
 			/*
 			 * Nothing to do: wait till new request arrives.
 			 */
@@ -1299,7 +1290,6 @@ free_req_and_continue:
 			    &state->id_acache_req_lock);
 			CALLB_CPR_SAFE_END(&cprinfo,
 			    &state->id_acache_req_lock);
-#endif
 		}
 	}
 

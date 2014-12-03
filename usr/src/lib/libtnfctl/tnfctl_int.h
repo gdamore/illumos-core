@@ -50,24 +50,11 @@ extern "C" {
 #include <synch.h>
 
 /*
- * This bogus structure is our way of getting around the fact that
- * warlock does not handle recursive locks (warlock does not complain
- * when anonymous locks, such as warlock_kludge->lmap_lock, are
- * multiply locked).
- */
-#if defined(__lock_lint)
-struct warlock {
-	mutex_t lmap_lock;
-} *warlock_kludge;
-#endif
-
-/*
  * global variables used for INTERNAL_MODE synchronization with
  * dlopen's and dlclose's on another thread.
  */
 extern mutex_t		_tnfctl_lmap_lock;
 extern boolean_t	_tnfctl_libs_changed;
-NOTE(MUTEX_PROTECTS_DATA(warlock::lmap_lock, _tnfctl_libs_changed))
 
 /* Project private interface - function name in target */
 #define	TRACE_END_FUNC		"tnf_trace_end"
@@ -92,9 +79,6 @@ struct prbctlref {
 	tnf_probe_control_t 	wrkprbctl;	/* probe struct from target */
 	tnfctl_probe_t		*probe_handle;	/* handle visible to client */
 };
-
-NOTE(SCHEME_PROTECTS_DATA("one thread per handle", prbctlref))
-NOTE(MUTEX_PROTECTS_DATA(warlock::lmap_lock, prbctlref::{addr obj}))
 
 /* per object state */
 struct objlist {
@@ -169,9 +153,6 @@ struct tnfctl_handle {
 						void *client_data);
 	pid_t (*p_getpid)(void *prochandle);
 };
-
-NOTE(SCHEME_PROTECTS_DATA("one thread per handle", tnfctl_handle))
-NOTE(MUTEX_PROTECTS_DATA(warlock::lmap_lock, tnfctl_handle::objlist))
 
 typedef enum comb_op {
 	PRB_COMB_CHAIN = 0,	/* call the down, then the next */
@@ -319,18 +300,6 @@ tnfctl_errcode_t tnfctl_status_map(int);
  * lock_lint won't have to see the conditional locking.
  * CAUTION: Be aware that these macros have a return() embedded in them.
  */
-#ifdef __lock_lint
-
-#define	LOCK(hndl, stat, release) (void) _tnfctl_lock_libs(hndl, &release)
-
-#define	LOCK_SYNC(hndl, stat, release)					\
-	(void) _tnfctl_lock_libs(hndl, &release); 			\
-	(void) _tnfctl_sync_lib_list(hndl)
-
-#define	UNLOCK(hndl, release)	_tnfctl_unlock_libs(hndl, release)
-
-#else
-
 #define	LOCK(hndl, stat, release)					\
 	if (hndl->mode == INTERNAL_MODE) {				\
 		stat = _tnfctl_lock_libs(hndl, &release);		\
@@ -356,8 +325,6 @@ tnfctl_errcode_t tnfctl_status_map(int);
 	if (hndl->mode == INTERNAL_MODE)				\
 		_tnfctl_unlock_libs(hndl, release_lock);		\
 	else
-
-#endif
 
 #ifdef __cplusplus
 }

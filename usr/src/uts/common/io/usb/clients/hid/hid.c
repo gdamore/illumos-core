@@ -139,24 +139,6 @@ static int	hid_attach(dev_info_t *, ddi_attach_cmd_t);
 static int	hid_detach(dev_info_t *, ddi_detach_cmd_t);
 static int	hid_power(dev_info_t *, int, int);
 
-/*
- * Warlock is not aware of the automatic locking mechanisms for
- * streams drivers.  The hid streams enter points are protected by
- * a per module perimeter.  If the locking in hid is a bottleneck
- * per queue pair or per queue locking may be used.  Since warlock
- * is not aware of the streams perimeters, these notes have been added.
- *
- * Note that the perimeters do not protect the driver from callbacks
- * happening while a streams entry point is executing.	So, the hid_mutex
- * has been created to protect the data.
- */
-_NOTE(SCHEME_PROTECTS_DATA("unique per call", iocblk))
-_NOTE(SCHEME_PROTECTS_DATA("unique per call", datab))
-_NOTE(SCHEME_PROTECTS_DATA("unique per call", msgb))
-_NOTE(SCHEME_PROTECTS_DATA("unique per call", queue))
-_NOTE(SCHEME_PROTECTS_DATA("unique per call", usb_ctrl_req))
-_NOTE(SCHEME_PROTECTS_DATA("unique per call", usb_intr_req))
-
 /* module information */
 static struct module_info hid_mod_info = {
 	0x0ffff,			/* module id number */

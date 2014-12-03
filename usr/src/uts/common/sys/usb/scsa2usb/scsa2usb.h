@@ -352,28 +352,6 @@ typedef struct scsa2usb_state {
 } scsa2usb_state_t;
 
 
-/* for warlock */
-_NOTE(MUTEX_PROTECTS_DATA(scsa2usb_state::scsa2usb_mutex, scsa2usb_state))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(scsa2usb_state::scsa2usb_instance))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(scsa2usb_state::scsa2usb_dip))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(scsa2usb_state::scsa2usb_arq_cmd))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(scsa2usb_state::scsa2usb_arq_bp))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(scsa2usb_state::scsa2usb_bulkin_ept))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(scsa2usb_state::scsa2usb_bulkout_ept))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(scsa2usb_state::scsa2usb_intr_ept))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(scsa2usb_state::scsa2usb_default_pipe))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(scsa2usb_state::scsa2usb_intr_pipe))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(scsa2usb_state::scsa2usb_bulkin_pipe))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(scsa2usb_state::scsa2usb_bulkout_pipe))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(scsa2usb_state::scsa2usb_log_handle))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(scsa2usb_state::scsa2usb_intfc_num))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(scsa2usb_state::scsa2usb_dev_data))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(scsa2usb_state::scsa2usb_ugen_hdl))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(scsa2usb_state::scsa2usb_pm))
-_NOTE(SCHEME_PROTECTS_DATA("stable data", scsa2usb_power_t))
-_NOTE(SCHEME_PROTECTS_DATA("stable data", scsi_hba_tran_t))
-_NOTE(SCHEME_PROTECTS_DATA("unshared data", usb_bulk_req_t))
-
 /* scsa2usb_pipe_state values */
 #define	SCSA2USB_PIPE_NORMAL		0x00	/* no reset or clearing	*/
 #define	SCSA2USB_PIPE_CLOSING		0x01	/* closing all pipes */

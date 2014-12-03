@@ -206,15 +206,6 @@
 ./usr/src/common/bignum/mont_mulf.c
 
 #
-# Ignore the sparc Makefiles for x86-only drivers;
-# they're used to build warlock only.
-#
-./usr/src/uts/sparc/sata/Makefile
-./usr/src/uts/sparc/si3124/Makefile
-./usr/src/uts/sparc/nv_sata/Makefile
-./usr/src/uts/sparc/ahci/Makefile
-
-#
 # Ignore uttrack.c.  It is provided as part of the standard
 # ACPI CA source code but provides optional resource tracking
 # functionality which is not used.

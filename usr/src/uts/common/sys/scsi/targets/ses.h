@@ -116,7 +116,6 @@ typedef struct {
 	uchar_t		encstat[4];	/* state && stats */
 } encobj;
 
-#ifndef	__lint				/* no warlock for X86 */
 #ifdef	_KERNEL
 _NOTE(MUTEX_PROTECTS_DATA(scsi_device::sd_mutex, encobj))
 _NOTE(DATA_READABLE_WITHOUT_LOCK(encobj::priv))
@@ -125,7 +124,6 @@ _NOTE(DATA_READABLE_WITHOUT_LOCK(encobj::enctype))
 _NOTE(DATA_READABLE_WITHOUT_LOCK(encobj::encstat))
 _NOTE(DATA_READABLE_WITHOUT_LOCK(encobj::subenclosure))
 #endif	/* _KERNEL */
-#endif	/* __lint */
 
 
 /*
@@ -165,7 +163,6 @@ struct ses_softc {
 	uchar_t		ses_srqsbuf[MAX_SENSE_LENGTH];
 };
 
-#ifndef	__lint				/* no warlock for X86 */
 #ifdef	_KERNEL
 _NOTE(MUTEX_PROTECTS_DATA(scsi_device::sd_mutex, ses_softc))
 _NOTE(MUTEX_PROTECTS_DATA(scsi_device::sd_mutex, ses_softc::ses_lyropen))
@@ -205,7 +202,6 @@ _NOTE(DATA_READABLE_WITHOUT_LOCK(ses_softc::ses_oflag))
 
 _NOTE(SCHEME_PROTECTS_DATA("absurdities", ses_objarg))
 #endif	/* _KERNEL */
-#endif	/* __lint */
 
 
 /*

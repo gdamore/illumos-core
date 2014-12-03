@@ -143,10 +143,8 @@ tavor_cmd_post(tavor_state_t *state, tavor_cmd_post_t *cmdpost)
 		_NOTE(NOW_VISIBLE_TO_OTHER_THREADS(*cmdptr))
 		mutex_enter(&cmdptr->cmd_comp_lock);
 		while (cmdptr->cmd_status == TAVOR_CMD_INVALID_STATUS) {
-#ifndef	__lock_lint
 			cv_wait(&cmdptr->cmd_comp_cv, &cmdptr->cmd_comp_lock);
 			/* NOTE: EXPECT SEVERAL THREADS TO BE WAITING HERE */
-#endif
 		}
 		mutex_exit(&cmdptr->cmd_comp_lock);
 		_NOTE(NOW_INVISIBLE_TO_OTHER_THREADS(*cmdptr))
@@ -590,9 +588,7 @@ tavor_impl_mbox_alloc(tavor_state_t *state, tavor_mboxlist_t *mblist,
 			 * TAVOR_CMD_NOSLEEP.
 			 */
 			mblist->mbl_waiters++;
-#ifndef	__lock_lint
 			cv_wait(&mblist->mbl_cv, &mblist->mbl_lock);
-#endif
 		}
 	}
 
@@ -887,19 +883,12 @@ tavor_outstanding_cmd_alloc(tavor_state_t *state, tavor_cmd_t **cmd_ptr,
 		}
 
 		/*
-		 * Wait (on cv) for a command to become free.  Note: Just
-		 * as we do above in tavor_cmd_post(), we also have the
-		 * "__lock_lint" here to workaround warlock.  Warlock doesn't
-		 * know that other parts of the Tavor may occasionally call
-		 * this routine while holding their own locks, so it complains
-		 * about this cv_wait.  In reality, however, the rest of the
-		 * driver never calls this routine with a lock held unless
-		 * they pass TAVOR_CMD_NOSLEEP.
+		 * Wait (on cv) for a command to become free.
+		 * In reality the rest of the driver never calls this routine
+		 * with a lock held unless they pass TAVOR_CMD_NOSLEEP.
 		 */
 		cmd_list->cml_waiters++;
-#ifndef	__lock_lint
 		cv_wait(&cmd_list->cml_cv, &cmd_list->cml_lock);
-#endif
 	}
 
 	/* Grab the next available command from the list */
@@ -1005,13 +994,9 @@ tavor_write_hcr(tavor_state_t *state, tavor_cmd_post_t *cmdpost,
 	 * with the single thread but in high interrupt context
 	 * (so that this mutex lock cannot be used).
 	 */
-#ifdef __lock_lint
-	mutex_enter(&state->ts_cmd_regs.hcr_lock);
-#else
 	if (!TAVOR_IN_FASTREBOOT(state)) {
 		mutex_enter(&state->ts_cmd_regs.hcr_lock);
 	}
-#endif
 
 	hcr = state->ts_cmd_regs.hcr;
 
@@ -1039,13 +1024,9 @@ tavor_write_hcr(tavor_state_t *state, tavor_cmd_post_t *cmdpost,
 		 * return a "timeout" error.
 		 */
 		if (++count > countmax) {
-#ifdef __lock_lint
-			mutex_exit(&state->ts_cmd_regs.hcr_lock);
-#else
 			if (!TAVOR_IN_FASTREBOOT(state)) {
 				mutex_exit(&state->ts_cmd_regs.hcr_lock);
 			}
-#endif
 			TNF_PROBE_0(tavor_write_hcr_timeout1, TAVOR_TNF_ERROR,
 			    "");
 			TAVOR_TNF_EXIT(tavor_write_hcr);
@@ -1106,14 +1087,10 @@ tavor_write_hcr(tavor_state_t *state, tavor_cmd_post_t *cmdpost,
 			 * then return a "timeout" error.
 			 */
 			if (++count > countmax) {
-#ifdef __lock_lint
-				mutex_exit(&state-> ts_cmd_regs.hcr_lock);
-#else
 				if (!TAVOR_IN_FASTREBOOT(state)) {
 					mutex_exit(&state->
 					    ts_cmd_regs.hcr_lock);
 				}
-#endif
 				TNF_PROBE_0(tavor_write_hcr_timeout2,
 				    TAVOR_TNF_ERROR, "");
 				TAVOR_TNF_EXIT(tavor_write_hcr);
@@ -1140,13 +1117,9 @@ tavor_write_hcr(tavor_state_t *state, tavor_cmd_post_t *cmdpost,
 	}
 
 	/* Drop the "HCR access" lock */
-#ifdef __lock_lint
-	mutex_exit(&state->ts_cmd_regs.hcr_lock);
-#else
 	if (!TAVOR_IN_FASTREBOOT(state)) {
 		mutex_exit(&state->ts_cmd_regs.hcr_lock);
 	}
-#endif
 
 	TAVOR_TNF_EXIT(tavor_write_hcr);
 	return (status);

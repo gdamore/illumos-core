@@ -614,16 +614,6 @@ static int mptsas_timeouts_enabled = 0;
 int mptsas_extreq_sense_bufsize = 256*64;
 
 /*
- * warlock directives
- */
-_NOTE(SCHEME_PROTECTS_DATA("unique per pkt", scsi_pkt \
-	mptsas_cmd NcrTableIndirect buf scsi_cdb scsi_status))
-_NOTE(SCHEME_PROTECTS_DATA("unique per pkt", smp_pkt))
-_NOTE(SCHEME_PROTECTS_DATA("stable data", scsi_device scsi_address))
-_NOTE(SCHEME_PROTECTS_DATA("No Mutex Needed", mptsas_tgt_private))
-_NOTE(SCHEME_PROTECTS_DATA("No Mutex Needed", scsi_hba_tran::tran_tgt_private))
-
-/*
  * SM - HBA statics
  */
 char	*mptsas_driver_rev = MPTSAS_MOD_STRING;
@@ -2310,9 +2300,8 @@ mptsas_cache_destroy(mptsas_t *mpt)
 static int
 mptsas_power(dev_info_t *dip, int component, int level)
 {
-#ifndef __lock_lint
 	_NOTE(ARGUNUSED(component))
-#endif
+
 	mptsas_t	*mpt;
 	int		rval = DDI_SUCCESS;
 	int		polls = 0;
@@ -2955,9 +2944,7 @@ static int
 mptsas_scsi_tgt_init(dev_info_t *hba_dip, dev_info_t *tgt_dip,
     scsi_hba_tran_t *hba_tran, struct scsi_device *sd)
 {
-#ifndef __lock_lint
 	_NOTE(ARGUNUSED(hba_tran))
-#endif
 
 	/*
 	 * At this point, the scsi_device structure already exists
@@ -3148,9 +3135,7 @@ static void
 mptsas_scsi_tgt_free(dev_info_t *hba_dip, dev_info_t *tgt_dip,
     scsi_hba_tran_t *hba_tran, struct scsi_device *sd)
 {
-#ifndef __lock_lint
 	_NOTE(ARGUNUSED(hba_dip, tgt_dip, hba_tran, sd))
-#endif
 
 	mptsas_tgt_private_t	*tgt_private = hba_tran->tran_tgt_private;
 
@@ -3176,9 +3161,8 @@ mptsas_scsi_tgt_free(dev_info_t *hba_dip, dev_info_t *tgt_dip,
 static int
 mptsas_scsi_start(struct scsi_address *ap, struct scsi_pkt *pkt)
 {
-#ifndef __lock_lint
 	_NOTE(ARGUNUSED(ap))
-#endif
+
 	mptsas_t	*mpt = PKT2MPT(pkt);
 	mptsas_cmd_t	*cmd = PKT2CMD(pkt);
 	int		rval;
@@ -3985,9 +3969,8 @@ mptsas_kmem_cache_constructor(void *buf, void *cdrarg, int kmflags)
 static void
 mptsas_kmem_cache_destructor(void *buf, void *cdrarg)
 {
-#ifndef __lock_lint
 	_NOTE(ARGUNUSED(cdrarg))
-#endif
+
 	mptsas_cmd_t	*cmd = buf;
 
 	NDBG4(("mptsas_kmem_cache_destructor"));
@@ -4057,9 +4040,8 @@ mptsas_cache_frames_constructor(void *buf, void *cdrarg, int kmflags)
 static void
 mptsas_cache_frames_destructor(void *buf, void *cdrarg)
 {
-#ifndef __lock_lint
 	_NOTE(ARGUNUSED(cdrarg))
-#endif
+
 	mptsas_cache_frames_t	*p = buf;
 	if (p->m_dma_hdl != NULL) {
 		(void) ddi_dma_unbind_handle(p->m_dma_hdl);
@@ -5793,9 +5775,8 @@ mptsas_intr(caddr_t arg1, caddr_t arg2)
 		/*
 		 * read fifo until empty.
 		 */
-#ifndef __lock_lint
 		_NOTE(CONSTCOND)
-#endif
+
 		while (TRUE) {
 			(void) ddi_dma_sync(mpt->m_dma_post_queue_hdl, 0, 0,
 			    DDI_DMA_SYNC_FORCPU);
@@ -9250,9 +9231,7 @@ static void
 mptsas_set_pkt_reason(mptsas_t *mpt, mptsas_cmd_t *cmd, uchar_t reason,
     uint_t stat)
 {
-#ifndef __lock_lint
 	_NOTE(ARGUNUSED(mpt))
-#endif
 
 	NDBG25(("mptsas_set_pkt_reason: cmd=0x%p reason=%x stat=%x",
 	    (void *)cmd, reason, stat));
@@ -9304,9 +9283,7 @@ mptsas_setup_bus_reset_delay(mptsas_t *mpt)
 static void
 mptsas_watch_reset_delay(void *arg)
 {
-#ifndef __lock_lint
 	_NOTE(ARGUNUSED(arg))
-#endif
 
 	mptsas_t	*mpt;
 	int		not_done = 0;
@@ -9789,9 +9766,7 @@ mptsas_printf(char *fmt, ...)
 static void
 mptsas_watch(void *arg)
 {
-#ifndef __lock_lint
 	_NOTE(ARGUNUSED(arg))
-#endif
 
 	mptsas_t	*mpt;
 	uint32_t	doorbell;
@@ -10537,9 +10512,8 @@ mpi_pre_fw_25_upload(mptsas_t *mpt, mptsas_pt_request_t *pt)
 static void
 mpi_pre_ioc_facts(mptsas_t *mpt, mptsas_pt_request_t *pt)
 {
-#ifndef __lock_lint
 	_NOTE(ARGUNUSED(mpt))
-#endif
+
 	if (pt->request_size != sizeof (MPI2_IOC_FACTS_REQUEST))
 		NDBG15(("mpi_pre_ioc_facts(): Incorrect req size, "
 		    "0x%x, should be 0x%x, dataoutsz 0x%x",
@@ -10559,9 +10533,8 @@ mpi_pre_ioc_facts(mptsas_t *mpt, mptsas_pt_request_t *pt)
 static void
 mpi_pre_port_facts(mptsas_t *mpt, mptsas_pt_request_t *pt)
 {
-#ifndef __lock_lint
 	_NOTE(ARGUNUSED(mpt))
-#endif
+
 	if (pt->request_size != sizeof (MPI2_PORT_FACTS_REQUEST))
 		NDBG15(("mpi_pre_port_facts(): Incorrect req size, "
 		    "0x%x, should be 0x%x, dataoutsz 0x%x",
@@ -10581,9 +10554,8 @@ mpi_pre_port_facts(mptsas_t *mpt, mptsas_pt_request_t *pt)
 static void
 mpi_pre_sata_passthrough(mptsas_t *mpt, mptsas_pt_request_t *pt)
 {
-#ifndef __lock_lint
 	_NOTE(ARGUNUSED(mpt))
-#endif
+
 	pt->sgl_offset = offsetof(MPI2_SATA_PASSTHROUGH_REQUEST, SGL);
 	if (pt->request_size != pt->sgl_offset)
 		NDBG15(("mpi_pre_sata_passthrough(): Incorrect req size, "
@@ -10599,9 +10571,8 @@ mpi_pre_sata_passthrough(mptsas_t *mpt, mptsas_pt_request_t *pt)
 static void
 mpi_pre_smp_passthrough(mptsas_t *mpt, mptsas_pt_request_t *pt)
 {
-#ifndef __lock_lint
 	_NOTE(ARGUNUSED(mpt))
-#endif
+
 	pt->sgl_offset = offsetof(MPI2_SMP_PASSTHROUGH_REQUEST, SGL);
 	if (pt->request_size != pt->sgl_offset)
 		NDBG15(("mpi_pre_smp_passthrough(): Incorrect req size, "
@@ -10620,9 +10591,8 @@ mpi_pre_smp_passthrough(mptsas_t *mpt, mptsas_pt_request_t *pt)
 static void
 mpi_pre_config(mptsas_t *mpt, mptsas_pt_request_t *pt)
 {
-#ifndef __lock_lint
 	_NOTE(ARGUNUSED(mpt))
-#endif
+
 	pt->sgl_offset = offsetof(MPI2_CONFIG_REQUEST, PageBufferSGE);
 	if (pt->request_size != pt->sgl_offset)
 		NDBG15(("mpi_pre_config(): Incorrect req size, 0x%x, "
@@ -10641,9 +10611,8 @@ mpi_pre_config(mptsas_t *mpt, mptsas_pt_request_t *pt)
 static void
 mpi_pre_scsi_io_req(mptsas_t *mpt, mptsas_pt_request_t *pt)
 {
-#ifndef __lock_lint
 	_NOTE(ARGUNUSED(mpt))
-#endif
+
 	pt->sgl_offset = offsetof(MPI2_SCSI_IO_REQUEST, SGL);
 	if (pt->request_size != pt->sgl_offset)
 		NDBG15(("mpi_pre_config(): Incorrect req size, 0x%x, "
@@ -10662,9 +10631,8 @@ mpi_pre_scsi_io_req(mptsas_t *mpt, mptsas_pt_request_t *pt)
 static void
 mpi_pre_sas_io_unit_control(mptsas_t *mpt, mptsas_pt_request_t *pt)
 {
-#ifndef __lock_lint
 	_NOTE(ARGUNUSED(mpt))
-#endif
+
 	pt->sgl_offset = (uint16_t)pt->request_size;
 }
 

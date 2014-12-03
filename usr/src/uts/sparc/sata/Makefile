@@ -44,8 +44,6 @@ UTSBASE	= ../..
 MODULE		= sata
 OBJECTS		= $(SATA_OBJS:%=$(OBJS_DIR)/%)
 LINTS		= $(SATA_OBJS:%.o=$(LINTS_DIR)/%.ln)
-WARLOCK_OUT     = $(SATA_OBJS:%.o=%.ll)
-WARLOCK_OK      = $(MODULE).ok
 ROOTMODULE	= $(ROOT_MISC_DIR)/$(MODULE)
 
 #
@@ -80,11 +78,9 @@ def:		$(DEF_DEPS)
 
 all:		$(ALL_DEPS)
 
-clean:		$(CLEAN_DEPS); \
-		$(RM) $(WARLOCK_OUT) $(WARLOCK_OK)
+clean:		$(CLEAN_DEPS);
 
-clobber:	$(CLOBBER_DEPS); \
-		$(RM) $(WARLOCK_OUT) $(WARLOCK_OK)
+clobber:	$(CLOBBER_DEPS);
 
 lint:		$(LINT_DEPS)
 
@@ -105,24 +101,3 @@ CERRWARN	+= -_gcc=-Wno-empty-body
 #	Include common targets.
 #
 include $(UTSBASE)/sparc/Makefile.targ
-
-#
-#       Defines for local commands.
-#
-WLCC            = wlcc
-TOUCH           = touch
-WARLOCK         = warlock
-
-#
-#       Warlock targets
-#
-
-SATA_FILES = $(SATA_OBJS:%.o=%.ll)
-
-warlock: $(MODULE).ok
-
-%.ok:   $(SATA_FILES)
-	$(TOUCH) $@
-
-%.ll: $(UTSBASE)/common/io/sata/impl/%.c
-	$(WLCC) $(CPPFLAGS) -D __sparcv9 -DDEBUG -o $@ $<

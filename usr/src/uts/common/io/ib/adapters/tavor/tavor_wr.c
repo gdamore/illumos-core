@@ -2399,13 +2399,9 @@ tavor_wrid_from_reset_handling(tavor_state_t *state, tavor_qphdl_t qp)
 
 	qp_srq_en = qp->qp_srq_en;
 
-#ifdef __lock_lint
-	mutex_enter(&qp->qp_srqhdl->srq_lock);
-#else
 	if (qp_srq_en == TAVOR_QP_SRQ_ENABLED) {
 		mutex_enter(&qp->qp_srqhdl->srq_lock);
 	}
-#endif
 	/*
 	 * Now we repeat all the above operations for the receive work queue,
 	 * or shared receive work queue.
@@ -2447,13 +2443,9 @@ tavor_wrid_from_reset_handling(tavor_state_t *state, tavor_qphdl_t qp)
 				    swq);
 			}
 
-#ifdef __lock_lint
-			mutex_exit(&qp->qp_srqhdl->srq_lock);
-#else
 			if (qp_srq_en == TAVOR_QP_SRQ_ENABLED) {
 				mutex_exit(&qp->qp_srqhdl->srq_lock);
 			}
-#endif
 
 			tavor_wrid_wqhdr_unlock_both(qp);
 			TNF_PROBE_0(tavor_wrid_from_reset_handling_wqhdr_fail,
@@ -2531,13 +2523,9 @@ tavor_wrid_from_reset_handling(tavor_state_t *state, tavor_qphdl_t qp)
 			tavor_cq_wqhdr_remove(qp->qp_rq_cqhdl, rwq);
 		}
 
-#ifdef __lock_lint
-		mutex_exit(&qp->qp_srqhdl->srq_lock);
-#else
 		if (qp_srq_en == TAVOR_QP_SRQ_ENABLED) {
 			mutex_exit(&qp->qp_srqhdl->srq_lock);
 		}
-#endif
 
 		tavor_wrid_wqhdr_unlock_both(qp);
 		TNF_PROBE_0(tavor_wrid_from_reset_handling_wridlist_fail,
@@ -2586,13 +2574,9 @@ tavor_wrid_from_reset_handling(tavor_state_t *state, tavor_qphdl_t qp)
 	tavor_wrid_wqhdr_add(rwq, r_wridlist);
 	mutex_exit(&rwq->wq_wrid_wql->wql_lock);
 
-#ifdef __lock_lint
-	mutex_exit(&qp->qp_srqhdl->srq_lock);
-#else
 	if (qp_srq_en == TAVOR_QP_SRQ_ENABLED) {
 		mutex_exit(&qp->qp_srqhdl->srq_lock);
 	}
-#endif
 
 	_NOTE(NOW_VISIBLE_TO_OTHER_THREADS(*r_wridlist))
 	_NOTE(NOW_VISIBLE_TO_OTHER_THREADS(*rwq))
@@ -3123,9 +3107,6 @@ tavor_wrid_cq_force_reap(tavor_cqhdl_t cq)
 	 * then we can be assured that there are no longer any QP associated
 	 * with the CQ that we are trying to free.
 	 */
-#ifdef __lock_lint
-	tavor_wrid_wqhdr_compare(NULL, NULL);
-#endif
 	treep = &cq->cq_wrid_wqhdr_avl_tree;
 	while ((curr = avl_destroy_nodes(treep, &cookie)) != NULL) {
 		_NOTE(NOW_INVISIBLE_TO_OTHER_THREADS(*curr))
@@ -3327,9 +3308,6 @@ tavor_wrid_wqhdr_find(tavor_cqhdl_t cq, uint_t qpn, uint_t wq_type)
 	 */
 	cmp.cmp_qpn = qpn;
 	cmp.cmp_type = wq_type;
-#ifdef __lock_lint
-	tavor_wrid_wqhdr_compare(NULL, NULL);
-#endif
 	curr = avl_find(&cq->cq_wrid_wqhdr_avl_tree, &cmp, NULL);
 
 	TAVOR_TNF_EXIT(tavor_wrid_wqhdr_find);
@@ -3602,9 +3580,6 @@ _NOTE(MUTEX_ACQUIRED_AS_SIDE_EFFECT(&rq_cq->cq_wrid_wqhdr_lock))
 	 */
 	if (sq_cq == rq_cq) {
 		mutex_enter(&sq_cq->cq_wrid_wqhdr_lock);
-#ifdef	__lock_lint
-		mutex_enter(&rq_cq->cq_wrid_wqhdr_lock);
-#endif
 	} else {
 		mutex_enter(&sq_cq->cq_wrid_wqhdr_lock);
 		mutex_enter(&rq_cq->cq_wrid_wqhdr_lock);
@@ -3630,9 +3605,6 @@ _NOTE(LOCK_RELEASED_AS_SIDE_EFFECT(&sq_cq->cq_wrid_wqhdr_lock))
 	 * See tavor_wrid_wqhdr_lock_both() above for more detail
 	 */
 	if (sq_cq == rq_cq) {
-#ifdef	__lock_lint
-		mutex_exit(&rq_cq->cq_wrid_wqhdr_lock);
-#endif
 		mutex_exit(&sq_cq->cq_wrid_wqhdr_lock);
 	} else {
 		mutex_exit(&rq_cq->cq_wrid_wqhdr_lock);
@@ -3655,9 +3627,6 @@ tavor_cq_wqhdr_add(tavor_cqhdl_t cq, tavor_workq_hdr_t *wqhdr)
 
 	cmp.cmp_qpn = wqhdr->wq_qpn;
 	cmp.cmp_type = wqhdr->wq_type;
-#ifdef __lock_lint
-	tavor_wrid_wqhdr_compare(NULL, NULL);
-#endif
 	(void) avl_find(&cq->cq_wrid_wqhdr_avl_tree, &cmp, &where);
 	/*
 	 * If the CQ's work queue list is empty, then just add it.
@@ -3676,9 +3645,6 @@ tavor_cq_wqhdr_remove(tavor_cqhdl_t cq, tavor_workq_hdr_t *wqhdr)
 {
 	ASSERT(MUTEX_HELD(&cq->cq_wrid_wqhdr_lock));
 
-#ifdef __lock_lint
-	tavor_wrid_wqhdr_compare(NULL, NULL);
-#endif
 	/* Remove "wqhdr" from the work queue header list on "cq" */
 	avl_remove(&cq->cq_wrid_wqhdr_avl_tree, wqhdr);
 

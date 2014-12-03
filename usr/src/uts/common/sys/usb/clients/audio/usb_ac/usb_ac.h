@@ -263,50 +263,6 @@ struct usb_ac_state {
 	char			dstr[64];
 };
 
-/* warlock directives, stable data */
-_NOTE(MUTEX_PROTECTS_DATA(usb_ac_state_t::usb_ac_mutex, usb_ac_state_t))
-_NOTE(MUTEX_PROTECTS_DATA(usb_ac_state_t::usb_ac_mutex, usb_ac_power_t))
-_NOTE(MUTEX_PROTECTS_DATA(usb_ac_state_t::usb_ac_mutex, usb_ac_plumbed_t))
-_NOTE(MUTEX_PROTECTS_DATA(usb_audio_eng_t::lock, usb_audio_eng_t))
-_NOTE(MUTEX_PROTECTS_DATA(usb_audio_eng_t::lock, usb_audio_format_t))
-_NOTE(MUTEX_PROTECTS_DATA(usb_audio_ctrl_t::ctrl_mutex, usb_audio_ctrl_t))
-
-
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_ac_state_t::usb_ac_dip))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_ac_state_t::usb_ac_ser_acc))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_ac_state_t::usb_ac_pm))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_ac_state_t::usb_ac_instance))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_ac_state_t::usb_ac_default_ph))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_ac_state_t::usb_ac_log_handle))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_ac_state_t::usb_ac_if_descr))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_ac_state_t::usb_ac_dev_data))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_ac_state_t::usb_ac_ifno))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_ac_state_t::flags))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_ac_state_t::usb_ac_input_ports))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_ac_state_t::engines))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_ac_state_t::usb_ac_audio_dev))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_ac_state_t::controls))
-
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_audio_eng_t::af_eflags))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_audio_eng_t::streams))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_audio_eng_t::statep))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_audio_eng_t::fmt))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_audio_eng_t::fragfr))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_audio_eng_t::frsmshift))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_audio_eng_t::started))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_audio_eng_t::af_engp))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_audio_eng_t::io_count))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_audio_eng_t::intrate))
-
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_audio_ctrl_t::statep))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_audio_ctrl_t::af_ctrlp))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_audio_ctrl_t::cval))
-
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_ac_plumbed_t::acp_tqp))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_ac_plumbed_t::acp_uacp))
-
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_audio_format_t::ch))
-
 /* usb_ac driver only care about two states:  plumbed or unplumbed */
 #define	USB_AC_STATE_UNPLUMBED		0
 #define	USB_AC_STATE_PLUMBED		1

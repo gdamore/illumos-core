@@ -155,20 +155,6 @@ static int fas_enable_untagged;
 #endif
 
 /*
- * warlock directives
- */
-_NOTE(DATA_READABLE_WITHOUT_LOCK(dma fasdebug))
-_NOTE(SCHEME_PROTECTS_DATA("just test variables", fas_transport_busy))
-_NOTE(SCHEME_PROTECTS_DATA("just test variables", fas_transport_busy_rqs))
-_NOTE(SCHEME_PROTECTS_DATA("just test variables", fas_transport_reject))
-_NOTE(SCHEME_PROTECTS_DATA("just test variables", fas_arqs_failure))
-_NOTE(SCHEME_PROTECTS_DATA("just test variables", fas_tran_err))
-_NOTE(MUTEX_PROTECTS_DATA(fas_log_mutex, fas_log_buf))
-_NOTE(MUTEX_PROTECTS_DATA(fas_global_mutex, fas_reset_watch))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(fas_state fas_head fas_tail \
-	fas_scsi_watchdog_tick fas_tick))
-
-/*
  * function prototypes
  *
  * scsa functions are exported by means of the transport table:
@@ -1376,10 +1362,6 @@ fas_quiesce_bus(struct fas *fas)
 			(void) fas_istart(fas);
 			if (fas->f_quiesce_timeid != 0) {
 				mutex_exit(FAS_MUTEX(fas));
-#ifndef __lock_lint	/* warlock complains but there is a NOTE on this */
-				(void) untimeout(fas->f_quiesce_timeid);
-				fas->f_quiesce_timeid = 0;
-#endif
 				return (-1);
 			}
 			mutex_exit(FAS_MUTEX(fas));
@@ -6980,17 +6962,6 @@ fas_create_arq_pkt(struct fas *fas, struct scsi_address *ap)
 	rqpktp->cmd_pkt->pkt_ha_private = rqpktp;
 	fas->f_arq_pkt[slot] = rqpktp;
 
-	/*
-	 * we need a function ptr here so abort/reset can
-	 * defer callbacks; fas_call_pkt_comp() calls
-	 * fas_complete_arq_pkt() directly without releasing the lock
-	 * However, since we are not calling back directly thru
-	 * pkt_comp, don't check this with warlock
-	 */
-#ifndef __lock_lint
-	rqpktp->cmd_pkt->pkt_comp =
-	    (void (*)(struct scsi_pkt *))fas_complete_arq_pkt;
-#endif
 	return (0);
 }
 
