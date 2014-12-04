@@ -931,7 +931,6 @@ PORTSYS=			\
 	execv.o			\
 	fcntl.o			\
 	fexecve.o		\
-	flock.o			\
 	getpagesizes.o		\
 	getpeerucred.o		\
 	inst_sync.o		\

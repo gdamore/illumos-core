@@ -120,17 +120,6 @@ typedef struct fpollinfo {
 #define	FCLOEXEC	0x800000	/* O_CLOEXEC = 0x800000 */
 #define	FDIRECTORY	0x1000000	/* O_DIRECTORY = 0x1000000 */
 
-#if !defined(_KERNEL) && !defined(_STRICT_SYMBOLS)
-/*
- * BSD compatible flock implementation.  Here for historical reasons.
- */
-#define	LOCK_SH		1	/* shared lock */
-#define	LOCK_EX		2	/* exclusive lock */
-#define	LOCK_NB		4	/* non-blocking */
-#define	LOCK_UN		8	/* unlock */
-extern int flock(int, int);
-#endif	/* !_KERNEL && !_STRICT_SYMBOLS */
-
 #ifdef _KERNEL
 
 /*
