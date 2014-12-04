@@ -29,8 +29,7 @@ SUBDIRS1 = \
 	digest \
 	elfsign \
 	kmfcfg \
-	pktool \
-	tpmadm
+	pktool
 
 SUBDIRS2 = \
 	etc \

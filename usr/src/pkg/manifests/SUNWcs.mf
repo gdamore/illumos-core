@@ -837,7 +837,6 @@ file path=usr/bin/tail mode=0555
 file path=usr/bin/tic mode=0555
 file path=usr/bin/time mode=0555
 file path=usr/bin/tip mode=4511 owner=uucp
-file path=usr/bin/tpmadm mode=0555
 file path=usr/bin/tput mode=0555
 file path=usr/bin/tr mode=0555
 file path=usr/bin/true mode=0555

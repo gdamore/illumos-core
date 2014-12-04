@@ -512,7 +512,6 @@ _MANFILES=	6to4relay.1m		\
 		tnctl.1m		\
 		tnd.1m			\
 		tninfo.1m		\
-		tpmadm.1m		\
 		traceroute.1m		\
 		trapstat.1m		\
 		ttyadm.1m		\

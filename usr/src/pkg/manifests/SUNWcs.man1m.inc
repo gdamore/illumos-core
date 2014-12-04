@@ -251,7 +251,6 @@ file path=usr/share/man/man1m/syseventd.1m
 file path=usr/share/man/man1m/syslogd.1m
 file path=usr/share/man/man1m/tapes.1m
 file path=usr/share/man/man1m/tic.1m
-file path=usr/share/man/man1m/tpmadm.1m
 file path=usr/share/man/man1m/traceroute.1m
 file path=usr/share/man/man1m/trapstat.1m
 file path=usr/share/man/man1m/ttyadm.1m

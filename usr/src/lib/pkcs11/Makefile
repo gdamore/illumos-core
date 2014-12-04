@@ -36,8 +36,7 @@ SUBDIRS = \
 	libsoftcrypto   \
 	libkcfd		\
 	pkcs11_kernel	\
-	pkcs11_softtoken \
-	pkcs11_tpm
+	pkcs11_softtoken
 
 all 	:=	TARGET= all
 clean 	:=	TARGET= clean
