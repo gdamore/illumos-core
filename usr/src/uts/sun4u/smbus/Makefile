@@ -83,27 +83,6 @@ clean.lint:	$(CLEAN_LINT_DEPS)
 install:	$(INSTALL_DEPS)
 
 #
-#	Defines for local commands.
-#
-WLCC		= wlcc
-TOUCH		= touch
-WARLOCK		= warlock
-
-#
-#	Warlock targets
-#
-
-SMBUS = $(SMBUS_OBJS:%.o=%.ll)
-
-warlock: $(MODULE).ok 
-
-%.ok:	$(SMBUS_FILES)
-	$(TOUCH) $@
-
-%.ll: $(UTSBASE)/sun4u/io/i2c/nexus/smbus/%.c
-	$(WLCC) $(CFLAGS) $(CPPFLAGS) -DDEBUG -o $@ $<
-
-#
 #	Include common targets
 #
 include $(UTSBASE)/sun4u/Makefile.targ

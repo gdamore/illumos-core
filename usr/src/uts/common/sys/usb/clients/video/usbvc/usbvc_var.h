@@ -325,46 +325,12 @@ if (ddi_copyin((caddr_t)arg, &arg_name, sizeof (arg_name), mode)) { \
 /* Length of the Frame descriptor which has continuous frame intervals */
 #define	USBVC_FRAME_LEN_CON	38
 
-
 /*
  * According to usb2.0 spec (table 9-13), for all ep, bits 10..0 specify the
  * max pkt size; for high speed ep, bits 12..11 specify the number of
  * additional transaction opportunities per microframe.
  */
 #define	HS_PKT_SIZE(pktsize) (pktsize & 0x07ff) * (1 + ((pktsize >> 11) & 3))
-
-/*
- * warlock directives
- * _NOTE is an advice for locklint.  Locklint checks lock use for deadlocks.
- */
-_NOTE(MUTEX_PROTECTS_DATA(usbvc_state_t::usbvc_mutex, usbvc_state_t))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usbvc_state_t::{
-	usbvc_dip
-	usbvc_pm
-	usbvc_log_handle
-	usbvc_reg
-	usbvc_default_ph
-	usbvc_vc_header
-	usbvc_term_list
-	usbvc_unit_list
-	usbvc_stream_list
-}))
-
-_NOTE(SCHEME_PROTECTS_DATA("stable data", usb_pipe_policy))
-_NOTE(SCHEME_PROTECTS_DATA("USBA", usbvc_stream_if::datain_ph))
-_NOTE(SCHEME_PROTECTS_DATA("USBA", usbvc_stream_if::curr_alt))
-_NOTE(SCHEME_PROTECTS_DATA("USBA", usbvc_stream_if::curr_ep))
-_NOTE(SCHEME_PROTECTS_DATA("unshared data", usbvc_buf::umem_cookie))
-_NOTE(SCHEME_PROTECTS_DATA("unshared data", usbvc_buf::data))
-_NOTE(SCHEME_PROTECTS_DATA("unshared data", usbvc_v4l2_ctrl))
-_NOTE(SCHEME_PROTECTS_DATA("unshared data", usbvc_v4l2_ctrl_map))
-_NOTE(SCHEME_PROTECTS_DATA("unshared data", mblk_t))
-_NOTE(SCHEME_PROTECTS_DATA("unshared data", buf))
-_NOTE(SCHEME_PROTECTS_DATA("unshared data", usb_isoc_req))
-_NOTE(SCHEME_PROTECTS_DATA("unshared data", v4l2_queryctrl))
-_NOTE(SCHEME_PROTECTS_DATA("unshared data", v4l2_format))
-_NOTE(SCHEME_PROTECTS_DATA("unshared data", v4l2_control))
-_NOTE(SCHEME_PROTECTS_DATA("unshared data", v4l2_streamparm))
 
 int	usbvc_open_isoc_pipe(usbvc_state_t *, usbvc_stream_if_t *);
 int	usbvc_start_isoc_polling(usbvc_state_t *, usbvc_stream_if_t *, uchar_t);

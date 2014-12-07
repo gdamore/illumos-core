@@ -167,10 +167,8 @@ retry:
 		_NOTE(NOW_VISIBLE_TO_OTHER_THREADS(*cmdptr))
 		mutex_enter(&cmdptr->cmd_comp_lock);
 		while (cmdptr->cmd_status == HERMON_CMD_INVALID_STATUS) {
-#ifndef	__lock_lint
 			cv_wait(&cmdptr->cmd_comp_cv, &cmdptr->cmd_comp_lock);
 			/* NOTE: EXPECT SEVERAL THREADS TO BE WAITING HERE */
-#endif
 		}
 		mutex_exit(&cmdptr->cmd_comp_lock);
 		_NOTE(NOW_INVISIBLE_TO_OTHER_THREADS(*cmdptr))
@@ -614,9 +612,7 @@ hermon_impl_mbox_alloc(hermon_state_t *state, hermon_mboxlist_t *mblist,
 			 * HERMON_CMD_NOSLEEP.
 			 */
 			mblist->mbl_waiters++;
-#ifndef	__lock_lint
 			cv_wait(&mblist->mbl_cv, &mblist->mbl_lock);
-#endif
 		}
 	}
 
@@ -888,9 +884,7 @@ hermon_outstanding_cmd_alloc(hermon_state_t *state, hermon_cmd_t **cmd_ptr,
 		 * they pass HERMON_CMD_NOSLEEP.
 		 */
 		cmd_list->cml_waiters++;
-#ifndef	__lock_lint
 		cv_wait(&cmd_list->cml_cv, &cmd_list->cml_lock);
-#endif
 	}
 
 	/* Grab the next available command from the list */
@@ -995,13 +989,9 @@ hermon_write_hcr(hermon_state_t *state, hermon_cmd_post_t *cmdpost,
 	 * with the single thread but in high interrupt context
 	 * (so that this mutex lock cannot be used).
 	 */
-#ifdef __lock_lint
-	mutex_enter(&state->hs_cmd_regs.hcr_lock);
-#else
 	if (!HERMON_IN_FASTREBOOT(state)) {
 		mutex_enter(&state->hs_cmd_regs.hcr_lock);
 	}
-#endif
 	hcr = state->hs_cmd_regs.hcr;
 
 	/*
@@ -1033,13 +1023,9 @@ hermon_write_hcr(hermon_state_t *state, hermon_cmd_post_t *cmdpost,
 		 * return a "timeout" error.
 		 */
 		if (++count > countmax) {
-#ifdef __lock_lint
-			mutex_exit(&state->hs_cmd_regs.hcr_lock);
-#else
 			if (!HERMON_IN_FASTREBOOT(state)) {
 				mutex_exit(&state->hs_cmd_regs.hcr_lock);
 			}
-#endif
 			cmn_err(CE_NOTE, "write_hcr: cannot start cmd");
 			return (HERMON_CMD_TIMEOUT_GOBIT);
 		}
@@ -1130,14 +1116,10 @@ hermon_write_hcr(hermon_state_t *state, hermon_cmd_post_t *cmdpost,
 			 * then return a "timeout" error.
 			 */
 			if (++count > countmax) {
-#ifdef __lock_lint
-				mutex_exit(&state-> hs_cmd_regs.hcr_lock);
-#else
 				if (!HERMON_IN_FASTREBOOT(state)) {
 					mutex_exit(&state->
 					    hs_cmd_regs.hcr_lock);
 				}
-#endif
 				cmn_err(CE_NOTE,
 				    "write_hcr: cannot complete cmd");
 				return (HERMON_CMD_TIMEOUT_GOBIT);
@@ -1172,13 +1154,9 @@ hermon_write_hcr(hermon_state_t *state, hermon_cmd_post_t *cmdpost,
 	}
 
 	/* Drop the "HCR access" lock */
-#ifdef __lock_lint
-	mutex_exit(&state->hs_cmd_regs.hcr_lock);
-#else
 	if (!HERMON_IN_FASTREBOOT(state)) {
 		mutex_exit(&state->hs_cmd_regs.hcr_lock);
 	}
-#endif
 	if (hw_error == B_TRUE) {
 		*hw_err = HCA_PIO_TRANSIENT;
 	} else {
@@ -1192,13 +1170,9 @@ hermon_write_hcr(hermon_state_t *state, hermon_cmd_post_t *cmdpost,
 	return (status);
 
 pio_error:
-#ifdef __lock_lint
-	mutex_exit(&state->hs_cmd_regs.hcr_lock);
-#else
 	if (!HERMON_IN_FASTREBOOT(state)) {
 		mutex_exit(&state->hs_cmd_regs.hcr_lock);
 	}
-#endif
 	hermon_fm_ereport(state, HCA_SYS_ERR, HCA_ERR_NON_FATAL);
 	*hw_err = HCA_PIO_PERSISTENT;
 	return (HERMON_CMD_INVALID_STATUS);

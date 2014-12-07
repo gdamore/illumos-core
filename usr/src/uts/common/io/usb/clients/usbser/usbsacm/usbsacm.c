@@ -2605,11 +2605,9 @@ usbsacm_set_line_coding(usbsacm_port_t *acm_port, usb_cdc_line_coding_t *lc)
 		return (USB_NO_RESOURCES);
 	}
 
-#ifndef __lock_lint /* warlock gets confused here */
 	/* LINTED E_BAD_PTR_CAST_ALIGN */
 	*((usb_cdc_line_coding_t *)bp->b_wptr) = *lc;
 	bp->b_wptr += USB_CDC_LINE_CODING_LEN;
-#endif
 
 	ret = usbsacm_req_write(acm_port, USB_CDC_REQ_SET_LINE_CODING, 0, &bp);
 

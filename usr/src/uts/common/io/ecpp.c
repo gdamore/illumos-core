@@ -3577,18 +3577,6 @@ ecpp_error(dev_info_t *dip, char *fmt, ...)
 	}
 
 	/*
-	 * This function is supposed to be a quick non-blockable
-	 * wrapper for cmn_err(9F), which provides a sensible degree
-	 * of debug message throttling.  Not using any type of lock
-	 * is a requirement, but this also leaves two static variables
-	 * - last and lastfmt - unprotected. However, this will not do
-	 * any harm to driver functionality, it can only weaken throttling.
-	 * The following directive asks warlock to not worry about these
-	 * variables.
-	 */
-	_NOTE(NOW_INVISIBLE_TO_OTHER_THREADS(last, lastfmt))
-
-	/*
 	 * Don't print same error message too often.
 	 */
 	now = gethrestime_sec();

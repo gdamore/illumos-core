@@ -444,14 +444,6 @@ typedef struct usb_common_power_struct {
 	uint8_t		uc_current_power;	/* current power level */
 } usb_common_power_t;
 
-/* warlock directives, stable data */
-
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_common_power_t::uc_usb_statep))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_common_power_t::uc_wakeup_enabled))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_common_power_t::uc_pwr_states))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_common_power_t::uc_pm_capabilities))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(usb_common_power_t::uc_current_power))
-
 /* power management */
 int usba_common_power(dev_info_t *, uint8_t *, int *, int);
 

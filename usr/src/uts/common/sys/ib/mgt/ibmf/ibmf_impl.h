@@ -140,14 +140,6 @@ extern "C" {
 		cv_signal(&(altqp)->isq_recv_cb_teardown_cv);		\
 }
 
-/* warlock annotations for ibmf.h and ibmf_msg.h structures */
-_NOTE(READ_ONLY_DATA(_ibmf_msg::im_msgbufs_send.im_bufs_cl_data
-	_ibmf_msg::im_msgbufs_send.im_bufs_cl_data_len
-	_ibmf_msg::im_msgbufs_send.im_bufs_cl_hdr
-	_ibmf_msg::im_msgbufs_send.im_bufs_cl_hdr_len
-	_ibmf_msg::im_msgbufs_send.im_bufs_mad_hdr
-	_ib_mad_hdr_t))
-
 /*
  * WQE pool management contexts
  */

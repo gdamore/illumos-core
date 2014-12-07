@@ -40,9 +40,6 @@
 #include <sys/vt_impl.h>
 #include <sys/note.h>
 
-/* warlock in this file only cares about variables shared by vt and devfs */
-_NOTE(SCHEME_PROTECTS_DATA("Do not care", sdev_node vattr vnode))
-
 #define	DEVVT_UID_DEFAULT	SDEV_UID_DEFAULT
 #define	DEVVT_GID_DEFAULT	(0)
 #define	DEVVT_DEVMODE_DEFAULT	(0600)
@@ -197,13 +194,8 @@ devvt_lookup(struct vnode *dvp, char *nm, struct vnode **vpp,
 		type = SDEV_VATTR;
 	}
 
-/* Give warlock a more clear call graph */
-#ifndef __lock_lint
 	error = devname_lookup_func(sdvp, nm, vpp, cred,
 	    devvt_create_rvp, type);
-#else
-	devvt_create_rvp(0, 0, 0, 0, 0, 0);
-#endif
 
 	if (error == 0) {
 		switch ((*vpp)->v_type) {
@@ -362,15 +354,10 @@ devvt_cleandir(struct vnode *dvp, struct cred *cred)
 	cnt = VC_INSTANCES_COUNT;
 	mutex_exit(&vc_lock);
 
-/* We have to fool warlock this way, otherwise it will complain */
-#ifndef	__lock_lint
 	if (rw_tryupgrade(&sdvp->sdev_contents) == NULL) {
 		rw_exit(&sdvp->sdev_contents);
 		rw_enter(&sdvp->sdev_contents, RW_WRITER);
 	}
-#else
-	rw_enter(&sdvp->sdev_contents, RW_WRITER);
-#endif
 
 	/* 1.  prune invalid nodes and rebuild stale symlinks */
 	devvt_prunedir(sdvp);

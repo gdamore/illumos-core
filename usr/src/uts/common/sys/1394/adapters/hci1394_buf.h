@@ -94,9 +94,6 @@ int hci1394_buf_alloc(hci1394_drvinfo_t *drvinfo, hci1394_buf_parms_t *parms,
     hci1394_buf_info_t *info, hci1394_buf_handle_t *handle);
 void hci1394_buf_free(hci1394_buf_handle_t *handle);
 
-/* warlock directives */
-_NOTE(SCHEME_PROTECTS_DATA("Single user", hci1394_buf_info_s hci1394_buf_s))
-
 #ifdef __cplusplus
 }
 #endif

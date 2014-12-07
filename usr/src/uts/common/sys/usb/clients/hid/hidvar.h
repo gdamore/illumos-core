@@ -224,23 +224,6 @@ typedef struct hid_state {
 	int			hid_external_flag;	/* see below */
 } hid_state_t;
 
-/* warlock directives, stable data */
-_NOTE(MUTEX_PROTECTS_DATA(hid_state_t::hid_mutex, hid_state_t))
-_NOTE(MUTEX_PROTECTS_DATA(hid_state_t::hid_mutex, hid_power_t))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(hid_state_t::hid_dip))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(hid_state_t::hid_pm))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(hid_state_t::hid_dev_data))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(hid_state_t::hid_instance))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(hid_state_t::hid_interrupt_pipe))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(hid_state_t::hid_ep_intr_descr))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(hid_state_t::hid_default_pipe))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(hid_state_t::hid_log_handle))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(hid_state_t::hid_if_descr))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(hid_state_t::hid_dev_data))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(hid_state_t::hid_dev_descr))
-_NOTE(SCHEME_PROTECTS_DATA("stable data", usb_ep_descr))
-
-
 /*
  * The hid_polled_console_info field is a handle from usba.  The
  * handle is used when the kernel is in the single thread mode

@@ -306,15 +306,6 @@ typedef struct uhci_pipe_private {
 	usb_opaque_t		pp_client_periodic_in_reqp;
 } uhci_pipe_private_t;
 
-/* warlock directives, stable data */
-_NOTE(MUTEX_PROTECTS_DATA(uhci_state_t::uhci_int_mutex, uhci_pipe_private_t))
-_NOTE(LOCK_ORDER(uhci_state::uhci_int_mutex \
-		usba_pipe_handle_data::p_mutex \
-		usba_device::usb_mutex \
-		usba_ph_impl::usba_ph_mutex))
-_NOTE(SCHEME_PROTECTS_DATA("private mutex", kstat_io))
-_NOTE(SCHEME_PROTECTS_DATA("unshared", usb_isoc_pkt_descr))
-
 /*
  * Pipe states
  *

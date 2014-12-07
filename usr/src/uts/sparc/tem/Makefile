@@ -43,9 +43,6 @@ OBJECTS		= $(TEM_OBJS:%=$(OBJS_DIR)/%)
 
 LINTS		= $(TEM_OBJS:%.o=$(LINTS_DIR)/%.ln)
 ROOTMODULE	= $(ROOT_MISC_DIR)/$(MODULE)
-WARLOCK_OUT	= $(TEM_OBJS:%.o=%.ll)
-WARLOCK_OK	= $(MODULE).ok
-WLCMD_DIR	= $(UTSBASE)/common/io/warlock
 
 #
 #	Include common rules.
@@ -98,26 +95,3 @@ install:	$(INSTALL_DEPS)
 #	Include common targets.
 #
 include $(UTSBASE)/sparc/Makefile.targ
-
-#
-#	Defines for local commands
-#
-TEST		= test
-WLCC		= wlcc
-TOUCH		= touch
-WARLOCK		= warlock
-
-#
-#	warlock targets
-#
-
-warlock:	$(WARLOCK_OUT) warlock_ddi.files
-	$(WARLOCK) -c $(WLCMD_DIR)/tem.wlcmd $(WARLOCK_OUT) \
-	-l ../../sparc/warlock/ddi_dki_impl.ll
-	$(TOUCH) $(WARLOCK_OK)
-
-%.ll:	$(UTSBASE)/common/io/%.c
-	$(WLCC) $(CPPFLAGS) -DDEBUG -o $@ $<
-
-warlock_ddi.files:
-	@cd ../../sparc/warlock; pwd; $(MAKE) warlock

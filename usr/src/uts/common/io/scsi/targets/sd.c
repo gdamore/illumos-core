@@ -53,11 +53,6 @@
 #include <sys/var.h>
 #include <sys/aio_req.h>
 
-#ifdef __lock_lint
-#define	_LP64
-#define	__amd64
-#endif
-
 #if (defined(__fibre))
 /* Note: is there a leadville version of the following? */
 #include <sys/fc4/fcal_linkapp.h>
@@ -15941,14 +15936,6 @@ sd_retry_command(struct sd_lun *un, struct buf *bp, int retry_check_flag,
 			if (user_funcp != NULL) {
 				(*user_funcp)(un, bp, user_arg,
 				    SD_IMMEDIATE_RETRY_ISSUED);
-#ifdef __lock_lint
-				sd_print_incomplete_msg(un, bp, user_arg,
-				    SD_IMMEDIATE_RETRY_ISSUED);
-				sd_print_cmd_incomplete_msg(un, bp, user_arg,
-				    SD_IMMEDIATE_RETRY_ISSUED);
-				sd_print_sense_failed_msg(un, bp, user_arg,
-				    SD_IMMEDIATE_RETRY_ISSUED);
-#endif
 			}
 
 			SD_TRACE(SD_LOG_IO_CORE | SD_LOG_ERROR, un,

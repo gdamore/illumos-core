@@ -98,13 +98,6 @@ typedef	struct ahci_event_arg {
 	uint32_t	ahciea_event;
 } ahci_event_arg_t;
 
-/* Warlock annotation */
-_NOTE(DATA_READABLE_WITHOUT_LOCK(ahci_event_arg_t::ahciea_ctlp))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(ahci_event_arg_t::ahciea_portp))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(ahci_event_arg_t::ahciea_addrp))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(ahci_event_arg_t::ahciea_event))
-
-
 /*
  * ahci_pmult_info stores the information of a port multiplier and its
  * sub-devices in case a port multiplier is attached to an HBA port.
@@ -291,35 +284,6 @@ typedef struct ahci_port {
 	int			ahciport_mop_in_progress;
 } ahci_port_t;
 
-/* Warlock annotation */
-_NOTE(READ_ONLY_DATA(ahci_port_t::ahciport_rcvd_fis_dma_handle))
-_NOTE(READ_ONLY_DATA(ahci_port_t::ahciport_cmd_list_dma_handle))
-_NOTE(READ_ONLY_DATA(ahci_port_t::ahciport_cmd_tables_dma_handle))
-_NOTE(MUTEX_PROTECTS_DATA(ahci_port_t::ahciport_mutex,
-				    ahci_port_t::ahciport_device_type))
-_NOTE(MUTEX_PROTECTS_DATA(ahci_port_t::ahciport_mutex,
-				    ahci_port_t::ahciport_port_state))
-_NOTE(MUTEX_PROTECTS_DATA(ahci_port_t::ahciport_mutex,
-				    ahci_port_t::ahciport_flags))
-_NOTE(MUTEX_PROTECTS_DATA(ahci_port_t::ahciport_mutex,
-				    ahci_port_t::ahciport_pending_tags))
-_NOTE(MUTEX_PROTECTS_DATA(ahci_port_t::ahciport_mutex,
-				    ahci_port_t::ahciport_slot_pkts))
-_NOTE(MUTEX_PROTECTS_DATA(ahci_port_t::ahciport_mutex,
-				    ahci_port_t::ahciport_slot_timeout))
-_NOTE(MUTEX_PROTECTS_DATA(ahci_port_t::ahciport_mutex,
-				    ahci_port_t::ahciport_doneq))
-_NOTE(MUTEX_PROTECTS_DATA(ahci_port_t::ahciport_mutex,
-				    ahci_port_t::ahciport_doneqtail))
-_NOTE(MUTEX_PROTECTS_DATA(ahci_port_t::ahciport_mutex,
-				    ahci_port_t::ahciport_doneq_len))
-_NOTE(MUTEX_PROTECTS_DATA(ahci_port_t::ahciport_mutex,
-				    ahci_port_t::ahciport_reset_in_progress))
-_NOTE(MUTEX_PROTECTS_DATA(ahci_port_t::ahciport_mutex,
-				    ahci_port_t::ahciport_mop_in_progress))
-_NOTE(MUTEX_PROTECTS_DATA(ahci_port_t::ahciport_mutex,
-				    ahci_port_t::ahciport_event_taskq))
-
 #define	AHCI_NUM_PORTS(ctlp)						\
 	(ctlp)->ahcictl_num_ports
 
@@ -441,18 +405,6 @@ typedef struct ahci_ctl {
 	/* FMA capabilities */
 	int			ahcictl_fm_cap;
 } ahci_ctl_t;
-
-/* Warlock annotation */
-_NOTE(READ_ONLY_DATA(ahci_ctl_t::ahcictl_ports))
-_NOTE(READ_ONLY_DATA(ahci_ctl_t::ahcictl_cport_to_port))
-_NOTE(READ_ONLY_DATA(ahci_ctl_t::ahcictl_port_to_cport))
-
-_NOTE(MUTEX_PROTECTS_DATA(ahci_ctl_t::ahcictl_mutex,
-					ahci_ctl_t::ahcictl_power_level))
-_NOTE(MUTEX_PROTECTS_DATA(ahci_ctl_t::ahcictl_mutex,
-					ahci_ctl_t::ahcictl_flags))
-_NOTE(MUTEX_PROTECTS_DATA(ahci_ctl_t::ahcictl_mutex,
-					ahci_ctl_t::ahcictl_timeout_id))
 
 #define	AHCI_SUCCESS	(0)  /* Successful return */
 #define	AHCI_TIMEOUT	(1)  /* Timed out */

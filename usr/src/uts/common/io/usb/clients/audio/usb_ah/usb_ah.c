@@ -105,16 +105,6 @@ static struct modlinkage modlinkage = {
 	NULL
 };
 
-/*
- * Warlock is not aware of the automatic locking mechanisms for
- * streams modules.
- * Since warlock is not aware of the streams perimeters, these notes
- * have been added.
- */
-_NOTE(SCHEME_PROTECTS_DATA("unique per call", iocblk))
-_NOTE(SCHEME_PROTECTS_DATA("unique per call", datab))
-_NOTE(SCHEME_PROTECTS_DATA("unique per call", msgb))
-_NOTE(SCHEME_PROTECTS_DATA("unique per call", queue))
 
 /*
  * Module qinit functions

@@ -196,14 +196,12 @@ usba_release_ph_data(usba_ph_impl_t *ph_impl)
 		    (void *)ph_impl, ph_impl->usba_ph_state,
 		    ph_impl->usba_ph_ref_count);
 
-#ifndef __lock_lint
 		if (ph_impl->usba_ph_data) {
 			USB_DPRINTF_L4(DPRINT_MASK_USBAI, usbai_log_handle,
 			    "usba_release_ph_data: req_count=%d",
 			    ph_impl->usba_ph_data->p_req_count);
 			ASSERT(ph_impl->usba_ph_data->p_req_count >= 0);
 		}
-#endif
 		ph_impl->usba_ph_ref_count--;
 		ASSERT(ph_impl->usba_ph_ref_count >= 0);
 

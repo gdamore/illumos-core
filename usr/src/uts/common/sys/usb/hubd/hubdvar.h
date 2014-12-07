@@ -107,17 +107,6 @@ typedef struct hub_power_struct {
 	usba_cfg_pwr_descr_t	hubp_confpwr_descr; /* config pwr descr */
 } hub_power_t;
 
-/* warlock directives, stable data */
-_NOTE(DATA_READABLE_WITHOUT_LOCK(hub_power_t::hubp_hubd))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(hub_power_t::hubp_wakeup_enabled))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(hub_power_t::hubp_pwr_states))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(hub_power_t::hubp_time_at_full_power))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(hub_power_t::hubp_min_pm_threshold))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(hub_power_t::hubp_pm_capabilities))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(hub_power_t::hubp_pmcomp))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(hub_power_t::hubp_confpwr_descr))
-
-
 #define	HUBD_APID_NAMELEN	32		/* max len in cfgadm display */
 
 /*

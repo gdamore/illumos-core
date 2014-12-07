@@ -53,7 +53,6 @@ elf_end(Elf * elf)
 		return (rc);
 	}
 
-#ifndef __lock_lint
 	while (elf->ed_activ == 0) {
 		for (s = elf->ed_hdscn; s != 0; s = s->s_next) {
 			if (s->s_myflags & SF_ALLOC) {
@@ -140,17 +139,6 @@ elf_end(Elf * elf)
 	if (elf) {
 		ELFUNLOCK(elf)
 	}
-#else
-	/*
-	 * This sill stuff is here to make warlock happy
-	 * durring it's lock checking.  The problem is that it
-	 * just can't track the multiple dynamic paths through
-	 * the above loop so we just give it a simple one it can
-	 * look at.
-	 */
-	_elf_unmap(elf->ed_image, elf->ed_imagesz);
-	ELFUNLOCK(elf)
-#endif
 
 	return (0);
 }

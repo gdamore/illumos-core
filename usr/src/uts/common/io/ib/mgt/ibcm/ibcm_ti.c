@@ -3066,9 +3066,6 @@ ibt_deregister_service(ibt_clnt_hdl_t ibt_hdl, ibt_srv_hdl_t srv_hdl)
 	IBTF_DPRINTF_L3(cmlog, "ibt_deregister_service: SID 0x%llX, numsids %d",
 	    srv_hdl->svc_id, srv_hdl->svc_num_sids);
 
-#ifdef __lock_lint
-	ibcm_svc_compare(NULL, NULL);
-#endif
 	svcp = avl_find(&ibcm_svc_avl_tree, &svc, NULL);
 	if (svcp != srv_hdl) {
 		mutex_exit(&ibcm_svc_info_lock);
@@ -6776,77 +6773,4 @@ ibt_get_ip_data(ibt_priv_data_len_t priv_data_len, void *priv_data,
 	IBCM_PRINT_IP("ibt_get_ip_data: dst", &ip_cm_infop->dst_addr);
 
 	return (IBT_SUCCESS);
-}
-
-
-/* Routines for warlock */
-
-/* ARGSUSED */
-static void
-ibcm_dummy_mcg_handler(void *arg, ibt_status_t retval, ibt_mcg_info_t *minfo)
-{
-	ibcm_join_mcg_tqarg_t	dummy_mcg;
-
-	dummy_mcg.func = ibcm_dummy_mcg_handler;
-
-	IBTF_DPRINTF_L5(cmlog, "ibcm_dummy_mcg_handler: "
-	    "dummy_mcg.func %p", dummy_mcg.func);
-}
-
-
-/* ARGSUSED */
-static void
-ibcm_dummy_recycle_rc_handler(ibt_status_t retval, void *arg)
-{
-	ibcm_taskq_recycle_arg_t	dummy_rc_recycle;
-
-	dummy_rc_recycle.func = ibcm_dummy_recycle_rc_handler;
-
-	IBTF_DPRINTF_L5(cmlog, "ibcm_dummy_recycle_rc_handler: "
-	    "dummy_rc_recycle.func %p", dummy_rc_recycle.func);
-}
-
-
-/* ARGSUSED */
-static ibt_cm_status_t
-ibcm_dummy_ud_handler(void *priv, ibt_cm_ud_event_t *event,
-    ibt_cm_ud_return_args_t *ret_args,
-    void *priv_data, ibt_priv_data_len_t len)
-{
-	/*
-	 * Let warlock see that ibcm_local_handler_s::actual_cm_handler
-	 * points to this routine.
-	 */
-	ibcm_local_handler_t	p;
-	ibcm_ud_state_data_t	dummy_ud;
-
-	p.actual_cm_handler = ibcm_dummy_ud_handler;
-	dummy_ud.ud_cm_handler = ibcm_dummy_ud_handler;
-
-	IBTF_DPRINTF_L5(cmlog, "ibcm_dummy_ud_handler: p.actual_cm_handler %p"
-	    "dummy_ud.ud_cm_handler %p", p.actual_cm_handler,
-	    dummy_ud.ud_cm_handler);
-	/*
-	 * Call all routines that the client's callback routine could call.
-	 */
-
-	return (IBT_CM_ACCEPT);
-}
-
-/* ARGSUSED */
-static ibt_cm_status_t
-ibcm_dummy_rc_handler(void *priv, ibt_cm_event_t *event,
-    ibt_cm_return_args_t *ret_args, void *priv_data, ibt_priv_data_len_t len)
-{
-	ibcm_state_data_t	dummy_rc;
-
-	dummy_rc.cm_handler = ibcm_dummy_rc_handler;
-
-	IBTF_DPRINTF_L5(cmlog, "ibcm_dummy_rc_handler: "
-	    "dummy_ud.ud_cm_handler %p", dummy_rc.cm_handler);
-	/*
-	 * Call all routines that the client's callback routine could call.
-	 */
-
-	return (IBT_CM_ACCEPT);
 }

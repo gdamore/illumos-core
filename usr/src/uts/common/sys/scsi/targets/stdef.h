@@ -1380,15 +1380,7 @@ typedef struct {
  * how many of that direction and type to do.
  */
 
-#if (defined(__lock_lint))
-/*
- * This is a workaround for warlock not being able to parse an #ULL constant.
- */
-#undef	UINT64_MAX
-#define	UINT64_MAX	(18446744073709551615UL)
-#endif /* __lock_lint */
-
-#if (defined(__lock_lint) || (SIZE_MAX < UINT64_MAX))
+#if (SIZE_MAX < UINT64_MAX)
 
 #define	SP_BLK		UINT32_C(0x00000000)
 #define	SP_FLM		UINT32_C(0x20000000)

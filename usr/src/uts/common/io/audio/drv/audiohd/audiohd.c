@@ -90,11 +90,6 @@ static	int	audiohd_beep;
 static	int	audiohd_beep_divider;
 static	int	audiohd_beep_vol = 1;
 
-/* Warlock annotation */
-_NOTE(SCHEME_PROTECTS_DATA("unshared data", audiohd_beep))
-_NOTE(SCHEME_PROTECTS_DATA("unshared data", audiohd_beep_divider))
-_NOTE(SCHEME_PROTECTS_DATA("unshared data", audiohd_beep_vol))
-
 static ddi_device_acc_attr_t hda_dev_accattr = {
 	DDI_DEVICE_ATTR_V0,
 	DDI_STRUCTURE_LE_ACC,

@@ -667,28 +667,6 @@ static ddi_dma_attr_t aac_dma_attr = {
 static int aac_tick = AAC_DEFAULT_TICK;	/* tick for the internal timer */
 static uint32_t aac_timebase = 0;	/* internal timer in seconds */
 
-/*
- * Warlock directives
- *
- * Different variables with the same types have to be protected by the
- * same mutex; otherwise, warlock will complain with "variables don't
- * seem to be protected consistently". For example,
- * aac_softstate::{q_wait, q_comp} are type of aac_cmd_queue, and protected
- * by aac_softstate::{io_lock, q_comp_mutex} respectively. We have to
- * declare them as protected explictly at aac_cmd_dequeue().
- */
-_NOTE(SCHEME_PROTECTS_DATA("unique per pkt", scsi_pkt scsi_cdb scsi_status \
-    scsi_arq_status scsi_descr_sense_hdr scsi_information_sense_descr \
-    mode_format mode_geometry mode_header aac_cmd))
-_NOTE(SCHEME_PROTECTS_DATA("unique per aac_cmd", aac_fib ddi_dma_cookie_t \
-    aac_sge))
-_NOTE(SCHEME_PROTECTS_DATA("unique per aac_fib", aac_blockread aac_blockwrite \
-    aac_blockread64 aac_raw_io aac_sg_entry aac_sg_entry64 aac_sg_entryraw \
-    aac_sg_table aac_srb))
-_NOTE(SCHEME_PROTECTS_DATA("unique to sync fib and cdb", scsi_inquiry))
-_NOTE(SCHEME_PROTECTS_DATA("stable data", scsi_device scsi_address))
-_NOTE(SCHEME_PROTECTS_DATA("unique to scsi_transport", buf))
-
 int
 _init(void)
 {
@@ -1776,9 +1754,8 @@ static void
 aac_set_pkt_reason(struct aac_softstate *softs, struct aac_cmd *acp,
     uchar_t reason, uint_t stat)
 {
-#ifndef __lock_lint
 	_NOTE(ARGUNUSED(softs))
-#endif
+
 	if (acp->pkt->pkt_reason == CMD_CMPLT)
 		acp->pkt->pkt_reason = reason;
 	acp->pkt->pkt_statistics |= stat;
@@ -4146,7 +4123,7 @@ aac_tran_tgt_init(dev_info_t *hba_dip, dev_info_t *tgt_dip,
     scsi_hba_tran_t *tran, struct scsi_device *sd)
 {
 	struct aac_softstate *softs = AAC_TRAN2SOFTS(tran);
-#if defined(DEBUG) || defined(__lock_lint)
+#if defined(DEBUG)
 	int ctl = ddi_get_instance(softs->devinfo_p);
 #endif
 	uint16_t tgt = sd->sd_address.a_target;
@@ -4229,9 +4206,7 @@ static void
 aac_tran_tgt_free(dev_info_t *hba_dip, dev_info_t *tgt_dip,
     scsi_hba_tran_t *hba_tran, struct scsi_device *sd)
 {
-#ifndef __lock_lint
 	_NOTE(ARGUNUSED(hba_dip, tgt_dip, hba_tran))
-#endif
 
 	struct aac_softstate *softs = SD2AAC(sd);
 	int tgt = sd->sd_address.a_target;

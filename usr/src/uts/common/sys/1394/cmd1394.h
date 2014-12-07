@@ -203,10 +203,6 @@ typedef struct cmd1394_cmd
 #define	CMD1394_ERR_FIRST		CMD1394_CMDSUCCESS
 #define	CMD1394_ERR_LAST		CMD1394_ERSRC_CONFLICT
 
-/* Warlock directives for cmd1394 */
-
-_NOTE(SCHEME_PROTECTS_DATA("One per call", cmd1394_cmd_t))
-
 #ifdef __cplusplus
 }
 #endif

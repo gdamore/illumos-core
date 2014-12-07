@@ -273,16 +273,6 @@ typedef struct ehci_intrs_stats {
 #define	EHCI_ISOC_STATS(ehci)	\
 	(KSTAT_IO_PTR((ehci)->ehci_count_stats[USB_EP_ATTR_ISOCH]))
 
-/* warlock directives, stable data */
-_NOTE(MUTEX_PROTECTS_DATA(ehci_state_t::ehci_int_mutex, ehci_state_t))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(ehci_state_t::ehci_intr_pri))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(ehci_state_t::ehci_dip))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(ehci_state_t::ehci_regsp))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(ehci_state_t::ehci_instance))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(ehci_state_t::ehci_vendor_id))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(ehci_state_t::ehci_device_id))
-_NOTE(DATA_READABLE_WITHOUT_LOCK(ehci_state_t::ehci_rev_id))
-
 /* this may not be stable data in the future */
 _NOTE(DATA_READABLE_WITHOUT_LOCK(ehci_state_t::ehci_qtd_pool_addr))
 _NOTE(DATA_READABLE_WITHOUT_LOCK(ehci_state_t::ehci_qtd_pool_mem_handle))

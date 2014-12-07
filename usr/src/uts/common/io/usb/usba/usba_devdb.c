@@ -41,13 +41,6 @@ static krwlock_t usba_devdb_lock;	/* lock protecting the tree */
 
 _NOTE(RWLOCK_PROTECTS_DATA(usba_devdb_lock, usba_devdb))
 
-/*
- * Reader Writer locks have problem with warlock. warlock is unable to
- * decode that the structure is local and doesn't need locking
- */
-_NOTE(SCHEME_PROTECTS_DATA("unshared", usba_devdb_info))
-_NOTE(SCHEME_PROTECTS_DATA("unshared", usba_configrec))
-
 /* function prototypes */
 static int usb_devdb_compare_pathnames(char *, char *);
 static int usba_devdb_compare(const void *, const void *);
@@ -596,17 +589,11 @@ usba_devdb_get_user_preferences(int idVendor, int idProduct, char *serialno,
 
 	/* try to find a perfect match in the device database */
 	dbnode = (usba_devdb_info_t *)avl_find(&usba_devdb, req_node, &where);
-#ifdef __lock_lint
-	(void) usba_devdb_compare(req_node, dbnode);
-#endif
 	if (dbnode == NULL) {
 		/* look for a generic rule */
 		req_rec->serialno = req_rec->pathname = NULL;
 		dbnode = (usba_devdb_info_t *)avl_find(&usba_devdb, req_node,
 		    &where);
-#ifdef __lock_lint
-		(void) usba_devdb_compare(req_node, dbnode);
-#endif
 	}
 	rw_exit(&usba_devdb_lock);
 

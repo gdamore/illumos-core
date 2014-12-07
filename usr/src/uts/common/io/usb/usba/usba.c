@@ -770,18 +770,14 @@ usba_free_usba_device(usba_device_t *usba_device)
 		usba_unset_usb_address(usba_device);
 	}
 
-#ifndef __lock_lint
 	ASSERT(usba_device->usb_client_dev_data_list.cddl_next == NULL);
-#endif
 
 	if (usba_device->usb_client_flags) {
-#ifndef __lock_lint
 		int i;
 
 		for (i = 0; i < usba_device->usb_n_ifs; i++) {
 			ASSERT(usba_device->usb_client_flags[i] == 0);
 		}
-#endif
 		kmem_free(usba_device->usb_client_flags,
 		    usba_device->usb_n_ifs * USBA_CLIENT_FLAG_SIZE);
 	}
