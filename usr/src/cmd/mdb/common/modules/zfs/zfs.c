@@ -21,7 +21,7 @@
 /*
  * Copyright (c) 2005, 2010, Oracle and/or its affiliates. All rights reserved.
  * Copyright 2011 Nexenta Systems, Inc. All rights reserved.
- * Copyright (c) 2012, 2014 by Delphix. All rights reserved.
+ * Copyright (c) 2011, 2014 by Delphix. All rights reserved.
  */
 
 /* Portions Copyright 2010 Robert Milkowski */
@@ -591,6 +591,7 @@ zap_leaf(uintptr_t addr, uint_t flags, int argc, const mdb_arg_t *argv)
 	char buf[16*1024];
 	int verbose = B_FALSE;
 	int four = B_FALSE;
+	dmu_buf_t l_dbuf;
 	zap_leaf_t l;
 	zap_leaf_phys_t *zlp = (void *)buf;
 	int i;
@@ -601,7 +602,8 @@ zap_leaf(uintptr_t addr, uint_t flags, int argc, const mdb_arg_t *argv)
 	    NULL) != argc)
 		return (DCMD_USAGE);
 
-	l.l_phys = zlp;
+	l_dbuf.db_data = zlp;
+	l.l_dbuf = &l_dbuf;
 	l.l_bs = 14; /* assume 16k blocks */
 	if (four)
 		l.l_bs = 12;
@@ -958,6 +960,7 @@ arc_print(uintptr_t addr, uint_t flags, int argc, const mdb_arg_t *argv)
 	static const char *bytestats[] = {
 		"p", "c", "c_min", "c_max", "size", "duplicate_buffers_size",
 		"arc_meta_used", "arc_meta_limit", "arc_meta_max",
+		"arc_meta_min", "hdr_size", "data_size", "other_size",
 		NULL
 	};
 
