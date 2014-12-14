@@ -9,7 +9,7 @@
 .\" The contents of this file are subject to the terms of the Common Development and Distribution License (the "License").  You may not use this file except in compliance with the License.
 .\" You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE or http://www.opensolaris.org/os/licensing.  See the License for the specific language governing permissions and limitations under the License.
 .\" When distributing Covered Code, include this CDDL HEADER in each file and include the License file at usr/src/OPENSOLARIS.LICENSE.  If applicable, add the following below this CDDL HEADER, with the fields enclosed by brackets "[]" replaced with your own identifying information: Portions Copyright [yyyy] [name of copyright owner]
-.Dd Sep 6, 2014
+.Dd Dec 15, 2014
 .Dt LN 1
 .Os
 .
@@ -22,15 +22,15 @@
 .
 .Nm
 .Op Fl fns
-.Op Fl F | P
+.Op Fl L | P
 .Ar source_file
-.Op Ar target
+.Op Ar target_file
 .
 .Nm
 .Op Fl fns
-.Op Fl F | P
+.Op Fl L | P
 .Ar source_file Ns No ...
-.Ar target
+.Ar target_dir
 .
 .Sh DESCRIPTION
 .
@@ -40,9 +40,9 @@ utility creates a new directory entry
 (link) for the file specified by
 .Ar source_file ,
 at the destination path specified by
-.Ar target .
+.Ar target_file .
 If
-.Ar target
+.Ar target_file
 is not specified, the link is made in the current directory.
 This first synopsis form is assumed when the final
 operand does not name an existing directory; if more than two operands are
@@ -52,36 +52,26 @@ In the second synopsis form, the
 .Nm
 utility creates a new directory entry for each file specified by a
 .Ar source_file
-operand, at a destination path
+operand, at a destination path with the same file name as
+.Ar source_file ,
 in the existing directory named by
-.Ar target .
+.Ar target_dir .
 .Lp
 The
 .Nm
 utility may be used to create both hard links and symbolic links.
 A hard link is a pointer to a file and is indistinguishable from the original
-directory entry. Any changes to a file are effective independent of the name
-used to reference the file. Hard links may not span file systems and may not
+directory entry.
+Any changes to a file are effective independent of the name
+used to reference the file.
+Hard links may not span file systems and may not
 refer to directories.
 .Lp
 The
 .Nm
 utility by default creates hard links.
-Each
-.Ar source_file
-is linked to
-.Ar target . If
-.Ar target
-is a directory, another file named
-.Ar source_file
-is created in
-.Ar target
-and linked to the original
-.Ar source_file .
 .Lp
-If
-.Ar target
-is an existing file and the
+If the destination is an existing file and the
 .Fl f
 option is not specified,
 .Nm
@@ -91,8 +81,8 @@ with the current
 and go on to any remaining
 .Ar source_file Ns No s.
 .Lp
-A symbolic link is an indirect pointer to a file; its directory entry  contains
-the name of the file to which it is linked.
+A symbolic link is an indirect pointer to a file; its directory entry
+contains the name of the file to which it is linked.
 Symbolic links may span file systems and may refer to directories.
 .Lp
 File permissions for
@@ -117,90 +107,37 @@ the symbolic link object itself
 unless the
 .Fl P
 flag is present.
-.Ss "/usr/bin/ln"
-.
-If
-.Nm /usr/bin/ln
-determines that the mode of
-.Ar target
-forbids writing, it prints the mode (see
-.Xr chmod 1 ,
-asks for a response, and reads the
-standard input for one line.
-If the response is affirmative, the link occurs, if permissible.
-Otherwise, the command exits.
 .
 .Sh OPTIONS
 .
 The following options are supported:
 .Bl -tag -width indent
 .It Fl f
-Links files without questioning the user, even if the mode of
-.Ar target
-forbids writing. This is the default if the standard input is not a terminal.
+If the destination file already exists,
+.Nm
+attempts to
+.Xr unlink 2
+the file before, making the new link.
+If this fails,
+.Nm
+prints a diagnostic message to
+.Va stderr
+and moves to the next
+.Ar source_file ,
+if any remain.
 .
 .It Fl s
-Creates a symbolic link.
-.sp
-If the
-.Fl s
-option is used with two arguments,
-.Fa target
-may be an
-existing directory or a non-existent file. If
-.Fa target
-already exists and
-is not a directory, an error is returned.
-.Ar source_file
-may be any path
-name and need not exist.
-If it exists, it may be a file or directory and may
-reside on a different file system from
-.Ar target .
-If
-.Ar target
-is an
-existing directory, a file is created in directory
-.Ar target
-whose name is
-.Ar source_file
-or the last component of
-.Ar source_file .
-This file is a
-symbolic link that references
-.Ar source_file .
-If
-.Ar target
-does not exist, a file with name
-.Ar target
-is created and it is a symbolic link that references
-.Ar source_file .
-.Lp
-If the
-.Fl s
-option is used with more than two arguments,
-.Ar target
-must be an existing directory or an error will be returned. For each
-.Ar source_file ,
-a link is created in
-.Ar target
-whose name is the last component of
-.Ar source_file .
-Each new
-.Ar source_file
-is a symbolic link to the original
-.Ar source_file .
-The files and
-.Ar target
-may reside on different file systems.
-.
+Create symbolic links.
+The
+.Ar source_file Ns No Pq s
+may be any path name and need not exist.
 The
 .Fl P
 and
-.Fl F
+.Fl L
 options are ignored if this option is present.
 .
-.It Fl F
+.It Fl L
 .
 If
 .Ar source_file
@@ -208,16 +145,9 @@ names a symbolic link, then the
 .Ar target
 will be linked to the file that symbolic link
 .Ar source_file ,
-references, rather than
-.Ar source_file
-itself.
+references.
 This is the default behavior, and is the inverse of
-.Fl F .
-If both
-.Fl F
-and
-.Fl P
-are present, then the last one supplied will determine the behavior.
+.Fl P .
 This option is ignored if
 .Fl s
 is present.
@@ -226,37 +156,29 @@ is present.
 .
 If
 .Ar source_file
-names a symbolic link, then the
-.Ar target
+names a symbolic link, then the destination
 will be linked to the symbolic link
-.Ar source_file ,
-rather than the file that
-.Ar source_file
-references.
+.Ar source_file 
+itself.
 This is the inverse of
-.Fl F .
-If both
-.Fl F
-and
-.Fl P
-are present, then the last one supplied will determine the behavior.
+.Fl L .
 This option is ignored if
 .Fl s
 is present.
 .
 .It Fl n
 .
-If
-.Ar target
-is an existing file, writes a diagnostic message to stderr and
-goes on to any remaining
-.Ar source_file Ns No s.
-The
-.Fl f
-option overrides this
-option.
-This is the default behavior and is silently ignored.
+This option is present for legacy compatability only, and is ignored.
 .El
+.
+.Lp
+If both
+.Fl F
+and
+.Fl P
+options are present, then the last one specified determines the
+behavior of
+.Nm .
 .
 .Sh OPERANDS
 .
@@ -271,8 +193,11 @@ option is specified,
 .Ar source_file
 can also be a directory.
 .
-.It Ar target
-The path name of the new directory entry to be created, or of an existing
+.It Ar target_file
+The path name of the new directory entry to be created.
+.
+.It Ar target_dir
+The path name of an existing
 directory in which the new directory entries are to be created.
 .El
 .

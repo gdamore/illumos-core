@@ -21,63 +21,42 @@
 # Copyright 2008 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
+# Copyright 2014 Garrett D'Amore <garrett@damore.org>
+#
 
 PROG=		mv
-XPG4PROG=	mv
 OBJS1=		mv.o
 OBJS=           $(OBJS1) getresponse.o
 CPFILE=		cp
 LNFILE=		ln
-XPG4OBJS=	$(OBJS:%.o=xpg4_%.o)
 SRCS=		$(OBJS1:%.o=%.c) $(SRC)/common/util/getresponse.c
 
 ROOTLINKS= $(ROOTBIN)/$(CPFILE) $(ROOTBIN)/$(LNFILE)
-ROOTXPG4LINKS= $(ROOTXPG4BIN)/$(CPFILE) $(ROOTXPG4BIN)/$(LNFILE)
+ROOTXPG4LINKS= $(ROOTXPG4BIN)/$(CPFILE) \
+	$(ROOTXPG4BIN)/$(LNFILE) \
+	$(ROOTXPG4BIN)/$(PROG)
 
 include ../Makefile.cmd
 
-clean $(XPG4)	:= OBJS += values-xpg4.o
-
 CLOBBERFILES += $(CPFILE) $(LNFILE)
 CFLAGS	+=	$(CCVERBOSE)
-CERRWARN +=	-_gcc=-Wno-parentheses
-CERRWARN +=	-_gcc=-Wno-unused-variable
-CERRWARN +=	-_gcc=-Wno-uninitialized
-$(XPG4) := CFLAGS += -DXPG4
-LINTFLAGS += -DXPG4 -u
+LINTFLAGS += -u
 XGETFLAGS += -a -x mv.xcl
 CPPFLAGS += -D_FILE_OFFSET_BITS=64 -I $(SRC)/common/util
 
-lint :=	LDLIBS += -lcmdutils -lavl -lsec -lnvpair
-$(PROG) := LDLIBS += -lcmdutils -lavl -lsec -lnvpair
-$(XPG4) := LDLIBS += -lcmdutils -lavl -lsec -lnvpair
+LDLIBS += -lcmdutils -lavl -lsec -lnvpair
 
 .KEEP_STATE:
 
-all:	$(PROG) $(CPFILE) $(LNFILE) $(XPG4)
+all:	$(PROG) $(CPFILE) $(LNFILE)
 
 $(PROG):	$$(OBJS)
 	$(LINK.c) -o $@ $(OBJS) $(LDLIBS)
 	$(POST_PROCESS)
 
-$(XPG4):	$$(XPG4OBJS)
-	$(LINK.c) -o $@ $(XPG4OBJS) $(LDLIBS)
-	$(POST_PROCESS)
-
 %.o:    $(SRC)/common/util/%.c
 	$(COMPILE.c) $(OUTPUT_OPTION) $<
 	$(POST_PROCESS_O)
-
-xpg4_%.o:    %.c
-	$(COMPILE.c) -o $@ $<
-	$(POST_PROCESS_O)
-
-xpg4_%.o:    $(SRC)/common/util/%.c
-	$(COMPILE.c) -o $@ $<
-	$(POST_PROCESS_O)
-
-%values-xpg4.o:		../../lib/common/common/values-xpg4.c
-	$(COMPILE.c) -o $@ ../../lib/common/common/values-xpg4.c
 
 $(CPFILE):	$(PROG)
 	@$(RM) $(CPFILE); $(LN) $(PROG) $(CPFILE)
@@ -85,18 +64,18 @@ $(CPFILE):	$(PROG)
 $(LNFILE):	$(PROG)
 	@$(RM) $(LNFILE); $(LN) $(PROG) $(LNFILE)
 
-install: all $(ROOTXPG4PROG) $(ROOTLINKS) $(ROOTXPG4LINKS)
+install: all $(ROOTLINKS) $(ROOTXPG4LINKS)
 
 $(ROOTLINKS):	$(ROOTPROG)
 	$(RM) $@
 	$(LN) $(ROOTPROG) $@
 
-$(ROOTXPG4LINKS):	$(ROOTXPG4PROG)
+$(ROOTXPG4LINKS):	$(ROOTPROG)
 	$(RM) $@
-	$(LN) $(ROOTXPG4PROG) $@
+	$(LN) -s ../../bin/$(@F) $@
 
 clean:
-	$(RM) $(OBJS) $(XPG4OBJS)
+	$(RM) $(OBJS)
 
 lint:	lint_SRCS
 
