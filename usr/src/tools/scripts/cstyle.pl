@@ -19,7 +19,7 @@
 #
 # CDDL HEADER END
 #
-#
+# Copyright 2014 Ryan Zezeski
 # Copyright 2008 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
@@ -539,8 +539,18 @@ line: while (<$filehandle>) {
 	if (/\s[,;]/ && !/^[\t]+;$/ && !/^\s*for \([^;]*; ;[^;]*\)/) {
 		err("comma or semicolon preceded by blank");
 	}
-	if (/^\s*(&&|\|\|)/) {
-		err("improper boolean continuation");
+	# binary and assignment operators must not start a
+	# continuation line
+	#
+	# `[|<>\/^%=]` - covers |, ||, |=, <, <=, <<, <<=, >, >=, >>, =, ==
+	#                >>=, /, /=, ^, ^=, %, %=, =, ==
+	#
+	# `[-*+&] ` - covers `- `, `* `, `+ `, `& `
+	#
+	# `[-+*&!]=` - covers -=, +=, *=, &=, !=
+	#
+	if (/^\s*([|<>\/^%=]|[-*+&] |[-+*&!]=|&&)/) {
+		err("binary or assignment operator at start of continuation");
 	}
 	if (/\S   *(&&|\|\|)/ || /(&&|\|\|)   *\S/) {
 		err("more than one space around boolean operator");
