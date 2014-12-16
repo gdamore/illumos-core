@@ -11,7 +11,7 @@
 .\"
 .\" Copyright 2014 Garrett D'Amore <garrett@damore.org>
 .\"
-.Dd "Dec 15, 2014"
+.Dd "Dec 3, 2014"
 .Dt CANPUTNEXT 9F
 .Os
 .Sh NAME
@@ -37,15 +37,12 @@ The
 .Fn canputnext
 and
 .Fn bcanputnext
-functions atomically test for available space in the next
-linked queue or priority band.
-They are preferable to and safer than calling
+functions are functionality equivalent, and preferable to calling
 .Xr canput 9F
 and
 .Xr bcanput 9F
-directly on the the queue linked to by
+with the queue linked to by
 .Fa q Ns No -> Ns Fa q_next .
-.Lp
 Drivers and modules should call these routines to ensure that room
 on the next queue exists before calling
 .Xr putnext 9F .
@@ -54,13 +51,10 @@ Architecture independent (DDI/DDK).
 .Sh PARAMETERS
 .Bl -tag -width Ds
 .It Fa q
-STREAMS queue.
+STREAMs queue.
 .It Fa pri
 Priority band to test.
 .El
-.Sh CONTEXT
-These functions may be called in user, kernel, or interrupt
-context.
 .Sh RETURN VALUES
 .Bl -tag -width Ds
 .It 1

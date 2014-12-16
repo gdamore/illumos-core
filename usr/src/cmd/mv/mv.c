@@ -202,9 +202,14 @@ main(int argc, char *argv[])
 				break;
 			case 'p':
 				pflg++;
+#ifdef XPG4
 				attrsilent = 1;
 				atflg = 0;
 				saflg = 0;
+#else
+				if (atflg == 0)
+					attrsilent = 1;
+#endif
 				break;
 			case 'H':
 				/*
@@ -244,12 +249,16 @@ main(int argc, char *argv[])
 			case '@':
 				atflg++;
 				attrsilent = 0;
+#ifdef XPG4
 				pflg = 0;
+#endif
 				break;
 			case '/':
 				saflg++;
 				attrsilent = 0;
+#ifdef XPG4
 				pflg = 0;
+#endif
 				break;
 			default:
 				errflg++;
@@ -265,11 +274,15 @@ main(int argc, char *argv[])
 			switch (c) {
 			case 'f':
 				silent++;
+#ifdef XPG4
 				iflg = 0;
+#endif
 				break;
 			case 'i':
 				iflg++;
+#ifdef XPG4
 				silent = 0;
+#endif
 				break;
 			default:
 				errflg++;
@@ -625,6 +638,7 @@ cpymve(char *source, char *target)
 			return (1);
 		}
 		if (ISDIR(s1)) {
+#ifdef XPG4
 			if (targetexists && ISDIR(s2)) {
 				/* existing target dir must be empty */
 				if (rmdir(target) < 0) {
@@ -637,6 +651,7 @@ cpymve(char *source, char *target)
 					return (1);
 				}
 			}
+#endif
 			if ((n =  copydir(source, target)) == 0)
 				(void) rmdir(source);
 			return (n);
@@ -690,12 +705,14 @@ cpymve(char *source, char *target)
 			}
 			(void) umask(md);
 			m = lchown(target, UID(s1), GID(s1));
+#ifdef XPG4
 			if (m < 0) {
 				(void) fprintf(stderr, gettext("%s: cannot"
 				    " change owner and group of"
 				    " %s: "), cmd, target);
 				perror("");
 			}
+#endif
 			goto cleanup;
 		}
 		if (ISDEV(s1)) {
@@ -1129,7 +1146,7 @@ chkfiles(char *source, char **to)
 			 */
 
 
-			overwrite = iflg && !silent;
+			overwrite = iflg && !silent && use_stdin();
 			override = !cpy && (access(target, 2) < 0) &&
 			    !silent && use_stdin() && !ISLNK(s2);
 
@@ -1348,6 +1365,7 @@ chg_time(char *to, struct stat ss)
 
 	rc = utimensat(AT_FDCWD, to, times,
 	    ISLNK(s1) ? AT_SYMLINK_NOFOLLOW : 0);
+#ifdef XPG4
 	if ((pflg || mve) && rc != 0) {
 		(void) fprintf(stderr,
 		    gettext("%s: cannot set times for %s: "), cmd, to);
@@ -1355,6 +1373,7 @@ chg_time(char *to, struct stat ss)
 		if (pflg)
 			return (1);
 	}
+#endif
 
 	return (0);
 
@@ -1387,11 +1406,13 @@ chg_mode(char *target, uid_t uid, gid_t gid, mode_t mode)
 		return (0);
 
 	if (chown(target, uid, gid) != 0) {
+#ifdef XPG4
 		if (mve) {
 			(void) fprintf(stderr, gettext("%s: cannot change"
 			    " owner and group of %s: "), cmd, target);
 			perror("");
 		}
+#endif
 		if (mode & (S_ISUID | S_ISGID)) {
 			/* try to clear S_ISUID and S_ISGID */
 			mode &= ~S_ISUID & ~S_ISGID;
@@ -1408,6 +1429,7 @@ chg_mode(char *target, uid_t uid, gid_t gid, mode_t mode)
 			if (pflg)
 				return (1);
 		}
+#ifdef XPG4
 		else {
 			(void) fprintf(stderr, gettext(
 			"%s: cannot set permissions for %s: "), cmd, target);
@@ -1416,6 +1438,7 @@ chg_mode(char *target, uid_t uid, gid_t gid, mode_t mode)
 			if (pflg)
 				return (1);
 		}
+#endif
 	}
 	return (0);
 
@@ -1497,6 +1520,15 @@ copydir(char *source, char *target)
 					return (1);
 
 			}
+#ifdef XPG4
+			else {
+				(void) fprintf(stderr, gettext("%s: "
+				    "Insufficient memory to save acl"
+				    " entry\n"), cmd);
+				if (pflg)
+					return (1);
+			}
+#endif
 		}
 	}
 
@@ -1518,7 +1550,11 @@ copydir(char *source, char *target)
 		if (s1acl_save != NULL) {
 			if (acl_set(target, s1acl_save) < 0) {
 				error++;
+#ifdef XPG4
 				if (pflg || mve) {
+#else
+				if (pflg) {
+#endif
 					(void) fprintf(stderr, gettext(
 					    "%s: failed to set acl entries "
 					    "on %s\n"), cmd, target);
@@ -1587,7 +1623,11 @@ copyspecial(char *target)
 static int
 use_stdin(void)
 {
+#ifdef XPG4
+	return (1);
+#else
 	return (isatty(fileno(stdin)));
+#endif
 }
 
 /* Copy non-system extended attributes */
