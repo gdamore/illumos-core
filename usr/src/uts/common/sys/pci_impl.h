@@ -72,9 +72,10 @@ extern "C" {
 #define	PCI_PMC			0xcfb
 #define	PCI_CONFDATA		0xcfc
 #define	PCI_CONE		0x80000000
-#define	PCI_CADDR1(bus, device, function, reg) \
-		(PCI_CONE | (((bus) & 0xff) << 16) | (((device & 0x1f)) << 11) \
-			    | (((function) & 0x7) << 8) | ((reg) & 0xfc))
+#define	PCI_CADDR1(bus, device, function, reg)		\
+	(PCI_CONE | (((bus) & 0xff) << 16) |		\
+	    (((device & 0x1f)) << 11) |			\
+	    (((function) & 0x7) << 8) | ((reg) & 0xfc))
 
 /* these macros apply to Configuration Mechanism #2 */
 #define	PCI_CSE_PORT		0xcf8

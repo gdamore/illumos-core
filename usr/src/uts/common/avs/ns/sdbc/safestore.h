@@ -37,40 +37,35 @@ extern "C" {
 #include <sys/nsctl/nsctl.h>
 #if defined(_KERNEL) || defined(_KMEMUSER)
 
-/* CSTYLED */
-/**$
+/*
  * token for a volume directory stream
  */
 typedef struct ss_vdir_s {
 	intptr_t opaque[6];
 } ss_vdir_t;
 
-/* CSTYLED */
-/**$
+/*
  * token for a cache entry directory stream
  */
 typedef struct ss_cdir_s {
 	intptr_t opaque[6];
 }ss_cdir_t;
 
-/* CSTYLED */
-/**$
+/*
  * token for a volume
  */
 typedef struct ss_vol_s {
 	intptr_t opaque;
 }ss_vol_t;
 
-/* CSTYLED */
-/**$
+/*
  * token for cache entry block and dirty bits
  */
 typedef struct s_resource_s {
 	intptr_t opaque;
 } ss_resource_t;
 
-/* CSTYLED */
-/**$
+/*
  * token for a list of cache safestore resources
  */
 typedef struct ss_resourcelist_s {
@@ -78,8 +73,7 @@ typedef struct ss_resourcelist_s {
 }ss_resourcelist_t;
 
 
-/* CSTYLED */
-/**$
+/*
  * cache entry directory stream type specifier
  *
  * @field ck_type specifies all cache entries, cache entries for volume, node
@@ -99,8 +93,7 @@ typedef struct ss_cdirkey_s {
 #define	CDIR_VOL 1
 #define	CDIR_NODE 2
 
-/* BEGIN CSTYLED */
-/**$
+/*
  * exported cache entry info
  *
  * @field sc_cd the cache descriptor, associates this entry with a volume
@@ -117,11 +110,9 @@ typedef struct ss_centry_info_s {
 	int sc_flag;		/* CC_PINNABLE | CC_PINNED */
 	ss_resource_t *sc_res;	/* token for this centry */
 } ss_centry_info_t;
-/* END CSTYLED */
 
 
-/* CSTYLED */
-/**$
+/*
  * volume directory stream type specifier
  *
  * @field vk_type specifies all volume entries, entries for volume, node
@@ -141,8 +132,7 @@ typedef struct ss_vdirkey_s {
 #define	VDIR_VOL 1
 #define	VDIR_NODE 2
 
-/* CSTYLED */
-/**$
+/*
  * exported volume entry info
  *
  * @field sv_cd the cache descriptor
@@ -165,26 +155,22 @@ typedef struct ss_voldata_s {
 
 /* safestore media types */
 
-/* CSTYLED */
-/**%
+/*
  * safestore in RAM, useful but not very safe
  */
 #define	SS_M_RAM 0x00000001
 
-/* CSTYLED */
-/**%
+/*
  * safestore in NVRAM on a single node
  */
 #define	SS_M_NV_SINGLENODE 0x00000002
 
-/* CSTYLED */
-/**%
+/*
  * safestore in NVRAM on a dual node system. all data is store remotely.
  */
 #define	SS_M_NV_DUALNODE_NOMIRROR 0x00000004
 
-/* CSTYLED */
-/**%
+/*
  * safestore in NVRAM on a dual node system. data is mirrored on both nodes.
  */
 #define	SS_M_NV_DUALNODE_MIRROR 0x00000008
@@ -192,20 +178,17 @@ typedef struct ss_voldata_s {
 
 /* safestore data and metadata transport types */
 
-/* CSTYLED */
-/**%
+/*
  * data is transferred using STE connection
  */
 #define	SS_T_STE   0x00010000
 
-/* CSTYLED */
-/**%
+/*
  * data is transferred using RPC
  */
 #define	SS_T_RPC 0x00020000
 
-/* CSTYLED */
-/**%
+/*
  * no transport -- (single node)
  */
 #define	SS_T_NONE  0x08000000
@@ -245,8 +228,7 @@ typedef struct ss_voldata_s {
 #define	SAFESTORE_RECOVERY(ssp) ((ssp) && \
 				(ssp->ssop_flags & SS_RECOVERY_NEEDED))
 
-/* CSTYLED */
-/**$
+/*
  * configuration structure provided by safestore client
  *
  * @field ssc_configured set by safestore module to indicate config completed
@@ -267,8 +249,7 @@ typedef struct ss_common_config_s {
 	uint_t ssc_flag;
 } ss_common_config_t;
 
-/* BEGIN CSTYLED */
-/**$
+/*
  * safestore operations structure
  *
  * @field ssop_name description of this module.
@@ -320,7 +301,6 @@ typedef struct safestore_ops_s {
 						const void *, int, int);
 	int (* ssop_ctl)(uint_t, uintptr_t);
 } safestore_ops_t;
-/* END CSTYLED */
 
 /* ssop_flags */
 /*

@@ -1007,8 +1007,7 @@ extern rctl_hndl_t rc_project_crypto_mem;
 	    decr_mech, decr_key, ciphertext, mac, plaintext, \
 	    mac_ctx_template, decr_ctx_template, req) ( \
 	(KCF_PROV_DUAL_CIPHER_MAC_OPS(pd) && \
-	KCF_PROV_DUAL_CIPHER_MAC_OPS(pd)->mac_verify_decrypt_atomic \
-	    != NULL) ? \
+	KCF_PROV_DUAL_CIPHER_MAC_OPS(pd)->mac_verify_decrypt_atomic != NULL) ? \
 	KCF_PROV_DUAL_CIPHER_MAC_OPS(pd)->mac_verify_decrypt_atomic( \
 	    (pd)->pd_prov_handle, session, mac_mech, mac_key, \
 	    decr_mech, decr_key, ciphertext, mac, plaintext, \

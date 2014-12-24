@@ -116,8 +116,8 @@ typedef struct nvlist {
 #define	NVP_NAME(nvp)		((char *)(nvp) + sizeof (nvpair_t))
 #define	NVP_TYPE(nvp)		((nvp)->nvp_type)
 #define	NVP_NELEM(nvp)		((nvp)->nvp_value_elem)
-#define	NVP_VALUE(nvp)		((char *)(nvp) + NV_ALIGN(sizeof (nvpair_t) \
-				+ (nvp)->nvp_name_sz))
+#define	NVP_VALUE(nvp)		((char *)(nvp) + NV_ALIGN(sizeof (nvpair_t) + \
+				(nvp)->nvp_name_sz))
 
 #define	NVL_VERSION(nvl)	((nvl)->nvl_version)
 #define	NVL_SIZE(nvl)		((nvl)->nvl_size)

@@ -850,8 +850,8 @@ dofsck(zlog_t *zlogp, const char *fstype, const char *rawdev)
 	 * We could alternatively have called /usr/sbin/fsck -F <fstype>, but
 	 * that would cost us an extra fork/exec without buying us anything.
 	 */
-	if (snprintf(cmdbuf, sizeof (cmdbuf), "/usr/lib/fs/%s/fsck", fstype)
-	    >= sizeof (cmdbuf)) {
+	if (snprintf(cmdbuf, sizeof (cmdbuf), "/usr/lib/fs/%s/fsck", fstype) >=
+	    sizeof (cmdbuf)) {
 		zerror(zlogp, B_FALSE, "file-system type %s too long", fstype);
 		return (-1);
 	}
@@ -889,8 +889,8 @@ domount(zlog_t *zlogp, const char *fstype, const char *opts,
 	 * We could alternatively have called /usr/sbin/mount -F <fstype>, but
 	 * that would cost us an extra fork/exec without buying us anything.
 	 */
-	if (snprintf(cmdbuf, sizeof (cmdbuf), "/usr/lib/fs/%s/mount", fstype)
-	    >= sizeof (cmdbuf)) {
+	if (snprintf(cmdbuf, sizeof (cmdbuf), "/usr/lib/fs/%s/mount", fstype) >=
+	    sizeof (cmdbuf)) {
 		zerror(zlogp, B_FALSE, "file-system type %s too long", fstype);
 		return (-1);
 	}
@@ -1471,8 +1471,8 @@ build_mounted_post_var(zlog_t *zlogp, zone_mnt_t mount_cmd, char *rootpath,
 				zerror(zlogp, B_TRUE, "cannot create %s", tmp);
 				return (B_FALSE);
 			}
-			if (domount(zlogp, MNTTYPE_LOFS, "", fromdir, tmp)
-			    != 0) {
+			if (domount(zlogp, MNTTYPE_LOFS, "", fromdir, tmp) !=
+			    0) {
 				zerror(zlogp, B_TRUE, "cannot mount %s on %s",
 				    tmp, *cpp);
 				return (B_FALSE);
@@ -1805,8 +1805,8 @@ mount_filesystems(zlog_t *zlogp, zone_mnt_t mount_cmd)
 			 */
 			assert(strcmp(&rootpath[slen], "/a") == 0);
 			rootpath[slen] = '\0';
-			if (mount_one(zlogp, &fs_ptr[i], rootpath, mount_cmd)
-			    != 0)
+			if (mount_one(zlogp, &fs_ptr[i], rootpath, mount_cmd) !=
+			    0)
 				goto bad;
 			rootpath[slen] = '/';
 			continue;
@@ -3042,8 +3042,8 @@ remove_datalink_pool(zlog_t *zlogp, zoneid_t zoneid)
 		if (dlnum == 0)
 			return (0);
 
-		if ((dllinks = malloc(dlnum * sizeof (datalink_id_t)))
-		    == NULL) {
+		if ((dllinks = malloc(dlnum * sizeof (datalink_id_t))) ==
+		    NULL) {
 			zerror(zlogp, B_TRUE, "memory allocation failed");
 			return (-1);
 		}
@@ -3356,10 +3356,9 @@ get_rctls(zlog_t *zlogp, char **bufp, size_t *bufsizep)
 	 * max-processes property.  If only the max-processes property is set,
 	 * we add a max-lwps property with a limit derived from max-processes.
 	 */
-	if (zonecfg_get_aliased_rctl(handle, ALIAS_MAXPROCS, &maxprocs)
-	    == Z_OK &&
-	    zonecfg_get_aliased_rctl(handle, ALIAS_MAXLWPS, &maxlwps)
-	    == Z_NO_ENTRY) {
+	if (zonecfg_get_aliased_rctl(handle, ALIAS_MAXPROCS, &maxprocs) ==
+	    Z_OK && zonecfg_get_aliased_rctl(handle, ALIAS_MAXLWPS, &maxlwps) ==
+	    Z_NO_ENTRY) {
 		if (zonecfg_set_aliased_rctl(handle, ALIAS_MAXLWPS,
 		    maxprocs * LWPS_PER_PROCESS) != Z_OK) {
 			zerror(zlogp, B_FALSE, "unable to set max-lwps alias");
@@ -3405,8 +3404,8 @@ get_rctls(zlog_t *zlogp, char **bufp, size_t *bufsizep)
 				    "nvlist_alloc");
 				goto out;
 			}
-			if (zonecfg_construct_rctlblk(rctlval, rctlblk)
-			    != Z_OK) {
+			if (zonecfg_construct_rctlblk(rctlval, rctlblk) !=
+			    Z_OK) {
 				zerror(zlogp, B_FALSE, "invalid rctl value: "
 				    "(priv=%s,limit=%s,action=%s)",
 				    rctlval->zone_rctlval_priv,
@@ -3437,8 +3436,8 @@ get_rctls(zlog_t *zlogp, char **bufp, size_t *bufsizep)
 				goto out;
 			}
 			if (nvlist_add_uint64(nvlv[i], "action",
-			    (uint_t)rctlblk_get_local_action(rctlblk, NULL))
-			    != 0) {
+			    (uint_t)rctlblk_get_local_action(rctlblk, NULL)) !=
+			    0) {
 				zerror(zlogp, B_FALSE, "%s failed",
 				    "nvlist_add_uint64");
 				goto out;
@@ -3446,8 +3445,8 @@ get_rctls(zlog_t *zlogp, char **bufp, size_t *bufsizep)
 		}
 		zonecfg_free_rctl_value_list(rctltab.zone_rctl_valptr);
 		rctltab.zone_rctl_valptr = NULL;
-		if (nvlist_add_nvlist_array(nvl, (char *)name, nvlv, count)
-		    != 0) {
+		if (nvlist_add_nvlist_array(nvl, (char *)name, nvlv, count) !=
+		    0) {
 			zerror(zlogp, B_FALSE, "%s failed",
 			    "nvlist_add_nvlist_array");
 			goto out;
@@ -3464,8 +3463,8 @@ get_rctls(zlog_t *zlogp, char **bufp, size_t *bufsizep)
 		error = 0;
 		goto out;
 	}
-	if (nvlist_pack(nvl, &nvl_packed, &nvl_size, NV_ENCODE_NATIVE, 0)
-	    != 0) {
+	if (nvlist_pack(nvl, &nvl_packed, &nvl_size, NV_ENCODE_NATIVE, 0) !=
+	    0) {
 		zerror(zlogp, B_FALSE, "%s failed", "nvlist_pack");
 		goto out;
 	}
@@ -3496,8 +3495,8 @@ get_implicit_datasets(zlog_t *zlogp, char **retstr)
 	if (query_hook[0] == '\0')
 		return (0);
 
-	if (snprintf(cmdbuf, sizeof (cmdbuf), "%s datasets", query_hook)
-	    > sizeof (cmdbuf))
+	if (snprintf(cmdbuf, sizeof (cmdbuf), "%s datasets", query_hook) >
+	    sizeof (cmdbuf))
 		return (-1);
 
 	if (do_subproc(zlogp, cmdbuf, retstr) != 0)
@@ -4443,8 +4442,8 @@ setup_zone_rm(zlog_t *zlogp, char *zone_name, zoneid_t zoneid)
 			zerror(zlogp, B_TRUE, "WARNING: unable to set the "
 			    "default scheduling class");
 
-	} else if (zonecfg_get_aliased_rctl(handle, ALIAS_SHARES, &tmp)
-	    == Z_OK) {
+	} else if (zonecfg_get_aliased_rctl(handle, ALIAS_SHARES, &tmp) ==
+	    Z_OK) {
 		/*
 		 * If the zone has the zone.cpu-shares rctl set then we want to
 		 * use the Fair Share Scheduler (FSS) for processes in the

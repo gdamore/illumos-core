@@ -106,10 +106,10 @@ extern	int	_sd_cblock_shift;
  * handle is invalid and the handle should be rejected during an allocation.
  */
 
-#define	_SD_VALID_FLAGS (NSC_RDWRBUF | NSC_NOBLOCK | NSC_WRTHRU | NSC_NOCACHE\
-			| NSC_HALLOCATED | NSC_BCOPY | NSC_PAGEIO \
-			| NSC_PINNABLE | NSC_MIXED | NSC_FORCED_WRTHRU \
-			| NSC_METADATA)
+#define	_SD_VALID_FLAGS (NSC_RDWRBUF | NSC_NOBLOCK | NSC_WRTHRU |	\
+	NSC_NOCACHE | NSC_HALLOCATED | NSC_BCOPY | NSC_PAGEIO |		\
+	NSC_PINNABLE | NSC_MIXED | NSC_FORCED_WRTHRU |			\
+	NSC_METADATA)
 
 
 #define	_SD_FLAG_MASK   	(NSC_FLAGS)

@@ -417,8 +417,8 @@ void debug_print(int l, char *fmt, ...);
 	if (((icmp6->icmp6_type == ND_NEIGHBOR_SOLICIT) ||		\
 	    (icmp6->icmp6_type == ND_NEIGHBOR_ADVERT)) &&		\
 	    (len != 0)) {						\
-		opt = (nd_opt_hdr_t *)((uint8_t *)ip6h			\
-		    + IPV6_HDR_LEN + sizeof (nd_neighbor_advert_t));	\
+		opt = (nd_opt_hdr_t *)((uint8_t *)ip6h +		\
+		    IPV6_HDR_LEN + sizeof (nd_neighbor_advert_t));	\
 		ASSERT(opt != NULL);					\
 		nd_lla_ptr = (uchar_t *)&opt[1];			\
 		if (type == IBD_SEND) {					\

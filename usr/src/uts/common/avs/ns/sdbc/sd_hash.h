@@ -67,8 +67,8 @@ typedef struct _sd_hash_table  {
 #if defined(_KERNEL)
 
 #define	HASH(cd, blk, table) \
-	(((cd << 6) ^ ((blk) ^ ((blk) >> table->ht_bits)))	\
-	    & (table->ht_mask))
+	(((cd << 6) ^ ((blk) ^ ((blk) >> table->ht_bits))) & \
+	(table->ht_mask))
 
 #define	HT_SEARCH	0
 #define	HT_NOSEARCH	1

@@ -86,12 +86,12 @@ typedef	uint64_t		stmf_status_t;
 
 #define	GET_BYTE_OFFSET(ptr, off)	(((uint8_t *)(ptr)) + (off))
 #define	GET_STRUCT_SIZE(s)		((sizeof (s) + 7) & 0xfffffff8)
-#define	READ_SCSI16(addr, type)		((((type)(((uint8_t *)(addr))[0])) \
-								<< 8) |\
-					((type)(((uint8_t *)(addr))[1])))
-#define	READ_SCSI21(addr, type)		((((type)(((uint8_t *)(addr))[0] & \
-								0x1F)) << 16)\
-					    | (READ_SCSI16(addr+1, type)))
+#define	READ_SCSI16(addr, type)				\
+	((((type)(((uint8_t *)(addr))[0])) << 8) |	\
+	    ((type)(((uint8_t *)(addr))[1])))
+#define	READ_SCSI21(addr, type)					\
+	((((type)(((uint8_t *)(addr))[0] & 0x1F)) << 16) |	\
+	    (READ_SCSI16(addr+1, type)))
 #define	READ_SCSI32(addr, type)		(((READ_SCSI16(addr, type)) << 16) |\
 					    (READ_SCSI16((addr+2), type)))
 #define	READ_SCSI64(addr, type)		(((READ_SCSI32(addr, type)) << 32) |\

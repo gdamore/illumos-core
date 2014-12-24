@@ -294,16 +294,16 @@ struct {								\
 } while (0)
 
 #define	STAILQ_INSERT_AFTER(head, listelm, elm, field) do {		\
-	if (((elm)->field.stqe_next = (listelm)->field.stqe_next)	\
-	    == NULL)							\
+	if (((elm)->field.stqe_next = (listelm)->field.stqe_next) ==	\
+	    NULL)							\
 		(head)->stqh_last = &(elm)->field.stqe_next;		\
 	(listelm)->field.stqe_next = (elm);				\
 	_NOTE(CONSTCOND)						\
 } while (0)
 
 #define	STAILQ_REMOVE_HEAD(head, field) do {				\
-	if (((head)->stqh_first = (head)->stqh_first->field.stqe_next)	\
-	    == NULL) 							\
+	if (((head)->stqh_first = (head)->stqh_first->field.stqe_next) == \
+	    NULL) 							\
 		(head)->stqh_last = &(head)->stqh_first;		\
 	_NOTE(CONSTCOND)						\
 } while (0)

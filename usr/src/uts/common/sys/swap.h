@@ -190,8 +190,8 @@ struct	swapinfo {
  */
 #define	swap_alloc(AP)							\
 {									\
-	(AP)->an_vp = swapfs_getvp(((uintptr_t)(AP) >> AN_CACHE_ALIGN_LOG2) \
-	    & AN_VPMASK); 						\
+	(AP)->an_vp = swapfs_getvp(((uintptr_t)(AP) >> AN_CACHE_ALIGN_LOG2) & \
+	    AN_VPMASK); 						\
 	(AP)->an_off = (anoff_t)((((uintptr_t)(AP)) >>			\
 	    AN_VPSHIFT + AN_CACHE_ALIGN_LOG2) << PAGESHIFT);		\
 }

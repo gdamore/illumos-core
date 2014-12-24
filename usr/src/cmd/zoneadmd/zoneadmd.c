@@ -1354,8 +1354,8 @@ server(void *cookie, char *args, size_t alen, door_desc_t *dp,
 		case Z_BOOT:
 		case Z_FORCEBOOT:
 			eventstream_write(Z_EVT_ZONE_BOOTING);
-			if ((rval = zone_ready(zlogp, Z_MNT_BOOT, zstate))
-			    == 0) {
+			if ((rval = zone_ready(zlogp, Z_MNT_BOOT, zstate)) ==
+			    0) {
 				rval = zone_bootup(zlogp, zargp->bootbuf,
 				    zstate);
 			}
@@ -1493,8 +1493,8 @@ server(void *cookie, char *args, size_t alen, door_desc_t *dp,
 		case Z_HALT:
 			if (kernelcall)	/* Invalid; can't happen */
 				abort();
-			if ((rval = zone_halt(zlogp, B_FALSE, B_FALSE, zstate))
-			    != 0)
+			if ((rval = zone_halt(zlogp, B_FALSE, B_FALSE,
+			    zstate)) != 0)
 				break;
 			eventstream_write(Z_EVT_ZONE_HALTED);
 			break;
@@ -1540,8 +1540,8 @@ server(void *cookie, char *args, size_t alen, door_desc_t *dp,
 	case ZONE_STATE_DOWN:
 		switch (cmd) {
 		case Z_READY:
-			if ((rval = zone_halt(zlogp, B_FALSE, B_TRUE, zstate))
-			    != 0)
+			if ((rval = zone_halt(zlogp, B_FALSE, B_TRUE,
+			    zstate)) != 0)
 				break;
 			if ((rval = zone_ready(zlogp, Z_MNT_BOOT, zstate)) == 0)
 				eventstream_write(Z_EVT_ZONE_READIED);
@@ -1559,8 +1559,8 @@ server(void *cookie, char *args, size_t alen, door_desc_t *dp,
 			rval = 0;
 			break;
 		case Z_HALT:
-			if ((rval = zone_halt(zlogp, B_FALSE, B_FALSE, zstate))
-			    != 0)
+			if ((rval = zone_halt(zlogp, B_FALSE, B_FALSE,
+			    zstate)) != 0)
 				break;
 			eventstream_write(Z_EVT_ZONE_HALTED);
 			break;
@@ -1568,14 +1568,14 @@ server(void *cookie, char *args, size_t alen, door_desc_t *dp,
 			(void) strlcpy(boot_args, zargp->bootbuf,
 			    sizeof (boot_args));
 			eventstream_write(Z_EVT_ZONE_REBOOTING);
-			if ((rval = zone_halt(zlogp, B_FALSE, B_TRUE, zstate))
-			    != 0) {
+			if ((rval = zone_halt(zlogp, B_FALSE, B_TRUE,
+			    zstate)) != 0) {
 				eventstream_write(Z_EVT_ZONE_BOOTFAILED);
 				boot_args[0] = '\0';
 				break;
 			}
-			if ((rval = zone_ready(zlogp, Z_MNT_BOOT, zstate))
-			    != 0) {
+			if ((rval = zone_ready(zlogp, Z_MNT_BOOT,
+			    zstate)) != 0) {
 				eventstream_write(Z_EVT_ZONE_BOOTFAILED);
 				boot_args[0] = '\0';
 				break;
@@ -1948,8 +1948,8 @@ main(int argc, char *argv[])
 	}
 
 	/* Get a handle to the brand info for this zone */
-	if (zone_get_brand(zone_name, brand_name, sizeof (brand_name))
-	    != Z_OK) {
+	if (zone_get_brand(zone_name, brand_name, sizeof (brand_name)) !=
+	    Z_OK) {
 		zerror(zlogp, B_FALSE, "unable to determine zone brand");
 		return (1);
 	}

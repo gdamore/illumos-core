@@ -308,8 +308,8 @@ extern void tpc_free(tsol_tpc_t *);
  * The next three hashing macros are copied from macros in ip_ire.h.
  */
 #define	TSOL_ADDR_HASH(addr, table_size)				\
-	(((((addr) >> 16) ^ (addr)) ^ ((((addr) >> 16) ^ (addr))>> 8))	\
-	% (table_size))
+	(((((addr) >> 16) ^ (addr)) ^ ((((addr) >> 16) ^ (addr))>> 8)) % \
+	    (table_size))
 
 #define	TSOL_ADDR_HASH_V6(addr, table_size)				\
 	(((addr).s6_addr8[8] ^ (addr).s6_addr8[9] ^			\

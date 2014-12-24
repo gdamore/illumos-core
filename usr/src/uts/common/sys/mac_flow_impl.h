@@ -470,18 +470,18 @@ typedef struct flow_tab_info_s {
 
 
 #define	MCIP_STAT_UPDATE(m, s, c) {					\
-	((mac_client_impl_t *)(m))->mci_misc_stat.mms_##s		\
-	+= ((uint64_t)(c));						\
+	((mac_client_impl_t *)(m))->mci_misc_stat.mms_##s +=		\
+	((uint64_t)(c));						\
 }
 
 #define	SRS_RX_STAT_UPDATE(m, s, c)  {					\
-	((mac_soft_ring_set_t *)(m))->srs_rx.sr_stat.mrs_##s		\
-	+= ((uint64_t)(c));						\
+	((mac_soft_ring_set_t *)(m))->srs_rx.sr_stat.mrs_##s +=		\
+	((uint64_t)(c));						\
 }
 
 #define	SRS_TX_STAT_UPDATE(m, s, c)  {					\
-	((mac_soft_ring_set_t *)(m))->srs_tx.st_stat.mts_##s		\
-	+= ((uint64_t)(c));						\
+	((mac_soft_ring_set_t *)(m))->srs_tx.st_stat.mts_##s +=		\
+	((uint64_t)(c));						\
 }
 
 #define	SRS_TX_STATS_UPDATE(m, s) {					\

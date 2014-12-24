@@ -137,8 +137,8 @@ typedef tnf_uint16_t		tnf_abs16_t; /* absolute, 16 bits */
 	((tnf_ref16_t)((tnf_uint32_t)(x) & TNF_REF32_REF16_MASK))
 
 #define	TNF_REF32_TAG16(x)	\
-	((tnf_ref16_t)(((tnf_uint32_t)(x) >> TNF_REF32_TAG16_SHIFT)	\
-				& TNF_REF32_TAG16_MASK))
+	((tnf_ref16_t)(((tnf_uint32_t)(x) >> TNF_REF32_TAG16_SHIFT) & \
+				TNF_REF32_TAG16_MASK))
 
 /* Macros on tnf_ref16_t values: */
 

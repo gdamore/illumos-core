@@ -95,8 +95,8 @@ enum xdr_op {
  * This is the number of bytes per unit of external data.
  */
 #define	BYTES_PER_XDR_UNIT	(4)
-#define	RNDUP(x)  ((((x) + BYTES_PER_XDR_UNIT - 1) / BYTES_PER_XDR_UNIT) \
-		    * BYTES_PER_XDR_UNIT)
+#define	RNDUP(x)  ((((x) + BYTES_PER_XDR_UNIT - 1) / BYTES_PER_XDR_UNIT) * \
+		    BYTES_PER_XDR_UNIT)
 
 /*
  * The XDR handle.
@@ -368,22 +368,22 @@ struct xdr_discrim {
 #ifndef _LITTLE_ENDIAN
 #define	IXDR_GET_HYPER(buf, v)	{ \
 			*((int32_t *)(&v)) = ntohl(*(uint32_t *)buf++); \
-			*((int32_t *)(((char *)&v) + BYTES_PER_XDR_UNIT)) \
-			= ntohl(*(uint32_t *)buf++); \
+			*((int32_t *)(((char *)&v) + BYTES_PER_XDR_UNIT)) = \
+			ntohl(*(uint32_t *)buf++); \
 			}
 #define	IXDR_PUT_HYPER(buf, v)	{ \
 			*(buf)++ = (int32_t)htonl(*(uint32_t *) \
 				((char *)&v)); \
 			*(buf)++ = \
-				(int32_t)htonl(*(uint32_t *)(((char *)&v) \
-				+ BYTES_PER_XDR_UNIT)); \
+				(int32_t)htonl(*(uint32_t *)(((char *)&v) + \
+				BYTES_PER_XDR_UNIT)); \
 			}
 #else
 
 #define	IXDR_GET_HYPER(buf, v)	{ \
 			*((int32_t *)(((char *)&v) + \
-				BYTES_PER_XDR_UNIT)) \
-				= ntohl(*(uint32_t *)buf++); \
+				BYTES_PER_XDR_UNIT)) = \
+				ntohl(*(uint32_t *)buf++); \
 			*((int32_t *)(&v)) = \
 				ntohl(*(uint32_t *)buf++); \
 			}

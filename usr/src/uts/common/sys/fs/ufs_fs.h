@@ -124,8 +124,8 @@ extern "C" {
 #define	UFS_MAXOFFSET_T	MAXOFF_T
 #define	UFS_FILESIZE_BITS	32
 #else
-#define	UFS_MAXOFFSET_T	((1LL << NBBY * sizeof (daddr32_t) + DEV_BSHIFT - 1) \
-							- 1)
+#define	UFS_MAXOFFSET_T	((1LL << NBBY * \
+		sizeof (daddr32_t) + DEV_BSHIFT - 1) - 1)
 #define	UFS_FILESIZE_BITS	41
 #endif /* _LONGLONG_TYPE */
 
@@ -402,15 +402,15 @@ struct  fs {
 	(((ufsvfsp)->vfs_fs->fs_postblformat != FS_DYNAMICPOSTBLFMT) \
 	? ((ufsvfsp)->vfs_fs->fs_opostbl[cylno]) \
 	: ((short *)((char *)(ufsvfsp)->vfs_fs + \
-	(ufsvfsp)->vfs_fs->fs_postbloff) \
-	+ (cylno) * (ufsvfsp)->vfs_nrpos))
+	(ufsvfsp)->vfs_fs->fs_postbloff) + \
+	(cylno) * (ufsvfsp)->vfs_nrpos))
 #else
 #define	fs_postbl(fs, cylno) \
 	(((fs)->fs_postblformat != FS_DYNAMICPOSTBLFMT) \
 	? ((fs)->fs_opostbl[cylno]) \
 	: ((short *)((char *)(fs) + \
-	(fs)->fs_postbloff) \
-	+ (cylno) * (fs)->fs_nrpos))
+	(fs)->fs_postbloff) + \
+	(cylno) * (fs)->fs_nrpos))
 #endif
 
 #define	fs_rotbl(fs) \

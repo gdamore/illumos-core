@@ -1072,8 +1072,8 @@ struct group_filter {
 #endif
 
 #define	GROUP_FILTER_SIZE(numsrc) \
-	(sizeof (struct group_filter) - sizeof (struct sockaddr_storage) \
-	+ (numsrc) * sizeof (struct sockaddr_storage))
+	(sizeof (struct group_filter) - sizeof (struct sockaddr_storage) + \
+	(numsrc) * sizeof (struct sockaddr_storage))
 
 /*
  * Argument for SIOC[GS]IPMSFILTER ioctls (IPv4-specific)
@@ -1087,8 +1087,8 @@ struct ip_msfilter {
 };
 
 #define	IP_MSFILTER_SIZE(numsrc) \
-	(sizeof (struct ip_msfilter) - sizeof (struct in_addr) \
-	+ (numsrc) * sizeof (struct in_addr))
+	(sizeof (struct ip_msfilter) - sizeof (struct in_addr) + \
+	(numsrc) * sizeof (struct in_addr))
 
 /*
  * Multicast source filter manipulation functions in libsocket;

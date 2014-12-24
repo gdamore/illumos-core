@@ -566,8 +566,7 @@ list_devs(int listguids, int ctrl)
 
 	bzero(checkctrl, MAXPATHLEN);
 	pair = NULL;
-	while ((pair = nvlist_next_nvpair(mapnvl, pair))
-	    != NULL) {
+	while ((pair = nvlist_next_nvpair(mapnvl, pair)) != NULL) {
 		boolean_t livescsivhcip = B_FALSE;
 
 		if ((((rv = nvpair_value_string(pair, &querydev)) < 0) ||
@@ -1342,8 +1341,7 @@ vhci_to_phci(char *devpath, char *slice, int d_flag)
 	ioc.client = devpath;
 	ioc.buf_elem = npaths;
 	ioc.ret_elem = &npaths;
-	if ((ioc.ret_buf = calloc(npaths, sizeof (sv_path_info_t)))
-	    == NULL)
+	if ((ioc.ret_buf = calloc(npaths, sizeof (sv_path_info_t))) == NULL)
 		goto failure;
 	rv = ioctl(vhci_fd, SCSI_VHCI_GET_CLIENT_MULTIPATH_INFO, &ioc);
 	if (rv || npaths == 0) {

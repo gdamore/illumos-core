@@ -89,8 +89,8 @@ typedef struct td_thr_events {
 } td_thr_events_t;
 
 /* Event set manipulation macros. */
-#define	__td_eventmask(n)	((unsigned int)1 << (((n) - 1)	\
-				    & (BT_NBIPUI - 1)))
+#define	__td_eventmask(n)	((unsigned int)1 << (((n) - 1) & \
+		(BT_NBIPUI - 1)))
 #define	__td_eventword(n)	(((unsigned int)((n) - 1))>>5)
 
 #define	td_event_emptyset(setp)				\
