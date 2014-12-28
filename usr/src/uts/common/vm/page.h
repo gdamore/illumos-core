@@ -943,8 +943,8 @@ int	page_szc_user_filtered(size_t);
 #define	PP_ISBOOTPAGES(pp)	((pp)->p_state & P_BOOTPAGES)
 #define	PP_ISRAF(pp)		((pp)->p_state & P_RAF)
 
-#define	PP_SETFREE(pp)		((pp)->p_state = ((pp)->p_state & ~P_MIGRATE) \
-				| P_FREE)
+#define	PP_SETFREE(pp)						\
+	((pp)->p_state = ((pp)->p_state & ~P_MIGRATE) | P_FREE)
 #define	PP_SETAGED(pp)		ASSERT(PP_ISAGED(pp))
 #define	PP_SETNORELOC(pp)	((pp)->p_state |= P_NORELOC)
 #define	PP_SETMIGRATE(pp)	((pp)->p_state |= P_MIGRATE)

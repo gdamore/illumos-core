@@ -471,8 +471,8 @@ struct t_uderr {
  *                               struct t_opthdr *popt):
  *         Skip to next option header
  */
-#define	T_ALIGN(p)	(((uintptr_t)(p) + (sizeof (t_scalar_t) - 1))\
-					& ~(sizeof (t_scalar_t) - 1))
+#define	T_ALIGN(p)	(((uintptr_t)(p) + (sizeof (t_scalar_t) - 1)) & \
+					~(sizeof (t_scalar_t) - 1))
 #define	OPT_NEXTHDR(pbuf, buflen, popt)	(_T_NEXTHDR((pbuf), (buflen), (popt)))
 #endif
 

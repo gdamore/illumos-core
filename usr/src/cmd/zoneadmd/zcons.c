@@ -429,8 +429,8 @@ devlinks:
 	 * 1 sec. and retry a few times before we fail to boot the zone.
 	 */
 	for (i = 0; i < 5; i++) {
-		if (ioctl(masterfd, ZC_HOLDSLAVE, (caddr_t)(intptr_t)slavefd)
-		    == 0) {
+		if (ioctl(masterfd, ZC_HOLDSLAVE, (caddr_t)(intptr_t)slavefd) ==
+		    0) {
 			rv = 0;
 			break;
 		} else if (errno != ENXIO) {

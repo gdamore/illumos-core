@@ -1199,8 +1199,8 @@ ready_func(int argc, char *argv[])
 		sub_usage(SHELP_READY, CMD_READY);
 		return (Z_USAGE);
 	}
-	if (sanity_check(target_zone, CMD_READY, B_FALSE, B_FALSE, B_FALSE)
-	    != Z_OK)
+	if (sanity_check(target_zone, CMD_READY, B_FALSE, B_FALSE, B_FALSE) !=
+	    Z_OK)
 		return (Z_ERR);
 	if (verify_details(CMD_READY, argv) != Z_OK)
 		return (Z_ERR);
@@ -1275,8 +1275,8 @@ boot_func(int argc, char *argv[])
 				return (Z_ERR);
 			}
 	}
-	if (sanity_check(target_zone, CMD_BOOT, B_FALSE, B_FALSE, force)
-	    != Z_OK)
+	if (sanity_check(target_zone, CMD_BOOT, B_FALSE, B_FALSE, force) !=
+	    Z_OK)
 		return (Z_ERR);
 	if (verify_details(CMD_BOOT, argv) != Z_OK)
 		return (Z_ERR);
@@ -1823,8 +1823,8 @@ halt_func(int argc, char *argv[])
 	 * so even though it seems that the fourth parameter below should
 	 * perhaps be B_TRUE, it really shouldn't be.
 	 */
-	if (sanity_check(target_zone, CMD_HALT, B_FALSE, B_FALSE, B_FALSE)
-	    != Z_OK)
+	if (sanity_check(target_zone, CMD_HALT, B_FALSE, B_FALSE, B_FALSE) !=
+	    Z_OK)
 		return (Z_ERR);
 
 	/*
@@ -1887,8 +1887,8 @@ shutdown_func(int argc, char *argv[])
 	 * so even though it seems that the third parameter below should
 	 * perhaps be B_TRUE, it really shouldn't be.
 	 */
-	if (sanity_check(target_zone, CMD_SHUTDOWN, B_TRUE, B_FALSE, B_FALSE)
-	    != Z_OK)
+	if (sanity_check(target_zone, CMD_SHUTDOWN, B_TRUE, B_FALSE, B_FALSE) !=
+	    Z_OK)
 		return (Z_ERR);
 
 	if (zonecfg_call_zoneadmd(target_zone, &zarg, locale, B_TRUE) != Z_OK)
@@ -1951,8 +1951,8 @@ reboot_func(int argc, char *argv[])
 	 * so even though it seems that the fourth parameter below should
 	 * perhaps be B_TRUE, it really shouldn't be.
 	 */
-	if (sanity_check(target_zone, CMD_REBOOT, B_TRUE, B_FALSE, B_FALSE)
-	    != Z_OK)
+	if (sanity_check(target_zone, CMD_REBOOT, B_TRUE, B_FALSE, B_FALSE) !=
+	    Z_OK)
 		return (Z_ERR);
 	if (verify_details(CMD_REBOOT, argv) != Z_OK)
 		return (Z_ERR);
@@ -2075,8 +2075,8 @@ verify_rctls(zone_dochandle_t handle)
 
 		for (rctlval = rctltab.zone_rctl_valptr; rctlval != NULL;
 		    rctlval = rctlval->zone_rctlval_next) {
-			if (zonecfg_construct_rctlblk(rctlval, rctlblk)
-			    != Z_OK) {
+			if (zonecfg_construct_rctlblk(rctlval, rctlblk) !=
+			    Z_OK) {
 				zerror(gettext("invalid rctl value: "
 				    "(priv=%s,limit=%s,action%s)"),
 				    rctlval->zone_rctlval_priv,
@@ -2478,8 +2478,8 @@ retry:
 			break;
 		}
 
-		if ((local_ifs[cnt]->name = strdup(if_reqp->lifr_name))
-		    == NULL) {
+		if ((local_ifs[cnt]->name = strdup(if_reqp->lifr_name)) ==
+		    NULL) {
 			free(local_ifs[cnt]);
 			res = Z_ERR;
 			break;
@@ -2846,8 +2846,8 @@ verify_func(int argc, char *argv[])
 		sub_usage(SHELP_VERIFY, CMD_VERIFY);
 		return (Z_USAGE);
 	}
-	if (sanity_check(target_zone, CMD_VERIFY, B_FALSE, B_FALSE, B_FALSE)
-	    != Z_OK)
+	if (sanity_check(target_zone, CMD_VERIFY, B_FALSE, B_FALSE, B_FALSE) !=
+	    Z_OK)
 		return (Z_ERR);
 	return (verify_details(CMD_VERIFY, argv));
 }
@@ -2991,8 +2991,8 @@ install_func(int argc, char *argv[])
 			zerror("Install command line too long");
 			return (Z_ERR);
 		}
-		if (addopt(postcmdbuf, optopt, optarg, sizeof (postcmdbuf))
-		    != Z_OK) {
+		if (addopt(postcmdbuf, optopt, optarg, sizeof (postcmdbuf)) !=
+		    Z_OK) {
 			zerror("Post-Install command line too long");
 			return (Z_ERR);
 		}
@@ -3004,8 +3004,8 @@ install_func(int argc, char *argv[])
 			return (Z_ERR);
 		}
 
-		if (addopt(postcmdbuf, 0, argv[optind], sizeof (postcmdbuf))
-		    != Z_OK) {
+		if (addopt(postcmdbuf, 0, argv[optind], sizeof (postcmdbuf)) !=
+		    Z_OK) {
 			zerror("Post-Install command line too long");
 			return (Z_ERR);
 		}
@@ -3293,8 +3293,8 @@ warn_ip_match(zone_dochandle_t s_handle, char *source_zone,
 
 		while (zonecfg_getnwifent(s_handle, &s_nwiftab) == Z_OK) {
 			/* remove an (optional) netmask from the address */
-			if ((p = strchr(s_nwiftab.zone_nwif_address, '/'))
-			    != NULL)
+			if ((p = strchr(s_nwiftab.zone_nwif_address, '/')) !=
+			    NULL)
 				*p = '\0';
 
 			/* For exclusive-IP zones, address is not specified. */
@@ -3656,8 +3656,8 @@ clone_func(int argc, char *argv[])
 		goto done;
 	}
 
-	if ((err = zone_get_zonepath(target_zone, zonepath, sizeof (zonepath)))
-	    != Z_OK) {
+	if ((err = zone_get_zonepath(target_zone, zonepath,
+	    sizeof (zonepath))) != Z_OK) {
 		errno = err;
 		zperror2(target_zone, gettext("could not get zone path"));
 		goto done;
@@ -3730,8 +3730,8 @@ clone_func(int argc, char *argv[])
 	}
 
 	if (!brand_help) {
-		if ((err = zone_set_state(target_zone, ZONE_STATE_INCOMPLETE))
-		    != Z_OK) {
+		if ((err = zone_set_state(target_zone,
+		    ZONE_STATE_INCOMPLETE)) != Z_OK) {
 			errno = err;
 			zperror2(target_zone, gettext("could not set state"));
 			goto done;
@@ -3791,8 +3791,8 @@ clone_func(int argc, char *argv[])
 
 	if (err == Z_OK && postcmdbuf[0] != '\0') {
 		status = do_subproc(postcmdbuf);
-		if ((err = subproc_status("postclone", status, B_FALSE))
-		    != ZONE_SUBPROC_OK) {
+		if ((err = subproc_status("postclone", status, B_FALSE)) !=
+		    ZONE_SUBPROC_OK) {
 			zerror(gettext("post-clone configuration failed."));
 			err = Z_ERR;
 		}
@@ -3981,8 +3981,8 @@ move_func(int argc, char *argv[])
 		return (Z_USAGE);
 	}
 	new_zonepath = argv[optind];
-	if (sanity_check(target_zone, CMD_MOVE, B_FALSE, B_TRUE, B_FALSE)
-	    != Z_OK)
+	if (sanity_check(target_zone, CMD_MOVE, B_FALSE, B_TRUE, B_FALSE) !=
+	    Z_OK)
 		return (Z_ERR);
 	if (verify_details(CMD_MOVE, argv) != Z_OK)
 		return (Z_ERR);
@@ -3995,8 +3995,8 @@ move_func(int argc, char *argv[])
 	if (validate_zonepath(new_zonepath, CMD_MOVE) != Z_OK)
 		return (Z_ERR);
 
-	if ((err = zone_get_zonepath(target_zone, zonepath, sizeof (zonepath)))
-	    != Z_OK) {
+	if ((err = zone_get_zonepath(target_zone, zonepath,
+	    sizeof (zonepath))) != Z_OK) {
 		errno = err;
 		zperror2(target_zone, gettext("could not get zone path"));
 		return (Z_ERR);
@@ -4328,8 +4328,8 @@ detach_func(int argc, char *argv[])
 		}
 	}
 
-	if ((err = zone_get_zonepath(target_zone, zonepath, sizeof (zonepath)))
-	    != Z_OK) {
+	if ((err = zone_get_zonepath(target_zone, zonepath,
+	    sizeof (zonepath))) != Z_OK) {
 		errno = err;
 		zperror2(target_zone, gettext("could not get zone path"));
 		return (Z_ERR);
@@ -4550,8 +4550,8 @@ dryrun_get_brand(char *manifest_path, char *tmpname, int size)
 		goto done;
 	}
 
-	if ((err = zonecfg_attach_manifest(fd, local_handle, rem_handle))
-	    != Z_OK) {
+	if ((err = zonecfg_attach_manifest(fd, local_handle, rem_handle)) !=
+	    Z_OK) {
 		res = Z_ERR;
 
 		if (err == Z_INVALID_DOCUMENT) {
@@ -4586,8 +4586,8 @@ dryrun_get_brand(char *manifest_path, char *tmpname, int size)
 	}
 
 	/* Retrieve remote handle brand type. */
-	if (zonecfg_get_brand(rem_handle, target_brand, sizeof (target_brand))
-	    != Z_OK) {
+	if (zonecfg_get_brand(rem_handle, target_brand,
+	    sizeof (target_brand)) != Z_OK) {
 		zerror(gettext("missing or invalid brand"));
 		exit(Z_ERR);
 	}
@@ -5101,8 +5101,8 @@ mount_func(int argc, char *argv[])
 	if (argc > optind)
 		return (Z_USAGE);
 
-	if (sanity_check(target_zone, CMD_MOUNT, B_FALSE, B_FALSE, force)
-	    != Z_OK)
+	if (sanity_check(target_zone, CMD_MOUNT, B_FALSE, B_FALSE, force) !=
+	    Z_OK)
 		return (Z_ERR);
 	if (verify_details(CMD_MOUNT, argv) != Z_OK)
 		return (Z_ERR);
@@ -5124,8 +5124,8 @@ unmount_func(int argc, char *argv[])
 
 	if (argc > 0)
 		return (Z_USAGE);
-	if (sanity_check(target_zone, CMD_UNMOUNT, B_FALSE, B_FALSE, B_FALSE)
-	    != Z_OK)
+	if (sanity_check(target_zone, CMD_UNMOUNT, B_FALSE, B_FALSE, B_FALSE) !=
+	    Z_OK)
 		return (Z_ERR);
 
 	zarg.cmd = Z_UNMOUNT;
@@ -5171,8 +5171,8 @@ mark_func(int argc, char *argv[])
 	if (state != ZONE_STATE_INCOMPLETE && !force)
 		return (Z_USAGE);
 
-	if (sanity_check(target_zone, CMD_MARK, B_FALSE, B_TRUE, B_FALSE)
-	    != Z_OK)
+	if (sanity_check(target_zone, CMD_MARK, B_FALSE, B_TRUE, B_FALSE) !=
+	    Z_OK)
 		return (Z_ERR);
 
 	/*

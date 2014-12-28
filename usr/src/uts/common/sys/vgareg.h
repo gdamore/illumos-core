@@ -114,14 +114,14 @@ extern "C" {
 #define		VGA_CRTC_OVFL_REG_VDE9	6
 #define		VGA_CRTC_OVFL_REG_VRS9	7
 #define		VGA_CRTC_OVFL_REG_PUT_VT(n)	\
-			((((n)>>8)&1)<<VGA_CRTC_OVFL_REG_VT8) \
-			| ((((n)>>9)&1)<<VGA_CRTC_OVFL_REG_VT9)
+			((((n)>>8)&1)<<VGA_CRTC_OVFL_REG_VT8) | \
+			((((n)>>9)&1)<<VGA_CRTC_OVFL_REG_VT9)
 #define		VGA_CRTC_OVFL_REG_PUT_VDE(n)	\
-			((((n)>>8)&1)<<VGA_CRTC_OVFL_REG_VDE8) \
-			| ((((n)>>9)&1)<<VGA_CRTC_OVFL_REG_VDE9)
+			((((n)>>8)&1)<<VGA_CRTC_OVFL_REG_VDE8) | \
+			((((n)>>9)&1)<<VGA_CRTC_OVFL_REG_VDE9)
 #define		VGA_CRTC_OVFL_REG_PUT_VRS(n)	\
-			((((n)>>8)&1)<<VGA_CRTC_OVFL_REG_VRS8) \
-			| ((((n)>>9)&1)<<VGA_CRTC_OVFL_REG_VRS9)
+			((((n)>>8)&1)<<VGA_CRTC_OVFL_REG_VRS8) | \
+			((((n)>>9)&1)<<VGA_CRTC_OVFL_REG_VRS9)
 #define		VGA_CRTC_OVFL_REG_PUT_LCM(n)	\
 			((((n)>>8)&1)<<VGA_CRTC_OVFL_REG_LCM8)
 #define		VGA_CRTC_OVFL_REG_PUT_SVB(n)	\

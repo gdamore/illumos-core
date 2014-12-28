@@ -409,8 +409,8 @@ extern uint32_t tcp_early_abort;
  */
 #define	MAKE_DROPPABLE(listener, eager)					\
 	if ((eager)->tcp_eager_next_drop_q0 == NULL) {			\
-		(listener)->tcp_eager_next_drop_q0->tcp_eager_prev_drop_q0\
-		    = (eager);						\
+		(listener)->tcp_eager_next_drop_q0->tcp_eager_prev_drop_q0 = \
+		    (eager);						\
 		(eager)->tcp_eager_prev_drop_q0 = (listener);		\
 		(eager)->tcp_eager_next_drop_q0 =			\
 		    (listener)->tcp_eager_next_drop_q0;			\
@@ -419,10 +419,10 @@ extern uint32_t tcp_early_abort;
 
 #define	MAKE_UNDROPPABLE(eager)						\
 	if ((eager)->tcp_eager_next_drop_q0 != NULL) {			\
-		(eager)->tcp_eager_next_drop_q0->tcp_eager_prev_drop_q0	\
-		    = (eager)->tcp_eager_prev_drop_q0;			\
-		(eager)->tcp_eager_prev_drop_q0->tcp_eager_next_drop_q0	\
-		    = (eager)->tcp_eager_next_drop_q0;			\
+		(eager)->tcp_eager_next_drop_q0->tcp_eager_prev_drop_q0	= \
+		    (eager)->tcp_eager_prev_drop_q0;			\
+		(eager)->tcp_eager_prev_drop_q0->tcp_eager_next_drop_q0	= \
+		    (eager)->tcp_eager_next_drop_q0;			\
 		(eager)->tcp_eager_prev_drop_q0 = NULL;			\
 		(eager)->tcp_eager_next_drop_q0 = NULL;			\
 	}

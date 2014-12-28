@@ -550,8 +550,8 @@ cmdParse(int argc, char *argv[], synTables_t synTable, void *callArgs,
 				cmdOptions[i].optval = opt;
 				if (optarg) {
 					len = strlen(optarg);
-					if (len > sizeof (cmdOptions[i].optarg)
-					    - 1) {
+					if (len >
+					    sizeof (cmdOptions[i].optarg) - 1) {
 						(void) printf("%s: %s\n",
 						    commandName,
 						    gettext("option too long"));

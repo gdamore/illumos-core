@@ -135,8 +135,8 @@ typedef	struct	port_notify32 {
 /*
  * Helper type
  */
-#define	FILE_EXCEPTION		(UNMOUNTED|FILE_DELETE|FILE_RENAME_TO \
-				|FILE_RENAME_FROM|MOUNTEDOVER)
+#define	FILE_EXCEPTION		(UNMOUNTED|FILE_DELETE|FILE_RENAME_TO| \
+				FILE_RENAME_FROM|MOUNTEDOVER)
 
 #ifdef	__cplusplus
 }

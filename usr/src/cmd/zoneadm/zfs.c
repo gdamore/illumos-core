@@ -117,8 +117,8 @@ match_mountpoint(zfs_handle_t *zhp, void *data)
 
 		while (getmntent(fp, &entry) == 0) {
 			if (strcmp(nm, entry.mnt_special) == 0) {
-				if (strcmp(entry.mnt_mountp, cbp->match_name)
-				    == 0) {
+				if (strcmp(entry.mnt_mountp, cbp->match_name) ==
+				    0) {
 					(void) fclose(fp);
 					cbp->match_handle = zhp;
 					return (1);
@@ -940,8 +940,8 @@ clone_zfs(char *source_zonepath, char *zonepath, char *presnapbuf,
 
 	if (clone_snap(snap_name, clone_name) != Z_OK) {
 		/* Clean up the snapshot we just took. */
-		if ((zhp = zfs_open(g_zfs, snap_name, ZFS_TYPE_SNAPSHOT))
-		    != NULL) {
+		if ((zhp = zfs_open(g_zfs, snap_name, ZFS_TYPE_SNAPSHOT)) !=
+		    NULL) {
 			if (zfs_unmount(zhp, NULL, 0) == 0)
 				(void) zfs_destroy(zhp, B_FALSE);
 			zfs_close(zhp);

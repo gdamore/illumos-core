@@ -179,8 +179,7 @@ typedef struct log_eventq {
 
 /* Class hashing defines */
 #define	CLASS_HASH_SZ	63
-#define	CLASS_HASH(class_name)	((hash_func(class_name) \
-				% CLASS_HASH_SZ) + 1)
+#define	CLASS_HASH(class_name)	((hash_func(class_name) % CLASS_HASH_SZ) + 1)
 #define	CHAN_HASH_SZ	32
 
 typedef struct subclass_lst {

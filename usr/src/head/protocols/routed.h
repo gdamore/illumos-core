@@ -201,8 +201,8 @@ typedef struct defr_s {
 
 #define	HOPCNT_INFINITY		16	/* per Xerox NS */
 #define	MAXPACKETSIZE		512	/* max broadcast size */
-#define	NETS_LEN ((MAXPACKETSIZE - sizeof (struct rip))	\
-	/ sizeof (struct netinfo) +1)
+#define	NETS_LEN ((MAXPACKETSIZE - sizeof (struct rip))	/ \
+	    sizeof (struct netinfo) +1)
 
 #define	INADDR_RIP_GROUP 0xe0000009U	/* 224.0.0.9 */
 

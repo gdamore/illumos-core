@@ -63,8 +63,8 @@ extern uint_t rlim_fd_cur;
 extern uint_t rlim_fd_max;
 
 /* Given an array of rctlblk_t calculate the address of the n'th element */
-#define	RCTLBLK_INC(blk, n)	(rctlblk_t *)(((char *)blk) \
-	+ (n * rctlblk_size()))
+#define	RCTLBLK_INC(blk, n)	(rctlblk_t *)(((char *)blk) + \
+	(n * rctlblk_size()))
 
 #ifdef	__cplusplus
 }

@@ -110,8 +110,7 @@ extern "C" {
 	}
 
 #define	KICONV_JA_PUTU(u32)	\
-	if (write_unicode((u32), &op, &oleft, errno) \
-			== (size_t)-1) { \
+	if (write_unicode((u32), &op, &oleft, errno) == (size_t)-1) { \
 		rv = ((size_t)-1);\
 		goto ret; \
 	}

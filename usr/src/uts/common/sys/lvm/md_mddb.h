@@ -288,8 +288,8 @@ typedef	struct mddb_mnln {
 #define	MDDB_LOCAL_LNCNT	RNDUP_BLKCNT(sizeof (mddb_ln_t), \
 				    sizeof (md_name_suffix))
 
-#define	MDDB_MNLNCNT		((sizeof (mddb_mnln_t) + (MDDB_BSIZE - 1)) \
-				    / MDDB_BSIZE)
+#define	MDDB_MNLNCNT		((sizeof (mddb_mnln_t) + (MDDB_BSIZE - 1)) / \
+				    MDDB_BSIZE)
 
 typedef struct mddb_dt {
 	uint_t		dt_mag;
@@ -482,8 +482,8 @@ typedef struct mddb_mnlb {
 #define	MDDB_LOCAL_LBCNT	RNDUP_BLKCNT(sizeof (mddb_lb_t), \
 				    sizeof (mddb_sidelocator_t))
 
-#define	MDDB_MNLBCNT		((sizeof (mddb_mnlb_t) + (MDDB_BSIZE - 1)) \
-				    / MDDB_BSIZE)
+#define	MDDB_MNLBCNT		((sizeof (mddb_mnlb_t) + (MDDB_BSIZE - 1)) / \
+				    MDDB_BSIZE)
 
 typedef struct mddb_map {
 	daddr32_t		m_consecutive;

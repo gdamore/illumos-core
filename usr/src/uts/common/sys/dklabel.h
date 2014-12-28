@@ -164,8 +164,8 @@ struct dk_vtoc {
 			    (12 * sizeof (uint16_t)) + \
 			    (2 * (sizeof (uint16_t))))))
 #elif defined(_SUNOS_VTOC_8)
-#define	LEN_DKL_PAD	(DK_LABEL_SIZE \
-			    - ((LEN_DKL_ASCII) + \
+#define	LEN_DKL_PAD	(DK_LABEL_SIZE - \
+			    ((LEN_DKL_ASCII) + \
 			    (sizeof (struct dk_vtoc)) + \
 			    (sizeof (struct dk_map32)  * NDKMAP) + \
 			    (14 * (sizeof (uint16_t))) + \

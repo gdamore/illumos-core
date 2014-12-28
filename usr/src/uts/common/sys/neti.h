@@ -74,8 +74,8 @@ extern "C" {
 #define	NET_IS_HCK_L4_PART(n, x)                                             \
 	((net_ispartialchecksum(n, x) & NET_HCK_L4_PART) == NET_HCK_L4_PART)
 #define	NET_IS_HCK_L34_FULL(n, x)                                            \
-	((net_ispartialchecksum(n, x) & (NET_HCK_L3_FULL|NET_HCK_L4_FULL))   \
-	    == (NET_HCK_L3_FULL | NET_HCK_L4_FULL))
+	((net_ispartialchecksum(n, x) & (NET_HCK_L3_FULL|NET_HCK_L4_FULL)) == \
+	    (NET_HCK_L3_FULL | NET_HCK_L4_FULL))
 
 typedef uintptr_t	phy_if_t;
 typedef intptr_t	lif_if_t;

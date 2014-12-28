@@ -522,19 +522,16 @@ typedef enum __ns_cert_types {
  */
 #define	NS_GET16(s, cp) do { \
 	register const uchar_t *t_cp = (const uchar_t *)(cp); \
-	(s) = ((uint16_t)t_cp[0] << 8) \
-	    | ((uint16_t)t_cp[1]) \
-	; \
+	(s) = ((uint16_t)t_cp[0] << 8) | ((uint16_t)t_cp[1]); \
 	(cp) += NS_INT16SZ; \
 } while (0)
 
 #define	NS_GET32(l, cp) do { \
 	register const uchar_t *t_cp = (const uchar_t *)(cp); \
-	(l) = ((uint32_t)t_cp[0] << 24) \
-	    | ((uint32_t)t_cp[1] << 16) \
-	    | ((uint32_t)t_cp[2] << 8) \
-	    | ((uint32_t)t_cp[3]) \
-	; \
+	(l) = ((uint32_t)t_cp[0] << 24) | \
+	    ((uint32_t)t_cp[1] << 16) | \
+	    ((uint32_t)t_cp[2] << 8) | \
+	    ((uint32_t)t_cp[3]); \
 	(cp) += NS_INT32SZ; \
 } while (0)
 

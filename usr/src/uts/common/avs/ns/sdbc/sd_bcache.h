@@ -778,8 +778,8 @@ typedef struct _sd_map_info {
 
 #define	FILE_OPENED(cd)	(((cd) >= 0) && ((cd) < (sdbc_max_devs)) && \
 			(_sd_cache_files[(cd)].cd_info != NULL) && \
-			(_sd_cache_files[(cd)].cd_info->sh_alloc \
-			& CD_ALLOCATED))
+			(_sd_cache_files[(cd)].cd_info->sh_alloc & \
+			CD_ALLOCATED))
 
 /*
  * bitmap stuff
@@ -824,8 +824,8 @@ typedef struct _sd_map_info {
 	SSOP_SETCENTRY(sdbc_safestore, gl); }
 
 #define	SDBC_VALID_BITS(fba_off, fba_len, cc_entry) \
-	((((cc_entry)->cc_valid) & (SDBC_GET_BITS(fba_off, fba_len))) \
-	== (SDBC_GET_BITS(fba_off, fba_len)))
+	((((cc_entry)->cc_valid) & (SDBC_GET_BITS(fba_off, fba_len))) == \
+	(SDBC_GET_BITS(fba_off, fba_len)))
 
 
 #define	SDBC_DIRTY_NEIGHBORS(last, next) \

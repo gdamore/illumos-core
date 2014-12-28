@@ -162,8 +162,8 @@ struct compressor {
 #define	DEFLATE_METHOD_VAL	8
 #define	DEFLATE_SIZE(x)		(((x) >> 4) + DEFLATE_MIN_SIZE)
 #define	DEFLATE_METHOD(x)	((x) & 0x0F)
-#define	DEFLATE_MAKE_OPT(w)	((((w) - DEFLATE_MIN_SIZE) << 4) \
-				    + DEFLATE_METHOD_VAL)
+#define	DEFLATE_MAKE_OPT(w)	((((w) - DEFLATE_MIN_SIZE) << 4) + \
+				    DEFLATE_METHOD_VAL)
 #define	DEFLATE_CHK_SEQUENCE	0
 
 /*
