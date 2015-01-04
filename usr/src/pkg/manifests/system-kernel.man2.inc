@@ -180,6 +180,7 @@ link path=usr/share/man/man2/faccessat.2 target=access.2
 link path=usr/share/man/man2/facl.2 target=acl.2
 link path=usr/share/man/man2/fchdir.2 target=chdir.2
 link path=usr/share/man/man2/fchmod.2 target=chmod.2
+link path=usr/share/man/man2/fchmodat.2 target=chmod.2
 link path=usr/share/man/man2/fchown.2 target=chown.2
 link path=usr/share/man/man2/fchownat.2 target=chown.2
 link path=usr/share/man/man2/fchroot.2 target=chroot.2
@@ -213,6 +214,7 @@ link path=usr/share/man/man2/mknodat.2 target=mknod.2
 link path=usr/share/man/man2/openat.2 target=open.2
 link path=usr/share/man/man2/pathconf.2 target=fpathconf.2
 link path=usr/share/man/man2/pipe2.2 target=pipe.2
+link path=usr/share/man/man2/ppoll.2 target=poll.2
 link path=usr/share/man/man2/pread.2 target=read.2
 link path=usr/share/man/man2/pset_assign.2 target=pset_create.2
 link path=usr/share/man/man2/pset_destroy.2 target=pset_create.2

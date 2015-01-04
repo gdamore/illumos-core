@@ -61,25 +61,29 @@ if was invoked by some other part of
 the kernel. In a block device driver, the
 .Xr strategy 9E
 entry point may be
-called by the page daemon to write pages to the device. The page daemon has no
+called by the page daemon to write pages to the device.
+The page daemon has no
 relation to the current user thread, so in this case
 .Xr strategy 9E
 has kernel context.
 .Lp
 .Em Interrupt context
 is kernel context, but also has an interrupt level
-associated with it. Driver interrupt routines have interrupt context.
+associated with it.
+Driver interrupt routines have interrupt context.
 .Lp
 Note that a mutex acquired in user or kernel context that can also be acquired
 in interrupt context means that the user or kernel context thread holding that
 mutex is subject to all the restrictions imposed by interrupt context, for the
-duration of the ownership of that mutex. Please see the
+duration of the ownership of that mutex.
+Please see the
 .Xr mutex 9F
 man page for a more complete discussion of proper mutex handling for drivers.
 .Lp
 .Em High-level interrupt context
 is a more restricted form of interrupt
-context. If a driver interrupt priority returned from
+context.
+If a driver interrupt priority returned from
 .Xr ddi_intr_get_pri 9F
 is greater than the priority returned from
 .Xr ddi_intr_get_hilevel_pri 9F
@@ -117,7 +121,7 @@ The following table summarizes the STREAMS functions described in this section.
 .It Sy Routine	Sy Type
 .It Sy adjmsg	DDI/DKI
 .It Sy allocb	DDI/DKI
-.It Sy allocb_tmpl	Solaris DDI
+.It Sy allocb_tmpl	illumos DDI
 .It Sy backq	DDI/DKI
 .It Sy bcanput	DDI/DKI
 .It Sy bcanputnext	DDI/DKI
@@ -127,10 +131,10 @@ The following table summarizes the STREAMS functions described in this section.
 .It Sy clrbuf	DDI/DKI
 .It Sy copyb	DDI/DKI
 .It Sy copymsg	DDI/DKI
-.It Sy DB_BASE	Solaris DDI
-.It Sy DB_LIM	Solaris DDI
-.It Sy DB_REF	Solaris DDI
-.It Sy DB_TYPE	Solaris DDI
+.It Sy DB_BASE	illumos DDI
+.It Sy DB_LIM	illumos DDI
+.It Sy DB_REF	illumos DDI
+.It Sy DB_TYPE	illumos DDI
 .It Sy datamsg	DDI/DKI
 .It Sy dupb	DDI/DKI
 .It Sy dupmsg	DDI/DKI
@@ -143,28 +147,28 @@ The following table summarizes the STREAMS functions described in this section.
 .It Sy freemsg	DDI/DKI
 .It Sy freezestr	DDI/DKI
 .It Sy getq	DDI/DKI
-.It Sy IOC_CONVERT_FROM	Solaris DDI
+.It Sy IOC_CONVERT_FROM	illumos DDI
 .It Sy insq	DDI/DKI
 .It Sy linkb	DDI/DKI
-.It Sy MBLKHEAD	Solaris DDI
-.It Sy MBLKIN	Solaris DDI
-.It Sy MBLKL	Solaris DDI
-.It Sy MBLKSIZE	Solaris DDI
-.It Sy MBLKTAIL	Solaris DDI
-.It Sy mcopyin	Solaris DDI
-.It Sy mcopymsg	Solaris DDI
-.It Sy mcopyout	Solaris DDI
-.It Sy merror	Solaris DDI
-.It Sy mexchange	Solaris DDI
-.It Sy mioc2ack	Solaris DDI
-.It Sy miocack	Solaris DDI
-.It Sy mexchange	Solaris DDI
-.It Sy miocpullup	Solaris DDI
-.It Sy mkiocb	Solaris DDI
+.It Sy MBLKHEAD	illumos DDI
+.It Sy MBLKIN	illumos DDI
+.It Sy MBLKL	illumos DDI
+.It Sy MBLKSIZE	illumos DDI
+.It Sy MBLKTAIL	illumos DDI
+.It Sy mcopyin	illumos DDI
+.It Sy mcopymsg	illumos DDI
+.It Sy mcopyout	illumos DDI
+.It Sy merror	illumos DDI
+.It Sy mexchange	illumos DDI
+.It Sy mioc2ack	illumos DDI
+.It Sy miocack	illumos DDI
+.It Sy mexchange	illumos DDI
+.It Sy miocpullup	illumos DDI
+.It Sy mkiocb	illumos DDI
 .It Sy msgdsize	DDI/DKI
 .It Sy msgpullup	DDI/DKI
-.It Sy msgsize	Solaris DDI
-.It Sy mt-streams	Solaris DDI
+.It Sy msgsize	illumos DDI
+.It Sy mt-streams	illumos DDI
 .It Sy noenable	DDI/DKI
 .It Sy OTHERQ	DDI/DKI
 .It Sy pullupmsg	DDI/DKI
@@ -175,19 +179,19 @@ The following table summarizes the STREAMS functions described in this section.
 .It Sy putnext	DDI/DKI
 .It Sy putnextctl	DDI/DKI
 .It Sy putq	DDI/DKI
-.It Sy qassociate	Solaris DDI
-.It Sy qbufcall	Solaris DDI
+.It Sy qassociate	illumos DDI
+.It Sy qbufcall	illumos DDI
 .It Sy qenable	DDI/DKI
 .It Sy qprocson	DDI/DKI
 .It Sy qprocsoff	DDI/DKI
 .It Sy qreply	DDI/DKI
 .It Sy qsize	DDI/DKI
-.It Sy qtimeout	Solaris DDI
-.It Sy qunbufcall	Solaris DDI
-.It Sy quntimeout	Solaris DDI
-.It Sy qwait	Solaris DDI
-.It Sy qwait_sig	Solaris DDI
-.It Sy qwriter	Solaris DDI
+.It Sy qtimeout	illumos DDI
+.It Sy qunbufcall	illumos DDI
+.It Sy quntimeout	illumos DDI
+.It Sy qwait	illumos DDI
+.It Sy qwait_sig	illumos DDI
+.It Sy qwriter	illumos DDI
 .It Sy RD	DDI/DKI
 .It Sy rmvb	DDI/DKI
 .It Sy rmvq	DDI/DKI
@@ -206,8 +210,8 @@ The following table summarizes the functions not specific to STREAMS.
 .Bl -column usb_pipe_get_max_bulk_transfer_size
 .It Sy Routine	Sy Type
 .It Sy ASSERT	DDI/DKI
-.It Sy anocancel	Solaris DDI
-.It Sy aphysio	Solaris DDI
+.It Sy anocancel	illumos DDI
+.It Sy aphysio	illumos DDI
 .It Sy atomic_add	DDI/DKI
 .It Sy atomic_and	DDI/DKI
 .It Sy atomic_bits	DDI/DKI
@@ -219,14 +223,14 @@ The following table summarizes the functions not specific to STREAMS.
 .It Sy atomic_swap	DDI/DKI
 .It Sy bcmp	DDI/DKI
 .It Sy bcopy	DDI/DKI
-.It Sy bioclone	Solaris DDI
+.It Sy bioclone	illumos DDI
 .It Sy biodone	DDI/DKI
-.It Sy biofini	Solaris DDI
-.It Sy bioinit	Solaris DDI
-.It Sy biomodified	Solaris DDI
-.It Sy biosize	Solaris DDI
-.It Sy bioerror	Solaris DDI
-.It Sy bioreset	Solaris DDI
+.It Sy biofini	illumos DDI
+.It Sy bioinit	illumos DDI
+.It Sy biomodified	illumos DDI
+.It Sy biosize	illumos DDI
+.It Sy bioerror	illumos DDI
+.It Sy bioreset	illumos DDI
 .It Sy biowait	DDI/DKI
 .It Sy bp_copyin	DDI/DKI
 .It Sy bp_copyout	DDI/DKI
@@ -236,543 +240,545 @@ The following table summarizes the functions not specific to STREAMS.
 .It Sy btopr	DDI/DKI
 .It Sy bzero	DDI/DKI
 .It Sy cmn_err	DDI/DKI
-.It Sy condvar	Solaris DDI
+.It Sy condvar	illumos DDI
 .It Sy copyin	DDI/DKI
 .It Sy copyout	DDI/DKI
-.It Sy cv_broadcast	Solaris DDI
-.It Sy cv_destroy	Solaris DDI
-.It Sy cv_init	Solaris DDI
-.It Sy cv_signal	Solaris DDI
-.It Sy cv_timedwait	Solaris DDI
-.It Sy cv_wait	Solaris DDI
-.It Sy cv_wait_sig	Solaris DDI
-.It Sy ddi_add_event_handler	Solaris DDI
-.It Sy ddi_add_intr	Solaris DDI
-.It Sy ddi_add_softintr	Solaris DDI
-.It Sy ddi_binding_name	Solaris DDI
-.It Sy ddi_btop	Solaris DDI
-.It Sy ddi_btopr	Solaris DDI
-.It Sy ddi_can_receive_sig	Solaris DDI
-.It Sy ddi_check_acc_handle	Solaris DDI
-.It Sy ddi_copyin	Solaris DDI
-.It Sy ddi_copyout	Solaris DDI
-.It Sy ddi_create_minor_node	Solaris DDI
-.It Sy ddi_cred	Solaris DDI
-.It Sy ddi_dev_is_sid	Solaris DDI
-.It Sy ddi_dev_nintrs	Solaris DDI
-.It Sy ddi_dev_nregs	Solaris DDI
-.It Sy ddi_dev_regsize	Solaris DDI
-.It Sy ddi_device_copy	Solaris DDI
-.It Sy ddi_device_zero	Solaris DDI
-.It Sy ddi_devmap_segmap	Solaris DDI
-.It Sy ddi_dma_addr_bind_handle	Solaris DDI
-.It Sy ddi_dma_alloc_handle	Solaris DDI
-.It Sy ddi_dma_buf_bind_handle	Solaris DDI
-.It Sy ddi_dma_burstsizes	Solaris DDI
-.It Sy ddi_dma_free_handle	Solaris DDI
-.It Sy ddi_dma_getwin	Solaris DDI
-.It Sy ddi_dma_mem_alloc	Solaris DDI
-.It Sy ddi_dma_mem_free	Solaris DDI
-.It Sy ddi_dma_nextcookie	Solaris DDI
-.It Sy ddi_dma_numwin	Solaris DDI
-.It Sy ddi_dma_set_sbus64	Solaris DDI
-.It Sy ddi_dma_sync	Solaris DDI
-.It Sy ddi_dma_unbind_handle	Solaris DDI
-.It Sy ddi_dmae	Solaris x86 DDI
-.It Sy ddi_dmae_1stparty	Solaris x86 DDI
-.It Sy ddi_dmae_alloc	Solaris x86 DDI
-.It Sy ddi_dmae_disable	Solaris x86 DDI
-.It Sy ddi_dmae_enable	Solaris x86 DDI
-.It Sy ddi_dmae_getattr	Solaris x86 DDI
-.It Sy ddi_dmae_getcnt	Solaris x86 DDI
-.It Sy ddi_dmae_getlim	Solaris x86 DDI
-.It Sy ddi_dmae_prog	Solaris x86 DDI
-.It Sy ddi_dmae_release	Solaris x86 DDI
-.It Sy ddi_dmae_stop	Solaris x86 DDI
-.It Sy ddi_driver_major	Solaris DDI
-.It Sy ddi_driver_name	Solaris DDI
-.It Sy ddi_enter_critical	Solaris DDI
-.It Sy ddi_exit_critical	Solaris DDI
-.It Sy ddi_ffs	Solaris DDI
-.It Sy ddi_fls	Solaris DDI
-.It Sy ddi_fm_acc_err_clear	Solaris DDI
-.It Sy ddi_fm_acc_err_get	Solaris DDI
-.It Sy ddi_fm_ereport_post	Solaris DDI
-.It Sy ddi_fm_handler_register	Solaris DDI
-.It Sy ddi_fm_init	Solaris DDI
-.It Sy ddi_fm_service_impact	Solaris DDI
-.It Sy ddi_get16	Solaris DDI
-.It Sy ddi_get32	Solaris DDI
-.It Sy ddi_get64	Solaris DDI
-.It Sy ddi_get8	Solaris DDI
-.It Sy ddi_get_cred	Solaris DDI
-.It Sy ddi_get_devstate	Solaris DDI
-.It Sy ddi_get_driver_private	Solaris DDI
-.It Sy ddi_get_eventcookie	Solaris DDI
-.It Sy ddi_get_iblock_cookie	Solaris DDI
-.It Sy ddi_get_iminor	Solaris DDI
-.It Sy ddi_get_instance	Solaris DDI
-.It Sy ddi_get_kt_did	Solaris DDI
-.It Sy ddi_get_lbolt	Solaris DDI
-.It Sy ddi_get_name	Solaris DDI
-.It Sy ddi_get_parent	Solaris DDI
-.It Sy ddi_get_pid	Solaris DDI
-.It Sy ddi_get_soft_iblock_cookie	Solaris DDI
-.It Sy ddi_get_soft_state	Solaris DDI
-.It Sy ddi_getb	Solaris DDI
-.It Sy ddi_getl	Solaris DDI
-.It Sy ddi_getll	Solaris DDI
-.It Sy ddi_getlongprop	Solaris DDI
-.It Sy ddi_getlongprop_buf	Solaris DDI
-.It Sy ddi_getprop	Solaris DDI
-.It Sy ddi_getproplen	Solaris DDI
-.It Sy ddi_getw	Solaris DDI
-.It Sy ddi_intr_add_handler	Solaris DDI
-.It Sy ddi_intr_add_softint	Solaris DDI
-.It Sy ddi_intr_alloc	Solaris DDI
-.It Sy ddi_intr_block_disable	Solaris DDI
-.It Sy ddi_intr_block_enable	Solaris DDI
-.It Sy ddi_intr_clr_mask	Solaris DDI
-.It Sy ddi_intr_dup_handler	Solaris DDI
-.It Sy ddi_intr_disable	Solaris DDI
-.It Sy ddi_intr_enable	Solaris DDI
-.It Sy ddi_intr_free	Solaris DDI
-.It Sy ddi_intr_get_cap	Solaris DDI
-.It Sy ddi_intr_get_hilevel_pri	Solaris DDI
-.It Sy ddi_intr_get_navail	Solaris DDI
-.It Sy ddi_intr_get_nintrs	Solaris DDI
-.It Sy ddi_intr_get_pending	Solaris DDI
-.It Sy ddi_intr_get_pri	Solaris DDI
-.It Sy ddi_intr_get_softint_pri	Solaris DDI
-.It Sy ddi_intr_get_supported_types	Solaris DDI
-.It Sy ddi_intr_remove_handler	Solaris DDI
-.It Sy ddi_intr_remove_softint	Solaris DDI
-.It Sy ddi_intr_set_cap	Solaris DDI
-.It Sy ddi_intr_set_mask	Solaris DDI
-.It Sy ddi_intr_set_pri	Solaris DDI
-.It Sy ddi_intr_set_softint_pri	Solaris DDI
-.It Sy ddi_intr_trigger_softint	Solaris DDI
-.It Sy ddi_io_get16	Solaris DDI
-.It Sy ddi_io_get32	Solaris DDI
-.It Sy ddi_io_get8	Solaris DDI
-.It Sy ddi_io_getb	Solaris DDI
-.It Sy ddi_io_getl	Solaris DDI
-.It Sy ddi_io_getw	Solaris DDI
-.It Sy ddi_io_put16	Solaris DDI
-.It Sy ddi_io_put32	Solaris DDI
-.It Sy ddi_io_put8	Solaris DDI
-.It Sy ddi_io_putb	Solaris DDI
-.It Sy ddi_io_putl	Solaris DDI
-.It Sy ddi_io_putw	Solaris DDI
-.It Sy ddi_io_rep_get16	Solaris DDI
-.It Sy ddi_io_rep_get32	Solaris DDI
-.It Sy ddi_io_rep_get8	Solaris DDI
-.It Sy ddi_io_rep_getb	Solaris DDI
-.It Sy ddi_io_rep_getl	Solaris DDI
-.It Sy ddi_io_rep_getw	Solaris DDI
-.It Sy ddi_io_rep_put16	Solaris DDI
-.It Sy ddi_io_rep_put32	Solaris DDI
-.It Sy ddi_io_rep_put8	Solaris DDI
-.It Sy ddi_io_rep_putb	Solaris DDI
-.It Sy ddi_io_rep_putl	Solaris DDI
-.It Sy ddi_io_rep_putw	Solaris DDI
-.It Sy ddi_iomin	Solaris DDI
-.It Sy ddi_log_sysevent	Solaris DDI
-.It Sy ddi_map_regs	Solaris DDI
-.It Sy ddi_mapdev	Solaris DDI
-.It Sy ddi_mapdev_intercept	Solaris DDI
-.It Sy ddi_mapdev_nointercept	Solaris DDI
-.It Sy ddi_mapdev_set_device_acc_attr	Solaris DDI
-.It Sy ddi_mem_get16	Solaris DDI
-.It Sy ddi_mem_get32	Solaris DDI
-.It Sy ddi_mem_get64	Solaris DDI
-.It Sy ddi_mem_get8	Solaris DDI
-.It Sy ddi_mem_getb	Solaris DDI
-.It Sy ddi_mem_getl	Solaris DDI
-.It Sy ddi_mem_getll	Solaris DDI
-.It Sy ddi_mem_getw	Solaris DDI
-.It Sy ddi_mem_put16	Solaris DDI
-.It Sy ddi_mem_put32	Solaris DDI
-.It Sy ddi_mem_put64	Solaris DDI
-.It Sy ddi_mem_put8	Solaris DDI
-.It Sy ddi_mem_putb	Solaris DDI
-.It Sy ddi_mem_putl	Solaris DDI
-.It Sy ddi_mem_putll	Solaris DDI
-.It Sy ddi_mem_putw	Solaris DDI
-.It Sy ddi_mem_rep_get16	Solaris DDI
-.It Sy ddi_mem_rep_get32	Solaris DDI
-.It Sy ddi_mem_rep_get64	Solaris DDI
-.It Sy ddi_mem_rep_get8	Solaris DDI
-.It Sy ddi_mem_rep_getb	Solaris DDI
-.It Sy ddi_mem_rep_getl	Solaris DDI
-.It Sy ddi_mem_rep_getll	Solaris DDI
-.It Sy ddi_mem_rep_getw	Solaris DDI
-.It Sy ddi_mem_rep_put16	Solaris DDI
-.It Sy ddi_mem_rep_put32	Solaris DDI
-.It Sy ddi_mem_rep_put64	Solaris DDI
-.It Sy ddi_mem_rep_put8	Solaris DDI
-.It Sy ddi_mem_rep_putb	Solaris DDI
-.It Sy ddi_mem_rep_putl	Solaris DDI
-.It Sy ddi_mem_rep_putll	Solaris DDI
-.It Sy ddi_mem_rep_putw	Solaris DDI
-.It Sy ddi_mmap_get_model	Solaris DDI
-.It Sy ddi_model_convert_from	Solaris DDI
-.It Sy ddi_modopen	Solaris DDI
-.It Sy ddi_no_info	Solaris DDI
-.It Sy ddi_node_name	Solaris DDI
-.It Sy ddi_peek16	Solaris DDI
-.It Sy ddi_peek32	Solaris DDI
-.It Sy ddi_peek64	Solaris DDI
-.It Sy ddi_peek8	Solaris DDI
-.It Sy ddi_peekc	Solaris DDI
-.It Sy ddi_peekd	Solaris DDI
-.It Sy ddi_peekl	Solaris DDI
-.It Sy ddi_peeks	Solaris DDI
-.It Sy ddi_periodic_add	Solaris DDI
-.It Sy ddi_periodic_delete	Solaris DDI
-.It Sy ddi_poke16	Solaris DDI
-.It Sy ddi_poke32	Solaris DDI
-.It Sy ddi_poke64	Solaris DDI
-.It Sy ddi_poke8	Solaris DDI
-.It Sy ddi_pokec	Solaris DDI
-.It Sy ddi_poked	Solaris DDI
-.It Sy ddi_pokel	Solaris DDI
-.It Sy ddi_pokes	Solaris DDI
-.It Sy ddi_prop_create	Solaris DDI
-.It Sy ddi_prop_exists	Solaris DDI
-.It Sy ddi_prop_free	Solaris DDI
-.It Sy ddi_prop_get_int	Solaris DDI
-.It Sy ddi_prop_lookup	Solaris DDI
-.It Sy ddi_prop_lookup_byte_array	Solaris DDI
-.It Sy ddi_prop_lookup_int_array	Solaris DDI
-.It Sy ddi_prop_lookup_string	Solaris DDI
-.It Sy ddi_prop_lookup_string_array	Solaris DDI
-.It Sy ddi_prop_modify	Solaris DDI
-.It Sy ddi_prop_op	Solaris DDI
-.It Sy ddi_prop_remove	Solaris DDI
-.It Sy ddi_prop_remove_all	Solaris DDI
-.It Sy ddi_prop_undefine	Solaris DDI
-.It Sy ddi_prop_update	Solaris DDI
-.It Sy ddi_prop_update_byte_array	Solaris DDI
-.It Sy ddi_prop_update_int	Solaris DDI
-.It Sy ddi_prop_update_int_array	Solaris DDI
-.It Sy ddi_prop_update_string	Solaris DDI
-.It Sy ddi_prop_update_string_array	Solaris DDI
-.It Sy ddi_ptob	Solaris DDI
-.It Sy ddi_put16	Solaris DDI
-.It Sy ddi_put32	Solaris DDI
-.It Sy ddi_put64	Solaris DDI
-.It Sy ddi_put8	Solaris DDI
-.It Sy ddi_putb	Solaris DDI
-.It Sy ddi_putl	Solaris DDI
-.It Sy ddi_putll	Solaris DDI
-.It Sy ddi_putw	Solaris DDI
-.It Sy ddi_regs_map_free	Solaris DDI
-.It Sy ddi_regs_map_setup	Solaris DDI
-.It Sy ddi_remove_event_handler	Solaris DDI
-.It Sy ddi_remove_intr	Solaris DDI
-.It Sy ddi_remove_minor_node	Solaris DDI
-.It Sy ddi_remove_softintr	Solaris DDI
-.It Sy ddi_removing_power	Solaris DDI
-.It Sy ddi_rep_get16	Solaris DDI
-.It Sy ddi_rep_get32	Solaris DDI
-.It Sy ddi_rep_get64	Solaris DDI
-.It Sy ddi_rep_get8	Solaris DDI
-.It Sy ddi_rep_getb	Solaris DDI
-.It Sy ddi_rep_getl	Solaris DDI
-.It Sy ddi_rep_getll	Solaris DDI
-.It Sy ddi_rep_getw	Solaris DDI
-.It Sy ddi_rep_put16	Solaris DDI
-.It Sy ddi_rep_put32	Solaris DDI
-.It Sy ddi_rep_put64	Solaris DDI
-.It Sy ddi_rep_put8	Solaris DDI
-.It Sy ddi_rep_putb	Solaris DDI
-.It Sy ddi_rep_putl	Solaris DDI
-.It Sy ddi_rep_putll	Solaris DDI
-.It Sy ddi_rep_putw	Solaris DDI
-.It Sy ddi_report_dev	Solaris DDI
-.It Sy ddi_root_node	Solaris DDI
-.It Sy ddi_segmap	Solaris DDI
-.It Sy ddi_segmap_setup	Solaris DDI
-.It Sy ddi_set_driver_private	Solaris DDI
-.It Sy ddi_slaveonly	Solaris DDI
-.It Sy ddi_soft_state	Solaris DDI
-.It Sy ddi_soft_state_fini	Solaris DDI
-.It Sy ddi_soft_state_free	Solaris DDI
-.It Sy ddi_soft_state_init	Solaris DDI
-.It Sy ddi_soft_state_zalloc	Solaris DDI
-.It Sy ddi_strlol	Solaris DDI
-.It Sy ddi_strloul	Solaris DDI
-.It Sy ddi_trigger_softintr	Solaris DDI
-.It Sy ddi_umem_alloc	Solaris DDI
-.It Sy ddi_umem_free	Solaris DDI
-.It Sy ddi_umem_iosetup	Solaris DDI
-.It Sy ddi_umem_lock	Solaris DDI
-.It Sy ddi_unmap_regs	Solaris DDI
+.It Sy cv_broadcast	illumos DDI
+.It Sy cv_destroy	illumos DDI
+.It Sy cv_init	illumos DDI
+.It Sy cv_signal	illumos DDI
+.It Sy cv_reltimedwait	illumos DDI
+.It Sy cv_reltimedwait_sig	illumos DDI
+.It Sy cv_timedwait	illumos DDI
+.It Sy cv_wait	illumos DDI
+.It Sy cv_wait_sig	illumos DDI
+.It Sy ddi_add_event_handler	illumos DDI
+.It Sy ddi_add_intr	illumos DDI
+.It Sy ddi_add_softintr	illumos DDI
+.It Sy ddi_binding_name	illumos DDI
+.It Sy ddi_btop	illumos DDI
+.It Sy ddi_btopr	illumos DDI
+.It Sy ddi_can_receive_sig	illumos DDI
+.It Sy ddi_check_acc_handle	illumos DDI
+.It Sy ddi_copyin	illumos DDI
+.It Sy ddi_copyout	illumos DDI
+.It Sy ddi_create_minor_node	illumos DDI
+.It Sy ddi_cred	illumos DDI
+.It Sy ddi_dev_is_sid	illumos DDI
+.It Sy ddi_dev_nintrs	illumos DDI
+.It Sy ddi_dev_nregs	illumos DDI
+.It Sy ddi_dev_regsize	illumos DDI
+.It Sy ddi_device_copy	illumos DDI
+.It Sy ddi_device_zero	illumos DDI
+.It Sy ddi_devmap_segmap	illumos DDI
+.It Sy ddi_dma_addr_bind_handle	illumos DDI
+.It Sy ddi_dma_alloc_handle	illumos DDI
+.It Sy ddi_dma_buf_bind_handle	illumos DDI
+.It Sy ddi_dma_burstsizes	illumos DDI
+.It Sy ddi_dma_free_handle	illumos DDI
+.It Sy ddi_dma_getwin	illumos DDI
+.It Sy ddi_dma_mem_alloc	illumos DDI
+.It Sy ddi_dma_mem_free	illumos DDI
+.It Sy ddi_dma_nextcookie	illumos DDI
+.It Sy ddi_dma_numwin	illumos DDI
+.It Sy ddi_dma_set_sbus64	illumos DDI
+.It Sy ddi_dma_sync	illumos DDI
+.It Sy ddi_dma_unbind_handle	illumos DDI
+.It Sy ddi_dmae	illumos x86 DDI
+.It Sy ddi_dmae_1stparty	illumos x86 DDI
+.It Sy ddi_dmae_alloc	illumos x86 DDI
+.It Sy ddi_dmae_disable	illumos x86 DDI
+.It Sy ddi_dmae_enable	illumos x86 DDI
+.It Sy ddi_dmae_getattr	illumos x86 DDI
+.It Sy ddi_dmae_getcnt	illumos x86 DDI
+.It Sy ddi_dmae_getlim	illumos x86 DDI
+.It Sy ddi_dmae_prog	illumos x86 DDI
+.It Sy ddi_dmae_release	illumos x86 DDI
+.It Sy ddi_dmae_stop	illumos x86 DDI
+.It Sy ddi_driver_major	illumos DDI
+.It Sy ddi_driver_name	illumos DDI
+.It Sy ddi_enter_critical	illumos DDI
+.It Sy ddi_exit_critical	illumos DDI
+.It Sy ddi_ffs	illumos DDI
+.It Sy ddi_fls	illumos DDI
+.It Sy ddi_fm_acc_err_clear	illumos DDI
+.It Sy ddi_fm_acc_err_get	illumos DDI
+.It Sy ddi_fm_ereport_post	illumos DDI
+.It Sy ddi_fm_handler_register	illumos DDI
+.It Sy ddi_fm_init	illumos DDI
+.It Sy ddi_fm_service_impact	illumos DDI
+.It Sy ddi_get16	illumos DDI
+.It Sy ddi_get32	illumos DDI
+.It Sy ddi_get64	illumos DDI
+.It Sy ddi_get8	illumos DDI
+.It Sy ddi_get_cred	illumos DDI
+.It Sy ddi_get_devstate	illumos DDI
+.It Sy ddi_get_driver_private	illumos DDI
+.It Sy ddi_get_eventcookie	illumos DDI
+.It Sy ddi_get_iblock_cookie	illumos DDI
+.It Sy ddi_get_iminor	illumos DDI
+.It Sy ddi_get_instance	illumos DDI
+.It Sy ddi_get_kt_did	illumos DDI
+.It Sy ddi_get_lbolt	illumos DDI
+.It Sy ddi_get_name	illumos DDI
+.It Sy ddi_get_parent	illumos DDI
+.It Sy ddi_get_pid	illumos DDI
+.It Sy ddi_get_soft_iblock_cookie	illumos DDI
+.It Sy ddi_get_soft_state	illumos DDI
+.It Sy ddi_getb	illumos DDI
+.It Sy ddi_getl	illumos DDI
+.It Sy ddi_getll	illumos DDI
+.It Sy ddi_getlongprop	illumos DDI
+.It Sy ddi_getlongprop_buf	illumos DDI
+.It Sy ddi_getprop	illumos DDI
+.It Sy ddi_getproplen	illumos DDI
+.It Sy ddi_getw	illumos DDI
+.It Sy ddi_intr_add_handler	illumos DDI
+.It Sy ddi_intr_add_softint	illumos DDI
+.It Sy ddi_intr_alloc	illumos DDI
+.It Sy ddi_intr_block_disable	illumos DDI
+.It Sy ddi_intr_block_enable	illumos DDI
+.It Sy ddi_intr_clr_mask	illumos DDI
+.It Sy ddi_intr_dup_handler	illumos DDI
+.It Sy ddi_intr_disable	illumos DDI
+.It Sy ddi_intr_enable	illumos DDI
+.It Sy ddi_intr_free	illumos DDI
+.It Sy ddi_intr_get_cap	illumos DDI
+.It Sy ddi_intr_get_hilevel_pri	illumos DDI
+.It Sy ddi_intr_get_navail	illumos DDI
+.It Sy ddi_intr_get_nintrs	illumos DDI
+.It Sy ddi_intr_get_pending	illumos DDI
+.It Sy ddi_intr_get_pri	illumos DDI
+.It Sy ddi_intr_get_softint_pri	illumos DDI
+.It Sy ddi_intr_get_supported_types	illumos DDI
+.It Sy ddi_intr_remove_handler	illumos DDI
+.It Sy ddi_intr_remove_softint	illumos DDI
+.It Sy ddi_intr_set_cap	illumos DDI
+.It Sy ddi_intr_set_mask	illumos DDI
+.It Sy ddi_intr_set_pri	illumos DDI
+.It Sy ddi_intr_set_softint_pri	illumos DDI
+.It Sy ddi_intr_trigger_softint	illumos DDI
+.It Sy ddi_io_get16	illumos DDI
+.It Sy ddi_io_get32	illumos DDI
+.It Sy ddi_io_get8	illumos DDI
+.It Sy ddi_io_getb	illumos DDI
+.It Sy ddi_io_getl	illumos DDI
+.It Sy ddi_io_getw	illumos DDI
+.It Sy ddi_io_put16	illumos DDI
+.It Sy ddi_io_put32	illumos DDI
+.It Sy ddi_io_put8	illumos DDI
+.It Sy ddi_io_putb	illumos DDI
+.It Sy ddi_io_putl	illumos DDI
+.It Sy ddi_io_putw	illumos DDI
+.It Sy ddi_io_rep_get16	illumos DDI
+.It Sy ddi_io_rep_get32	illumos DDI
+.It Sy ddi_io_rep_get8	illumos DDI
+.It Sy ddi_io_rep_getb	illumos DDI
+.It Sy ddi_io_rep_getl	illumos DDI
+.It Sy ddi_io_rep_getw	illumos DDI
+.It Sy ddi_io_rep_put16	illumos DDI
+.It Sy ddi_io_rep_put32	illumos DDI
+.It Sy ddi_io_rep_put8	illumos DDI
+.It Sy ddi_io_rep_putb	illumos DDI
+.It Sy ddi_io_rep_putl	illumos DDI
+.It Sy ddi_io_rep_putw	illumos DDI
+.It Sy ddi_iomin	illumos DDI
+.It Sy ddi_log_sysevent	illumos DDI
+.It Sy ddi_map_regs	illumos DDI
+.It Sy ddi_mapdev	illumos DDI
+.It Sy ddi_mapdev_intercept	illumos DDI
+.It Sy ddi_mapdev_nointercept	illumos DDI
+.It Sy ddi_mapdev_set_device_acc_attr	illumos DDI
+.It Sy ddi_mem_get16	illumos DDI
+.It Sy ddi_mem_get32	illumos DDI
+.It Sy ddi_mem_get64	illumos DDI
+.It Sy ddi_mem_get8	illumos DDI
+.It Sy ddi_mem_getb	illumos DDI
+.It Sy ddi_mem_getl	illumos DDI
+.It Sy ddi_mem_getll	illumos DDI
+.It Sy ddi_mem_getw	illumos DDI
+.It Sy ddi_mem_put16	illumos DDI
+.It Sy ddi_mem_put32	illumos DDI
+.It Sy ddi_mem_put64	illumos DDI
+.It Sy ddi_mem_put8	illumos DDI
+.It Sy ddi_mem_putb	illumos DDI
+.It Sy ddi_mem_putl	illumos DDI
+.It Sy ddi_mem_putll	illumos DDI
+.It Sy ddi_mem_putw	illumos DDI
+.It Sy ddi_mem_rep_get16	illumos DDI
+.It Sy ddi_mem_rep_get32	illumos DDI
+.It Sy ddi_mem_rep_get64	illumos DDI
+.It Sy ddi_mem_rep_get8	illumos DDI
+.It Sy ddi_mem_rep_getb	illumos DDI
+.It Sy ddi_mem_rep_getl	illumos DDI
+.It Sy ddi_mem_rep_getll	illumos DDI
+.It Sy ddi_mem_rep_getw	illumos DDI
+.It Sy ddi_mem_rep_put16	illumos DDI
+.It Sy ddi_mem_rep_put32	illumos DDI
+.It Sy ddi_mem_rep_put64	illumos DDI
+.It Sy ddi_mem_rep_put8	illumos DDI
+.It Sy ddi_mem_rep_putb	illumos DDI
+.It Sy ddi_mem_rep_putl	illumos DDI
+.It Sy ddi_mem_rep_putll	illumos DDI
+.It Sy ddi_mem_rep_putw	illumos DDI
+.It Sy ddi_mmap_get_model	illumos DDI
+.It Sy ddi_model_convert_from	illumos DDI
+.It Sy ddi_modopen	illumos DDI
+.It Sy ddi_no_info	illumos DDI
+.It Sy ddi_node_name	illumos DDI
+.It Sy ddi_peek16	illumos DDI
+.It Sy ddi_peek32	illumos DDI
+.It Sy ddi_peek64	illumos DDI
+.It Sy ddi_peek8	illumos DDI
+.It Sy ddi_peekc	illumos DDI
+.It Sy ddi_peekd	illumos DDI
+.It Sy ddi_peekl	illumos DDI
+.It Sy ddi_peeks	illumos DDI
+.It Sy ddi_periodic_add	illumos DDI
+.It Sy ddi_periodic_delete	illumos DDI
+.It Sy ddi_poke16	illumos DDI
+.It Sy ddi_poke32	illumos DDI
+.It Sy ddi_poke64	illumos DDI
+.It Sy ddi_poke8	illumos DDI
+.It Sy ddi_pokec	illumos DDI
+.It Sy ddi_poked	illumos DDI
+.It Sy ddi_pokel	illumos DDI
+.It Sy ddi_pokes	illumos DDI
+.It Sy ddi_prop_create	illumos DDI
+.It Sy ddi_prop_exists	illumos DDI
+.It Sy ddi_prop_free	illumos DDI
+.It Sy ddi_prop_get_int	illumos DDI
+.It Sy ddi_prop_lookup	illumos DDI
+.It Sy ddi_prop_lookup_byte_array	illumos DDI
+.It Sy ddi_prop_lookup_int_array	illumos DDI
+.It Sy ddi_prop_lookup_string	illumos DDI
+.It Sy ddi_prop_lookup_string_array	illumos DDI
+.It Sy ddi_prop_modify	illumos DDI
+.It Sy ddi_prop_op	illumos DDI
+.It Sy ddi_prop_remove	illumos DDI
+.It Sy ddi_prop_remove_all	illumos DDI
+.It Sy ddi_prop_undefine	illumos DDI
+.It Sy ddi_prop_update	illumos DDI
+.It Sy ddi_prop_update_byte_array	illumos DDI
+.It Sy ddi_prop_update_int	illumos DDI
+.It Sy ddi_prop_update_int_array	illumos DDI
+.It Sy ddi_prop_update_string	illumos DDI
+.It Sy ddi_prop_update_string_array	illumos DDI
+.It Sy ddi_ptob	illumos DDI
+.It Sy ddi_put16	illumos DDI
+.It Sy ddi_put32	illumos DDI
+.It Sy ddi_put64	illumos DDI
+.It Sy ddi_put8	illumos DDI
+.It Sy ddi_putb	illumos DDI
+.It Sy ddi_putl	illumos DDI
+.It Sy ddi_putll	illumos DDI
+.It Sy ddi_putw	illumos DDI
+.It Sy ddi_regs_map_free	illumos DDI
+.It Sy ddi_regs_map_setup	illumos DDI
+.It Sy ddi_remove_event_handler	illumos DDI
+.It Sy ddi_remove_intr	illumos DDI
+.It Sy ddi_remove_minor_node	illumos DDI
+.It Sy ddi_remove_softintr	illumos DDI
+.It Sy ddi_removing_power	illumos DDI
+.It Sy ddi_rep_get16	illumos DDI
+.It Sy ddi_rep_get32	illumos DDI
+.It Sy ddi_rep_get64	illumos DDI
+.It Sy ddi_rep_get8	illumos DDI
+.It Sy ddi_rep_getb	illumos DDI
+.It Sy ddi_rep_getl	illumos DDI
+.It Sy ddi_rep_getll	illumos DDI
+.It Sy ddi_rep_getw	illumos DDI
+.It Sy ddi_rep_put16	illumos DDI
+.It Sy ddi_rep_put32	illumos DDI
+.It Sy ddi_rep_put64	illumos DDI
+.It Sy ddi_rep_put8	illumos DDI
+.It Sy ddi_rep_putb	illumos DDI
+.It Sy ddi_rep_putl	illumos DDI
+.It Sy ddi_rep_putll	illumos DDI
+.It Sy ddi_rep_putw	illumos DDI
+.It Sy ddi_report_dev	illumos DDI
+.It Sy ddi_root_node	illumos DDI
+.It Sy ddi_segmap	illumos DDI
+.It Sy ddi_segmap_setup	illumos DDI
+.It Sy ddi_set_driver_private	illumos DDI
+.It Sy ddi_slaveonly	illumos DDI
+.It Sy ddi_soft_state	illumos DDI
+.It Sy ddi_soft_state_fini	illumos DDI
+.It Sy ddi_soft_state_free	illumos DDI
+.It Sy ddi_soft_state_init	illumos DDI
+.It Sy ddi_soft_state_zalloc	illumos DDI
+.It Sy ddi_strlol	illumos DDI
+.It Sy ddi_strloul	illumos DDI
+.It Sy ddi_trigger_softintr	illumos DDI
+.It Sy ddi_umem_alloc	illumos DDI
+.It Sy ddi_umem_free	illumos DDI
+.It Sy ddi_umem_iosetup	illumos DDI
+.It Sy ddi_umem_lock	illumos DDI
+.It Sy ddi_unmap_regs	illumos DDI
 .It Sy delay	DDI/DKI
-.It Sy devmap_default_access	Solaris DDI
-.It Sy devmap_devmem_setup	Solaris DDI
-.It Sy devmap_do_ctxmgt	Solaris DDI
-.It Sy devmap_load	Solaris DDI
-.It Sy devmap_set_ctx_timeout	Solaris DDI
-.It Sy devmap_setup	Solaris DDI
-.It Sy devmap_umem_setup	Solaris DDI
-.It Sy devmap_unload	Solaris DDI
-.It Sy disksort	Solaris DDI
-.It Sy dlbindack	Solaris DDI
+.It Sy devmap_default_access	illumos DDI
+.It Sy devmap_devmem_setup	illumos DDI
+.It Sy devmap_do_ctxmgt	illumos DDI
+.It Sy devmap_load	illumos DDI
+.It Sy devmap_set_ctx_timeout	illumos DDI
+.It Sy devmap_setup	illumos DDI
+.It Sy devmap_umem_setup	illumos DDI
+.It Sy devmap_unload	illumos DDI
+.It Sy disksort	illumos DDI
+.It Sy dlbindack	illumos DDI
 .It Sy drv_getparm	DDI/DKI
 .It Sy drv_hztousec	DDI/DKI
 .It Sy drv_priv	DDI/DKI
 .It Sy drv_usectohz	DDI/DKI
 .It Sy drv_usecwait	DDI/DKI
-.It Sy free_pktiopb	Solaris DDI
+.It Sy free_pktiopb	illumos DDI
 .It Sy freerbuf	DDI/DKI
-.It Sy get_pktiopb	Solaris DDI
+.It Sy get_pktiopb	illumos DDI
 .It Sy geterror	DDI/DKI
 .It Sy gethrtime	DDI/DKI
 .It Sy getmajor	DDI/DKI
 .It Sy getminor	DDI/DKI
 .It Sy getrbuf	DDI/DKI
-.It Sy gld	Solaris DDI
+.It Sy gld	illumos DDI
 .It Sy hat_getkpfnum	DKI only
-.It Sy id32_alloc	Solaris DDI
-.It Sy inb	Solaris x86 DDI
-.It Sy inl	Solaris x86 DDI
-.It Sy inw	Solaris x86 DDI
-.It Sy kiconv	Solaris DDI
-.It Sy kiconv_close	Solaris DDI
-.It Sy kiconv_open	Solaris DDI
-.It Sy kiconvstr	Solaris DDI
+.It Sy id32_alloc	illumos DDI
+.It Sy inb	illumos x86 DDI
+.It Sy inl	illumos x86 DDI
+.It Sy inw	illumos x86 DDI
+.It Sy kiconv	illumos DDI
+.It Sy kiconv_close	illumos DDI
+.It Sy kiconv_open	illumos DDI
+.It Sy kiconvstr	illumos DDI
 .It Sy kmem_alloc	DDI/DKI
-.It Sy kmem_cache_create	Solaris DDI
+.It Sy kmem_cache_create	illumos DDI
 .It Sy kmem_free	DDI/DKI
 .It Sy kmem_zalloc	DDI/DKI
-.It Sy kstat_create	Solaris DDI
-.It Sy kstat_delete	Solaris DDI
-.It Sy kstat_install	Solaris DDI
-.It Sy kstat_named_init	Solaris DDI
-.It Sy kstat_queue	Solaris DDI
-.It Sy kstat_runq_back_to_waitq	Solaris DDI
-.It Sy kstat_runq_enter	Solaris DDI
-.It Sy kstat_runq_exit	Solaris DDI
-.It Sy kstat_waitq_enter	Solaris DDI
-.It Sy kstat_waitq_exit	Solaris DDI
-.It Sy kstat_waitq_to_runq	Solaris DDI
-.It Sy ldi_add_event_handler	Solaris DDI
-.It Sy ldi_aread	Solaris DDI
-.It Sy ldi_devmap	Solaris DDI
-.It Sy ldi_dump	Solaris DDI
-.It Sy ldi_ev_finalize	Solaris DDI
-.It Sy ldi_ev_get_cookie	Solaris DDI
-.It Sy ldi_ev_get_type	Solaris DDI
-.It Sy ldi_ev_notify	Solaris DDI
-.It Sy ldi_ev_register_callbacks	Solaris DDI
-.It Sy ldi_ev_remove_callbacks	Solaris DDI
-.It Sy ldi_get_dev	Solaris DDI
-.It Sy ldi_get_eventcookie	Solaris DDI
-.It Sy ldi_get_size	Solaris DDI
-.It Sy ldi_ident_from_dev	Solaris DDI
-.It Sy ldi_ioctl	Solaris DDI
-.It Sy ldi_open_by_dev	Solaris DDI
-.It Sy ldi_poll	Solaris DDI
-.It Sy ldi_prop_exists	Solaris DDI
-.It Sy ldi_prop_get_int	Solaris DDI
-.It Sy ldi_prop_get_lookup_int_array	Solaris DDI
-.It Sy ldi_putmsg	Solaris DDI
-.It Sy ldi_read	Solaris DDI
-.It Sy ldi_remove_event_handler	Solaris DDI
-.It Sy ldi_strategy	Solaris DDI
-.It Sy makecom_g0	Solaris DDI
-.It Sy makecom_g0_s	Solaris DDI
-.It Sy makecom_g1	Solaris DDI
-.It Sy makecom_g5	Solaris DDI
+.It Sy kstat_create	illumos DDI
+.It Sy kstat_delete	illumos DDI
+.It Sy kstat_install	illumos DDI
+.It Sy kstat_named_init	illumos DDI
+.It Sy kstat_queue	illumos DDI
+.It Sy kstat_runq_back_to_waitq	illumos DDI
+.It Sy kstat_runq_enter	illumos DDI
+.It Sy kstat_runq_exit	illumos DDI
+.It Sy kstat_waitq_enter	illumos DDI
+.It Sy kstat_waitq_exit	illumos DDI
+.It Sy kstat_waitq_to_runq	illumos DDI
+.It Sy ldi_add_event_handler	illumos DDI
+.It Sy ldi_aread	illumos DDI
+.It Sy ldi_devmap	illumos DDI
+.It Sy ldi_dump	illumos DDI
+.It Sy ldi_ev_finalize	illumos DDI
+.It Sy ldi_ev_get_cookie	illumos DDI
+.It Sy ldi_ev_get_type	illumos DDI
+.It Sy ldi_ev_notify	illumos DDI
+.It Sy ldi_ev_register_callbacks	illumos DDI
+.It Sy ldi_ev_remove_callbacks	illumos DDI
+.It Sy ldi_get_dev	illumos DDI
+.It Sy ldi_get_eventcookie	illumos DDI
+.It Sy ldi_get_size	illumos DDI
+.It Sy ldi_ident_from_dev	illumos DDI
+.It Sy ldi_ioctl	illumos DDI
+.It Sy ldi_open_by_dev	illumos DDI
+.It Sy ldi_poll	illumos DDI
+.It Sy ldi_prop_exists	illumos DDI
+.It Sy ldi_prop_get_int	illumos DDI
+.It Sy ldi_prop_get_lookup_int_array	illumos DDI
+.It Sy ldi_putmsg	illumos DDI
+.It Sy ldi_read	illumos DDI
+.It Sy ldi_remove_event_handler	illumos DDI
+.It Sy ldi_strategy	illumos DDI
+.It Sy makecom_g0	illumos DDI
+.It Sy makecom_g0_s	illumos DDI
+.It Sy makecom_g1	illumos DDI
+.It Sy makecom_g5	illumos DDI
 .It Sy makedevice	DDI/DKI
 .It Sy max	DDI/DKI
-.It Sy membar_ops	Solaris DDI
-.It Sy memchr	Solaris DDI
+.It Sy membar_ops	illumos DDI
+.It Sy memchr	illumos DDI
 .It Sy min	DDI/DKI
-.It Sy minphys	Solaris DDI
-.It Sy mod_info	Solaris DDI
-.It Sy mod_install	Solaris DDI
-.It Sy mod_remove	Solaris DDI
-.It Sy mutex_destroy	Solaris DDI
-.It Sy mutex_enter	Solaris DDI
-.It Sy mutex_exit	Solaris DDI
-.It Sy mutex_init	Solaris DDI
-.It Sy mutex_owned	Solaris DDI
-.It Sy mutex_tryenter	Solaris DDI
-.It Sy nochpoll	Solaris DDI
+.It Sy minphys	illumos DDI
+.It Sy mod_info	illumos DDI
+.It Sy mod_install	illumos DDI
+.It Sy mod_remove	illumos DDI
+.It Sy mutex_destroy	illumos DDI
+.It Sy mutex_enter	illumos DDI
+.It Sy mutex_exit	illumos DDI
+.It Sy mutex_init	illumos DDI
+.It Sy mutex_owned	illumos DDI
+.It Sy mutex_tryenter	illumos DDI
+.It Sy nochpoll	illumos DDI
 .It Sy nodev	DDI/DKI
 .It Sy nulldev	DDI/DKI
-.It Sy numtos	Solaris DDI
-.It Sy nvlist_add_boolean	Solaris DDI
-.It Sy nvlist_alloc	Solaris DDI
-.It Sy nvlist_lookup_boolean	Solaris DDI
-.It Sy nvlist_lookup_nvpair	Solaris DDI
-.It Sy nvlist_next_nvpair	Solaris DDI
-.It Sy nvlist_remove	Solaris DDI
-.It Sy nvlist_value_byte	Solaris DDI
-.It Sy outb	Solaris x86 DDI
-.It Sy outl	Solaris x86 DDI
-.It Sy outw	Solaris x86 DDI
-.It Sy pci_config_get16	Solaris DDI
-.It Sy pci_config_get32	Solaris DDI
-.It Sy pci_config_get64	Solaris DDI
-.It Sy pci_config_get8	Solaris DDI
-.It Sy pci_config_getb	Solaris DDI
-.It Sy pci_config_getl	Solaris DDI
-.It Sy pci_config_getw	Solaris DDI
-.It Sy pci_config_put16	Solaris DDI
-.It Sy pci_config_put32	Solaris DDI
-.It Sy pci_config_put64	Solaris DDI
-.It Sy pci_config_put8	Solaris DDI
-.It Sy pci_config_putb	Solaris DDI
-.It Sy pci_config_putl	Solaris DDI
-.It Sy pci_config_putw	Solaris DDI
-.It Sy pci_config_setup	Solaris DDI
-.It Sy pci_config_teardown	Solaris DDI
-.It Sy pci_ereport_setup	Solaris DDI
-.It Sy pci_report_pmcap	Solaris DDI
-.It Sy pci_save_config_regs	Solaris DDI
-.It Sy physio	Solaris DDI
-.It Sy pm_busy_component	Solaris DDI
-.It Sy pm_power_has_changed	Solaris DDI
-.It Sy pm_raise_power	Solaris DDI
-.It Sy pm_trans_check	Solaris DDI
+.It Sy numtos	illumos DDI
+.It Sy nvlist_add_boolean	illumos DDI
+.It Sy nvlist_alloc	illumos DDI
+.It Sy nvlist_lookup_boolean	illumos DDI
+.It Sy nvlist_lookup_nvpair	illumos DDI
+.It Sy nvlist_next_nvpair	illumos DDI
+.It Sy nvlist_remove	illumos DDI
+.It Sy nvlist_value_byte	illumos DDI
+.It Sy outb	illumos x86 DDI
+.It Sy outl	illumos x86 DDI
+.It Sy outw	illumos x86 DDI
+.It Sy pci_config_get16	illumos DDI
+.It Sy pci_config_get32	illumos DDI
+.It Sy pci_config_get64	illumos DDI
+.It Sy pci_config_get8	illumos DDI
+.It Sy pci_config_getb	illumos DDI
+.It Sy pci_config_getl	illumos DDI
+.It Sy pci_config_getw	illumos DDI
+.It Sy pci_config_put16	illumos DDI
+.It Sy pci_config_put32	illumos DDI
+.It Sy pci_config_put64	illumos DDI
+.It Sy pci_config_put8	illumos DDI
+.It Sy pci_config_putb	illumos DDI
+.It Sy pci_config_putl	illumos DDI
+.It Sy pci_config_putw	illumos DDI
+.It Sy pci_config_setup	illumos DDI
+.It Sy pci_config_teardown	illumos DDI
+.It Sy pci_ereport_setup	illumos DDI
+.It Sy pci_report_pmcap	illumos DDI
+.It Sy pci_save_config_regs	illumos DDI
+.It Sy physio	illumos DDI
+.It Sy pm_busy_component	illumos DDI
+.It Sy pm_power_has_changed	illumos DDI
+.It Sy pm_raise_power	illumos DDI
+.It Sy pm_trans_check	illumos DDI
 .It Sy pollwakeup	DDI/DKI
-.It Sy pci_config_teardown	Solaris DDI
-.It Sy pci_config_teardown	Solaris DDI
-.It Sy priv_getbyname	Solaris DDI
-.It Sy priv_policy	Solaris DDI
-.It Sy proc_signal	Solaris DDI
-.It Sy proc_unref	Solaris DDI
+.It Sy pci_config_teardown	illumos DDI
+.It Sy pci_config_teardown	illumos DDI
+.It Sy priv_getbyname	illumos DDI
+.It Sy priv_policy	illumos DDI
+.It Sy proc_signal	illumos DDI
+.It Sy proc_unref	illumos DDI
 .It Sy ptob	DDI/DKI
-.It Sy repinsb	Solaris x86 DDI
-.It Sy repinsd	Solaris x86 DDI
-.It Sy repinsw	Solaris x86 DDI
-.It Sy repoutsb	Solaris x86 DDI
-.It Sy repoutsd	Solaris x86 DDI
-.It Sy repoutsw	Solaris x86 DDI
+.It Sy repinsb	illumos x86 DDI
+.It Sy repinsd	illumos x86 DDI
+.It Sy repinsw	illumos x86 DDI
+.It Sy repoutsb	illumos x86 DDI
+.It Sy repoutsd	illumos x86 DDI
+.It Sy repoutsw	illumos x86 DDI
 .It Sy rmalloc	DDI/DKI
 .It Sy rmalloc_wait	DDI/DKI
 .It Sy rmallocmap	DDI/DKI
 .It Sy rmallocmap_wait	DDI/DKI
 .It Sy rmfree	DDI/DKI
 .It Sy rmfreemap	DDI/DKI
-.It Sy rw_destroy	Solaris DDI
-.It Sy rw_downgrade	Solaris DDI
-.It Sy rw_enter	Solaris DDI
-.It Sy rw_exit	Solaris DDI
-.It Sy rw_init	Solaris DDI
-.It Sy rw_read_locked	Solaris DDI
-.It Sy rw_tryenter	Solaris DDI
-.It Sy rw_tryupgrade	Solaris DDI
-.It Sy scsi_abort	Solaris DDI
-.It Sy scsi_alloc_consistent_buf	Solaris DDI
-.It Sy scsi_cname	Solaris DDI
-.It Sy scsi_destroy_pkt	Solaris DDI
-.It Sy scsi_dmafree	Solaris DDI
-.It Sy scsi_dmaget	Solaris DDI
-.It Sy scsi_dname	Solaris DDI
-.It Sy scsi_errmsg	Solaris DDI
-.It Sy scsi_ext_sense_fields	Solaris DDI
-.It Sy scsi_find_sense_descr	Solaris DDI
-.It Sy scsi_free_consistent_buf	Solaris DDI
-.It Sy scsi_get_device_type_scsi_options	Solaris DDI
-.It Sy scsi_get_device_type_string	Solaris DDI
-.It Sy scsi_hba_attach_setup	Solaris DDI
-.It Sy scsi_hba_detach	Solaris DDI
-.It Sy scsi_hba_fini	Solaris DDI
-.It Sy scsi_hba_init	Solaris DDI
-.It Sy scsi_hba_lookup_capstr	Solaris DDI
-.It Sy scsi_hba_pkt_alloc	Solaris DDI
-.It Sy scsi_hba_pkt_free	Solaris DDI
-.It Sy scsi_hba_probe	Solaris DDI
-.It Sy scsi_hba_tran_alloc	Solaris DDI
-.It Sy scsi_hba_tran_free	Solaris DDI
-.It Sy scsi_ifgetcap	Solaris DDI
-.It Sy scsi_ifsetcap	Solaris DDI
-.It Sy scsi_init_pkt	Solaris DDI
-.It Sy scsi_log	Solaris DDI
-.It Sy scsi_mname	Solaris DDI
-.It Sy scsi_pktalloc	Solaris DDI
-.It Sy scsi_pktfree	Solaris DDI
-.It Sy scsi_poll	Solaris DDI
-.It Sy scsi_probe	Solaris DDI
-.It Sy scsi_resalloc	Solaris DDI
-.It Sy scsi_reset	Solaris DDI
-.It Sy scsi_reset_notify	Solaris DDI
-.It Sy scsi_resfree	Solaris DDI
-.It Sy scsi_rname	Solaris DDI
-.It Sy scsi_sense_key	Solaris DDI
-.It Sy scsi_setup_cdb	Solaris DDI
-.It Sy scsi_slave	Solaris DDI
-.It Sy scsi_sname	Solaris DDI
-.It Sy scsi_sync_pkt	Solaris DDI
-.It Sy scsi_transport	Solaris DDI
-.It Sy scsi_unprobe	Solaris DDI
-.It Sy scsi_unslave	Solaris DDI
-.It Sy scsi_validate_sense	Solaris DDI
-.It Sy scsi_vu_errmsg	Solaris DDI
-.It Sy sema_destroy	Solaris DDI
-.It Sy sema_init	Solaris DDI
-.It Sy sema_p	Solaris DDI
-.It Sy sema_p_sig	Solaris DDI
-.It Sy sema_tryp	Solaris DDI
-.It Sy sema_v	Solaris DDI
-.It Sy sprintf	Solaris DDI
-.It Sy stoi	Solaris DDI
-.It Sy strchr	Solaris DDI
-.It Sy strcmp	Solaris DDI
-.It Sy strcpy	Solaris DDI
-.It Sy strlen	Solaris DDI
-.It Sy strncmp	Solaris DDI
-.It Sy strncpy	Solaris DDI
-.It Sy STRUCT_DECL	Solaris DDI
+.It Sy rw_destroy	illumos DDI
+.It Sy rw_downgrade	illumos DDI
+.It Sy rw_enter	illumos DDI
+.It Sy rw_exit	illumos DDI
+.It Sy rw_init	illumos DDI
+.It Sy rw_read_locked	illumos DDI
+.It Sy rw_tryenter	illumos DDI
+.It Sy rw_tryupgrade	illumos DDI
+.It Sy scsi_abort	illumos DDI
+.It Sy scsi_alloc_consistent_buf	illumos DDI
+.It Sy scsi_cname	illumos DDI
+.It Sy scsi_destroy_pkt	illumos DDI
+.It Sy scsi_dmafree	illumos DDI
+.It Sy scsi_dmaget	illumos DDI
+.It Sy scsi_dname	illumos DDI
+.It Sy scsi_errmsg	illumos DDI
+.It Sy scsi_ext_sense_fields	illumos DDI
+.It Sy scsi_find_sense_descr	illumos DDI
+.It Sy scsi_free_consistent_buf	illumos DDI
+.It Sy scsi_get_device_type_scsi_options	illumos DDI
+.It Sy scsi_get_device_type_string	illumos DDI
+.It Sy scsi_hba_attach_setup	illumos DDI
+.It Sy scsi_hba_detach	illumos DDI
+.It Sy scsi_hba_fini	illumos DDI
+.It Sy scsi_hba_init	illumos DDI
+.It Sy scsi_hba_lookup_capstr	illumos DDI
+.It Sy scsi_hba_pkt_alloc	illumos DDI
+.It Sy scsi_hba_pkt_free	illumos DDI
+.It Sy scsi_hba_probe	illumos DDI
+.It Sy scsi_hba_tran_alloc	illumos DDI
+.It Sy scsi_hba_tran_free	illumos DDI
+.It Sy scsi_ifgetcap	illumos DDI
+.It Sy scsi_ifsetcap	illumos DDI
+.It Sy scsi_init_pkt	illumos DDI
+.It Sy scsi_log	illumos DDI
+.It Sy scsi_mname	illumos DDI
+.It Sy scsi_pktalloc	illumos DDI
+.It Sy scsi_pktfree	illumos DDI
+.It Sy scsi_poll	illumos DDI
+.It Sy scsi_probe	illumos DDI
+.It Sy scsi_resalloc	illumos DDI
+.It Sy scsi_reset	illumos DDI
+.It Sy scsi_reset_notify	illumos DDI
+.It Sy scsi_resfree	illumos DDI
+.It Sy scsi_rname	illumos DDI
+.It Sy scsi_sense_key	illumos DDI
+.It Sy scsi_setup_cdb	illumos DDI
+.It Sy scsi_slave	illumos DDI
+.It Sy scsi_sname	illumos DDI
+.It Sy scsi_sync_pkt	illumos DDI
+.It Sy scsi_transport	illumos DDI
+.It Sy scsi_unprobe	illumos DDI
+.It Sy scsi_unslave	illumos DDI
+.It Sy scsi_validate_sense	illumos DDI
+.It Sy scsi_vu_errmsg	illumos DDI
+.It Sy sema_destroy	illumos DDI
+.It Sy sema_init	illumos DDI
+.It Sy sema_p	illumos DDI
+.It Sy sema_p_sig	illumos DDI
+.It Sy sema_tryp	illumos DDI
+.It Sy sema_v	illumos DDI
+.It Sy sprintf	illumos DDI
+.It Sy stoi	illumos DDI
+.It Sy strchr	illumos DDI
+.It Sy strcmp	illumos DDI
+.It Sy strcpy	illumos DDI
+.It Sy strlen	illumos DDI
+.It Sy strncmp	illumos DDI
+.It Sy strncpy	illumos DDI
+.It Sy STRUCT_DECL	illumos DDI
 .It Sy swab	DDI/DKI
-.It Sy taskq	Solaris DDI
+.It Sy taskq	illumos DDI
 .It Sy timeout	DDI/DKI
-.It Sy u8_strcmp	Solaris DDI
-.It Sy u8_textprep_str	Solaris DDI
-.It Sy u8_validate	Solaris DDI
-.It Sy uconv_u16tou32	Solaris DDI
+.It Sy u8_strcmp	illumos DDI
+.It Sy u8_textprep_str	illumos DDI
+.It Sy u8_validate	illumos DDI
+.It Sy uconv_u16tou32	illumos DDI
 .It Sy uiomove	DDI/DKI
 .It Sy untimeout	DDI/DKI
 .It Sy ureadc	DDI/DKI
-.It Sy usb_alloc_request	Solaris DDI
-.It Sy usb_client_attach	Solaris DDI
-.It Sy usb_clr_feature	Solaris DDI
-.It Sy usb_create_pm_components	Solaris DDI
-.It Sy usb_get_addr	Solaris DDI
-.It Sy usb_get_alt_if	Solaris DDI
-.It Sy usb_get_cfg	Solaris DDI
-.It Sy usb_get_current_frame_number	Solaris DDI
-.It Sy usb_get_dev_data	Solaris DDI
-.It Sy usb_get_max_pkts_per_ioc_request	Solaris DDI
-.It Sy usb_get_status	Solaris DDI
-.It Sy usb_get_string_desc	Solaris DDI
-.It Sy usb_handle_remote_wakeup	Solaris DDI
-.It Sy usb_lookup_ep_data	Solaris DDI
-.It Sy usb_parse_data	Solaris DDI
-.It Sy usb_pipe_bulk_xfer	Solaris DDI
-.It Sy usb_pipe_close	Solaris DDI
-.It Sy usb_pipe_ctrl_xfer	Solaris DDI
-.It Sy usb_pipe_drain_reqs	Solaris DDI
-.It Sy usb_pipe_get_max_bulk_transfer_size	Solaris DDI
-.It Sy usb_pipe_get_state	Solaris DDI
-.It Sy usb_pipe_intr_xfer	Solaris DDI
-.It Sy usb_pipe_isoc_xfer	Solaris DDI
-.It Sy usb_pipe_open	Solaris DDI
-.It Sy usb_pipe_reset	Solaris DDI
-.It Sy usb_pipe_set_private	Solaris DDI
-.It Sy usb_register_hotplug_cbs	Solaris DDI
-.It Sy usb_reset_device	Solaris DDI
+.It Sy usb_alloc_request	illumos DDI
+.It Sy usb_client_attach	illumos DDI
+.It Sy usb_clr_feature	illumos DDI
+.It Sy usb_create_pm_components	illumos DDI
+.It Sy usb_get_addr	illumos DDI
+.It Sy usb_get_alt_if	illumos DDI
+.It Sy usb_get_cfg	illumos DDI
+.It Sy usb_get_current_frame_number	illumos DDI
+.It Sy usb_get_dev_data	illumos DDI
+.It Sy usb_get_max_pkts_per_ioc_request	illumos DDI
+.It Sy usb_get_status	illumos DDI
+.It Sy usb_get_string_desc	illumos DDI
+.It Sy usb_handle_remote_wakeup	illumos DDI
+.It Sy usb_lookup_ep_data	illumos DDI
+.It Sy usb_parse_data	illumos DDI
+.It Sy usb_pipe_bulk_xfer	illumos DDI
+.It Sy usb_pipe_close	illumos DDI
+.It Sy usb_pipe_ctrl_xfer	illumos DDI
+.It Sy usb_pipe_drain_reqs	illumos DDI
+.It Sy usb_pipe_get_max_bulk_transfer_size	illumos DDI
+.It Sy usb_pipe_get_state	illumos DDI
+.It Sy usb_pipe_intr_xfer	illumos DDI
+.It Sy usb_pipe_isoc_xfer	illumos DDI
+.It Sy usb_pipe_open	illumos DDI
+.It Sy usb_pipe_reset	illumos DDI
+.It Sy usb_pipe_set_private	illumos DDI
+.It Sy usb_register_hotplug_cbs	illumos DDI
+.It Sy usb_reset_device	illumos DDI
 .It Sy uwritec	DDI/DKI
-.It Sy va_arg	Solaris DDI
-.It Sy va_end	Solaris DDI
-.It Sy va_start	Solaris DDI
+.It Sy va_arg	illumos DDI
+.It Sy va_end	illumos DDI
+.It Sy va_start	illumos DDI
 .It Sy vcmn_err	DDI/DKI
-.It Sy vsprintf	Solaris DDI
+.It Sy vsprintf	illumos DDI
 .El
 .Sh SEE ALSO
 .Xr Intro 9E ,

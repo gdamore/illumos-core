@@ -185,6 +185,7 @@ MANLINKS=	_Exit.2				\
 	 	facl.2				\
 	 	fchdir.2			\
 	 	fchmod.2			\
+	 	fchmodat.2			\
 	 	fchown.2			\
 	 	fchownat.2			\
 	 	fchroot.2			\
@@ -213,11 +214,12 @@ MANLINKS=	_Exit.2				\
 	 	lchown.2			\
 		linkat.2			\
 	 	lstat.2				\
-	 	mkdirat.2			\
-	 	mknodat.2			\
+		mkdirat.2			\
+		mknodat.2			\
 	 	openat.2			\
 	 	pathconf.2			\
 		pipe2.2				\
+		ppoll.2				\
 	 	pread.2				\
 	 	pset_assign.2			\
 	 	pset_destroy.2			\
@@ -225,8 +227,8 @@ MANLINKS=	_Exit.2				\
 	 	putacct.2			\
 	 	putpmsg.2			\
 	 	pwrite.2			\
+		readlinkat.2			\
 	 	readv.2				\
-	 	readlinkat.2			\
 	 	renameat.2			\
 	 	sbrk.2				\
 	 	semtimedop.2			\
@@ -279,6 +281,7 @@ sbrk.2				:= LINKSRC = brk.2
 fchdir.2			:= LINKSRC = chdir.2
 
 fchmod.2			:= LINKSRC = chmod.2
+fchmodat.2			:= LINKSRC = chmod.2
 
 fchown.2			:= LINKSRC = chown.2
 fchownat.2			:= LINKSRC = chown.2
@@ -350,6 +353,8 @@ mknodat.2			:= LINKSRC = mknod.2
 openat.2			:= LINKSRC = open.2
 
 pipe2.2				:= LINKSRC = pipe.2
+
+ppoll.2				:= LINKSRC = poll.2
 
 pset_assign.2			:= LINKSRC = pset_create.2
 pset_destroy.2			:= LINKSRC = pset_create.2
