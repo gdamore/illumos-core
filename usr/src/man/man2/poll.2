@@ -1,4 +1,4 @@
-'\" te
+.\" Copyright 2015 Garrett D'Amore <garrett@damore.org>
 .\" Copyright (c) 2014, Joyent, Inc.
 .\"  Copyright 1989 AT&T  Copyright (c) 2001, Sun Microsystems, Inc.  All Rights Reserved  Portions Copyright (c) 1992, X/Open Company Limited  All Rights Reserved
 .\" Sun Microsystems, Inc. gratefully acknowledges The Open Group for permission to reproduce portions of its copyrighted documentation. Original documentation from The Open Group can be obtained online at
@@ -8,288 +8,372 @@
 .\" The contents of this file are subject to the terms of the Common Development and Distribution License (the "License").  You may not use this file except in compliance with the License.
 .\" You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE or http://www.opensolaris.org/os/licensing.  See the License for the specific language governing permissions and limitations under the License.
 .\" When distributing Covered Code, include this CDDL HEADER in each file and include the License file at usr/src/OPENSOLARIS.LICENSE.  If applicable, add the following below this CDDL HEADER, with the fields enclosed by brackets "[]" replaced with your own identifying information: Portions Copyright [yyyy] [name of copyright owner]
-.TH POLL 2 "Aug 23, 2001"
-.SH NAME
-poll \- input/output multiplexing
-.SH SYNOPSIS
-.LP
-.nf
-#include <poll.h>
-
-\fBint\fR \fBpoll\fR(\fBstruct pollfd\fR \fIfds[]\fR, \fBnfds_t\fR \fInfds\fR, \fBint\fR \fItimeout\fR);
-
-\fBint\fR \fBppoll\fR(\fBstruct pollfd *restrict\fR \fIfds\fR, \fBnfds_t\fR \fInfds\fR,
-    \fBconst struct timespec *restrict\fR \fItsp\fR, \fBconst sigset_t *restrict\fR \fIsigmask\fR);
-.fi
-
-.SH DESCRIPTION
-.LP
-The \fBpoll()\fR and \fBppoll()\fR functions provides applications with a
-mechanism for multiplexing input/output over a set of file descriptors.  For
-each member of the array pointed to by \fIfds\fR, \fBpoll()\fR and \fBppoll()\fR
-examine the given file descriptor for the event(s) specified in \fIevents\fR.
-The number of \fBpollfd\fR structures in the \fIfds\fR array is specified by
-\fInfds\fR. The \fBpoll()\fR and \fBppoll()\fR functions identify those file
-descriptors on which an application can read or write data, or on which certain
-events have occurred.
-.sp
-.LP
-The \fBppoll()\fR function behaves identically to \fBpoll()\fR, except as follows:
-.RS +4
-.TP
-.ie t \(bu
-.el o
-For the \fBppoll\fR function, the timeout period is given in seconds and
-nanoseconds in an argument of type \fBstruct timespec\fR, where as \fBpoll()\fR
+.Dd Jan 4, 2015
+.Dt POLL 2
+.Os
+.Sh NAME
+.Nm poll ,
+.Nm ppoll
+.Nd input/output multiplexing
+.Sh SYNOPSIS
+.In poll.h
+.Ft int
+.Fo poll
+.Fa "struct pollfd fds[]"
+.Fa "nfds_t nfds"
+.Fa "int timeout"
+.Fc
+.
+.Ft int
+.Fo ppoll
+.Fa "struct pllfd *restrict fds"
+.Fa "nfds_t nfds"
+.Fa "const struct timespec *restrict tsp"
+.Fa "const sigset_t *restrict sigmask"
+.Fc
+.
+.Sh DESCRIPTION
+The
+.Fn poll
+and
+.Fn ppoll
+functions provides applications with a
+mechanism for multiplexing input/output over a set of file descriptors.
+For each member of the array pointed to by
+.Fa fds ,
+.Fn poll
+and
+.Fn ppoll
+examine the given file descriptor for the event(s) specified in
+.Va events .
+The number of
+.Vt pollfd
+structures in the
+.Fa fds
+array is specified by
+.Fa nfds .
+The
+.Fn poll
+and
+.Fn ppoll
+functions identify those file descriptors on which an application can
+read or write data, or on which certain events have occurred.
+.Lp
+The
+.Fn ppoll
+function behaves identically to
+.Fn poll ,
+except as follows:
+.
+.Bl -bullet
+.It
+For the
+.Fn ppoll
+function, the timeout period is given in seconds and
+nanoseconds in an argument of type
+.Vt "struct timespec" ,
+where as
+.Fn poll
 takes a timeout in milliseconds in the form of an integer argument.
-.RE
-.RS +4
-.TP
-.ie t \(bu
-.el o
-The \fBppoll()\fR function takes an optional \fIsigmask\fR argument. When a
-non-\fBNULL\fR pointer is passed, the calling threads signal mask is replaced by
-the one specified in \fIsigset\fR before examining file descriptors, and
-restored before returning.
-.RE
-.sp
-.LP
-The \fIfds\fR argument specifies the file descriptors to be examined and the
-events of interest for each file descriptor.  It is a pointer to an array with
-one member for each open file descriptor of interest.  The array's members are
-\fBpollfd\fR structures, which contain the following members:
-.sp
-.in +2
-.nf
+.It
+The
+.Fn ppoll
+function takes an optional
+.Fa sigmask
+argument.
+When a
+.No non- Ns Dv NULL
+pointer is passed, the calling threads signal mask is replaced by
+the one specified in
+.Fa sigset
+before examining file descriptors, and restored before returning.
+.El
+.Lp
+The
+.Fa fds
+argument specifies the file descriptors to be examined and the
+events of interest for each file descriptor.
+It is a pointer to an array with
+one member for each open file descriptor of interest.
+The array's members are
+.Vt pollfd
+structures, which contain the following members:
+.Bd -literal -offset indent
 int     fd;        /* file descriptor */
 short   events;    /* requested events */
 short   revents;   /* returned events */
-.fi
-.in -2
-
-.sp
-.LP
-The \fBfd\fR member specifies an open file descriptor and the \fBevents\fR and
-\fBrevents\fR members are bitmasks constructed by a logical \fBOR\fR operation
+.Ed
+.Lp
+The
+.Va fd
+member specifies an open file descriptor and the
+.Va events
+and
+.Va revents
+members are bitmasks constructed by a logical OR operation
 of any combination of the following event flags:
-.sp
-.ne 2
-.na
-\fB\fBPOLLIN\fR\fR
-.ad
-.RS 14n
-Data other than high priority data may be read without blocking. For streams,
-this flag is set in \fBrevents\fR even if the message is of zero length.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBPOLLRDNORM\fR\fR
-.ad
-.RS 14n
-Normal data (priority band equals 0) may be read without blocking. For streams,
-this flag is set in \fBrevents\fR even if the message is of zero length.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBPOLLRDBAND\fR\fR
-.ad
-.RS 14n
-Data from a non-zero priority band may be read without blocking. For streams,
-this flag is set in \fBrevents\fR even if the message is of zero length.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBPOLLPRI\fR\fR
-.ad
-.RS 14n
-High priority data may be received without blocking. For streams, this flag is
-set in \fBrevents\fR even if the message is of zero length.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBPOLLOUT\fR\fR
-.ad
-.RS 14n
+.Bl -tag -width Dv
+.It Sy POLLIN
+Data other than high priority data may be read without blocking.
+For streams, this flag is set in
+.Va revents
+even if the message is of zero length.
+.It Sy POLLRDNORM
+Normal data (priority band equals 0) may be read without blocking.
+For streams, this flag is set in
+.Va revents
+even if the message is of zero length.
+.It Sy POLLRDBAND
+Data from a non-zero priority band may be read without blocking.
+For streams, this flag is set in
+.Va revents
+even if the message is of zero length.
+.It Sy POLLPRI
+High priority data may be received without blocking.
+For streams, this flag is set in
+.Va revents
+even if the message is of zero length.
+.It Sy POLLOUT
 Normal data (priority band equals 0) may be written without blocking.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBPOLLWRNORM\fR\fR
-.ad
-.RS 14n
-The same as  \fBPOLLOUT\fR.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBPOLLWRBAND\fR\fR
-.ad
-.RS 14n
-Priority data (priority band > 0) may be written.  This event only examines
-bands that have been written to at least once.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBPOLLERR\fR\fR
-.ad
-.RS 14n
-An error has occurred on the device or stream.  This flag is only valid in the
-\fBrevents\fR bitmask; it is not used in the \fBevents\fR member.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBPOLLHUP\fR\fR
-.ad
-.RS 14n
-A hangup has occurred on the stream. This event and  \fBPOLLOUT\fR are mutually
-exclusive; a stream can never be writable if a hangup has occurred. However,
-this event and  \fBPOLLIN\fR, \fBPOLLRDNORM\fR, \fBPOLLRDBAND\fR, or
-\fBPOLLPRI\fR are not mutually exclusive. This flag is only valid in the
-\fBrevents\fR bitmask; it is not used in the \fBevents\fR member.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBPOLLNVAL\fR\fR
-.ad
-.RS 14n
-The specified \fBfd\fR value does not belong to an open file. This flag is only
-valid in the \fBrevents\fR member; it is not used in the \fBevents\fR member.
-.RE
-
-.sp
-.LP
-If the value \fBfd\fR is less than 0, \fBevents\fR is ignored and \fBrevents\fR
-is set to 0 in that entry on return from \fBpoll()\fR and \fBppoll()\fR.
-.sp
-.LP
-The results of the \fBpoll()\fR or \fBppoll()\fR query are stored in the
-\fBrevents\fR member in the \fBpollfd\fR structure. Bits are set in the
-\fBrevents\fR bitmask to indicate which of the requested events are true. If
-none are true, none of the specified bits are set in \fBrevents\fR when either
-the \fBpoll()\fR or \fBppoll()\fR call returns. The event flags  \fBPOLLHUP\fR,
-\fBPOLLERR\fR, and  \fBPOLLNVAL\fR are always  set in \fBrevents\fR if the
+.It Sy POLLWRNORM
+The same as
+.Sy POLLOUT .
+.It Sy POLLWRBAND
+Priority data (priority band > 0) may be written.
+This event only examines bands that have been written to at least once.
+.It Sy POLLERR
+An error has occurred on the device or stream.
+ This flag is only valid in the
+.Va revents
+bitmask; it is not used in the
+.Va events
+member.
+.It Sy POLLHUP
+A hangup has occurred on the stream.
+This event and
+.Sy POLLOUT
+are mutually exclusive; a stream can never be writable if a hangup has occurred.
+However, this event and
+.Sy POLLIN , POLLRDNORM , POLLRDBAND , No or Sy POLLPRI
+are not mutually exclusive.
+This flag is only valid in the
+.Va revents
+bitmask; it is not used in the
+.Va events
+member.
+.It Sy POLLNVAL
+The specified
+.Va fd
+value does not belong to an open file.
+This flag is only valid in the
+.Va revents
+member; it is not used in the
+.Va events
+member.
+.El
+.Lp
+If the value
+.Va fd
+is less than 0,
+.Va events
+is ignored and
+.Va revents
+is set to 0 in that entry on return from
+.Fn poll
+and
+.Fn ppoll .
+.Lp
+The results of the
+.Fn poll
+or
+.Fn ppoll
+query are stored in the
+.Va revents
+member in the
+Vt pollfd
+structure.
+Bits are set in the
+.Va revents
+bitmask to indicate which of the requested events are true.
+If none are true, none of the specified bits are set in
+.Va revents
+when either the
+.Fn poll
+or
+.Fn ppoll
+call returns.
+The event flags
+.Sy POLLHUP , POLLERR , No and Sy POLLNVAL
+are always set in
+.Va revents
+if the
 conditions they indicate are true; this occurs even though these flags were not
-present in \fBevents\fR.
-.sp
-.LP
+present in
+.Va events .
+.Lp
 If none of the defined events have occurred on any selected file descriptor,
-\fBpoll()\fR and \fBppoll()\fR wait at least \fItimeout\fR milliseconds for an
-event to occur on any of the selected file descriptors. On a computer where
-millisecond timing accuracy is not available, \fItimeout\fR is rounded up to the
-nearest legal value available on that system. If the value \fItimeout\fR is 0,
-\fBpoll()\fR returns immediately. If the value of \fItimeout\fR is  \(mi1,
-\fBpoll()\fR blocks until a requested event occurs or until the call is
-interrupted. If the value of \fBtsp\fR is \fBNULL\fR, then \fBppoll()\fR blocks
-until a requested event occurs or until the call is interrupted. The
-\fBpoll()\fR and \fBppoll()\fR functions are not affected by the \fBO_NDELAY\fR
-and \fBO_NONBLOCK\fR flags.
-.sp
-.LP
-The \fBpoll()\fR and \fBppoll()\fR functions support regular files, terminal and
-pseudo-terminal devices, streams-based files, FIFOs, pipes, and sockets.  The
-behavior of \fBpoll()\fR and \fBppoll()\fR on elements of \fIfds\fR that refer
-to other types of file is unspecified.
-.sp
-.LP
+.Fn poll
+waits at least
+.Fa timeout
+milliseconds for an
+event to occur on any of the selected file descriptors.
+Likewise, in the same situation
+.Fn ppoll
+waits for at least the time pointed to by
+.Fa tsp .
+On a computer where
+millisecond or nanosecond timing accuracy is not available,
+the wait time is rounded up to the
+nearest legal value available on that system.
+If the value of
+.Fa timeout
+is 0,
+.Fn poll
+returns immediately.
+If the value of
+.Fa timeout
+is \(mi1,
+.Fn poll
+blocks until a requested event occurs or until the call is
+interrupted.
+If the value of
+.Fa tsp
+is
+.Dv NULL ,
+then
+.Fn ppoll
+blocks until a requested event occurs or until the call is interrupted.
+The
+.Fn poll
+and
+.Fn ppoll
+functions are not affected by the
+.Sy O_NDELAY No and Sy O_NONBLOCK
+flags.
+.Lp
+The
+.Fn poll
+and
+.Fn ppoll
+functions support regular files, terminal and
+pseudo-terminal devices, streams-based files, FIFOs, pipes, and sockets.
+The behavior of
+.Fn poll
+and
+.Fn ppoll
+on elements of
+.Fa fds
+that refer to other types of file is unspecified.
+.Lp
 A file descriptor for a socket that is listening for connections will indicate
-that it is ready for reading, once connections are available.  A file
+that it is ready for reading, once connections are available.
+A file
 descriptor for a socket that is connecting asynchronously will indicate that it
 is ready for writing, once a connection has been established.
-.sp
-.LP
-Regular files always \fBpoll()\fR and \fBppoll()\fR \fBTRUE\fR for reading and
-writing.
-.SH RETURN VALUES
-.LP
-Upon successful completion, a non-negative value is returned. A positive value
+.Lp
+Regular files always
+.Fn poll
+and
+.Fn ppoll
+.Sy TRUE
+for reading and writing.
+.Sh RETURN VALUES
+Upon successful completion, a non-negative value is returned.
+A positive value
 indicates the total number of file descriptors that has been selected (that is,
-file descriptors for which the \fBrevents\fR member is non-zero). A value of
-\fB0\fR indicates that the call timed out and no file descriptors have been
-selected. Upon failure, \fB\(mi1\fR is returned and \fBerrno\fR is set to
-indicate the error.
-.SH ERRORS
-.LP
-The \fBpoll()\fR and \fBppoll()\fR functions will fail if:
-.sp
-.ne 2
-.na
-\fB\fBEAGAIN\fR\fR
-.ad
-.RS 10n
+file descriptors for which the
+.Va revents
+member is non-zero).
+A value of 0 indicates that the call timed out and no file descriptors have been
+selected.
+Upon failure, \(mi1 is returned and
+.Va errno
+is set to indicate the error.
+.Sh ERRORS
+The
+.Fn poll
+and
+.Fn ppoll
+functions will fail if:
+.Bl -tag -width Er
+.It Bq Er EAGAIN
 Allocation of internal data structures failed, but the request may be attempted
 again.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEFAULT\fR\fR
-.ad
-.RS 10n
+.It Bq EFAULT
 Some argument points to an illegal address.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEINTR\fR\fR
-.ad
-.RS 10n
-A signal was caught during the \fBpoll()\fR or \fBppoll()\fR function.
-.RE
-
-.sp
-.ne 2
-.na
-\fB\fBEINVAL\fR\fR
-.ad
-.RS 10n
-The argument \fInfds\fR is greater than \fB{OPEN_MAX}\fR, or one of the
-\fBfd\fR members refers to a stream or multiplexer that is linked (directly or
+.It Bq EINTR
+A signal was caught during the
+.Fn poll
+or
+.Fn ppoll
+function.
+.It Bq EINVAL
+The argument
+.Fa nfds
+is greater than
+.Brq Dv OPEN_MAX ,
+or one of the
+.Va fd
+members refers to a stream or multiplexer that is linked (directly or
 indirectly) downstream from a multiplexer.
-.RE
-
-.SH ATTRIBUTES
-.LP
-See \fBattributes\fR(5) for descriptions of the following attributes:
-.sp
-
-.sp
-.TS
-box;
-c | c
-l | l .
-ATTRIBUTE TYPE	ATTRIBUTE VALUE
-_
-Interface Stability	Standard
-.TE
-
-.SH SEE ALSO
-.LP
-\fBIntro\fR(2), \fBgetmsg\fR(2), \fBgetrlimit\fR(2), \fBputmsg\fR(2),
-\fBread\fR(2), \fBwrite\fR(2), \fBselect\fR(3C), \fBattributes\fR(5),
-\fBstandards\fR(5), \fBchpoll\fR(9E)
-.sp
-.LP
-\fISTREAMS Programming Guide\fR
-.SH NOTES
-.LP
-Non-STREAMS drivers use  \fBchpoll\fR(9E) to implement  \fBpoll()\fR on these
-devices.
+.El
+.Sh INTERFACE STABILITY
+The
+.Fn poll
+function is
+.Sy Standard .
+The
+.Fn ppoll
+function is a
+.Sy Committed .
+.
+.Sh SEE ALSO
+.Xr Intro 2 ,
+.Xr getmsg 2 ,
+.Xr getrlimit 2 ,
+.Xr putmsg 2 ,
+.Xr read 2 ,
+.Xr write 2 ,
+.Xr select 3C ,
+.Xr standards 5 ,
+.Xr chpoll 9E
+.
+.Rs
+.%B STREAMS Programming Guide
+.Re
+.
+.Sh STANDARDS
+.
+These functions are available in the following compilation environments.
+See
+.Xr standards 5 .
+.
+.Ss Fn poll
+.
+.Bl -bullet -compact
+.It
+.St -p1003.1-90
+.It
+.St -xpg3
+.It
+.St -xpg4
+.It
+.St -xpg4.2
+.It
+.St -susv2
+.It
+.St -susv3
+.It
+.St -p1003.1-2008
+.El
+.
+.Ss Fn ppoll
+This function is a local extension and not available in any standards
+conforming compilation environment.
+.
+.Sh NOTES
+Non-STREAMS drivers use
+.Xr chpoll 9E
+to implement
+.Fn poll
+on these devices.
