@@ -21,6 +21,7 @@
 
 /*
  * Copyright (c) 2004, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2015 Garrett D'Amore <garrett@damore.org>
  */
 
 #include <sys/types.h>
@@ -43,12 +44,6 @@
 #include <inet/sctp_ip.h>
 #include <inet/ipclassifier.h>
 #include "sctp_impl.h"
-
-/*
- * Helper function for SunCluster (PSARC/2005/602) to get the original source
- * address from the COOKIE
- */
-int cl_sctp_cookie_paddr(sctp_chunk_hdr_t *, in6_addr_t *);
 
 /*
  * From RFC 2104. This should probably go into libmd5 (and while
@@ -424,32 +419,6 @@ sctp_initialize_params(sctp_t *sctp, sctp_init_chunk_t *init,
 	return (B_TRUE);
 }
 
-/*
- * Copy the peer's original source address into addr. This relies on the
- * following format (see sctp_send_initack() below):
- * 	relative timestamp for the cookie (int64_t) +
- * 	cookie lifetime (uint32_t) +
- * 	local tie-tag (uint32_t) +  peer tie-tag (uint32_t) +
- * 	Peer's original src ...
- */
-int
-cl_sctp_cookie_paddr(sctp_chunk_hdr_t *ch, in6_addr_t *addr)
-{
-	uchar_t	*off;
-
-	ASSERT(addr != NULL);
-
-	if (ch->sch_id != CHUNK_COOKIE)
-		return (EINVAL);
-
-	off = (uchar_t *)ch + sizeof (*ch) + sizeof (int64_t) +
-	    sizeof (uint32_t) + sizeof (uint32_t) + sizeof (uint32_t);
-
-	bcopy(off, addr, sizeof (*addr));
-
-	return (0);
-}
-
 #define	SCTP_CALC_COOKIE_LEN(initcp) \
 	sizeof (int64_t) +		/* timestamp */			\
 	sizeof (uint32_t) +		/* cookie lifetime */		\
@@ -725,10 +694,6 @@ sctp_send_initack(sctp_t *sctp, sctp_hdr_t *initsh, sctp_chunk_hdr_t *ch,
 	}
 	/*
 	 * Generate and lay in the COOKIE parameter.
-	 *
-	 * Any change here that results in a change of location for
-	 * the peer's orig source address must be propagated to the fn
-	 * cl_sctp_cookie_paddr() above.
 	 *
 	 * The cookie consists of:
 	 * 1. The relative timestamp for the cookie (lbolt64)

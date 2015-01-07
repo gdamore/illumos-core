@@ -22,6 +22,7 @@
 # Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2011 Nexenta Systems, Inc. All rights reserved
 # Copyright 2012 Joyent, Inc. All rights reserved
+# Copyright 2015 Garrett D'Amore <garrett@damore.org>
 #
 
 arp_m_tbl
@@ -30,24 +31,6 @@ arp_netinfo
 arp_no_defense
 arpinfo
 cb_inet_devops
-cl_inet_bind
-cl_inet_checkspi
-cl_inet_connect2
-cl_inet_deletespi
-cl_inet_disconnect
-cl_inet_getspi
-cl_inet_idlesa
-cl_inet_ipident
-cl_inet_isclusterwide
-cl_inet_listen
-cl_inet_unbind
-cl_inet_unlisten
-cl_sctp_assoc_change
-cl_sctp_check_addrs
-cl_sctp_connect
-cl_sctp_disconnect
-cl_sctp_listen
-cl_sctp_unlisten
 conn_drain_nthreads
 dce_cache
 dce_reclaim_cv

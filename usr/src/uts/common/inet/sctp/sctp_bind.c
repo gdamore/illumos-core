@@ -21,6 +21,7 @@
 
 /*
  * Copyright (c) 2004, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2015 Garrett D'Amore <garrett@damore.org>
  */
 
 #include <sys/types.h>
@@ -291,8 +292,7 @@ sctp_bind(sctp_t *sctp, struct sockaddr *sa, socklen_t len)
 	if (err != 0)
 		goto done;
 
-	if ((err = sctp_bind_add(sctp, sa, 1, B_TRUE,
-	    user_specified == 1 ? htons(requested_port) : 0)) != 0) {
+	if ((err = sctp_bind_add(sctp, sa, 1, B_TRUE)) != 0) {
 		goto done;
 	}
 	err = sctp_bindi(sctp, requested_port, bind_to_req_port_only,
@@ -319,8 +319,7 @@ sctp_bindx(sctp_t *sctp, const void *addrs, int addrcnt, int bindop)
 
 	switch (bindop) {
 	case SCTP_BINDX_ADD_ADDR:
-		return (sctp_bind_add(sctp, addrs, addrcnt, B_FALSE,
-		    sctp->sctp_connp->conn_lport));
+		return (sctp_bind_add(sctp, addrs, addrcnt, B_FALSE));
 	case SCTP_BINDX_REM_ADDR:
 		return (sctp_bind_del(sctp, addrs, addrcnt, B_FALSE));
 	default:
@@ -333,12 +332,11 @@ sctp_bindx(sctp_t *sctp, const void *addrs, int addrcnt, int bindop)
  */
 int
 sctp_bind_add(sctp_t *sctp, const void *addrs, uint32_t addrcnt,
-    boolean_t caller_hold_lock, in_port_t port)
+    boolean_t caller_hold_lock)
 {
 	int		err = 0;
 	boolean_t	do_asconf = B_FALSE;
 	sctp_stack_t	*sctps = sctp->sctp_sctps;
-	conn_t		*connp = sctp->sctp_connp;
 
 	if (!caller_hold_lock)
 		RUN_SCTP(sctp);
@@ -364,72 +362,7 @@ sctp_bind_add(sctp_t *sctp, const void *addrs, uint32_t addrcnt,
 		}
 		do_asconf = B_TRUE;
 	}
-	/*
-	 * On a clustered node, for an inaddr_any bind, we will pass the list
-	 * of all the addresses in the global list, minus any address on the
-	 * loopback interface, and expect the clustering susbsystem to give us
-	 * the correct list for the 'port'. For explicit binds we give the
-	 * list of addresses  and the clustering module validates it for the
-	 * 'port'.
-	 *
-	 * On a non-clustered node, cl_sctp_check_addrs will be NULL and
-	 * we proceed as usual.
-	 */
-	if (cl_sctp_check_addrs != NULL) {
-		uchar_t		*addrlist = NULL;
-		size_t		size = 0;
-		int		unspec = 0;
-		boolean_t	do_listen;
-		uchar_t		*llist = NULL;
-		size_t		lsize = 0;
-
-		/*
-		 * If we are adding addresses after listening, but before
-		 * an association is established, we need to update the
-		 * clustering module with this info.
-		 */
-		do_listen = !do_asconf && sctp->sctp_state > SCTPS_BOUND &&
-		    cl_sctp_listen != NULL;
-
-		err = sctp_get_addrlist(sctp, addrs, &addrcnt, &addrlist,
-		    &unspec, &size);
-		if (err != 0) {
-			ASSERT(addrlist == NULL);
-			ASSERT(addrcnt == 0);
-			ASSERT(size == 0);
-			if (!caller_hold_lock)
-				WAKE_SCTP(sctp);
-			SCTP_KSTAT(sctps, sctp_cl_check_addrs);
-			return (err);
-		}
-		ASSERT(addrlist != NULL);
-		(*cl_sctp_check_addrs)(connp->conn_family, port, &addrlist,
-		    size, &addrcnt, unspec == 1);
-		if (addrcnt == 0) {
-			/* We free the list */
-			kmem_free(addrlist, size);
-			if (!caller_hold_lock)
-				WAKE_SCTP(sctp);
-			return (EINVAL);
-		}
-		if (do_listen) {
-			lsize = sizeof (in6_addr_t) * addrcnt;
-			llist = kmem_alloc(lsize, KM_SLEEP);
-		}
-		err = sctp_valid_addr_list(sctp, addrlist, addrcnt, llist,
-		    lsize);
-		if (err == 0 && do_listen) {
-			(*cl_sctp_listen)(connp->conn_family, llist,
-			    addrcnt, connp->conn_lport);
-			/* list will be freed by the clustering module */
-		} else if (err != 0 && llist != NULL) {
-			kmem_free(llist, lsize);
-		}
-		/* free the list we allocated */
-		kmem_free(addrlist, size);
-	} else {
-		err = sctp_valid_addr_list(sctp, addrs, addrcnt, NULL, 0);
-	}
+	err = sctp_valid_addr_list(sctp, addrs, addrcnt, NULL, 0);
 	if (err != 0) {
 		if (!caller_hold_lock)
 			WAKE_SCTP(sctp);
@@ -458,11 +391,7 @@ sctp_bind_del(sctp_t *sctp, const void *addrs, uint32_t addrcnt,
     boolean_t caller_hold_lock)
 {
 	int		error = 0;
-	boolean_t	do_asconf = B_FALSE;
-	uchar_t		*ulist = NULL;
-	size_t		usize = 0;
 	sctp_stack_t	*sctps = sctp->sctp_sctps;
-	conn_t		*connp = sctp->sctp_connp;
 
 	if (!caller_hold_lock)
 		RUN_SCTP(sctp);
@@ -485,7 +414,6 @@ sctp_bind_del(sctp_t *sctp, const void *addrs, uint32_t addrcnt,
 				WAKE_SCTP(sctp);
 			return (EINVAL);
 		}
-		do_asconf = B_TRUE;
 	}
 
 	/* Can't delete the last address nor all of the addresses */
@@ -495,26 +423,11 @@ sctp_bind_del(sctp_t *sctp, const void *addrs, uint32_t addrcnt,
 		return (EINVAL);
 	}
 
-	if (cl_sctp_unlisten != NULL && !do_asconf &&
-	    sctp->sctp_state > SCTPS_BOUND) {
-		usize = sizeof (in6_addr_t) * addrcnt;
-		ulist = kmem_alloc(usize, KM_SLEEP);
-	}
-
-	error = sctp_del_ip(sctp, addrs, addrcnt, ulist, usize);
+	error = sctp_del_ip(sctp, addrs, addrcnt);
 	if (error != 0) {
-		if (ulist != NULL)
-			kmem_free(ulist, usize);
 		if (!caller_hold_lock)
 			WAKE_SCTP(sctp);
 		return (error);
-	}
-	/* ulist will be non-NULL only if cl_sctp_unlisten is non-NULL */
-	if (ulist != NULL) {
-		ASSERT(cl_sctp_unlisten != NULL);
-		(*cl_sctp_unlisten)(connp->conn_family, ulist, addrcnt,
-		    connp->conn_lport);
-		/* ulist will be freed by the clustering module */
 	}
 	if (!caller_hold_lock)
 		WAKE_SCTP(sctp);

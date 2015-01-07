@@ -20,6 +20,7 @@
  */
 /*
  * Copyright (c) 2004, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2015 Garrett D'Amore <garrett@damore.org>
  */
 
 #include <sys/types.h>
@@ -391,8 +392,7 @@ sctp_valid_addr_list(sctp_t *sctp, const void *addrs, uint32_t addrcnt,
 				/* Address not in the list */
 				err = EINVAL;
 				goto free_ret;
-			} else if (check_addrs && SCTP_IS_IPIF_LOOPBACK(ipif) &&
-			    cl_sctp_check_addrs == NULL) {
+			} else if (check_addrs && SCTP_IS_IPIF_LOOPBACK(ipif)) {
 				SCTP_IPIF_REFRELE(ipif);
 				err = EINVAL;
 				goto free_ret;
@@ -1455,8 +1455,7 @@ sctp_check_saddr(sctp_t *sctp, int supp_af, boolean_t delete,
 			 * to do the right thing w.r.t loopback addresses, so
 			 * we ignore loopback addresses in this check.
 			 */
-			if ((SCTP_IS_IPIF_LOOPBACK(ipif) &&
-			    cl_sctp_check_addrs == NULL) ||
+			if (SCTP_IS_IPIF_LOOPBACK(ipif) ||
 			    SCTP_IS_IPIF_LINKLOCAL(ipif) ||
 			    SCTP_UNSUPP_AF(ipif, supp_af)) {
 				if (!delete) {
@@ -1564,8 +1563,7 @@ sctp_getmyaddrs(void *conn, void *myaddrs, int *addrcnt)
 	 * Skip loopback addresses for non-loopback assoc., ignore
 	 * this on a clustered node.
 	 */
-	if (sctp->sctp_state >= SCTPS_ESTABLISHED && !sctp->sctp_loopback &&
-	    (cl_sctp_check_addrs == NULL)) {
+	if (sctp->sctp_state >= SCTPS_ESTABLISHED && !sctp->sctp_loopback) {
 		skip_lback = B_TRUE;
 	}
 
@@ -1659,11 +1657,7 @@ sctp_saddr_info(sctp_t *sctp, int supp_af, uchar_t *p, boolean_t modify)
 	boolean_t		del_lb = B_FALSE;
 
 
-	/*
-	 * On a clustered node don't bother changing anything
-	 * on the loopback interface.
-	 */
-	if (modify && !sctp->sctp_loopback && (cl_sctp_check_addrs == NULL))
+	if (modify && !sctp->sctp_loopback)
 		del_lb = B_TRUE;
 
 	if (modify && !sctp->sctp_linklocal)
@@ -1709,8 +1703,7 @@ sctp_saddr_info(sctp_t *sctp, int supp_af, uchar_t *p, boolean_t modify)
 				sctp_ipif_hash_remove(sctp, ipif, B_TRUE);
 
 				goto next_addr;
-			} else if (ipif_ll || unsupp_af ||
-			    (ipif_lb && (cl_sctp_check_addrs == NULL))) {
+			} else if (ipif_ll || unsupp_af || ipif_lb) {
 				goto next_addr;
 			}
 

@@ -21,6 +21,7 @@
 
 /*
  * Copyright (c) 2004, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2015 Garrett D'Amore <garrett@damore.org>
  */
 
 #include <sys/types.h>
@@ -1266,8 +1267,6 @@ sctp_get_addrparams(sctp_t *sctp, sctp_t *psctp, mblk_t *pkt,
 	sctp_faddr_t		*fp;
 	int			supp_af = 0;
 	boolean_t		check_saddr = B_TRUE;
-	in6_addr_t		curaddr;
-	sctp_stack_t		*sctps = sctp->sctp_sctps;
 	conn_t			*connp = sctp->sctp_connp;
 
 	if (sctp_options != NULL)
@@ -1320,9 +1319,6 @@ sctp_get_addrparams(sctp_t *sctp, sctp_t *psctp, mblk_t *pkt,
 		fp = sctp->sctp_faddrs;
 	}
 	/* make the header addr the primary */
-
-	if (cl_sctp_assoc_change != NULL && psctp == NULL)
-		curaddr = sctp->sctp_current->sf_faddr;
 
 	sctp->sctp_primary = fp;
 	sctp->sctp_current = fp;
@@ -1458,45 +1454,6 @@ next:
 		    B_TRUE, hdrdaddr);
 	}
 	ASSERT(sctp_saddr_lookup(sctp, hdrdaddr, 0) != NULL);
-	/*
-	 * We have the right address list now, update clustering's
-	 * knowledge because when we sent the INIT we had just added
-	 * the address the INIT was sent to.
-	 */
-	if (psctp == NULL && cl_sctp_assoc_change != NULL) {
-		uchar_t	*alist;
-		size_t	asize;
-		uchar_t	*dlist;
-		size_t	dsize;
-
-		asize = sizeof (in6_addr_t) * sctp->sctp_nfaddrs;
-		alist = kmem_alloc(asize, KM_NOSLEEP);
-		if (alist == NULL) {
-			SCTP_KSTAT(sctps, sctp_cl_assoc_change);
-			return (ENOMEM);
-		}
-		/*
-		 * Just include the address the INIT was sent to in the
-		 * delete list and send the entire faddr list. We could
-		 * do it differently (i.e include all the addresses in the
-		 * add list even if it contains the original address OR
-		 * remove the original address from the add list etc.), but
-		 * this seems reasonable enough.
-		 */
-		dsize = sizeof (in6_addr_t);
-		dlist = kmem_alloc(dsize, KM_NOSLEEP);
-		if (dlist == NULL) {
-			kmem_free(alist, asize);
-			SCTP_KSTAT(sctps, sctp_cl_assoc_change);
-			return (ENOMEM);
-		}
-		bcopy(&curaddr, dlist, sizeof (curaddr));
-		sctp_get_faddr_list(sctp, alist, asize);
-		(*cl_sctp_assoc_change)(connp->conn_family, alist, asize,
-		    sctp->sctp_nfaddrs, dlist, dsize, 1, SCTP_CL_PADDR,
-		    (cl_sctp_handle_t)sctp);
-		/* alist and dlist will be freed by the clustering module */
-	}
 	return (0);
 }
 

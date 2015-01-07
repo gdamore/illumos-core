@@ -21,6 +21,7 @@
 
 /*
  * Copyright (c) 2004, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2015 Garrett D'Amore <garrett@damore.org>
  */
 
 #include <sys/types.h>
@@ -1230,7 +1231,7 @@ sctp_set_opt(sctp_t *sctp, int level, int name, const void *invalp,
 			}
 			if (name == SCTP_ADD_ADDR) {
 				retval = sctp_bind_add(sctp, invalp, addrcnt,
-				    B_TRUE, connp->conn_lport);
+				    B_TRUE);
 			} else {
 				retval = sctp_bind_del(sctp, invalp, addrcnt,
 				    B_TRUE);

@@ -21,6 +21,8 @@
 /*
  * Copyright 2010 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
+ *
+ * Copyright 2015 Garrett D'Amore <garrett@damore.org>
  */
 
 #include <sys/types.h>
@@ -346,21 +348,6 @@ sadb_unlinkassoc(ipsa_t *ipsa)
 
 	/* This may destroy the SA. */
 	IPSA_REFRELE(ipsa);
-}
-
-void
-sadb_delete_cluster(ipsa_t *assoc)
-{
-	uint8_t protocol;
-
-	if (cl_inet_deletespi &&
-	    ((assoc->ipsa_state == IPSA_STATE_LARVAL) ||
-	    (assoc->ipsa_state == IPSA_STATE_MATURE))) {
-		protocol = (assoc->ipsa_type == SADB_SATYPE_AH) ?
-		    IPPROTO_AH : IPPROTO_ESP;
-		cl_inet_deletespi(assoc->ipsa_netstack->netstack_stackid,
-		    protocol, assoc->ipsa_spi, NULL);
-	}
 }
 
 /*
@@ -719,9 +706,7 @@ sadb_destroyer(isaf_t **tablep, uint_t numentries, boolean_t forever,
 {
 	int i;
 	isaf_t *table = *tablep;
-	uint8_t protocol;
 	ipsa_t *sa;
-	netstackid_t sid;
 
 	if (table == NULL)
 		return;
@@ -729,15 +714,6 @@ sadb_destroyer(isaf_t **tablep, uint_t numentries, boolean_t forever,
 	for (i = 0; i < numentries; i++) {
 		mutex_enter(&table[i].isaf_lock);
 		while ((sa = table[i].isaf_ipsa) != NULL) {
-			if (inbound && cl_inet_deletespi &&
-			    (sa->ipsa_state != IPSA_STATE_ACTIVE_ELSEWHERE) &&
-			    (sa->ipsa_state != IPSA_STATE_IDLE)) {
-				protocol = (sa->ipsa_type == SADB_SATYPE_AH) ?
-				    IPPROTO_AH : IPPROTO_ESP;
-				sid = sa->ipsa_netstack->netstack_stackid;
-				cl_inet_deletespi(sid, protocol, sa->ipsa_spi,
-				    NULL);
-			}
 			sadb_unlinkassoc(sa);
 		}
 		table[i].isaf_gen++;
@@ -2413,9 +2389,6 @@ sadb_purge_cb(isaf_t *head, ipsa_t *entry, void *cookie)
 		return;
 	}
 
-	if (ps->inbnd) {
-		sadb_delete_cluster(entry);
-	}
 	entry->ipsa_state = IPSA_STATE_DEAD;
 	(void) sadb_torch_assoc(head, entry);
 }
@@ -2581,9 +2554,6 @@ sadb_delget_sa(mblk_t *mp, keysock_in_t *ksi, sadbp_t *spp,
 
 		if (ipsapp.ipsap_sa_ptr != NULL) {
 			mutex_enter(&ipsapp.ipsap_sa_ptr->ipsa_lock);
-			if (ipsapp.ipsap_sa_ptr->ipsa_flags & IPSA_F_INBOUND) {
-				sadb_delete_cluster(ipsapp.ipsap_sa_ptr);
-			}
 			ipsapp.ipsap_sa_ptr->ipsa_state = IPSA_STATE_DEAD;
 			(void) sadb_torch_assoc(ipsapp.ipsap_bucket,
 			    ipsapp.ipsap_sa_ptr);
@@ -2597,11 +2567,6 @@ sadb_delget_sa(mblk_t *mp, keysock_in_t *ksi, sadbp_t *spp,
 			mutex_enter(&ipsapp.ipsap_psa_ptr->ipsa_lock);
 			if (sadb_msg_type == SADB_X_DELPAIR ||
 			    ipsapp.ipsap_psa_ptr->ipsa_haspeer) {
-				if (ipsapp.ipsap_psa_ptr->ipsa_flags &
-				    IPSA_F_INBOUND) {
-					sadb_delete_cluster
-					    (ipsapp.ipsap_psa_ptr);
-				}
 				ipsapp.ipsap_psa_ptr->ipsa_state =
 				    IPSA_STATE_DEAD;
 				(void) sadb_torch_assoc(ipsapp.ipsap_pbucket,
@@ -2915,8 +2880,6 @@ sadb_common_add(queue_t *pfkey_q, mblk_t *mp, sadb_msg_t *samsg,
 	    (sadb_x_pair_t *)ksi->ks_in_extv[SADB_X_EXT_PAIR];
 	sadb_x_replay_ctr_t *replayext =
 	    (sadb_x_replay_ctr_t *)ksi->ks_in_extv[SADB_X_EXT_REPLAY_VALUE];
-	uint8_t protocol =
-	    (samsg->sadb_msg_satype == SADB_SATYPE_AH) ? IPPROTO_AH:IPPROTO_ESP;
 	int salt_offset;
 	uint8_t *buf_ptr;
 	struct sockaddr_in *src, *dst, *isrc, *idst;
@@ -2934,7 +2897,6 @@ sadb_common_add(queue_t *pfkey_q, mblk_t *mp, sadb_msg_t *samsg,
 	ipsec_stack_t	*ipss = ns->netstack_ipsec;
 	ip_stack_t 	*ipst = ns->netstack_ip;
 	ipsec_alginfo_t *alg;
-	int		rcode;
 	boolean_t	async = B_FALSE;
 
 	init_ipsa_pair(&ipsapp);
@@ -2976,16 +2938,6 @@ sadb_common_add(queue_t *pfkey_q, mblk_t *mp, sadb_msg_t *samsg,
 		ASSERT(af == AF_INET6);
 		src_addr_ptr = (uint32_t *)&src6->sin6_addr;
 		dst_addr_ptr = (uint32_t *)&dst6->sin6_addr;
-	}
-
-	if (!isupdate && (clone == B_TRUE || is_inbound == B_TRUE) &&
-	    cl_inet_checkspi &&
-	    (assoc->sadb_sa_state != SADB_X_SASTATE_ACTIVE_ELSEWHERE)) {
-		rcode = cl_inet_checkspi(ns->netstack_stackid, protocol,
-		    assoc->sadb_sa_spi, NULL);
-		if (rcode == -1) {
-			return (EEXIST);
-		}
 	}
 
 	/*
@@ -3900,7 +3852,6 @@ sadb_age_bytes(queue_t *pfkey_q, ipsa_t *assoc, uint64_t bytes,
 	if (assoc->ipsa_hardbyteslt != 0 &&
 	    newtotal >= assoc->ipsa_hardbyteslt) {
 		if (assoc->ipsa_state != IPSA_STATE_DEAD) {
-			sadb_delete_cluster(assoc);
 			/*
 			 * Send EXPIRE message to PF_KEY.  May wish to pawn
 			 * this off on another non-interrupt thread.  Also
@@ -4021,10 +3972,6 @@ sadb_age_assoc(isaf_t *head, queue_t *pfkey_q, ipsa_t *assoc,
 	    assoc->ipsa_hardexpiretime <= current) {
 		if (assoc->ipsa_state == IPSA_STATE_DEAD)
 			return (sadb_torch_assoc(head, assoc));
-
-		if (inbound) {
-			sadb_delete_cluster(assoc);
-		}
 
 		/*
 		 * Send SADB_EXPIRE with hard lifetime, delay for unlinking.
@@ -5886,8 +5833,6 @@ sadb_getspi(keysock_in_t *ksi, uint32_t master_spi, int *diagnostic,
 	uint32_t *srcaddr, *dstaddr;
 	sa_family_t af;
 	uint32_t add, min, max;
-	uint8_t protocol =
-	    (sa_type == SADB_SATYPE_AH) ? IPPROTO_AH : IPPROTO_ESP;
 
 	if (src == NULL) {
 		*diagnostic = SADB_X_DIAGNOSTIC_MISSING_SRC;
@@ -5931,13 +5876,7 @@ sadb_getspi(keysock_in_t *ksi, uint32_t master_spi, int *diagnostic,
 
 	if (master_spi < min || master_spi > max) {
 		/* Return a random value in the range. */
-		if (cl_inet_getspi) {
-			cl_inet_getspi(ns->netstack_stackid, protocol,
-			    (uint8_t *)&add, sizeof (add), NULL);
-		} else {
-			(void) random_get_pseudo_bytes((uint8_t *)&add,
-			    sizeof (add));
-		}
+		(void) random_get_pseudo_bytes((uint8_t *)&add, sizeof (add));
 		master_spi = min + (add % (max - min + 1));
 	}
 
@@ -6972,52 +6911,13 @@ sadb_buf_pkt(ipsa_t *ipsa, mblk_t *bpkt, ip_recv_attr_t *ira)
 {
 	netstack_t	*ns = ira->ira_ill->ill_ipst->ips_netstack;
 	ipsec_stack_t   *ipss = ns->netstack_ipsec;
-	in6_addr_t *srcaddr = (in6_addr_t *)(&ipsa->ipsa_srcaddr);
-	in6_addr_t *dstaddr = (in6_addr_t *)(&ipsa->ipsa_dstaddr);
-	mblk_t		*mp;
 
 	ASSERT(ipsa->ipsa_state == IPSA_STATE_IDLE);
 
-	if (cl_inet_idlesa == NULL) {
-		ip_drop_packet(bpkt, B_TRUE, ira->ira_ill,
-		    DROPPER(ipss, ipds_sadb_inidle_overflow),
-		    &ipss->ipsec_sadb_dropper);
-		return;
-	}
-
-	cl_inet_idlesa(ns->netstack_stackid,
-	    (ipsa->ipsa_type == SADB_SATYPE_AH) ? IPPROTO_AH : IPPROTO_ESP,
-	    ipsa->ipsa_spi, ipsa->ipsa_addrfam, *srcaddr, *dstaddr, NULL);
-
-	mp = ip_recv_attr_to_mblk(ira);
-	if (mp == NULL) {
-		ip_drop_packet(bpkt, B_TRUE, ira->ira_ill,
-		    DROPPER(ipss, ipds_sadb_inidle_overflow),
-		    &ipss->ipsec_sadb_dropper);
-		return;
-	}
-	linkb(mp, bpkt);
-
-	mutex_enter(&ipsa->ipsa_lock);
-	ipsa->ipsa_mblkcnt++;
-	if (ipsa->ipsa_bpkt_head == NULL) {
-		ipsa->ipsa_bpkt_head = ipsa->ipsa_bpkt_tail = bpkt;
-	} else {
-		ipsa->ipsa_bpkt_tail->b_next = bpkt;
-		ipsa->ipsa_bpkt_tail = bpkt;
-		if (ipsa->ipsa_mblkcnt > SADB_MAX_IDLEPKTS) {
-			mblk_t *tmp;
-
-			tmp = ipsa->ipsa_bpkt_head;
-			ipsa->ipsa_bpkt_head = ipsa->ipsa_bpkt_head->b_next;
-			tmp = ip_recv_attr_free_mblk(tmp);
-			ip_drop_packet(tmp, B_TRUE, NULL,
-			    DROPPER(ipss, ipds_sadb_inidle_overflow),
-			    &ipss->ipsec_sadb_dropper);
-			ipsa->ipsa_mblkcnt --;
-		}
-	}
-	mutex_exit(&ipsa->ipsa_lock);
+	ip_drop_packet(bpkt, B_TRUE, ira->ira_ill,
+	    DROPPER(ipss, ipds_sadb_inidle_overflow),
+	    &ipss->ipsec_sadb_dropper);
+	return;
 }
 
 /*

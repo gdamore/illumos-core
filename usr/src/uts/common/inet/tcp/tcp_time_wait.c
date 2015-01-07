@@ -22,6 +22,7 @@
 /*
  * Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 2012, Joyent Inc. All rights reserved.
+ * Copyright 2015 Garrett D'Amore <garrett@damore.org>
  */
 
 /*
@@ -39,7 +40,6 @@
 #include <inet/ip.h>
 #include <inet/tcp.h>
 #include <inet/tcp_impl.h>
-#include <inet/tcp_cluster.h>
 
 static void	tcp_timewait_close(void *, mblk_t *, void *, ip_recv_attr_t *);
 
@@ -294,8 +294,6 @@ tcp_time_wait_collector(void *arg)
 	conn_t *connp;
 	kmutex_t *lock;
 	boolean_t removed;
-	extern void (*cl_inet_disconnect)(netstackid_t, uint8_t, sa_family_t,
-	    uint8_t *, in_port_t, uint8_t *, in_port_t, void *);
 
 	squeue_t *sqp = (squeue_t *)arg;
 	tcp_squeue_priv_t *tcp_time_wait =
@@ -362,8 +360,7 @@ tcp_time_wait_collector(void *arg)
 		 */
 		if (mutex_tryenter(lock)) {
 			mutex_enter(&connp->conn_lock);
-			if ((connp->conn_ref == 2) &&
-			    (cl_inet_disconnect == NULL)) {
+			if (connp->conn_ref == 2) {
 				ipcl_hash_remove_locked(connp,
 				    connp->conn_fanout);
 				/*

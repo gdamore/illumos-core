@@ -21,6 +21,7 @@
 
 /*
  * Copyright (c) 2004, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2015 Garrett D'Amore <garrett@damore.org>
  */
 
 #include <sys/types.h>
@@ -143,19 +144,6 @@ struct kmem_cache	*sctp_conn_cache;
 	list_remove(&(sctps)->sctps_g_list, (sctp));	\
 	mutex_exit(&(sctps)->sctps_g_lock);
 
-/*
- * Hooks for Sun Cluster. On non-clustered nodes these will remain NULL.
- * PSARC/2005/602.
- */
-void (*cl_sctp_listen)(sa_family_t, uchar_t *, uint_t, in_port_t) = NULL;
-void (*cl_sctp_unlisten)(sa_family_t, uchar_t *, uint_t, in_port_t) = NULL;
-void (*cl_sctp_connect)(sa_family_t, uchar_t *, uint_t, in_port_t,
-    uchar_t *, uint_t, in_port_t, boolean_t, cl_sctp_handle_t) = NULL;
-void (*cl_sctp_disconnect)(sa_family_t, cl_sctp_handle_t) = NULL;
-void (*cl_sctp_assoc_change)(sa_family_t, uchar_t *, size_t, uint_t,
-    uchar_t *, size_t, uint_t, int, cl_sctp_handle_t) = NULL;
-void (*cl_sctp_check_addrs)(sa_family_t, in_port_t, uchar_t **, size_t,
-    uint_t *, boolean_t) = NULL;
 /*
  * Return the version number of the SCTP kernel interface.
  */

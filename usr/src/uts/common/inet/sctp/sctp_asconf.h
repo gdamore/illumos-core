@@ -20,6 +20,7 @@
  */
 /*
  * Copyright (c) 2004, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2015 Garrett D'Amore <garrett@damore.org>
  */
 
 #ifndef _INET_SCTP_SCTP_ASCONF_H
@@ -50,7 +51,7 @@ extern "C" {
 	}
 
 extern int sctp_add_ip(sctp_t *, const void *, uint32_t);
-extern int sctp_del_ip(sctp_t *, const void *, uint32_t, uchar_t *, size_t);
+extern int sctp_del_ip(sctp_t *, const void *, uint32_t);
 extern void sctp_asconf_free_cxmit(sctp_t *, sctp_chunk_hdr_t *);
 extern void sctp_input_asconf(sctp_t *, sctp_chunk_hdr_t *, sctp_faddr_t *);
 extern void sctp_input_asconf_ack(sctp_t *, sctp_chunk_hdr_t *, sctp_faddr_t *);

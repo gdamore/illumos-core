@@ -21,6 +21,8 @@
 /*
  * Copyright 2010 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
+ *
+ * Copyright 2015 Garrett D'Amore <garrett@damore.org>
  */
 
 #include <sys/types.h>
@@ -1906,13 +1908,7 @@ ah_getspi(mblk_t *mp, keysock_in_t *ksi, ipsecah_stack_t *ahstack)
 	/*
 	 * Randomly generate a proposed SPI value.
 	 */
-	if (cl_inet_getspi != NULL) {
-		cl_inet_getspi(ahstack->ipsecah_netstack->netstack_stackid,
-		    IPPROTO_AH, (uint8_t *)&newspi, sizeof (uint32_t), NULL);
-	} else {
-		(void) random_get_pseudo_bytes((uint8_t *)&newspi,
-		    sizeof (uint32_t));
-	}
+	(void) random_get_pseudo_bytes((uint8_t *)&newspi, sizeof (uint32_t));
 	newbie = sadb_getspi(ksi, newspi, &diagnostic,
 	    ahstack->ipsecah_netstack, IPPROTO_AH);
 

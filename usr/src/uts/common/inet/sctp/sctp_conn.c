@@ -21,6 +21,7 @@
 
 /*
  * Copyright (c) 2004, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2015 Garrett D'Amore <garrett@damore.org>
  */
 
 #include <sys/types.h>
@@ -292,39 +293,6 @@ sctp_conn_request(sctp_t *sctp, mblk_t *mp, uint_t ifindex, uint_t ip_hdr_len,
 			ixa->ixa_scopeid = ifindex;
 			econnp->conn_incoming_ifindex = ifindex;
 		}
-	}
-
-	/*
-	 * On a clustered note send this notification to the clustering
-	 * subsystem.
-	 */
-	if (cl_sctp_connect != NULL) {
-		uchar_t	*slist;
-		uchar_t	*flist;
-		size_t	fsize;
-		size_t	ssize;
-
-		fsize = sizeof (in6_addr_t) * eager->sctp_nfaddrs;
-		ssize = sizeof (in6_addr_t) * eager->sctp_nsaddrs;
-		slist = kmem_alloc(ssize, KM_NOSLEEP);
-		flist = kmem_alloc(fsize, KM_NOSLEEP);
-		if (slist == NULL || flist == NULL) {
-			if (slist != NULL)
-				kmem_free(slist, ssize);
-			if (flist != NULL)
-				kmem_free(flist, fsize);
-			sctp_close_eager(eager);
-			SCTPS_BUMP_MIB(sctps, sctpListenDrop);
-			SCTP_KSTAT(sctps, sctp_cl_connect);
-			return (NULL);
-		}
-		/* The clustering module frees these list */
-		sctp_get_saddr_list(eager, slist, ssize);
-		sctp_get_faddr_list(eager, flist, fsize);
-		(*cl_sctp_connect)(econnp->conn_family, slist,
-		    eager->sctp_nsaddrs, econnp->conn_lport, flist,
-		    eager->sctp_nfaddrs, econnp->conn_fport, B_FALSE,
-		    (cl_sctp_handle_t)eager);
 	}
 
 	/* Connection established, so send up the conn_ind */
@@ -616,28 +584,6 @@ sctp_connect(sctp_t *sctp, const struct sockaddr *dst, uint32_t addrlen,
 		}
 		mutex_exit(&tbf->tf_lock);
 
-		/*
-		 * On a clustered note send this notification to the clustering
-		 * subsystem.
-		 */
-		if (cl_sctp_connect != NULL) {
-			uchar_t		*slist;
-			uchar_t		*flist;
-			size_t		ssize;
-			size_t		fsize;
-
-			fsize = sizeof (in6_addr_t) * sctp->sctp_nfaddrs;
-			ssize = sizeof (in6_addr_t) * sctp->sctp_nsaddrs;
-			slist = kmem_alloc(ssize, KM_SLEEP);
-			flist = kmem_alloc(fsize, KM_SLEEP);
-			/* The clustering module frees the lists */
-			sctp_get_saddr_list(sctp, slist, ssize);
-			sctp_get_faddr_list(sctp, flist, fsize);
-			(*cl_sctp_connect)(connp->conn_family, slist,
-			    sctp->sctp_nsaddrs, connp->conn_lport,
-			    flist, sctp->sctp_nfaddrs, connp->conn_fport,
-			    B_TRUE, (cl_sctp_handle_t)sctp);
-		}
 		ASSERT(ixa->ixa_cred != NULL);
 		ASSERT(ixa->ixa_ire != NULL);
 

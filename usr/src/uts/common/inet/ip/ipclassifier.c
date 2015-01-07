@@ -20,6 +20,7 @@
  */
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2015 Garrett D'Amore <garrett@damore.org>
  */
 
 /*
@@ -748,32 +749,6 @@ ipcl_conn_destroy(conn_t *connp)
 }
 
 /*
- * Running in cluster mode - deregister listener information
- */
-static void
-ipcl_conn_unlisten(conn_t *connp)
-{
-	ASSERT((connp->conn_flags & IPCL_CL_LISTENER) != 0);
-	ASSERT(connp->conn_lport != 0);
-
-	if (cl_inet_unlisten != NULL) {
-		sa_family_t	addr_family;
-		uint8_t		*laddrp;
-
-		if (connp->conn_ipversion == IPV6_VERSION) {
-			addr_family = AF_INET6;
-			laddrp = (uint8_t *)&connp->conn_bound_addr_v6;
-		} else {
-			addr_family = AF_INET;
-			laddrp = (uint8_t *)&connp->conn_bound_addr_v4;
-		}
-		(*cl_inet_unlisten)(connp->conn_netstack->netstack_stackid,
-		    IPPROTO_TCP, addr_family, laddrp, connp->conn_lport, NULL);
-	}
-	connp->conn_flags &= ~IPCL_CL_LISTENER;
-}
-
-/*
  * We set the IPCL_REMOVED flag (instead of clearing the flag indicating
  * which table the conn belonged to). So for debugging we can see which hash
  * table this connection was in.
@@ -795,8 +770,6 @@ ipcl_conn_unlisten(conn_t *connp)
 		(connp)->conn_next = NULL;				\
 		(connp)->conn_prev = NULL;				\
 		(connp)->conn_flags |= IPCL_REMOVED;			\
-		if (((connp)->conn_flags & IPCL_CL_LISTENER) != 0)	\
-			ipcl_conn_unlisten((connp));			\
 		CONN_DEC_REF((connp));					\
 		mutex_exit(&connfp->connf_lock);			\
 	}								\
@@ -828,7 +801,6 @@ ipcl_hash_remove_locked(conn_t *connp, connf_t	*connfp)
 {
 	ASSERT(MUTEX_HELD(&connfp->connf_lock));
 	ASSERT(MUTEX_HELD(&connp->conn_lock));
-	ASSERT((connp->conn_flags & IPCL_CL_LISTENER) == 0);
 
 	if ((connp)->conn_next != NULL) {
 		(connp)->conn_next->conn_prev = (connp)->conn_prev;
@@ -1223,14 +1195,6 @@ ipcl_bind_insert_v4(conn_t *connp)
 		} else {
 			IPCL_HASH_INSERT_WILDCARD(connfp, connp);
 		}
-		if (cl_inet_listen != NULL) {
-			ASSERT(connp->conn_ipversion == IPV4_VERSION);
-			connp->conn_flags |= IPCL_CL_LISTENER;
-			(*cl_inet_listen)(
-			    connp->conn_netstack->netstack_stackid,
-			    IPPROTO_TCP, AF_INET,
-			    (uint8_t *)&connp->conn_bound_addr_v4, lport, NULL);
-		}
 		break;
 
 	case IPPROTO_SCTP:
@@ -1286,23 +1250,6 @@ ipcl_bind_insert_v6(conn_t *connp)
 			IPCL_HASH_INSERT_BOUND(connfp, connp);
 		} else {
 			IPCL_HASH_INSERT_WILDCARD(connfp, connp);
-		}
-		if (cl_inet_listen != NULL) {
-			sa_family_t	addr_family;
-			uint8_t		*laddrp;
-
-			if (connp->conn_ipversion == IPV6_VERSION) {
-				addr_family = AF_INET6;
-				laddrp =
-				    (uint8_t *)&connp->conn_bound_addr_v6;
-			} else {
-				addr_family = AF_INET;
-				laddrp = (uint8_t *)&connp->conn_bound_addr_v4;
-			}
-			connp->conn_flags |= IPCL_CL_LISTENER;
-			(*cl_inet_listen)(
-			    connp->conn_netstack->netstack_stackid,
-			    IPPROTO_TCP, addr_family, laddrp, lport, NULL);
 		}
 		break;
 

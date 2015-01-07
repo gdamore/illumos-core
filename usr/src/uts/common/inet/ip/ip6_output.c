@@ -22,6 +22,8 @@
 /*
  * Copyright 2010 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
+ *
+ * Copyright 2015 Garrett D'Amore <garrett@damore.org>
  */
 /* Copyright (c) 1990 Mentat Inc. */
 
@@ -1080,9 +1082,6 @@ ire_send_wire_v6(ire_t *ire, mblk_t *mp, void *iph_arg,
 			 * Normally ixa_extra_ident is 0, but in the case of
 			 * LSO it will be the number of TCP segments  that the
 			 * driver/hardware will extraly construct.
-			 *
-			 * Note that cl_inet_ipident has only been used for
-			 * IPv4. We don't use it here.
 			 */
 			ident = atomic_add_32_nv(identp, ixa->ixa_extra_ident +
 			    1);

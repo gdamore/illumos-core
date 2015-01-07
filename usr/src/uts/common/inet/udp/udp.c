@@ -22,6 +22,7 @@
  * Copyright (c) 1991, 2010, Oracle and/or its affiliates. All rights reserved.
  * Copyright 2013 Nexenta Systems, Inc.  All rights reserved.
  * Copyright 2014, OmniTI Computer Consulting, Inc. All rights reserved.
+ * Copyright 2015 Garrett D'Amore <garrett@damore.org>
  */
 /* Copyright (c) 1990 Mentat Inc. */
 
@@ -203,44 +204,6 @@ static int	udp_do_connect(conn_t *, const struct sockaddr *, socklen_t,
 
 #pragma inline(udp_output_connected, udp_output_newdst, udp_output_lastdst)
 
-/*
- * Checks if the given destination addr/port is allowed out.
- * If allowed, registers the (dest_addr/port, node_ID) mapping at Cluster.
- * Called for each connect() and for sendto()/sendmsg() to a different
- * destination.
- * For connect(), called in udp_connect().
- * For sendto()/sendmsg(), called in udp_output_newdst().
- *
- * This macro assumes that the cl_inet_connect2 hook is not NULL.
- * Please check this before calling this macro.
- *
- * void
- * CL_INET_UDP_CONNECT(conn_t cp, udp_t *udp, boolean_t is_outgoing,
- *     in6_addr_t *faddrp, in_port_t (or uint16_t) fport, int err);
- */
-#define	CL_INET_UDP_CONNECT(cp, is_outgoing, faddrp, fport, err) {	\
-	(err) = 0;							\
-	/*								\
-	 * Running in cluster mode - check and register active		\
-	 * "connection" information					\
-	 */								\
-	if ((cp)->conn_ipversion == IPV4_VERSION)			\
-		(err) = (*cl_inet_connect2)(				\
-		    (cp)->conn_netstack->netstack_stackid,		\
-		    IPPROTO_UDP, is_outgoing, AF_INET,			\
-		    (uint8_t *)&((cp)->conn_laddr_v4),			\
-		    (cp)->conn_lport,					\
-		    (uint8_t *)&(V4_PART_OF_V6(*faddrp)),		\
-		    (in_port_t)(fport), NULL);				\
-	else								\
-		(err) = (*cl_inet_connect2)(				\
-		    (cp)->conn_netstack->netstack_stackid,		\
-		    IPPROTO_UDP, is_outgoing, AF_INET6,			\
-		    (uint8_t *)&((cp)->conn_laddr_v6),			\
-		    (cp)->conn_lport,					\
-		    (uint8_t *)(faddrp), (in_port_t)(fport), NULL);	\
-}
-
 static struct module_info udp_mod_info =  {
 	UDP_MOD_ID, UDP_MOD_NAME, 1, INFPSZ, UDP_RECV_HIWATER, UDP_RECV_LOWATER
 };
@@ -330,18 +293,6 @@ extern int udp_propinfo_count;
 /* Setable in /etc/system */
 /* If set to 0, pick ephemeral port sequentially; otherwise randomly. */
 uint32_t udp_random_anon_port = 1;
-
-/*
- * Hook functions to enable cluster networking.
- * On non-clustered systems these vectors must always be NULL
- */
-
-void (*cl_inet_bind)(netstackid_t stack_id, uchar_t protocol,
-    sa_family_t addr_family, uint8_t *laddrp, in_port_t lport,
-    void *args) = NULL;
-void (*cl_inet_unbind)(netstackid_t stack_id, uint8_t protocol,
-    sa_family_t addr_family, uint8_t *laddrp, in_port_t lport,
-    void *args) = NULL;
 
 typedef union T_primitives *t_primp_t;
 
@@ -3817,18 +3768,6 @@ udp_output_newdst(conn_t *connp, mblk_t *data_mp, sin_t *sin, sin6_t *sin6,
 	}
 
 
-	/*
-	 * Cluster note: we let the cluster hook know that we are sending to a
-	 * new address and/or port.
-	 */
-	if (cl_inet_connect2 != NULL) {
-		CL_INET_UDP_CONNECT(connp, B_TRUE, &v6dst, dstport, error);
-		if (error != 0) {
-			error = EHOSTUNREACH;
-			goto ud_error;
-		}
-	}
-
 	mutex_enter(&connp->conn_lock);
 	/*
 	 * While we dropped the lock some other thread might have connected
@@ -4742,25 +4681,6 @@ udp_do_close(conn_t *connp)
 	ASSERT(connp != NULL && IPCL_IS_UDP(connp));
 	udp = connp->conn_udp;
 
-	if (cl_inet_unbind != NULL && udp->udp_state == TS_IDLE) {
-		/*
-		 * Running in cluster mode - register unbind information
-		 */
-		if (connp->conn_ipversion == IPV4_VERSION) {
-			(*cl_inet_unbind)(
-			    connp->conn_netstack->netstack_stackid,
-			    IPPROTO_UDP, AF_INET,
-			    (uint8_t *)(&V4_PART_OF_V6(connp->conn_laddr_v6)),
-			    (in_port_t)connp->conn_lport, NULL);
-		} else {
-			(*cl_inet_unbind)(
-			    connp->conn_netstack->netstack_stackid,
-			    IPPROTO_UDP, AF_INET6,
-			    (uint8_t *)&(connp->conn_laddr_v6),
-			    (in_port_t)connp->conn_lport, NULL);
-		}
-	}
-
 	udp_bind_hash_remove(udp, B_FALSE);
 
 	ip_quiesce_conn(connp);
@@ -5227,21 +5147,6 @@ udp_do_bind(conn_t *connp, struct sockaddr *sa, socklen_t len, cred_t *cr,
 	mutex_exit(&udpf->uf_lock);
 	mutex_exit(&connp->conn_lock);
 
-	if (cl_inet_bind) {
-		/*
-		 * Running in cluster mode - register bind information
-		 */
-		if (connp->conn_ipversion == IPV4_VERSION) {
-			(*cl_inet_bind)(connp->conn_netstack->netstack_stackid,
-			    IPPROTO_UDP, AF_INET, (uint8_t *)&v4src,
-			    (in_port_t)connp->conn_lport, NULL);
-		} else {
-			(*cl_inet_bind)(connp->conn_netstack->netstack_stackid,
-			    IPPROTO_UDP, AF_INET6, (uint8_t *)&v6src,
-			    (in_port_t)connp->conn_lport, NULL);
-		}
-	}
-
 	mutex_enter(&connp->conn_lock);
 	connp->conn_anon_port = (is_system_labeled() && requested_port == 0);
 	if (is_system_labeled() && (!connp->conn_anon_port ||
@@ -5465,25 +5370,6 @@ udp_do_unbind(conn_t *connp)
 	udp_t 		*udp = connp->conn_udp;
 	udp_fanout_t	*udpf;
 	udp_stack_t	*us = udp->udp_us;
-
-	if (cl_inet_unbind != NULL) {
-		/*
-		 * Running in cluster mode - register unbind information
-		 */
-		if (connp->conn_ipversion == IPV4_VERSION) {
-			(*cl_inet_unbind)(
-			    connp->conn_netstack->netstack_stackid,
-			    IPPROTO_UDP, AF_INET,
-			    (uint8_t *)(&V4_PART_OF_V6(connp->conn_laddr_v6)),
-			    (in_port_t)connp->conn_lport, NULL);
-		} else {
-			(*cl_inet_unbind)(
-			    connp->conn_netstack->netstack_stackid,
-			    IPPROTO_UDP, AF_INET6,
-			    (uint8_t *)&(connp->conn_laddr_v6),
-			    (in_port_t)connp->conn_lport, NULL);
-		}
-	}
 
 	mutex_enter(&connp->conn_lock);
 	/* If a bind has not been done, we can't unbind. */
@@ -5782,14 +5668,6 @@ udp_do_connect(conn_t *connp, const struct sockaddr *sa, socklen_t len,
 		mutex_exit(&udpf->uf_lock);
 		error = -TBADADDR;
 		goto connect_failed;
-	}
-	if (cl_inet_connect2 != NULL) {
-		CL_INET_UDP_CONNECT(connp, B_TRUE, &v6dst, dstport, error);
-		if (error != 0) {
-			mutex_exit(&udpf->uf_lock);
-			error = -TBADADDR;
-			goto connect_failed;
-		}
 	}
 	mutex_exit(&udpf->uf_lock);
 

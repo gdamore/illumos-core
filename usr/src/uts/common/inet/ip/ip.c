@@ -24,6 +24,7 @@
  * Copyright (c) 1990 Mentat Inc.
  * Copyright (c) 2012 Joyent, Inc. All rights reserved.
  * Copyright (c) 2014, OmniTI Computer Consulting, Inc. All rights reserved.
+ * Copyright 2015 Garrett D'Amore <garrett@damore.org>
  */
 
 #include <sys/types.h>
@@ -178,53 +179,6 @@ typedef struct iproutedata_s {
 
 /* Include ire_testhidden and IRE_IF_CLONE routes */
 #define	IRD_REPORT_ALL	0x01
-
-/*
- * Cluster specific hooks. These should be NULL when booted as a non-cluster
- */
-
-/*
- * Hook functions to enable cluster networking
- * On non-clustered systems these vectors must always be NULL.
- *
- * Hook function to Check ip specified ip address is a shared ip address
- * in the cluster
- *
- */
-int (*cl_inet_isclusterwide)(netstackid_t stack_id, uint8_t protocol,
-    sa_family_t addr_family, uint8_t *laddrp, void *args) = NULL;
-
-/*
- * Hook function to generate cluster wide ip fragment identifier
- */
-uint32_t (*cl_inet_ipident)(netstackid_t stack_id, uint8_t protocol,
-    sa_family_t addr_family, uint8_t *laddrp, uint8_t *faddrp,
-    void *args) = NULL;
-
-/*
- * Hook function to generate cluster wide SPI.
- */
-void (*cl_inet_getspi)(netstackid_t, uint8_t, uint8_t *, size_t,
-    void *) = NULL;
-
-/*
- * Hook function to verify if the SPI is already utlized.
- */
-
-int (*cl_inet_checkspi)(netstackid_t, uint8_t, uint32_t, void *) = NULL;
-
-/*
- * Hook function to delete the SPI from the cluster wide repository.
- */
-
-void (*cl_inet_deletespi)(netstackid_t, uint8_t, uint32_t, void *) = NULL;
-
-/*
- * Hook function to inform the cluster when packet received on an IDLE SA
- */
-
-void (*cl_inet_idlesa)(netstackid_t, uint8_t, uint32_t, sa_family_t,
-    in6_addr_t, in6_addr_t, void *) = NULL;
 
 /*
  * Synchronization notes:

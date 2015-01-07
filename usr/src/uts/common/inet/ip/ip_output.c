@@ -21,6 +21,7 @@
 
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2015 Garrett D'Amore <garrett@damore.org>
  */
 /* Copyright (c) 1990 Mentat Inc. */
 
@@ -1848,36 +1849,8 @@ ire_send_wire_v4(ire_t *ire, mblk_t *mp, void *iph_arg,
 	 * Normally ixa_extra_ident is 0, but in the case of LSO it will
 	 * be the number of TCP segments  that the driver/hardware will
 	 * extraly construct.
-	 *
-	 * If running in cluster mode and if the source address
-	 * belongs to a replicated service then vector through
-	 * cl_inet_ipident vector to allocate ip identifier
-	 * NOTE: This is a contract private interface with the
-	 * clustering group.
 	 */
-	if (cl_inet_ipident != NULL) {
-		ipaddr_t src = ipha->ipha_src;
-		ipaddr_t dst = ipha->ipha_dst;
-		netstackid_t stack_id = ipst->ips_netstack->netstack_stackid;
-
-		ASSERT(cl_inet_isclusterwide != NULL);
-		if ((*cl_inet_isclusterwide)(stack_id, IPPROTO_IP,
-		    AF_INET, (uint8_t *)(uintptr_t)src, NULL)) {
-			/*
-			 * Note: not correct with LSO since we can't allocate
-			 * ixa_extra_ident+1 consecutive values.
-			 */
-			ipha->ipha_ident = (*cl_inet_ipident)(stack_id,
-			    IPPROTO_IP, AF_INET, (uint8_t *)(uintptr_t)src,
-			    (uint8_t *)(uintptr_t)dst, NULL);
-		} else {
-			ipha->ipha_ident = atomic_add_32_nv(identp,
-			    ixa->ixa_extra_ident + 1);
-		}
-	} else {
-		ipha->ipha_ident = atomic_add_32_nv(identp,
-		    ixa->ixa_extra_ident + 1);
-	}
+	ipha->ipha_ident = atomic_add_32_nv(identp, ixa->ixa_extra_ident + 1);
 #ifndef _BIG_ENDIAN
 	ipha->ipha_ident = htons(ipha->ipha_ident);
 #endif

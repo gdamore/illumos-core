@@ -25,6 +25,7 @@
  * Copyright (c) 2012, Joyent, Inc. All rights reserved.
  * Copyright 2014 Nexenta Systems, Inc.  All rights reserved.
  * Copyright 2014, OmniTI Computer Consulting, Inc. All rights reserved.
+ * Copyright 2015 Garrett D'Amore <garrett@damore.org>
  */
 
 #ifndef	_INET_IP_H
@@ -3482,30 +3483,6 @@ extern void	ip_unbind(conn_t *);
 
 extern void tnet_init(void);
 extern void tnet_fini(void);
-
-/*
- * Hook functions to enable cluster networking
- * On non-clustered systems these vectors must always be NULL.
- */
-extern int (*cl_inet_isclusterwide)(netstackid_t stack_id, uint8_t protocol,
-    sa_family_t addr_family, uint8_t *laddrp, void *args);
-extern uint32_t (*cl_inet_ipident)(netstackid_t stack_id, uint8_t protocol,
-    sa_family_t addr_family, uint8_t *laddrp, uint8_t *faddrp,
-    void *args);
-extern int (*cl_inet_connect2)(netstackid_t stack_id, uint8_t protocol,
-    boolean_t is_outgoing, sa_family_t addr_family, uint8_t *laddrp,
-    in_port_t lport, uint8_t *faddrp, in_port_t fport, void *args);
-extern void (*cl_inet_getspi)(netstackid_t, uint8_t, uint8_t *, size_t,
-    void *);
-extern void (*cl_inet_getspi)(netstackid_t stack_id, uint8_t protocol,
-    uint8_t *ptr, size_t len, void *args);
-extern int (*cl_inet_checkspi)(netstackid_t stack_id, uint8_t protocol,
-    uint32_t spi, void *args);
-extern void (*cl_inet_deletespi)(netstackid_t stack_id, uint8_t protocol,
-    uint32_t spi, void *args);
-extern void (*cl_inet_idlesa)(netstackid_t, uint8_t, uint32_t,
-    sa_family_t, in6_addr_t, in6_addr_t, void *);
-
 
 /* Hooks for CGTP (multirt routes) filtering module */
 #define	CGTP_FILTER_REV_1	1

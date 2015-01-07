@@ -24,6 +24,7 @@
  * Copyright 2011 Nexenta Systems, Inc. All rights reserved.
  * Copyright (c) 2011 Joyent, Inc. All rights reserved.
  * Copyright (c) 2014 by Delphix. All rights reserved.
+ * Copyright 2015 Garrett D'Amore <garrett@damore.org>
  */
 
 /* This file contains all TCP input processing functions. */
@@ -46,7 +47,6 @@
 #include <inet/ip.h>
 #include <inet/tcp.h>
 #include <inet/tcp_impl.h>
-#include <inet/tcp_cluster.h>
 #include <inet/proto_set.h>
 #include <inet/ipsec_impl.h>
 
@@ -1644,7 +1644,6 @@ tcp_input_listener(void *arg, mblk_t *mp, void *arg2, ip_recv_attr_t *ira)
 	tcp_bind_hash_insert(&tcps->tcps_bind_fanout[
 	    TCP_BIND_HASH(econnp->conn_lport)], eager, 0);
 
-	CL_INET_CONNECT(econnp, B_FALSE, err);
 	if (err != 0) {
 		tcp_bind_hash_remove(eager);
 		goto error3;

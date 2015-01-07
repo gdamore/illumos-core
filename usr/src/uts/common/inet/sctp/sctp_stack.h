@@ -21,6 +21,7 @@
 
 /*
  * Copyright (c) 2004, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2015 Garrett D'Amore <garrett@damore.org>
  */
 
 #ifndef	_INET_SCTP_SCTP_STACK_H
@@ -58,9 +59,6 @@ typedef struct sctp_kstat_s {
 	kstat_named_t	sctp_send_hb_failed;
 	kstat_named_t	sctp_return_hb_failed;
 	kstat_named_t	sctp_ss_rexmit_failed;
-	kstat_named_t	sctp_cl_connect;
-	kstat_named_t	sctp_cl_assoc_change;
-	kstat_named_t	sctp_cl_check_addrs;
 	kstat_named_t	sctp_reclaim_cnt;
 	kstat_named_t	sctp_listen_cnt_drop;
 } sctp_kstat_t;
@@ -93,9 +91,6 @@ typedef struct sctp_kstat_counter_s {
 	uint64_t	sctp_send_hb_failed;
 	uint64_t	sctp_return_hb_failed;
 	uint64_t	sctp_ss_rexmit_failed;
-	uint64_t	sctp_cl_connect;
-	uint64_t	sctp_cl_assoc_change;
-	uint64_t	sctp_cl_check_addrs;
 	uint64_t	sctp_reclaim_cnt;
 	uint64_t	sctp_listen_cnt_drop;
 } sctp_kstat_counter_t;

@@ -21,6 +21,7 @@
 
 /*
  * Copyright (c) 2004, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2015 Garrett D'Amore <garrett@damore.org>
  */
 
 #ifndef	_INET_SCTP_SCTP_IMPL_H
@@ -993,8 +994,7 @@ extern void	sctp_assoc_event(sctp_t *, uint16_t, uint16_t,
 extern void	sctp_bind_hash_insert(sctp_tf_t *, sctp_t *, int);
 extern void	sctp_bind_hash_remove(sctp_t *);
 extern int	sctp_bindi(sctp_t *, in_port_t, boolean_t, int, in_port_t *);
-extern int	sctp_bind_add(sctp_t *, const void *, uint32_t, boolean_t,
-		    in_port_t);
+extern int	sctp_bind_add(sctp_t *, const void *, uint32_t, boolean_t);
 extern int	sctp_bind_del(sctp_t *, const void *, uint32_t, boolean_t);
 extern int	sctp_build_hdrs(sctp_t *, int);
 
@@ -1168,18 +1168,6 @@ extern void	sctp_zap_addrs(sctp_t *);
 extern void	sctp_zap_faddrs(sctp_t *, int);
 extern sctp_chunk_hdr_t	*sctp_first_chunk(uchar_t *, ssize_t);
 extern void	sctp_send_shutdown_ack(sctp_t *, sctp_faddr_t *, boolean_t);
-
-/* Contract private interface between SCTP and Clustering - PSARC/2005/602 */
-
-extern void	(*cl_sctp_listen)(sa_family_t, uchar_t *, uint_t, in_port_t);
-extern void	(*cl_sctp_unlisten)(sa_family_t, uchar_t *, uint_t, in_port_t);
-extern void 	(*cl_sctp_connect)(sa_family_t, uchar_t *, uint_t, in_port_t,
-		    uchar_t *, uint_t, in_port_t, boolean_t, cl_sctp_handle_t);
-extern void	(*cl_sctp_disconnect)(sa_family_t, cl_sctp_handle_t);
-extern void	(*cl_sctp_assoc_change)(sa_family_t, uchar_t *, size_t, uint_t,
-		    uchar_t *, size_t, uint_t, int, cl_sctp_handle_t);
-extern void	(*cl_sctp_check_addrs)(sa_family_t, in_port_t, uchar_t **,
-		    size_t, uint_t *, boolean_t);
 
 #define	RUN_SCTP(sctp)						\
 {								\

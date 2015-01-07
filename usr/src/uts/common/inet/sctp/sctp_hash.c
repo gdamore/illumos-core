@@ -21,6 +21,7 @@
 
 /*
  * Copyright (c) 2004, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2015 Garrett D'Amore <garrett@damore.org>
  */
 
 #include <sys/sysmacros.h>
@@ -54,10 +55,6 @@ uint_t		sctp_conn_hash_size = SCTP_CONN_HASH_SIZE; /* /etc/system */
  * This routine is used to extract the current list of live associations
  * which must continue to to be dispatched to this node.
  */
-int cl_sctp_walk_list(int (*cl_callback)(cl_sctp_info_t *, void *), void *,
-    boolean_t);
-static int cl_sctp_walk_list_stack(int (*cl_callback)(cl_sctp_info_t *,
-    void *), void *arg, boolean_t cansleep, sctp_stack_t *sctps);
 
 void
 sctp_hash_init(sctp_stack_t *sctps)
@@ -126,108 +123,6 @@ sctp_hash_destroy(sctp_stack_t *sctps)
 	kmem_free(sctps->sctps_bind_fanout, SCTP_BIND_FANOUT_SIZE *
 	    sizeof (sctp_tf_t));
 	sctps->sctps_bind_fanout = NULL;
-}
-
-/*
- * Exported routine for extracting active SCTP associations.
- * Like TCP, we terminate the walk if the callback returns non-zero.
- *
- * Need to walk all sctp_stack_t instances since this clustering
- * interface is assumed global for all instances
- */
-int
-cl_sctp_walk_list(int (*cl_callback)(cl_sctp_info_t *, void *),
-    void *arg, boolean_t cansleep)
-{
-	netstack_handle_t nh;
-	netstack_t *ns;
-	int ret = 0;
-
-	netstack_next_init(&nh);
-	while ((ns = netstack_next(&nh)) != NULL) {
-		ret = cl_sctp_walk_list_stack(cl_callback, arg, cansleep,
-		    ns->netstack_sctp);
-		netstack_rele(ns);
-	}
-	netstack_next_fini(&nh);
-	return (ret);
-}
-
-static int
-cl_sctp_walk_list_stack(int (*cl_callback)(cl_sctp_info_t *, void *),
-    void *arg, boolean_t cansleep, sctp_stack_t *sctps)
-{
-	sctp_t		*sctp;
-	sctp_t		*sctp_prev;
-	cl_sctp_info_t	cl_sctpi;
-	uchar_t		*slist;
-	uchar_t		*flist;
-
-	sctp_prev = NULL;
-	mutex_enter(&sctps->sctps_g_lock);
-	sctp = list_head(&sctps->sctps_g_list);
-	while (sctp != NULL) {
-		size_t	ssize;
-		size_t	fsize;
-
-		mutex_enter(&sctp->sctp_reflock);
-		if (sctp->sctp_condemned || sctp->sctp_state <= SCTPS_LISTEN) {
-			mutex_exit(&sctp->sctp_reflock);
-			sctp = list_next(&sctps->sctps_g_list, sctp);
-			continue;
-		}
-		sctp->sctp_refcnt++;
-		mutex_exit(&sctp->sctp_reflock);
-		mutex_exit(&sctps->sctps_g_lock);
-		if (sctp_prev != NULL)
-			SCTP_REFRELE(sctp_prev);
-		RUN_SCTP(sctp);
-		ssize = sizeof (in6_addr_t) * sctp->sctp_nsaddrs;
-		fsize = sizeof (in6_addr_t) * sctp->sctp_nfaddrs;
-
-		slist = kmem_alloc(ssize, cansleep ? KM_SLEEP : KM_NOSLEEP);
-		flist = kmem_alloc(fsize, cansleep ? KM_SLEEP : KM_NOSLEEP);
-		if (slist == NULL || flist == NULL) {
-			WAKE_SCTP(sctp);
-			if (slist != NULL)
-				kmem_free(slist, ssize);
-			if (flist != NULL)
-				kmem_free(flist, fsize);
-			SCTP_REFRELE(sctp);
-			return (1);
-		}
-		cl_sctpi.cl_sctpi_version = CL_SCTPI_V1;
-		sctp_get_saddr_list(sctp, slist, ssize);
-		sctp_get_faddr_list(sctp, flist, fsize);
-		cl_sctpi.cl_sctpi_nladdr = sctp->sctp_nsaddrs;
-		cl_sctpi.cl_sctpi_nfaddr = sctp->sctp_nfaddrs;
-		cl_sctpi.cl_sctpi_family = sctp->sctp_connp->conn_family;
-		if (cl_sctpi.cl_sctpi_family == AF_INET)
-			cl_sctpi.cl_sctpi_ipversion = IPV4_VERSION;
-		else
-			cl_sctpi.cl_sctpi_ipversion = IPV6_VERSION;
-		cl_sctpi.cl_sctpi_state = sctp->sctp_state;
-		cl_sctpi.cl_sctpi_lport = sctp->sctp_connp->conn_lport;
-		cl_sctpi.cl_sctpi_fport = sctp->sctp_connp->conn_fport;
-		cl_sctpi.cl_sctpi_handle = (cl_sctp_handle_t)sctp;
-		WAKE_SCTP(sctp);
-		cl_sctpi.cl_sctpi_laddrp = slist;
-		cl_sctpi.cl_sctpi_faddrp = flist;
-		if ((*cl_callback)(&cl_sctpi, arg) != 0) {
-			kmem_free(slist, ssize);
-			kmem_free(flist, fsize);
-			SCTP_REFRELE(sctp);
-			return (1);
-		}
-		/* list will be freed by cl_callback */
-		sctp_prev = sctp;
-		mutex_enter(&sctps->sctps_g_lock);
-		sctp = list_next(&sctps->sctps_g_list, sctp);
-	}
-	mutex_exit(&sctps->sctps_g_lock);
-	if (sctp_prev != NULL)
-		SCTP_REFRELE(sctp_prev);
-	return (0);
 }
 
 sctp_t *
@@ -624,14 +519,6 @@ sctp_conn_hash_remove(sctp_t *sctp)
 	if (!tf) {
 		return;
 	}
-	/*
-	 * On a clustered note send this notification to the clustering
-	 * subsystem.
-	 */
-	if (cl_sctp_disconnect != NULL) {
-		(*cl_sctp_disconnect)(sctp->sctp_connp->conn_family,
-		    (cl_sctp_handle_t)sctp);
-	}
 
 	mutex_enter(&tf->tf_lock);
 	ASSERT(tf->tf_sctp);
@@ -689,25 +576,9 @@ void
 sctp_listen_hash_remove(sctp_t *sctp)
 {
 	sctp_tf_t *tf = sctp->sctp_listen_tfp;
-	conn_t	*connp = sctp->sctp_connp;
 
 	if (!tf) {
 		return;
-	}
-	/*
-	 * On a clustered note send this notification to the clustering
-	 * subsystem.
-	 */
-	if (cl_sctp_unlisten != NULL) {
-		uchar_t	*slist;
-		ssize_t	ssize;
-
-		ssize = sizeof (in6_addr_t) * sctp->sctp_nsaddrs;
-		slist = kmem_alloc(ssize, KM_SLEEP);
-		sctp_get_saddr_list(sctp, slist, ssize);
-		(*cl_sctp_unlisten)(connp->conn_family, slist,
-		    sctp->sctp_nsaddrs, connp->conn_lport);
-		/* list will be freed by the clustering module */
 	}
 
 	mutex_enter(&tf->tf_lock);
@@ -745,8 +616,6 @@ sctp_listen_hash_remove(sctp_t *sctp)
 void
 sctp_listen_hash_insert(sctp_tf_t *tf, sctp_t *sctp)
 {
-	conn_t	*connp = sctp->sctp_connp;
-
 	if (sctp->sctp_listen_tfp) {
 		sctp_listen_hash_remove(sctp);
 	}
@@ -760,21 +629,6 @@ sctp_listen_hash_insert(sctp_tf_t *tf, sctp_t *sctp)
 	tf->tf_sctp = sctp;
 	sctp->sctp_listen_tfp = tf;
 	mutex_exit(&tf->tf_lock);
-	/*
-	 * On a clustered note send this notification to the clustering
-	 * subsystem.
-	 */
-	if (cl_sctp_listen != NULL) {
-		uchar_t	*slist;
-		ssize_t	ssize;
-
-		ssize = sizeof (in6_addr_t) * sctp->sctp_nsaddrs;
-		slist = kmem_alloc(ssize, KM_SLEEP);
-		sctp_get_saddr_list(sctp, slist, ssize);
-		(*cl_sctp_listen)(connp->conn_family, slist,
-		    sctp->sctp_nsaddrs, connp->conn_lport);
-		/* list will be freed by the clustering module */
-	}
 }
 
 /*
