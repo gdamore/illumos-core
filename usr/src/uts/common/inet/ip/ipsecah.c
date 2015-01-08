@@ -1910,7 +1910,7 @@ ah_getspi(mblk_t *mp, keysock_in_t *ksi, ipsecah_stack_t *ahstack)
 	 */
 	(void) random_get_pseudo_bytes((uint8_t *)&newspi, sizeof (uint32_t));
 	newbie = sadb_getspi(ksi, newspi, &diagnostic,
-	    ahstack->ipsecah_netstack, IPPROTO_AH);
+	    ahstack->ipsecah_netstack);
 
 	if (newbie == NULL) {
 		sadb_pfkey_error(ahstack->ah_pfkey_q, mp, ENOMEM, diagnostic,

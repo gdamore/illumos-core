@@ -701,8 +701,7 @@ sadb_walker(isaf_t *table, uint_t numentries,
  * when a module is unloaded).
  */
 static void
-sadb_destroyer(isaf_t **tablep, uint_t numentries, boolean_t forever,
-    boolean_t inbound)
+sadb_destroyer(isaf_t **tablep, uint_t numentries, boolean_t forever)
 {
 	int i;
 	isaf_t *table = *tablep;
@@ -740,8 +739,8 @@ sadb_flush(sadb_t *sp, netstack_t *ns)
 	 * heels of a flush.  With keysock's enforcement, however, this
 	 * makes ESP's job easy.
 	 */
-	sadb_destroyer(&sp->sdb_of, sp->sdb_hashsize, B_FALSE, B_FALSE);
-	sadb_destroyer(&sp->sdb_if, sp->sdb_hashsize, B_FALSE, B_TRUE);
+	sadb_destroyer(&sp->sdb_of, sp->sdb_hashsize, B_FALSE);
+	sadb_destroyer(&sp->sdb_if, sp->sdb_hashsize, B_FALSE);
 
 	/* For each acquire, destroy it; leave the bucket mutex alone. */
 	sadb_destroy_acqlist(&sp->sdb_acq, sp->sdb_hashsize, B_FALSE, ns);
@@ -750,8 +749,8 @@ sadb_flush(sadb_t *sp, netstack_t *ns)
 static void
 sadb_destroy(sadb_t *sp, netstack_t *ns)
 {
-	sadb_destroyer(&sp->sdb_of, sp->sdb_hashsize, B_TRUE, B_FALSE);
-	sadb_destroyer(&sp->sdb_if, sp->sdb_hashsize, B_TRUE, B_TRUE);
+	sadb_destroyer(&sp->sdb_of, sp->sdb_hashsize, B_TRUE);
+	sadb_destroyer(&sp->sdb_if, sp->sdb_hashsize, B_TRUE);
 
 	/* For each acquire, destroy it, including the bucket mutex. */
 	sadb_destroy_acqlist(&sp->sdb_acq, sp->sdb_hashsize, B_TRUE, ns);
@@ -5821,7 +5820,7 @@ sadb_setup_acquire(ipsacq_t *acqrec, uint8_t satype, ipsec_stack_t *ipss)
  */
 ipsa_t *
 sadb_getspi(keysock_in_t *ksi, uint32_t master_spi, int *diagnostic,
-    netstack_t *ns, uint_t sa_type)
+    netstack_t *ns)
 {
 	sadb_address_t *src =
 	    (sadb_address_t *)ksi->ks_in_extv[SADB_EXT_ADDRESS_SRC],
