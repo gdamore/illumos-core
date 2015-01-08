@@ -317,7 +317,6 @@ file path=usr/share/man/man3c/pthread_mutex_getprioceiling.3c
 file path=usr/share/man/man3c/pthread_mutex_consistent.3c
 file path=usr/share/man/man3c/pthread_mutex_init.3c
 file path=usr/share/man/man3c/pthread_mutex_lock.3c
-file path=usr/share/man/man3c/pthread_mutex_consistent.3c
 file path=usr/share/man/man3c/pthread_mutex_timedlock.3c
 file path=usr/share/man/man3c/pthread_mutexattr_getprioceiling.3c
 file path=usr/share/man/man3c/pthread_mutexattr_getprotocol.3c
