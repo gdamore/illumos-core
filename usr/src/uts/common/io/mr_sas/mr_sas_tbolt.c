@@ -17,6 +17,7 @@
 
 /*
  * Copyright 2013 Nexenta Systems, Inc.  All rights reserved.
+ * Copyright 2015 Garrett D'Amore <garrett@damore.org>
  */
 
 
@@ -1231,6 +1232,7 @@ mr_sas_tbolt_build_sgl(struct mrsas_instance *instance,
 	Mpi25IeeeSgeChain64_t	*scsi_raid_io_sgl_ieee = NULL;
 	ddi_acc_handle_t acc_handle =
 	    instance->mpi2_frame_pool_dma_obj.acc_handle;
+	uint16_t		devid = instance->device_id;
 
 	con_log(CL_ANN1, (CE_NOTE,
 	    "chkpnt: Building Chained SGL :%d", __LINE__));
@@ -1274,7 +1276,8 @@ mr_sas_tbolt_build_sgl(struct mrsas_instance *instance,
 	scsi_raid_io_sgl_ieee =
 	    (Mpi25IeeeSgeChain64_t *)&scsi_raid_io->SGL.IeeeChain;
 
-	if (instance->device_id == PCI_DEVICE_ID_LSI_INVADER) {
+	if ((devid == PCI_DEVICE_ID_LSI_INVADER) ||
+	    (devid == PCI_DEVICE_ID_LSI_FURY)) {
 		Mpi25IeeeSgeChain64_t *sgl_ptr_end = scsi_raid_io_sgl_ieee;
 		sgl_ptr_end += instance->max_sge_in_main_msg - 1;
 
@@ -1290,7 +1293,8 @@ mr_sas_tbolt_build_sgl(struct mrsas_instance *instance,
 
 		ddi_put8(acc_handle, &scsi_raid_io_sgl_ieee->Flags, 0);
 
-		if (instance->device_id == PCI_DEVICE_ID_LSI_INVADER) {
+		if ((devid == PCI_DEVICE_ID_LSI_INVADER) ||
+		    (devid == PCI_DEVICE_ID_LSI_FURY)) {
 			if (i == (numElements - 1)) {
 				ddi_put8(acc_handle,
 				    &scsi_raid_io_sgl_ieee->Flags,
@@ -1318,7 +1322,8 @@ mr_sas_tbolt_build_sgl(struct mrsas_instance *instance,
 
 		con_log(CL_ANN1, (CE_NOTE, "[Chain Element index]:%x", i));
 
-		if (instance->device_id == PCI_DEVICE_ID_LSI_INVADER) {
+		if ((devid == PCI_DEVICE_ID_LSI_INVADER) ||
+		    (devid == PCI_DEVICE_ID_LSI_FURY)) {
 			uint16_t ioFlags =
 			    ddi_get16(acc_handle, &scsi_raid_io->IoFlags);
 
@@ -1341,7 +1346,8 @@ mr_sas_tbolt_build_sgl(struct mrsas_instance *instance,
 
 		ddi_put8(acc_handle, &ieeeChainElement->NextChainOffset, 0);
 
-		if (instance->device_id == PCI_DEVICE_ID_LSI_INVADER) {
+		if ((devid == PCI_DEVICE_ID_LSI_INVADER) ||
+		    (devid == PCI_DEVICE_ID_LSI_FURY)) {
 			ddi_put8(acc_handle, &ieeeChainElement->Flags,
 			    IEEE_SGE_FLAGS_CHAIN_ELEMENT);
 		} else {
@@ -1376,7 +1382,8 @@ mr_sas_tbolt_build_sgl(struct mrsas_instance *instance,
 
 			ddi_put8(acc_handle, &scsi_raid_io_sgl_ieee->Flags, 0);
 
-			if (instance->device_id == PCI_DEVICE_ID_LSI_INVADER) {
+			if ((devid == PCI_DEVICE_ID_LSI_INVADER) ||
+			    (devid == PCI_DEVICE_ID_LSI_FURY)) {
 				if (i == (numElements - 1)) {
 					ddi_put8(acc_handle,
 					    &scsi_raid_io_sgl_ieee->Flags,
@@ -1416,6 +1423,7 @@ mrsas_tbolt_build_cmd(struct mrsas_instance *instance, struct scsi_address *ap,
 	uint32_t	lba_count = 0;
 	uint32_t	start_lba_hi = 0;
 	uint32_t	start_lba_lo = 0;
+	uint16_t	devid = instance->device_id;
 	ddi_acc_handle_t acc_handle =
 	    instance->mpi2_frame_pool_dma_obj.acc_handle;
 	struct mrsas_cmd		*cmd = NULL;
@@ -1641,7 +1649,8 @@ mrsas_tbolt_build_cmd(struct mrsas_instance *instance, struct scsi_address *ap,
 			    (MPI2_REQ_DESCRIPT_FLAGS_HIGH_PRIORITY <<
 			    MPI2_REQ_DESCRIPT_FLAGS_TYPE_SHIFT);
 
-			if (instance->device_id == PCI_DEVICE_ID_LSI_INVADER) {
+			if ((devid == PCI_DEVICE_ID_LSI_INVADER) ||
+			    (devid == PCI_DEVICE_ID_LSI_FURY)) {
 				uint8_t regLockFlags = ddi_get8(acc_handle,
 				    &scsi_raid_io->RaidContext.regLockFlags);
 				uint16_t IoFlags = ddi_get16(acc_handle,
@@ -1704,7 +1713,8 @@ mrsas_tbolt_build_cmd(struct mrsas_instance *instance, struct scsi_address *ap,
 			    &scsi_raid_io->RaidContext.timeoutValue,
 			    local_map_ptr->raidMap.fpPdIoTimeoutSec);
 
-			if (instance->device_id == PCI_DEVICE_ID_LSI_INVADER) {
+			if ((devid == PCI_DEVICE_ID_LSI_INVADER) ||
+			    (devid == PCI_DEVICE_ID_LSI_FURY)) {
 				uint8_t regLockFlags = ddi_get8(acc_handle,
 				    &scsi_raid_io->RaidContext.regLockFlags);
 
@@ -2255,7 +2265,8 @@ mr_sas_tbolt_build_mfi_cmd(struct mrsas_instance *instance,
 	/* get raid message frame pointer */
 	scsi_raid_io = (Mpi2RaidSCSIIORequest_t *)cmd->scsi_io_request;
 
-	if (instance->device_id == PCI_DEVICE_ID_LSI_INVADER) {
+	if ((instance->device_id == PCI_DEVICE_ID_LSI_INVADER) ||
+	    (instance->device_id == PCI_DEVICE_ID_LSI_FURY)) {
 		Mpi25IeeeSgeChain64_t *sgl_ptr_end = (Mpi25IeeeSgeChain64_t *)
 		    &scsi_raid_io->SGL.IeeeChain;
 		sgl_ptr_end += instance->max_sge_in_main_msg - 1;
