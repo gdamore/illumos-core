@@ -729,8 +729,7 @@ ipsec_inbound_ah_sa(mblk_t *mp, ip_recv_attr_t *ira, ah_t **ahp)
 	assoc = ipsec_getassocbyspi(hptr, ah->ah_spi, src_ptr, dst_ptr, af);
 	mutex_exit(&hptr->isaf_lock);
 
-	if (assoc == NULL || assoc->ipsa_state == IPSA_STATE_DEAD ||
-	    assoc->ipsa_state == IPSA_STATE_ACTIVE_ELSEWHERE) {
+	if (assoc == NULL || assoc->ipsa_state == IPSA_STATE_DEAD) {
 		IP_AH_BUMP_STAT(ipss, lookup_failure);
 		IP_AH_BUMP_STAT(ipss, in_discards);
 		ipsecah_in_assocfailure(mp, 0,
@@ -871,8 +870,7 @@ ipsec_inbound_esp_sa(mblk_t *data_mp, ip_recv_attr_t *ira, esph_t **esphp)
 	    af);
 	mutex_exit(&bucket->isaf_lock);
 
-	if (ipsa == NULL || ipsa->ipsa_state == IPSA_STATE_DEAD ||
-	    ipsa->ipsa_state == IPSA_STATE_ACTIVE_ELSEWHERE) {
+	if (ipsa == NULL || ipsa->ipsa_state == IPSA_STATE_DEAD) {
 		/*  This is a loggable error!  AUDIT ME! */
 		IP_ESP_BUMP_STAT(ipss, lookup_failure);
 		IP_ESP_BUMP_STAT(ipss, in_discards);

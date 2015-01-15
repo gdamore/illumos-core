@@ -1087,8 +1087,7 @@ ah_add_sa(mblk_t *mp, keysock_in_t *ksi, int *diagnostic, netstack_t *ns)
 	/* Sundry ADD-specific reality checks. */
 	/* XXX STATS : Logging/stats here? */
 
-	if ((assoc->sadb_sa_state != SADB_SASTATE_MATURE) &&
-	    (assoc->sadb_sa_state != SADB_X_SASTATE_ACTIVE_ELSEWHERE)) {
+	if (assoc->sadb_sa_state != SADB_SASTATE_MATURE) {
 		*diagnostic = SADB_X_DIAGNOSTIC_BAD_SASTATE;
 		return (EINVAL);
 	}
@@ -1166,30 +1165,17 @@ static int
 ah_update_sa(mblk_t *mp, keysock_in_t *ksi, int *diagnostic,
     ipsecah_stack_t *ahstack, uint8_t sadb_msg_type)
 {
-	sadb_sa_t *assoc = (sadb_sa_t *)ksi->ks_in_extv[SADB_EXT_SA];
 	sadb_address_t *dstext =
 	    (sadb_address_t *)ksi->ks_in_extv[SADB_EXT_ADDRESS_DST];
-	mblk_t	*buf_pkt;
-	int rcode;
 
 	if (dstext == NULL) {
 		*diagnostic = SADB_X_DIAGNOSTIC_MISSING_DST;
 		return (EINVAL);
 	}
 
-	rcode = sadb_update_sa(mp, ksi, &buf_pkt, &ahstack->ah_sadb,
-	    diagnostic, ahstack->ah_pfkey_q, ah_add_sa,
-	    ahstack->ipsecah_netstack, sadb_msg_type);
-
-	if ((assoc->sadb_sa_state != SADB_X_SASTATE_ACTIVE) ||
-	    (rcode != 0)) {
-		return (rcode);
-	}
-
-	HANDLE_BUF_PKT(ah_taskq, ahstack->ipsecah_netstack->netstack_ipsec,
-	    ahstack->ah_dropper, buf_pkt);
-
-	return (rcode);
+	return (sadb_update_sa(mp, ksi, &ahstack->ah_sadb, diagnostic,
+	    ahstack->ah_pfkey_q, ah_add_sa, ahstack->ipsecah_netstack,
+	    sadb_msg_type));
 }
 
 /* Refactor me */
@@ -1336,7 +1322,6 @@ ah_parse_pfkey(mblk_t *mp, ipsecah_stack_t *ahstack)
 		break;
 	case SADB_DELETE:
 	case SADB_X_DELPAIR:
-	case SADB_X_DELPAIR_STATE:
 		error = ah_del_sa(mp, ksi, &diagnostic, ahstack,
 		    samsg->sadb_msg_type);
 		if (error != 0) {
@@ -1910,7 +1895,7 @@ ah_getspi(mblk_t *mp, keysock_in_t *ksi, ipsecah_stack_t *ahstack)
 	 */
 	(void) random_get_pseudo_bytes((uint8_t *)&newspi, sizeof (uint32_t));
 	newbie = sadb_getspi(ksi, newspi, &diagnostic,
-	    ahstack->ipsecah_netstack, IPPROTO_AH);
+	    ahstack->ipsecah_netstack);
 
 	if (newbie == NULL) {
 		sadb_pfkey_error(ahstack->ah_pfkey_q, mp, ENOMEM, diagnostic,
@@ -3832,15 +3817,6 @@ ah_auth_in_done(mblk_t *phdr_mp, ip_recv_attr_t *ira, ipsec_crypto_t *ic)
 			BUMP_MIB(ira->ira_ill->ill_ip_mib, ipIfStatsInDiscards);
 			return (NULL);
 		}
-	}
-
-	if (assoc->ipsa_state == IPSA_STATE_IDLE) {
-		/*
-		 * Cluster buffering case.  Tell caller that we're
-		 * handling the packet.
-		 */
-		sadb_buf_pkt(assoc, mp, ira);
-		return (NULL);
 	}
 
 	return (mp);

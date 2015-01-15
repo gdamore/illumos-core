@@ -577,13 +577,12 @@ sadb_keysock_out(minor_t serial)
  */
 static int
 sadb_dump_fanout(queue_t *pfkey_q, mblk_t *mp, minor_t serial, isaf_t *fanout,
-    int num_entries, boolean_t do_peers, time_t active_time)
+    int num_entries, boolean_t do_peers)
 {
 	int i, error = 0;
 	mblk_t *original_answer;
 	ipsa_t *walker;
 	sadb_msg_t *samsg;
-	time_t	current;
 
 	/*
 	 * For each IPSA hash bucket do:
@@ -597,15 +596,11 @@ sadb_dump_fanout(queue_t *pfkey_q, mblk_t *mp, minor_t serial, isaf_t *fanout,
 	if (original_answer == NULL)
 		return (ENOMEM);
 
-	current = gethrestime_sec();
 	for (i = 0; i < num_entries; i++) {
 		mutex_enter(&fanout[i].isaf_lock);
 		for (walker = fanout[i].isaf_ipsa; walker != NULL;
 		    walker = walker->ipsa_next) {
 			if (!do_peers && walker->ipsa_haspeer)
-				continue;
-			if ((active_time != 0) &&
-			    ((current - walker->ipsa_lastuse) > active_time))
 				continue;
 			error = sadb_dump_deliver(pfkey_q, original_answer,
 			    walker, samsg);
@@ -643,23 +638,16 @@ int
 sadb_dump(queue_t *pfkey_q, mblk_t *mp, keysock_in_t *ksi, sadb_t *sp)
 {
 	int error;
-	time_t	active_time = 0;
-	sadb_x_edump_t	*edump =
-	    (sadb_x_edump_t *)ksi->ks_in_extv[SADB_X_EXT_EDUMP];
-
-	if (edump != NULL) {
-		active_time = edump->sadb_x_edump_timeout;
-	}
 
 	/* Dump outbound */
 	error = sadb_dump_fanout(pfkey_q, mp, ksi->ks_in_serial, sp->sdb_of,
-	    sp->sdb_hashsize, B_TRUE, active_time);
+	    sp->sdb_hashsize, B_TRUE);
 	if (error)
 		return (error);
 
 	/* Dump inbound */
-	return sadb_dump_fanout(pfkey_q, mp, ksi->ks_in_serial, sp->sdb_if,
-	    sp->sdb_hashsize, B_FALSE, active_time);
+	return (sadb_dump_fanout(pfkey_q, mp, ksi->ks_in_serial, sp->sdb_if,
+	    sp->sdb_hashsize, B_FALSE));
 }
 
 /*
@@ -698,11 +686,10 @@ sadb_walker(isaf_t *table, uint_t numentries,
  * Call me to free up a security association fanout.  Use the forever
  * variable to indicate freeing up the SAs (forever == B_FALSE, e.g.
  * an SADB_FLUSH message), or destroying everything (forever == B_TRUE,
- * when a module is unloaded).
+ * when a netstack is destroyed or a module is unloaded).
  */
 static void
-sadb_destroyer(isaf_t **tablep, uint_t numentries, boolean_t forever,
-    boolean_t inbound)
+sadb_destroyer(isaf_t **tablep, uint_t numentries, boolean_t forever)
 {
 	int i;
 	isaf_t *table = *tablep;
@@ -740,8 +727,8 @@ sadb_flush(sadb_t *sp, netstack_t *ns)
 	 * heels of a flush.  With keysock's enforcement, however, this
 	 * makes ESP's job easy.
 	 */
-	sadb_destroyer(&sp->sdb_of, sp->sdb_hashsize, B_FALSE, B_FALSE);
-	sadb_destroyer(&sp->sdb_if, sp->sdb_hashsize, B_FALSE, B_TRUE);
+	sadb_destroyer(&sp->sdb_of, sp->sdb_hashsize, B_FALSE);
+	sadb_destroyer(&sp->sdb_if, sp->sdb_hashsize, B_FALSE);
 
 	/* For each acquire, destroy it; leave the bucket mutex alone. */
 	sadb_destroy_acqlist(&sp->sdb_acq, sp->sdb_hashsize, B_FALSE, ns);
@@ -750,8 +737,8 @@ sadb_flush(sadb_t *sp, netstack_t *ns)
 static void
 sadb_destroy(sadb_t *sp, netstack_t *ns)
 {
-	sadb_destroyer(&sp->sdb_of, sp->sdb_hashsize, B_TRUE, B_FALSE);
-	sadb_destroyer(&sp->sdb_if, sp->sdb_hashsize, B_TRUE, B_TRUE);
+	sadb_destroyer(&sp->sdb_of, sp->sdb_hashsize, B_TRUE);
+	sadb_destroyer(&sp->sdb_if, sp->sdb_hashsize, B_TRUE);
 
 	/* For each acquire, destroy it, including the bucket mutex. */
 	sadb_destroy_acqlist(&sp->sdb_acq, sp->sdb_hashsize, B_TRUE, ns);
@@ -1493,7 +1480,6 @@ sadb_strip(sadb_msg_t *samsg)
 	while ((uint8_t *)ext < msgend) {
 		if (ext->sadb_ext_type == SADB_EXT_RESERVED ||
 		    ext->sadb_ext_type == SADB_EXT_KEY_AUTH ||
-		    ext->sadb_ext_type == SADB_X_EXT_EDUMP ||
 		    ext->sadb_ext_type == SADB_EXT_KEY_ENCRYPT) {
 			/*
 			 * Aha!	 I found a header to be erased.
@@ -1610,7 +1596,6 @@ sadb_pfkey_echo(queue_t *pfkey_q, mblk_t *mp, sadb_msg_t *samsg,
 	case SADB_ADD:
 	case SADB_UPDATE:
 	case SADB_X_UPDATEPAIR:
-	case SADB_X_DELPAIR_STATE:
 	case SADB_FLUSH:
 	case SADB_DUMP:
 		/*
@@ -1622,9 +1607,10 @@ sadb_pfkey_echo(queue_t *pfkey_q, mblk_t *mp, sadb_msg_t *samsg,
 		 * message.
 		 */
 	justecho:
+		ASSERT(samsg->sadb_msg_type != SADB_DUMP ||
+		    samsg->sadb_msg_len == SADB_8TO64(sizeof (sadb_msg_t)));
 		if (ksi->ks_in_extv[SADB_EXT_KEY_AUTH] != NULL ||
-		    ksi->ks_in_extv[SADB_EXT_KEY_ENCRYPT] != NULL ||
-		    ksi->ks_in_extv[SADB_X_EXT_EDUMP] != NULL) {
+		    ksi->ks_in_extv[SADB_EXT_KEY_ENCRYPT] != NULL) {
 			sadb_strip(samsg);
 			/* Assume PF_KEY message is contiguous. */
 			ASSERT(mp->b_cont->b_cont == NULL);
@@ -2367,24 +2353,17 @@ sadb_match_query(ipsa_query_t *sq, ipsa_t *sa)
  * Conveniently, and not coincidentally, this is both what sadb_walker
  * gives us and also what sadb_unlinkassoc expects.
  */
-struct sadb_purge_state
-{
-	ipsa_query_t sq;
-	boolean_t inbnd;
-	uint8_t sadb_sa_state;
-};
-
 static void
 sadb_purge_cb(isaf_t *head, ipsa_t *entry, void *cookie)
 {
-	struct sadb_purge_state *ps = (struct sadb_purge_state *)cookie;
+	ipsa_query_t *query = (ipsa_query_t *)cookie;
 
 	ASSERT(MUTEX_HELD(&head->isaf_lock));
 
 	mutex_enter(&entry->ipsa_lock);
 
 	if (entry->ipsa_state == IPSA_STATE_LARVAL ||
-	    !sadb_match_query(&ps->sq, entry)) {
+	    !sadb_match_query(query, entry)) {
 		mutex_exit(&entry->ipsa_lock);
 		return;
 	}
@@ -2401,10 +2380,10 @@ int
 sadb_purge_sa(mblk_t *mp, keysock_in_t *ksi, sadb_t *sp,
 	int *diagnostic, queue_t *pfkey_q)
 {
-	struct sadb_purge_state ps;
+	ipsa_query_t query;
 	int error = sadb_form_query(ksi, 0,
 	    IPSA_Q_SRC|IPSA_Q_DST|IPSA_Q_SRCID|IPSA_Q_DSTID|IPSA_Q_KMC,
-	    &ps.sq, diagnostic);
+	    &query, diagnostic);
 
 	if (error != 0)
 		return (error);
@@ -2417,92 +2396,12 @@ sadb_purge_sa(mblk_t *mp, keysock_in_t *ksi, sadb_t *sp,
 	 * - if we get a dst address, we can hash based on dst addr to find
 	 * the correct bucket in the outbound table.
 	 */
-	ps.inbnd = B_TRUE;
-	sadb_walker(sp->sdb_if, sp->sdb_hashsize, sadb_purge_cb, &ps);
-	ps.inbnd = B_FALSE;
-	sadb_walker(sp->sdb_of, sp->sdb_hashsize, sadb_purge_cb, &ps);
+	sadb_walker(sp->sdb_if, sp->sdb_hashsize, sadb_purge_cb, &query);
+	sadb_walker(sp->sdb_of, sp->sdb_hashsize, sadb_purge_cb, &query);
 
 	ASSERT(mp->b_cont != NULL);
 	sadb_pfkey_echo(pfkey_q, mp, (sadb_msg_t *)mp->b_cont->b_rptr, ksi,
 	    NULL);
-	return (0);
-}
-
-static void
-sadb_delpair_state_one(isaf_t *head, ipsa_t *entry, void *cookie)
-{
-	struct sadb_purge_state *ps = (struct sadb_purge_state *)cookie;
-	isaf_t  *inbound_bucket;
-	ipsa_t *peer_assoc;
-	ipsa_query_t *sq = &ps->sq;
-
-	ASSERT(MUTEX_HELD(&head->isaf_lock));
-
-	mutex_enter(&entry->ipsa_lock);
-
-	if ((entry->ipsa_state != ps->sadb_sa_state) ||
-	    ((sq->srcaddr != NULL) &&
-	    !IPSA_ARE_ADDR_EQUAL(entry->ipsa_srcaddr, sq->srcaddr, sq->af))) {
-		mutex_exit(&entry->ipsa_lock);
-		return;
-	}
-
-	/*
-	 * The isaf_t *, which is passed in , is always an outbound bucket,
-	 * and we are preserving the outbound-then-inbound hash-bucket lock
-	 * ordering. The sadb_walker() which triggers this function is called
-	 * only on the outbound fanout, and the corresponding inbound bucket
-	 * lock is safe to acquire here.
-	 */
-
-	if (entry->ipsa_haspeer) {
-		inbound_bucket = INBOUND_BUCKET(sq->sp, entry->ipsa_spi);
-		mutex_enter(&inbound_bucket->isaf_lock);
-		peer_assoc = ipsec_getassocbyspi(inbound_bucket,
-		    entry->ipsa_spi, entry->ipsa_srcaddr,
-		    entry->ipsa_dstaddr, entry->ipsa_addrfam);
-	} else {
-		inbound_bucket = INBOUND_BUCKET(sq->sp, entry->ipsa_otherspi);
-		mutex_enter(&inbound_bucket->isaf_lock);
-		peer_assoc = ipsec_getassocbyspi(inbound_bucket,
-		    entry->ipsa_otherspi, entry->ipsa_dstaddr,
-		    entry->ipsa_srcaddr, entry->ipsa_addrfam);
-	}
-
-	entry->ipsa_state = IPSA_STATE_DEAD;
-	(void) sadb_torch_assoc(head, entry);
-	if (peer_assoc != NULL) {
-		mutex_enter(&peer_assoc->ipsa_lock);
-		peer_assoc->ipsa_state = IPSA_STATE_DEAD;
-		(void) sadb_torch_assoc(inbound_bucket, peer_assoc);
-	}
-	mutex_exit(&inbound_bucket->isaf_lock);
-}
-
-static int
-sadb_delpair_state(mblk_t *mp, keysock_in_t *ksi, sadbp_t *spp,
-    int *diagnostic, queue_t *pfkey_q)
-{
-	sadb_sa_t *assoc = (sadb_sa_t *)ksi->ks_in_extv[SADB_EXT_SA];
-	struct sadb_purge_state ps;
-	int error;
-
-	ps.sq.spp = spp;		/* XXX param */
-
-	error = sadb_form_query(ksi, IPSA_Q_DST|IPSA_Q_SRC,
-	    IPSA_Q_SRC|IPSA_Q_DST|IPSA_Q_SRCID|IPSA_Q_DSTID|IPSA_Q_KMC,
-	    &ps.sq, diagnostic);
-	if (error != 0)
-		return (error);
-
-	ps.inbnd = B_FALSE;
-	ps.sadb_sa_state = assoc->sadb_sa_state;
-	sadb_walker(ps.sq.sp->sdb_of, ps.sq.sp->sdb_hashsize,
-	    sadb_delpair_state_one, &ps);
-
-	ASSERT(mp->b_cont != NULL);
-	sadb_pfkey_echo(pfkey_q, mp, (sadb_msg_t *)mp->b_cont->b_rptr,
-	    ksi, NULL);
 	return (0);
 }
 
@@ -2517,9 +2416,6 @@ sadb_delget_sa(mblk_t *mp, keysock_in_t *ksi, sadbp_t *spp,
 	ipsa_t *echo_target = NULL;
 	ipsap_t ipsapp;
 	uint_t	error = 0;
-
-	if (sadb_msg_type == SADB_X_DELPAIR_STATE)
-		return (sadb_delpair_state(mp, ksi, spp, diagnostic, pfkey_q));
 
 	sq.spp = spp;		/* XXX param */
 	error = sadb_form_query(ksi, IPSA_Q_DST|IPSA_Q_SA,
@@ -3043,8 +2939,7 @@ sadb_common_add(queue_t *pfkey_q, mblk_t *mp, sadb_msg_t *samsg,
 
 	newbie->ipsa_type = samsg->sadb_msg_satype;
 
-	ASSERT((assoc->sadb_sa_state == SADB_SASTATE_MATURE) ||
-	    (assoc->sadb_sa_state == SADB_X_SASTATE_ACTIVE_ELSEWHERE));
+	ASSERT(assoc->sadb_sa_state == SADB_SASTATE_MATURE);
 	newbie->ipsa_auth_alg = assoc->sadb_sa_auth;
 	newbie->ipsa_encr_alg = assoc->sadb_sa_encrypt;
 
@@ -3951,11 +3846,11 @@ sadb_age_assoc(isaf_t *head, queue_t *pfkey_q, ipsa_t *assoc,
 
 	mutex_enter(&assoc->ipsa_lock);
 
-	if (((assoc->ipsa_state == IPSA_STATE_LARVAL) ||
-	    ((assoc->ipsa_state == IPSA_STATE_IDLE) ||
-	    (assoc->ipsa_state == IPSA_STATE_ACTIVE_ELSEWHERE) &&
-	    (assoc->ipsa_hardexpiretime != 0))) &&
-	    (assoc->ipsa_hardexpiretime <= current)) {
+	/*
+	 * Be aggressive in reaping expired LARVAL SAs.
+	 */
+	if (assoc->ipsa_state == IPSA_STATE_LARVAL &&
+	    assoc->ipsa_hardexpiretime <= current) {
 		assoc->ipsa_state = IPSA_STATE_DEAD;
 		return (sadb_torch_assoc(head, assoc));
 	}
@@ -4020,13 +3915,7 @@ sadb_age_assoc(isaf_t *head, queue_t *pfkey_q, ipsa_t *assoc,
 		sadb_expire_assoc(pfkey_q, assoc);
 	} else if (assoc->ipsa_idletime != 0 &&
 	    assoc->ipsa_idleexpiretime <= current) {
-		if (assoc->ipsa_state == IPSA_STATE_ACTIVE_ELSEWHERE) {
-			assoc->ipsa_state = IPSA_STATE_IDLE;
-		}
-
-		/*
-		 * Need to handle Mature case
-		 */
+		/* Only issue an IDLE expiration if we're in mature state. */
 		if (assoc->ipsa_state == IPSA_STATE_MATURE) {
 			sadb_expire_assoc(pfkey_q, assoc);
 		}
@@ -4321,61 +4210,6 @@ sadb_update_lifetimes(ipsa_t *assoc, sadb_lifetime_t *hard,
 	mutex_exit(&assoc->ipsa_lock);
 }
 
-static int
-sadb_update_state(ipsa_t *assoc, uint_t new_state, mblk_t **ipkt_lst)
-{
-	int rcode = 0;
-	time_t current = gethrestime_sec();
-
-	mutex_enter(&assoc->ipsa_lock);
-
-	switch (new_state) {
-	case SADB_X_SASTATE_ACTIVE_ELSEWHERE:
-		if (assoc->ipsa_state == SADB_X_SASTATE_IDLE) {
-			assoc->ipsa_state = IPSA_STATE_ACTIVE_ELSEWHERE;
-			assoc->ipsa_idleexpiretime =
-			    current + assoc->ipsa_idletime;
-		}
-		break;
-	case SADB_X_SASTATE_IDLE:
-		if (assoc->ipsa_state == SADB_X_SASTATE_ACTIVE_ELSEWHERE) {
-			assoc->ipsa_state = IPSA_STATE_IDLE;
-			assoc->ipsa_idleexpiretime =
-			    current + assoc->ipsa_idletime;
-		} else {
-			rcode = EINVAL;
-		}
-		break;
-
-	case SADB_X_SASTATE_ACTIVE:
-		if (assoc->ipsa_state != SADB_X_SASTATE_IDLE) {
-			rcode = EINVAL;
-			break;
-		}
-		assoc->ipsa_state = IPSA_STATE_MATURE;
-		assoc->ipsa_idleexpiretime = current + assoc->ipsa_idletime;
-
-		if (ipkt_lst == NULL) {
-			break;
-		}
-
-		if (assoc->ipsa_bpkt_head != NULL) {
-			*ipkt_lst = assoc->ipsa_bpkt_head;
-			assoc->ipsa_bpkt_head = assoc->ipsa_bpkt_tail = NULL;
-			assoc->ipsa_mblkcnt = 0;
-		} else {
-			*ipkt_lst = NULL;
-		}
-		break;
-	default:
-		rcode = EINVAL;
-		break;
-	}
-
-	mutex_exit(&assoc->ipsa_lock);
-	return (rcode);
-}
-
 /*
  * Check a proposed KMC update for sanity.
  */
@@ -4424,15 +4258,13 @@ sadb_update_kmc(ipsa_query_t *sq, ipsa_t *sa)
  */
 
 int
-sadb_update_sa(mblk_t *mp, keysock_in_t *ksi, mblk_t **ipkt_lst,
+sadb_update_sa(mblk_t *mp, keysock_in_t *ksi,
     sadbp_t *spp, int *diagnostic, queue_t *pfkey_q,
     int (*add_sa_func)(mblk_t *, keysock_in_t *, int *, netstack_t *),
     netstack_t *ns, uint8_t sadb_msg_type)
 {
 	sadb_key_t *akey = (sadb_key_t *)ksi->ks_in_extv[SADB_EXT_KEY_AUTH];
 	sadb_key_t *ekey = (sadb_key_t *)ksi->ks_in_extv[SADB_EXT_KEY_ENCRYPT];
-	sadb_x_replay_ctr_t *replext =
-	    (sadb_x_replay_ctr_t *)ksi->ks_in_extv[SADB_X_EXT_REPLAY_VALUE];
 	sadb_lifetime_t *soft =
 	    (sadb_lifetime_t *)ksi->ks_in_extv[SADB_EXT_LIFETIME_SOFT];
 	sadb_lifetime_t *hard =
@@ -4444,7 +4276,6 @@ sadb_update_sa(mblk_t *mp, keysock_in_t *ksi, mblk_t **ipkt_lst,
 	ipsa_t *echo_target = NULL;
 	ipsap_t ipsapp;
 	ipsa_query_t sq;
-	time_t current = gethrestime_sec();
 
 	sq.spp = spp;		/* XXX param */
 	int error = sadb_form_query(ksi, IPSA_Q_SRC|IPSA_Q_DST|IPSA_Q_SA,
@@ -4484,50 +4315,6 @@ sadb_update_sa(mblk_t *mp, keysock_in_t *ksi, mblk_t **ipkt_lst,
 		goto bail;
 	}
 
-	if (sq.assoc->sadb_sa_state == SADB_X_SASTATE_ACTIVE_ELSEWHERE) {
-		if (ipsapp.ipsap_sa_ptr != NULL &&
-		    ipsapp.ipsap_sa_ptr->ipsa_state == IPSA_STATE_IDLE) {
-			if ((error = sadb_update_state(ipsapp.ipsap_sa_ptr,
-			    sq.assoc->sadb_sa_state, NULL)) != 0) {
-				*diagnostic = SADB_X_DIAGNOSTIC_BAD_SASTATE;
-				goto bail;
-			}
-		}
-		if (ipsapp.ipsap_psa_ptr != NULL &&
-		    ipsapp.ipsap_psa_ptr->ipsa_state == IPSA_STATE_IDLE) {
-			if ((error = sadb_update_state(ipsapp.ipsap_psa_ptr,
-			    sq.assoc->sadb_sa_state, NULL)) != 0) {
-				*diagnostic = SADB_X_DIAGNOSTIC_BAD_SASTATE;
-				goto bail;
-			}
-		}
-	}
-	if (sq.assoc->sadb_sa_state == SADB_X_SASTATE_ACTIVE) {
-		if (ipsapp.ipsap_sa_ptr != NULL) {
-			error = sadb_update_state(ipsapp.ipsap_sa_ptr,
-			    sq.assoc->sadb_sa_state,
-			    (ipsapp.ipsap_sa_ptr->ipsa_flags &
-			    IPSA_F_INBOUND) ? ipkt_lst : NULL);
-			if (error) {
-				*diagnostic = SADB_X_DIAGNOSTIC_BAD_SASTATE;
-				goto bail;
-			}
-		}
-		if (ipsapp.ipsap_psa_ptr != NULL) {
-			error = sadb_update_state(ipsapp.ipsap_psa_ptr,
-			    sq.assoc->sadb_sa_state,
-			    (ipsapp.ipsap_psa_ptr->ipsa_flags &
-			    IPSA_F_INBOUND) ? ipkt_lst : NULL);
-			if (error) {
-				*diagnostic = SADB_X_DIAGNOSTIC_BAD_SASTATE;
-				goto bail;
-			}
-		}
-		sadb_pfkey_echo(pfkey_q, mp, (sadb_msg_t *)mp->b_cont->b_rptr,
-		    ksi, echo_target);
-		goto bail;
-	}
-
 	/*
 	 * Reality checks for updates of active associations.
 	 * Sundry first-pass UPDATE-specific reality checks.
@@ -4535,8 +4322,7 @@ sadb_update_sa(mblk_t *mp, keysock_in_t *ksi, mblk_t **ipkt_lst,
 	 * XXX STATS : logging/stats here?
 	 */
 
-	if (!((sq.assoc->sadb_sa_state == SADB_SASTATE_MATURE) ||
-	    (sq.assoc->sadb_sa_state == SADB_X_SASTATE_ACTIVE_ELSEWHERE))) {
+	if (sq.assoc->sadb_sa_state != SADB_SASTATE_MATURE) {
 		*diagnostic = SADB_X_DIAGNOSTIC_BAD_SASTATE;
 		error = EINVAL;
 		goto bail;
@@ -4568,55 +4354,10 @@ sadb_update_sa(mblk_t *mp, keysock_in_t *ksi, mblk_t **ipkt_lst,
 	if (error != 0)
 		goto bail;
 
-
-	if (ipsapp.ipsap_sa_ptr != NULL) {
-		/*
-		 * Do not allow replay value change for MATURE or LARVAL SA.
-		 */
-
-		if ((replext != NULL) &&
-		    ((ipsapp.ipsap_sa_ptr->ipsa_state == IPSA_STATE_LARVAL) ||
-		    (ipsapp.ipsap_sa_ptr->ipsa_state == IPSA_STATE_MATURE))) {
-			*diagnostic = SADB_X_DIAGNOSTIC_BAD_SASTATE;
-			error = EINVAL;
-			goto bail;
-		}
-	}
-
-
 	if (ipsapp.ipsap_sa_ptr != NULL) {
 		sadb_update_lifetimes(ipsapp.ipsap_sa_ptr, hard, soft,
 		    idle, B_TRUE);
 		sadb_update_kmc(&sq, ipsapp.ipsap_sa_ptr);
-		if ((replext != NULL) &&
-		    (ipsapp.ipsap_sa_ptr->ipsa_replay_wsize != 0)) {
-			/*
-			 * If an inbound SA, update the replay counter
-			 * and check off all the other sequence number
-			 */
-			if (ksi->ks_in_dsttype == KS_IN_ADDR_ME) {
-				if (!sadb_replay_check(ipsapp.ipsap_sa_ptr,
-				    replext->sadb_x_rc_replay32)) {
-					*diagnostic =
-					    SADB_X_DIAGNOSTIC_INVALID_REPLAY;
-					error = EINVAL;
-					goto bail;
-				}
-				mutex_enter(&ipsapp.ipsap_sa_ptr->ipsa_lock);
-				ipsapp.ipsap_sa_ptr->ipsa_idleexpiretime =
-				    current +
-				    ipsapp.ipsap_sa_ptr->ipsa_idletime;
-				mutex_exit(&ipsapp.ipsap_sa_ptr->ipsa_lock);
-			} else {
-				mutex_enter(&ipsapp.ipsap_sa_ptr->ipsa_lock);
-				ipsapp.ipsap_sa_ptr->ipsa_replay =
-				    replext->sadb_x_rc_replay32;
-				ipsapp.ipsap_sa_ptr->ipsa_idleexpiretime =
-				    current +
-				    ipsapp.ipsap_sa_ptr->ipsa_idletime;
-				mutex_exit(&ipsapp.ipsap_sa_ptr->ipsa_lock);
-			}
-		}
 	}
 
 	if (sadb_msg_type == SADB_X_UPDATEPAIR) {
@@ -5821,7 +5562,7 @@ sadb_setup_acquire(ipsacq_t *acqrec, uint8_t satype, ipsec_stack_t *ipss)
  */
 ipsa_t *
 sadb_getspi(keysock_in_t *ksi, uint32_t master_spi, int *diagnostic,
-    netstack_t *ns, uint_t sa_type)
+    netstack_t *ns)
 {
 	sadb_address_t *src =
 	    (sadb_address_t *)ksi->ks_in_extv[SADB_EXT_ADDRESS_SRC],
@@ -6903,54 +6644,6 @@ sadb_clear_lpkt(ipsa_t *ipsa)
 	return (opkt);
 }
 
-/*
- * Buffer a packet that's in IDLE state as set by Solaris Clustering.
- */
-void
-sadb_buf_pkt(ipsa_t *ipsa, mblk_t *bpkt, ip_recv_attr_t *ira)
-{
-	netstack_t	*ns = ira->ira_ill->ill_ipst->ips_netstack;
-	ipsec_stack_t   *ipss = ns->netstack_ipsec;
-
-	ASSERT(ipsa->ipsa_state == IPSA_STATE_IDLE);
-
-	ip_drop_packet(bpkt, B_TRUE, ira->ira_ill,
-	    DROPPER(ipss, ipds_sadb_inidle_overflow),
-	    &ipss->ipsec_sadb_dropper);
-	return;
-}
-
-/*
- * Stub function that taskq_dispatch() invokes to take the mblk (in arg)
- * and put into STREAMS again.
- */
-void
-sadb_clear_buf_pkt(void *ipkt)
-{
-	mblk_t	*tmp, *buf_pkt;
-	ip_recv_attr_t	iras;
-
-	buf_pkt = (mblk_t *)ipkt;
-
-	while (buf_pkt != NULL) {
-		mblk_t *data_mp;
-
-		tmp = buf_pkt->b_next;
-		buf_pkt->b_next = NULL;
-
-		data_mp = buf_pkt->b_cont;
-		buf_pkt->b_cont = NULL;
-		if (!ip_recv_attr_from_mblk(buf_pkt, &iras)) {
-			/* The ill or ip_stack_t disappeared on us. */
-			ip_drop_input("ip_recv_attr_from_mblk", data_mp, NULL);
-			freemsg(data_mp);
-		} else {
-			ip_input_post_ipsec(data_mp, &iras);
-		}
-		ira_cleanup(&iras, B_TRUE);
-		buf_pkt = tmp;
-	}
-}
 /*
  * Walker callback used by sadb_alg_update() to free/create crypto
  * context template when a crypto software provider is removed or

@@ -146,10 +146,6 @@ typedef struct ipsa_s {
 	struct ipsid_s *ipsa_src_cid;	/* Source certificate identity */
 	struct ipsid_s *ipsa_dst_cid;	/* Destination certificate identity */
 	mblk_t	*ipsa_lpkt;	/* Packet received while larval (CAS me) */
-	mblk_t	*ipsa_bpkt_head;	/* Packets received while idle */
-	mblk_t	*ipsa_bpkt_tail;
-#define	SADB_MAX_IDLEPKTS	100
-	uint8_t	ipsa_mblkcnt;	/* Number of packets received while idle */
 
 	/*
 	 * PF_KEYv2 supports a replay window size of 255.  Hence there is a
@@ -451,8 +447,9 @@ typedef struct ipsa_s {
 #define	IPSA_STATE_MATURE		SADB_SASTATE_MATURE
 #define	IPSA_STATE_DYING		SADB_SASTATE_DYING
 #define	IPSA_STATE_DEAD			SADB_SASTATE_DEAD
-#define	IPSA_STATE_IDLE			SADB_X_SASTATE_IDLE
-#define	IPSA_STATE_ACTIVE_ELSEWHERE	SADB_X_SASTATE_ACTIVE_ELSEWHERE
+/* Deprecated */
+/* #define	IPSA_STATE_IDLE			SADB_X_SASTATE_IDLE */
+/* #define	IPSA_STATE_ACTIVE_ELSEWHERE SADB_X_SASTATE_ACTIVE_ELSEWHERE */
 
 /*
  * NOTE:  If the document authors do things right in defining algorithms, we'll
@@ -759,7 +756,7 @@ int sadb_common_add(queue_t *, mblk_t *, sadb_msg_t *,
     netstack_t *, sadbp_t *);
 void sadb_set_usetime(ipsa_t *);
 boolean_t sadb_age_bytes(queue_t *, ipsa_t *, uint64_t, boolean_t);
-int sadb_update_sa(mblk_t *, keysock_in_t *, mblk_t **, sadbp_t *,
+int sadb_update_sa(mblk_t *, keysock_in_t *, sadbp_t *,
     int *, queue_t *, int (*)(mblk_t *, keysock_in_t *, int *, netstack_t *),
     netstack_t *, uint8_t);
 void sadb_acquire(mblk_t *, ip_xmit_attr_t *, boolean_t, boolean_t);
@@ -773,7 +770,7 @@ void cbc_params_init(ipsa_t *, uchar_t *, uint_t, uchar_t *, ipsa_cm_mech_t *,
 void sadb_destroy_acquire(ipsacq_t *, netstack_t *);
 struct ipsec_stack;
 mblk_t *sadb_setup_acquire(ipsacq_t *, uint8_t, struct ipsec_stack *);
-ipsa_t *sadb_getspi(keysock_in_t *, uint32_t, int *, netstack_t *, uint_t);
+ipsa_t *sadb_getspi(keysock_in_t *, uint32_t, int *, netstack_t *);
 void sadb_in_acquire(sadb_msg_t *, sadbp_t *, queue_t *, netstack_t *);
 boolean_t sadb_replay_check(ipsa_t *, uint32_t);
 boolean_t sadb_replay_peek(ipsa_t *, uint32_t);
@@ -786,30 +783,6 @@ timeout_id_t sadb_retimeout(hrtime_t, queue_t *, void (*)(void *), void *,
 void sadb_sa_refrele(void *target);
 mblk_t *sadb_set_lpkt(ipsa_t *, mblk_t *, ip_recv_attr_t *);
 mblk_t *sadb_clear_lpkt(ipsa_t *);
-void sadb_buf_pkt(ipsa_t *, mblk_t *, ip_recv_attr_t *);
-void sadb_clear_buf_pkt(void *ipkt);
-
-/* Note that buf_pkt is the product of ip_recv_attr_to_mblk() */
-#define	HANDLE_BUF_PKT(taskq, stack, dropper, buf_pkt)			\
-{									\
-	if (buf_pkt != NULL) {						\
-		if (taskq_dispatch(taskq, sadb_clear_buf_pkt,		\
-		    (void *) buf_pkt, TQ_NOSLEEP) == 0) {		\
-		    /* Dispatch was unsuccessful drop the packets. */	\
-			mblk_t		*tmp;				\
-			while (buf_pkt != NULL) {			\
-				tmp = buf_pkt->b_next;			\
-				buf_pkt->b_next = NULL;			\
-				buf_pkt = ip_recv_attr_free_mblk(buf_pkt); \
-				ip_drop_packet(buf_pkt, B_TRUE, NULL,	\
-				    DROPPER(stack,			\
-				    ipds_sadb_inidle_timeout),		\
-				    &dropper);				\
-				buf_pkt = tmp;				\
-			}						\
-		}							\
-	}								\
-}									\
 
 /*
  * Two IPsec rate-limiting routines.

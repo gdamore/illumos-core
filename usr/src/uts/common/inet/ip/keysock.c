@@ -1568,29 +1568,6 @@ keysock_extended_register(keysock_t *ks, mblk_t *mp, sadb_ext_t *extv[])
 	atomic_inc_32(&keystack->keystack_num_extended);
 }
 
-static void
-keysock_delpair_all(keysock_t *ks, mblk_t *mp, sadb_ext_t *extv[])
-{
-	int i, start, finish;
-	mblk_t *mp1 = NULL;
-	keysock_stack_t *keystack = ks->keysock_keystack;
-
-	start = 0;
-	finish = KEYSOCK_MAX_CONSUMERS - 1;
-
-	for (i = start; i <= finish; i++) {
-		if (keystack->keystack_consumers[i] != NULL) {
-			mp1 = copymsg(mp);
-			if (mp1 == NULL) {
-				keysock_error(ks, mp, ENOMEM,
-				    SADB_X_DIAGNOSTIC_NONE);
-				return;
-			}
-			keysock_passdown(ks, mp1, i, extv, B_FALSE);
-		}
-	}
-}
-
 /*
  * Handle PF_KEY messages.
  */
@@ -1712,14 +1689,6 @@ keysock_parse(queue_t *q, mblk_t *mp)
 		else keysock_error(ks, mp, EINVAL,
 		    SADB_X_DIAGNOSTIC_SATYPE_NEEDED);
 		return;
-	case SADB_X_DELPAIR_STATE:
-		if (samsg->sadb_msg_satype == SADB_SATYPE_UNSPEC) {
-			keysock_delpair_all(ks, mp, extv);
-		} else {
-			keysock_passdown(ks, mp, samsg->sadb_msg_satype, extv,
-			    B_FALSE);
-		}
-		return;
 	case SADB_ACQUIRE:
 		/*
 		 * If I _receive_ an acquire, this means I should spread it
@@ -1774,6 +1743,7 @@ keysock_parse(queue_t *q, mblk_t *mp)
 		 */
 		break;
 	case SADB_FLUSH:
+	case SADB_DUMP:	 /* not used by normal applications */
 		/*
 		 * Nuke all SAs.
 		 *
@@ -1794,17 +1764,6 @@ keysock_parse(queue_t *q, mblk_t *mp)
 		}
 
 		/* Passing down of DUMP/FLUSH messages are special. */
-		qwriter(q, mp, keysock_do_flushdump, PERIM_INNER);
-		return;
-	case SADB_DUMP:	 /* not used by normal applications */
-		if ((extv[0] != NULL) &&
-		    ((msgsize >
-		    (sizeof (sadb_msg_t) + sizeof (sadb_x_edump_t))) ||
-		    (extv[SADB_X_EXT_EDUMP] == NULL))) {
-				keysock_error(ks, mp, EINVAL,
-				    SADB_X_DIAGNOSTIC_NO_EXT);
-				return;
-		}
 		qwriter(q, mp, keysock_do_flushdump, PERIM_INNER);
 		return;
 	case SADB_X_PROMISC:
