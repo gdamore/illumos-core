@@ -1779,6 +1779,7 @@ print_sa(FILE *file, char *prefix, struct sadb_sa *assoc)
 	case SADB_SASTATE_DEAD:
 		(void) fprintf(file, dgettext(TEXT_DOMAIN, "DEAD"));
 		break;
+#if 0	/* DEPRECATED */
 	case SADB_X_SASTATE_ACTIVE_ELSEWHERE:
 		(void) fprintf(file, dgettext(TEXT_DOMAIN,
 		    "ACTIVE_ELSEWHERE"));
@@ -1786,6 +1787,7 @@ print_sa(FILE *file, char *prefix, struct sadb_sa *assoc)
 	case SADB_X_SASTATE_IDLE:
 		(void) fprintf(file, dgettext(TEXT_DOMAIN, "IDLE"));
 		break;
+#endif
 	default:
 		(void) fprintf(file, dgettext(TEXT_DOMAIN,
 		    "<unknown %u>"), assoc->sadb_sa_state);

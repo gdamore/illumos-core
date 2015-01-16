@@ -511,18 +511,6 @@ typedef struct sadb_x_replay_ctr {
 } sadb_x_replay_ctr_t;
 
 /*
- * For extended DUMP request. Dumps the SAs which were idle for
- * longer than the timeout specified.
- */
-
-typedef struct sadb_x_edump {
-	uint16_t sadb_x_edump_len;
-	uint16_t sadb_x_edump_exttype;
-	uint32_t sadb_x_edump_reserved;
-	uint64_t sadb_x_edump_timeout;
-} sadb_x_edump_t;
-
-/*
  * Base message types.
  */
 
@@ -541,7 +529,7 @@ typedef struct sadb_x_edump {
 #define	SADB_X_INVERSE_ACQUIRE	12
 #define	SADB_X_UPDATEPAIR	13
 #define	SADB_X_DELPAIR		14
-#define	SADB_X_DELPAIR_STATE	15
+/* #define	SADB_X_DELPAIR_STATE	15 */ /* Deprecated */
 #define	SADB_MAX		15
 
 /*
@@ -583,9 +571,9 @@ typedef struct sadb_x_edump {
 #define	SADB_SASTATE_MATURE		1
 #define	SADB_SASTATE_DYING		2
 #define	SADB_SASTATE_DEAD		3
-#define	SADB_X_SASTATE_ACTIVE_ELSEWHERE	4
-#define	SADB_X_SASTATE_IDLE		5
-#define	SADB_X_SASTATE_ACTIVE		6
+/* #define	SADB_X_SASTATE_ACTIVE_ELSEWHERE	4 */ /* Deprecated */
+/* #define	SADB_X_SASTATE_IDLE		5 */ /* Deprecated */
+/* #define	SADB_X_SASTATE_ACTIVE		6 */ /* Deprecated */
 
 #define	SADB_SASTATE_MAX		6
 
@@ -669,7 +657,7 @@ typedef struct sadb_x_edump {
 #define	SADB_X_EXT_ADDRESS_INNER_DST	22
 #define	SADB_X_EXT_PAIR			23
 #define	SADB_X_EXT_REPLAY_VALUE		24
-#define	SADB_X_EXT_EDUMP		25
+/* #define	SADB_X_EXT_EDUMP		25 */ /* Deprecated */
 #define	SADB_X_EXT_LIFETIME_IDLE	26
 #define	SADB_X_EXT_OUTER_SENS		27
 

@@ -1568,13 +1568,12 @@ static void
 esp_port_freshness(uint32_t ports, ipsa_t *assoc)
 {
 	uint16_t remote = FIRST_16(ports);
-	uint16_t local = NEXT_16(ports);
 	ipsa_t *outbound_peer;
 	isaf_t *bucket;
 	ipsecesp_stack_t *espstack = assoc->ipsa_netstack->netstack_ipsecesp;
 
 	/* We found a conn_t, therefore local != 0. */
-	ASSERT(local != 0);
+	ASSERT(NEXT_16(ports) != 0);
 	/* Assume an IPv4 SA. */
 	ASSERT(assoc->ipsa_addrfam == AF_INET);
 
@@ -1752,15 +1751,6 @@ esp_in_done(mblk_t *data_mp, ip_recv_attr_t *ira, ipsec_crypto_t *ic)
 		}
 		if (is_natt)
 			return (esp_fix_natt_checksums(data_mp, assoc));
-
-		if (assoc->ipsa_state == IPSA_STATE_IDLE) {
-			/*
-			 * Cluster buffering case.  Tell caller that we're
-			 * handling the packet.
-			 */
-			sadb_buf_pkt(assoc, data_mp, ira);
-			return (NULL);
-		}
 
 		return (data_mp);
 	}
@@ -3620,8 +3610,7 @@ esp_add_sa(mblk_t *mp, keysock_in_t *ksi, int *diagnostic, netstack_t *ns)
 	/* Sundry ADD-specific reality checks. */
 	/* XXX STATS :  Logging/stats here? */
 
-	if ((assoc->sadb_sa_state != SADB_SASTATE_MATURE) &&
-	    (assoc->sadb_sa_state != SADB_X_SASTATE_ACTIVE_ELSEWHERE)) {
+	if (assoc->sadb_sa_state != SADB_SASTATE_MATURE) {
 		*diagnostic = SADB_X_DIAGNOSTIC_BAD_SASTATE;
 		return (EINVAL);
 	}
@@ -3790,10 +3779,6 @@ static int
 esp_update_sa(mblk_t *mp, keysock_in_t *ksi, int *diagnostic,
     ipsecesp_stack_t *espstack, uint8_t sadb_msg_type)
 {
-	sadb_sa_t *assoc = (sadb_sa_t *)ksi->ks_in_extv[SADB_EXT_SA];
-	mblk_t    *buf_pkt;
-	int rcode;
-
 	sadb_address_t *dstext =
 	    (sadb_address_t *)ksi->ks_in_extv[SADB_EXT_ADDRESS_DST];
 
@@ -3802,19 +3787,9 @@ esp_update_sa(mblk_t *mp, keysock_in_t *ksi, int *diagnostic,
 		return (EINVAL);
 	}
 
-	rcode = sadb_update_sa(mp, ksi, &buf_pkt, &espstack->esp_sadb,
-	    diagnostic, espstack->esp_pfkey_q, esp_add_sa,
-	    espstack->ipsecesp_netstack, sadb_msg_type);
-
-	if ((assoc->sadb_sa_state != SADB_X_SASTATE_ACTIVE) ||
-	    (rcode != 0)) {
-		return (rcode);
-	}
-
-	HANDLE_BUF_PKT(esp_taskq, espstack->ipsecesp_netstack->netstack_ipsec,
-	    espstack->esp_dropper, buf_pkt);
-
-	return (rcode);
+	return (sadb_update_sa(mp, ksi, &espstack->esp_sadb, diagnostic,
+	    espstack->esp_pfkey_q, esp_add_sa, espstack->ipsecesp_netstack,
+	    sadb_msg_type));
 }
 
 /* XXX refactor me */
@@ -3955,7 +3930,6 @@ esp_parse_pfkey(mblk_t *mp, ipsecesp_stack_t *espstack)
 		break;
 	case SADB_DELETE:
 	case SADB_X_DELPAIR:
-	case SADB_X_DELPAIR_STATE:
 		error = esp_del_sa(mp, ksi, &diagnostic, espstack,
 		    samsg->sadb_msg_type);
 		if (error != 0) {
