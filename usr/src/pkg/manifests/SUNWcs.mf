@@ -1240,15 +1240,7 @@ file path=usr/lib/vtinfo mode=0555
 file path=usr/lib/vtxlock mode=0555
 file path=usr/sadm/bin/puttext mode=0555
 file path=usr/sadm/install/miniroot.db group=sys mode=0444
-file path=usr/sadm/install/scripts/i.kcfconf group=sys mode=0555
-file path=usr/sadm/install/scripts/i.kmfconf group=sys mode=0555
-file path=usr/sadm/install/scripts/i.manifest group=sys mode=0555
-file path=usr/sadm/install/scripts/i.pkcs11conf group=sys mode=0555
 file path=usr/sadm/install/scripts/i.rbac group=sys mode=0555
-file path=usr/sadm/install/scripts/r.kcfconf group=sys mode=0555
-file path=usr/sadm/install/scripts/r.kmfconf group=sys mode=0555
-file path=usr/sadm/install/scripts/r.manifest group=sys mode=0555
-file path=usr/sadm/install/scripts/r.pkcs11conf group=sys mode=0555
 file path=usr/sadm/install/scripts/r.rbac group=sys mode=0555
 file path=usr/sadm/ugdates mode=0444
 $(i386_ONLY)file path=usr/sbin/$(ARCH32)/add_drv group=sys mode=0555
