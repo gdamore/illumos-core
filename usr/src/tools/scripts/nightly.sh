@@ -25,7 +25,7 @@
 # Copyright 2008, 2010, Richard Lowe
 # Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
 # Copyright 2012 Joshua M. Clulow <josh@sysmgr.org>
-# Copyright 2014 Garrett D'Amore <garrett@damore.org>
+# Copyright 2015 Garrett D'Amore <garrett@damore.org>
 #
 # Based on the nightly script from the integration folks,
 # Mostly modified and owned by mike_s.
@@ -935,63 +935,33 @@ relsrcdirs="."
 abssrcdirs="$SRC"
 
 PROTOCMPTERSE="protocmp.terse -gu"
-POUND_SIGN="#"
-# have we set RELEASE_DATE in our env file?
-if [ -z "$RELEASE_DATE" ]; then
-	RELEASE_DATE=$(LC_ALL=C date +"%B %Y")
-fi
-BUILD_DATE=$(LC_ALL=C date +%Y-%b-%d)
-BASEWSDIR=$(basename $CODEMGR_WS)
-DEV_CM="\"@(#)illumos Development: $LOGNAME $BUILD_DATE [$BASEWSDIR]\""
-RELEASE_MICRO=$(( ($(date +%Y) * 12 + $(date +%m) - 1) - (2010 * 12 + 8 - 1) ))
 
-# we export POUND_SIGN, RELEASE_DATE and DEV_CM to speed up the build process
-# by avoiding repeated shell invocations to evaluate Makefile.master
-# definitions.
-export POUND_SIGN RELEASE_DATE DEV_CM RELEASE_MICRO
+# we export POUND_SIGN, RELEASE_DATE, RELEASE_MICRO, and DEV_CM to speed up
+# the build process # by avoiding repeated shell invocations to evaluate
+# Makefile.master definitions.
+export POUND_SIGN="#"
+
+# have we set RELEASE_DATE in our env file?
+export RELEASE_DATE=${RELEASE_DATE=$(LC_ALL=C date +"%B %Y")}
+
+# set up the string for the .comment section if not already set
+suffix="$LOGNAME $(LC_ALL=C date +%Y-%b-%d) $(basename $CODEMGR_WS)"
+export DEV_CM=${DEV_CM="\"@(#)illumos Development: $suffix\""}
+
+# If RELEASE_MICRO is unset, we calculate as months since August 2010, which
+# is illumos' birthday.
+thismonth=$(( ($(LC_ALL=C date +%Y) * 12 + $(LC_ALL=C date +%m) - 1) ))
+thatmonth=$(( (2010 * 12 + 8 - 1) ))
+export RELEASE_MICRO=${RELEASE_MICRO=$(( $thismonth - $thatmonth ))}
 
 maketype="distributed"
-if [[ -z "$MAKE" ]]; then
-	MAKE=dmake
-elif [[ ! -x "$MAKE" ]]; then
+export MAKE=${MAKE=dmake}
+if [[ ! -x "$MAKE" ]]; then
 	echo "\$MAKE is set to garbage in the environment"
 	exit 1	
 fi
-# get the dmake version string alone
-DMAKE_VERSION=$( $MAKE -v )
-DMAKE_VERSION=${DMAKE_VERSION#*: }
-# focus in on just the dotted version number alone
-DMAKE_MAJOR=$( echo $DMAKE_VERSION | \
-	sed -e 's/.*\<\([^.]*\.[^   ]*\).*$/\1/' )
-# extract the second (or final) integer
-DMAKE_MINOR=${DMAKE_MAJOR#*.}
-DMAKE_MINOR=${DMAKE_MINOR%%.*}
-# extract the first integer
-DMAKE_MAJOR=${DMAKE_MAJOR%%.*}
-CHECK_DMAKE=${CHECK_DMAKE:-y}
-# x86 was built on the 12th, sparc on the 13th.
-if [ "$CHECK_DMAKE" = "y" -a \
-     "$DMAKE_VERSION" != "Sun Distributed Make 7.3 2003/03/12" -a \
-     "$DMAKE_VERSION" != "Sun Distributed Make 7.3 2003/03/13" -a \( \
-     "$DMAKE_MAJOR" -lt 7 -o \
-     "$DMAKE_MAJOR" -eq 7 -a "$DMAKE_MINOR" -lt 4 \) ]; then
-	if [ -z "$DMAKE_VERSION" ]; then
-		echo "$MAKE is missing."
-		exit 1
-	fi
-	echo `whence $MAKE`" version is:"
-	echo "  ${DMAKE_VERSION}"
-	cat <<EOF
 
-This version may not be safe for use, if you really want to use this version
-anyway add the following to your environment to disable this check:
-
-  CHECK_DMAKE=n
-EOF
-	exit 1
-fi
 export PATH
-export MAKE
 
 if [ "${SUNWSPRO}" != "" ]; then
 	PATH="${SUNWSPRO}/bin:$PATH"
