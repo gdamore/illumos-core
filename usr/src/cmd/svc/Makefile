@@ -49,14 +49,7 @@ ROOTDTDS =	$(DTDS:%=$(XMLDIR)/%)
 
 $(ROOTDTDS) :=	FILEMODE = 444
 
-#
-# Definitions for class action scripts
-#
-
-CLASSACTIONS = i.manifest r.manifest
-ROOTCLASSACTIONS = $(CLASSACTIONS:%=$(ROOT)/usr/sadm/install/scripts/%)
-
-install: $(ROOTDTDS) $(ROOTCLASSACTIONS)
+install: $(ROOTDTDS)
 
 all install lint clean clobber: $(SUBDIRS)
 
