@@ -642,7 +642,6 @@ siena_filter_clear_used(
 	sftp->sft_bitmap[index / 32] &= ~(1 << (index % 32));
 
 	--sftp->sft_used;
-	EFSYS_ASSERT3U(sftp->sft_used, >=, 0);
 }
 
 

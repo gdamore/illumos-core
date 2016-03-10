@@ -33,7 +33,7 @@ INSTALL_TARGET	= $(BINARY) $(ROOTMODULE)
 # Overrides
 #
 
-INC_PATH += -I$(UTSBASE)/common/io/sfxge -I$(UTSBASE)/common/io/sfxge/common -include compat.h
+INC_PATH += -I$(UTSBASE)/common/io/sfxge -I$(UTSBASE)/common/io/sfxge/common
 
 #
 # TODO:
@@ -54,7 +54,7 @@ CFLAGS += $(CCVERBOSE)
 #
 # Driver depends on GLDv3 (mac)
 #
-LDFLAGS		+= -dy -N misc/mac
+LDFLAGS		+= -dy -N misc/mac -N drv/ip
 
 #
 # Default build targets.

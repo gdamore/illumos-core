@@ -1309,10 +1309,16 @@ extern int fix_lint;
  * Set or clear a numbered bit within an octword.
  */
  
+#define	EFX_SHIFT64_0							\
+	(((_bit) < 64) ? ((uint64_t)1 << (_bit)) : 0U)
+
 #define	EFX_SHIFT64(_bit, _base)					\
 	(((_bit) >= (_base) && (_bit) < (_base) + 64) ?			\
 		((uint64_t)1 << ((_bit) - (_base))) :			\
 		0U)
+
+#define	EFX_SHIFT32_0(_bit)						\
+	((_bit) < (32) ? ((uint32_t)1 << (_bit)) : 0U)
 
 #define	EFX_SHIFT32(_bit, _base)					\
 	(((_bit) >= (_base) && (_bit) < (_base) + 32) ?			\
@@ -1333,7 +1339,7 @@ extern int fix_lint;
 	do {								\
 		_NOTE(CONSTANTCONDITION) 				\
 		(_oword).eo_u64[0] |=					\
-		    __CPU_TO_LE_64(EFX_SHIFT64(_bit, FIX_LINT(0)));	\
+		    __CPU_TO_LE_64(EFX_SHIFT64_0(_bit));		\
 		(_oword).eo_u64[1] |=					\
 		    __CPU_TO_LE_64(EFX_SHIFT64(_bit, FIX_LINT(64)));	\
 	_NOTE(CONSTANTCONDITION) 					\
@@ -1343,7 +1349,7 @@ extern int fix_lint;
 	do {								\
 		_NOTE(CONSTANTCONDITION) 				\
 		(_oword).eo_u32[0] |=					\
-		    __CPU_TO_LE_32(EFX_SHIFT32(_bit, FIX_LINT(0)));	\
+		    __CPU_TO_LE_32(EFX_SHIFT32_0(_bit));		\
 		(_oword).eo_u32[1] |=					\
 		    __CPU_TO_LE_32(EFX_SHIFT32(_bit, FIX_LINT(32)));	\
 		(_oword).eo_u32[2] |=					\
@@ -1357,7 +1363,7 @@ extern int fix_lint;
 	do {								\
 		_NOTE(CONSTANTCONDITION) 				\
 		(_oword).eo_u64[0] &=					\
-		    __CPU_TO_LE_64(~EFX_SHIFT64(_bit, FIX_LINT(0)));	\
+		    __CPU_TO_LE_64(~EFX_SHIFT64_0(_bit));		\
 		(_oword).eo_u64[1] &=					\
 		    __CPU_TO_LE_64(~EFX_SHIFT64(_bit, FIX_LINT(64)));	\
 	_NOTE(CONSTANTCONDITION) 					\
@@ -1367,7 +1373,7 @@ extern int fix_lint;
 	do {								\
 		_NOTE(CONSTANTCONDITION) 				\
 		(_oword).eo_u32[0] &=					\
-		    __CPU_TO_LE_32(~EFX_SHIFT32(_bit, FIX_LINT(0)));	\
+		    __CPU_TO_LE_32(~EFX_SHIFT32_0(_bit));		\
 		(_oword).eo_u32[1] &=					\
 		    __CPU_TO_LE_32(~EFX_SHIFT32(_bit, FIX_LINT(32)));	\
 		(_oword).eo_u32[2] &=					\
@@ -1379,13 +1385,13 @@ extern int fix_lint;
 
 #define	EFX_TEST_OWORD_BIT64(_oword, _bit)				\
 	(((_oword).eo_u64[0] &						\
-		    __CPU_TO_LE_64(EFX_SHIFT64(_bit, FIX_LINT(0)))) ||	\
+		    __CPU_TO_LE_64(EFX_SHIFT64_0(_bit))) ||		\
 	((_oword).eo_u64[1] &						\
 		    __CPU_TO_LE_64(EFX_SHIFT64(_bit, FIX_LINT(64)))))
 
 #define	EFX_TEST_OWORD_BIT32(_oword, _bit)				\
 	(((_oword).eo_u32[0] &						\
-		    __CPU_TO_LE_32(EFX_SHIFT32(_bit, FIX_LINT(0)))) ||	\
+		    __CPU_TO_LE_32(EFX_SHIFT32_0(_bit))) ||		\
 	((_oword).eo_u32[1] &						\
 		    __CPU_TO_LE_32(EFX_SHIFT32(_bit, FIX_LINT(32)))) ||	\
 	((_oword).eo_u32[2] &						\
@@ -1398,7 +1404,7 @@ extern int fix_lint;
 	do {								\
 		_NOTE(CONSTANTCONDITION) 				\
 		(_qword).eq_u64[0] |=					\
-		    __CPU_TO_LE_64(EFX_SHIFT64(_bit, FIX_LINT(0)));	\
+		    __CPU_TO_LE_64(EFX_SHIFT64_0(_bit));		\
 	_NOTE(CONSTANTCONDITION) 					\
 	} while (B_FALSE)
 
@@ -1406,7 +1412,7 @@ extern int fix_lint;
 	do {								\
 		_NOTE(CONSTANTCONDITION) 				\
 		(_qword).eq_u32[0] |=					\
-		    __CPU_TO_LE_32(EFX_SHIFT32(_bit, FIX_LINT(0)));	\
+		    __CPU_TO_LE_32(EFX_SHIFT32_0(_bit));		\
 		(_qword).eq_u32[1] |=					\
 		    __CPU_TO_LE_32(EFX_SHIFT32(_bit, FIX_LINT(32)));	\
 	_NOTE(CONSTANTCONDITION) 					\
@@ -1416,7 +1422,7 @@ extern int fix_lint;
 	do {								\
 		_NOTE(CONSTANTCONDITION) 				\
 		(_qword).eq_u64[0] &=					\
-		    __CPU_TO_LE_64(~EFX_SHIFT64(_bit, FIX_LINT(0)));	\
+		    __CPU_TO_LE_64(~EFX_SHIFT64_0(_bit));		\
 	_NOTE(CONSTANTCONDITION) 					\
 	} while (B_FALSE)
 
@@ -1424,7 +1430,7 @@ extern int fix_lint;
 	do {								\
 		_NOTE(CONSTANTCONDITION) 				\
 		(_qword).eq_u32[0] &=					\
-		    __CPU_TO_LE_32(~EFX_SHIFT32(_bit, FIX_LINT(0)));	\
+		    __CPU_TO_LE_32(~EFX_SHIFT32_0(_bit));		\
 		(_qword).eq_u32[1] &=					\
 		    __CPU_TO_LE_32(~EFX_SHIFT32(_bit, FIX_LINT(32)));	\
 	_NOTE(CONSTANTCONDITION) 					\
@@ -1432,11 +1438,11 @@ extern int fix_lint;
 
 #define	EFX_TEST_QWORD_BIT64(_qword, _bit)				\
 	(((_qword).eq_u64[0] &						\
-		    __CPU_TO_LE_64(EFX_SHIFT64(_bit, FIX_LINT(0)))) != 0)
+		    __CPU_TO_LE_64(EFX_SHIFT64_0(_bit))) != 0)
 
 #define	EFX_TEST_QWORD_BIT32(_qword, _bit)				\
 	(((_qword).eq_u32[0] &						\
-		    __CPU_TO_LE_32(EFX_SHIFT32(_bit, FIX_LINT(0)))) ||	\
+		    __CPU_TO_LE_32(EFX_SHIFT32_0(_bit))) ||		\
 	((_qword).eq_u32[1] &						\
 		    __CPU_TO_LE_32(EFX_SHIFT32(_bit, FIX_LINT(32)))))
 
@@ -1444,20 +1450,20 @@ extern int fix_lint;
 #define	EFX_SET_DWORD_BIT(_dword, _bit)					\
 	do {								\
 		(_dword).ed_u32[0] |=					\
-		    __CPU_TO_LE_32(EFX_SHIFT32(_bit, FIX_LINT(0)));	\
+		    __CPU_TO_LE_32(EFX_SHIFT32_0(_bit));		\
 	_NOTE(CONSTANTCONDITION) 					\
 	} while (B_FALSE)
 
 #define	EFX_CLEAR_DWORD_BIT(_dword, _bit)				\
 	do {								\
 		(_dword).ed_u32[0] &=					\
-		    __CPU_TO_LE_32(~EFX_SHIFT32(_bit, FIX_LINT(0)));	\
+		    __CPU_TO_LE_32(~EFX_SHIFT32_0(_bit));		\
 	_NOTE(CONSTANTCONDITION) 					\
 	} while (B_FALSE)
 
 #define	EFX_TEST_DWORD_BIT(_dword, _bit)				\
 	(((_dword).ed_u32[0] &						\
-		    __CPU_TO_LE_32(EFX_SHIFT32(_bit, FIX_LINT(0)))) != 0)
+		    __CPU_TO_LE_32(EFX_SHIFT32_0(_bit))) != 0)
 
 
 #define	EFX_SET_WORD_BIT(_word, _bit)					\
