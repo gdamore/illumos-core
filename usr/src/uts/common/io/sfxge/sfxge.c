@@ -1388,6 +1388,9 @@ fail2:
 fail1:
 	DTRACE_PROBE1(fail1, int, rc);
 
+	kmem_free(sfxge_cpu, sizeof (unsigned int) * NCPU);
+	mutex_destroy(&sfxge_global_lock);
+
 	return (rc);
 }
 
