@@ -1309,7 +1309,7 @@ extern int fix_lint;
  * Set or clear a numbered bit within an octword.
  */
  
-#define	EFX_SHIFT64_0							\
+#define	EFX_SHIFT64_0(_bit)						\
 	(((_bit) < 64) ? ((uint64_t)1 << (_bit)) : 0U)
 
 #define	EFX_SHIFT64(_bit, _base)					\
