@@ -452,7 +452,7 @@ siena_filter_spec_from_gen_spec(
 	    EFX_FILTER_MATCH_LOC_HOST | EFX_FILTER_MATCH_LOC_PORT |
 	    EFX_FILTER_MATCH_REM_HOST | EFX_FILTER_MATCH_REM_PORT:
 		is_full = B_TRUE;
-		/* Fall through */
+		/* FALLTHROUGH */
 	case EFX_FILTER_MATCH_ETHER_TYPE | EFX_FILTER_MATCH_IP_PROTO |
 	    EFX_FILTER_MATCH_LOC_HOST | EFX_FILTER_MATCH_LOC_PORT: {
 		uint32_t rhost, host1, host2;
@@ -536,7 +536,7 @@ siena_filter_spec_from_gen_spec(
 
 	case EFX_FILTER_MATCH_LOC_MAC | EFX_FILTER_MATCH_OUTER_VID:
 		is_full = B_TRUE;
-		/* Fall through */
+		/* FALLTHROUGH */
 	case EFX_FILTER_MATCH_LOC_MAC:
 		if (gen_spec->efs_flags & EFX_FILTER_FLAG_TX) {
 			sf_spec->sfs_type = (is_full ?

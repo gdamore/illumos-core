@@ -526,7 +526,7 @@ efx_mcdi_nvram_partitions(
 	*npartnp = npartn;
 
 	memcpy(data,
-	    MCDI_OUT2(req, uint32_t, NVRAM_PARTITIONS_OUT_TYPE_ID),
+	    MCDI_OUT2(req, void, NVRAM_PARTITIONS_OUT_TYPE_ID),
 	    (npartn * sizeof (uint32_t)));
 
 	return (0);

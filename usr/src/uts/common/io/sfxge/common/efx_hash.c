@@ -138,10 +138,10 @@ efx_hash_dwords(
 	switch (count) {
 	case 3:
 		c += input[2];
-		/* Fall-through */
+		/* FALLTHROUGH */
 	case 2:
 		b += input[1];
-		/* Fall-through */
+		/* FALLTHROUGH */
 	case 1:
 		a += input[0];
 		EFX_HASH_FINALISE(a, b, c);
@@ -277,37 +277,37 @@ efx_hash_bytes(
 	switch (length) {
 	case 12:
 		c += ((uint32_t)input[11]) << 24;
-		/* Fall-through */
+		/* FALLTHROUGH */
 	case 11:
 		c += ((uint32_t)input[10]) << 16;
-		/* Fall-through */
+		/* FALLTHROUGH */
 	case 10:
 		c += ((uint32_t)input[9]) << 8;
-		/* Fall-through */
+		/* FALLTHROUGH */
 	case 9:
 		c += ((uint32_t)input[8]);
-		/* Fall-through */
+		/* FALLTHROUGH */
 	case 8:
 		b += ((uint32_t)input[7]) << 24;
-		/* Fall-through */
+		/* FALLTHROUGH */
 	case 7:
 		b += ((uint32_t)input[6]) << 16;
-		/* Fall-through */
+		/* FALLTHROUGH */
 	case 6:
 		b += ((uint32_t)input[5]) << 8;
-		/* Fall-through */
+		/* FALLTHROUGH */
 	case 5:
 		b += ((uint32_t)input[4]);
-		/* Fall-through */
+		/* FALLTHROUGH */
 	case 4:
 		a += ((uint32_t)input[3]) << 24;
-		/* Fall-through */
+		/* FALLTHROUGH */
 	case 3:
 		a += ((uint32_t)input[2]) << 16;
-		/* Fall-through */
+		/* FALLTHROUGH */
 	case 2:
 		a += ((uint32_t)input[1]) << 8;
-		/* Fall-through */
+		/* FALLTHROUGH */
 	case 1:
 		a += ((uint32_t)input[0]);
 		EFX_HASH_FINALISE(a, b, c);

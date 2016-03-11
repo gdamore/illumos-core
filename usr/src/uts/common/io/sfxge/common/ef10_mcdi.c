@@ -195,6 +195,7 @@ ef10_mcdi_poll_reboot(
 	new_status = dword.ed_u32[0];
 
 	/* MC has rebooted if the value has changed */
+#if MC_REBOOT_NOT_BROKEN
 	if (new_status != old_status) {
 		emip->emi_mc_reboot_status = new_status;
 
@@ -215,6 +216,7 @@ ef10_mcdi_poll_reboot(
 			goto fail1;
 		}
 	}
+#endif
 
 	return (0);
 

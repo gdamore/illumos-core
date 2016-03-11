@@ -764,7 +764,7 @@ struct efx_txq_s {
 
 #define	EFX_MAC_BROADCAST_ADDR_SET(_dst)				\
 	do {								\
-		uint16_t *_d = (uint16_t *)(_dst);			\
+		uint16_t *_d = (void *)(_dst);			\
 		_d[0] = 0xffff;						\
 		_d[1] = 0xffff;						\
 		_d[2] = 0xffff;						\

@@ -200,7 +200,7 @@ efx_mcdi_filter_op_add(
 		    handle->efh_lo);
 		MCDI_IN_SET_DWORD(req, FILTER_OP_IN_HANDLE_HI,
 		    handle->efh_hi);
-		/* Fall through */
+		/* FALLTHROUGH */
 	case MC_CMD_FILTER_OP_IN_OP_INSERT:
 	case MC_CMD_FILTER_OP_IN_OP_SUBSCRIBE:
 		MCDI_IN_SET_DWORD(req, FILTER_OP_IN_OP, filter_op);
@@ -439,7 +439,7 @@ ef10_filter_hash(
 	 * aligned and an exact number of DWORDs in size we can use the
 	 * optimised efx_hash_dwords() rather than efx_hash_bytes()
 	 */
-	return (efx_hash_dwords((const uint32_t *)&spec->efs_outer_vid,
+	return (efx_hash_dwords((const void *)&spec->efs_outer_vid,
 			(sizeof (efx_filter_spec_t) -
 			EFX_FIELD_OFFSET(efx_filter_spec_t, efs_outer_vid)) /
 			sizeof (uint32_t), 0));
@@ -921,7 +921,7 @@ efx_mcdi_get_parser_disp_info(
 
 	memcpy(list,
 	    MCDI_OUT2(req,
-	    uint32_t,
+	    void,
 	    GET_PARSER_DISP_INFO_OUT_SUPPORTED_MATCHES),
 	    (*length) * sizeof (uint32_t));
 	EFX_STATIC_ASSERT(sizeof (uint32_t) ==
@@ -967,7 +967,7 @@ ef10_filter_supported_filters(
 {
 	efx_rc_t rc;
 
-	if ((rc = efx_mcdi_get_parser_disp_info(enp, list, length) != 0))
+	if ((rc = efx_mcdi_get_parser_disp_info(enp, list, length)) != 0)
 		goto fail1;
 
 	return (0);

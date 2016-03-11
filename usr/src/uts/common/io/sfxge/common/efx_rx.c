@@ -962,6 +962,8 @@ siena_rx_prefix_hash(
 	__in		efx_rx_hash_alg_t func,
 	__in		uint8_t *buffer)
 {
+	_NOTE(ARGUNUSED(enp));
+
 	switch (func) {
 	case EFX_RX_HASHALG_TOEPLITZ:
 		return ((buffer[12] << 24) |
@@ -985,6 +987,9 @@ siena_rx_prefix_pktlen(
 	__in		uint8_t *buffer,
 	__out		uint16_t *lengthp)
 {
+	_NOTE(ARGUNUSED(enp));
+	_NOTE(ARGUNUSED(buffer));
+	_NOTE(ARGUNUSED(lengthp));
 	/* Not supported by Falcon/Siena hardware */
 	EFSYS_ASSERT(0);
 	return (ENOTSUP);
@@ -1116,6 +1121,8 @@ siena_rx_qcreate(
 	uint32_t size;
 	boolean_t jumbo;
 	efx_rc_t rc;
+
+	_NOTE(ARGUNUSED(esmp));
 
 	EFX_STATIC_ASSERT(EFX_EV_RX_NLABELS ==
 	    (1 << FRF_AZ_RX_DESCQ_LABEL_WIDTH));
