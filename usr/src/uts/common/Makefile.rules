@@ -2772,7 +2772,7 @@ $(LINTS_DIR)/%.ln:		$(UTSBASE)/common/io/sfxge/common/%.c
 $(LINTS_DIR)/%.h.ln:		$(UTSBASE)/common/io/sfxge/%.h
 	@$(CP) $< $(@:%.ln=%.c)
 	@($(LHEAD) $(LINT.c) $(@:%.ln=%.c) $(LTAIL))
-	@$(RM) $(@:%.o=%.c)
+	@$(RM) $(@:%.ln=%.c)
 
 $(LINTS_DIR)/%.ln:		$(UTSBASE)/common/io/skd/%.c
 	@($(LHEAD) $(LINT.c) $< $(LTAIL))
