@@ -123,7 +123,7 @@ toeplitz_cache_init(const uint8_t *key)
 	unsigned i;
 
 	for (i = 0; i < SFXGE_TOEPLITZ_IN_MAX; i++, key++) {
-		uint32_t key_bits[NBBY] = {};
+		uint32_t key_bits[NBBY] = { 0 };
 		unsigned j;
 		unsigned mask;
 		unsigned byte;

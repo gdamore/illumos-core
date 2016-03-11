@@ -81,6 +81,8 @@ sfxge_gld_mtu_update(sfxge_t *sp)
 {
 #ifdef _USE_MTU_UPDATE
 	(void) mac_maxsdu_update(sp->s_mh, sp->s_mtu);
+#else
+	_NOTE(ARGUNUSED(sp));
 #endif
 }
 
@@ -436,7 +438,7 @@ static void
 sfxge_gld_ioctl(void *arg, queue_t *wq, mblk_t *mp)
 {
 	sfxge_t *sp = arg;
-	struct iocblk *iocp = (struct iocblk *)mp->b_rptr;
+	struct iocblk *iocp = (void *)mp->b_rptr;
 
 	switch (iocp->ioc_cmd) {
 #ifdef _USE_NDD_PROPS
@@ -542,8 +544,10 @@ fail1:
 
 static void
 sfxge_gld_priv_prop_info(sfxge_t *sp, const char *name,
-mac_prop_info_handle_t handle)
+    mac_prop_info_handle_t handle)
 {
+	_NOTE(ARGUNUSED(sp));
+
 	/*
 	 * Using mac_prop_info_set_default_str rather than the the corresponding
 	 * mac_prop_info_set_default_uint32 etc as it gives readable output in
@@ -667,7 +671,7 @@ sfxge_gld_priv_prop_set(sfxge_t *sp, const char *name, unsigned int size,
 	}
 
 	if (strcmp(name, SFXGE_PRIV_PROP_NAME(intr_moderation)) == 0) {
-		if ((rc = sfxge_ev_moderation_set(sp, (unsigned int) val) != 0))
+		if ((rc = sfxge_ev_moderation_set(sp, (unsigned int) val)) != 0)
 			goto fail1;
 
 		goto done;
@@ -844,7 +848,6 @@ sfxge_gld_getprop(void *arg, const char *name, mac_prop_id_t id,
 	default:
 		rc = ENOTSUP;
 		goto fail1;
-		break;
 	}
 
 	switch (id) {
@@ -971,7 +974,6 @@ sfxge_gld_getprop(void *arg, const char *name, mac_prop_id_t id,
 	default:
 		rc = ENOTSUP;
 		goto fail3;
-		break;
 	}
 
 	return (0);
@@ -1046,7 +1048,6 @@ sfxge_gld_setprop(void *arg, const char *name, mac_prop_id_t id,
 	default:
 		rc = ENOTSUP;
 		goto fail1;
-		break;
 	}
 
 	switch (id) {
@@ -1139,7 +1140,6 @@ sfxge_gld_setprop(void *arg, const char *name, mac_prop_id_t id,
 		default:
 			rc = EINVAL;
 			goto fail2;
-			break;
 		}
 
 		if ((rc = sfxge_mac_fcntl_set(sp, fcntl)) != 0)

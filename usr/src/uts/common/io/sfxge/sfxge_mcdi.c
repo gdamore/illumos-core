@@ -464,7 +464,7 @@ sfxge_mcdi2_ioctl(sfxge_t *sp, sfxge_mcdi2_ioc_t *smip)
 
 	smip->smi_rc = emr.emr_rc;
 	smip->smi_cmd = emr.emr_cmd;
-	smip->smi_len = emr.emr_out_length_used;
+	smip->smi_len = (uint32_t)emr.emr_out_length_used;
 	memcpy(smip->smi_payload, out, smip->smi_len);
 
 	/*

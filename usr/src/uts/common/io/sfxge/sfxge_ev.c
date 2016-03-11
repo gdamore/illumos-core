@@ -272,7 +272,7 @@ sfxge_ev_rx(void *arg, uint32_t label, uint32_t id, uint32_t size,
 
 	if (delta != 1) {
 		if ((!efx_nic_cfg_get(sp->s_enp)->enc_rx_batching_enabled) ||
-		    (delta <= 0) ||
+		    (delta == 0) ||
 		    (delta > efx_nic_cfg_get(sp->s_enp)->enc_rx_batch_max)) {
 			/*
 			 * FIXME: This does not take into account scatter
@@ -763,7 +763,7 @@ sfxge_ev_qinit(sfxge_t *sp, unsigned int index, unsigned int ev_batch)
 		goto fail2;
 
 	sep->se_state = SFXGE_EVQ_INITIALIZED;
-	sep->se_ev_batch = ev_batch;
+	sep->se_ev_batch = (uint16_t)ev_batch;
 	sp->s_sep[index] = sep;
 
 	return (0);

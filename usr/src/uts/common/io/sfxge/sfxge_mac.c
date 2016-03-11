@@ -76,7 +76,7 @@ _sfxge_mac_stat_update(sfxge_mac_t *smp, int tries, int delay_usec)
 {
 	sfxge_t *sp = smp->sm_sp;
 	efsys_mem_t *esmp = &(smp->sm_mem);
-	int rc, i;
+	int i;
 
 	ASSERT(mutex_owned(&(smp->sm_lock)));
 	ASSERT3U(smp->sm_state, !=, SFXGE_MAC_UNINITIALIZED);
@@ -87,8 +87,8 @@ _sfxge_mac_stat_update(sfxge_mac_t *smp, int tries, int delay_usec)
 
 	for (i = 0; i < tries; i++) {
 		/* Try to update the cached counters */
-		if ((rc = efx_mac_stats_update(sp->s_enp, esmp, smp->sm_stat,
-		    NULL)) != EAGAIN)
+		if (efx_mac_stats_update(sp->s_enp, esmp, smp->sm_stat,
+		    NULL) != EAGAIN)
 			goto done;
 
 		drv_usecwait(delay_usec);

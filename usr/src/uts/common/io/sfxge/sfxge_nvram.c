@@ -81,6 +81,7 @@ sfxge_nvram_erase(sfxge_t *sp, sfxge_nvram_ioc_t *snip, efx_nvram_type_t type)
 	efx_nic_t *enp = sp->s_enp;
 	size_t chunk_size;
 	int rc;
+	_NOTE(ARGUNUSED(snip));
 
 	if ((rc = efx_nvram_rw_start(enp, type, &chunk_size)) != 0)
 		goto fail1;
@@ -162,7 +163,7 @@ sfxge_nvram_ioctl(sfxge_t *sp, sfxge_nvram_ioc_t *snip)
 		size_t size;
 		if ((rc = efx_nvram_size(enp, type, &size)) != 0)
 			goto fail4;
-		snip->sni_size = size;
+		snip->sni_size = (uint32_t)size;
 		break;
 	}
 	case SFXGE_NVRAM_OP_READ:

@@ -1048,6 +1048,7 @@ extern uint32_t sfxge_toeplitz_hash(sfxge_t *, unsigned int,
 					(_rport), \
 					(uint8_t *)(_laddr), \
 					(_lport)); \
+		_NOTE(CONSTANTCONDITION) \
 	} while (B_FALSE)
 
 /*

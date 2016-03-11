@@ -143,7 +143,7 @@ sfxge_create(dev_info_t *dip, sfxge_t **spp)
 	if (!(ISP2(rxq_size)))
 		rxq_size = SFXGE_DEFAULT_RXQ_SIZE;
 	rxq_size = min(rxq_size, EFX_RXQ_MAXNDESCS);
-	sp->s_rxq_size = max(rxq_size, EFX_RXQ_MINNDESCS);
+	sp->s_rxq_size = (uint16_t)max(rxq_size, EFX_RXQ_MINNDESCS);
 
 	/* Configure polling interval for queue refill/trim */
 	rxq_poll_usec = ddi_prop_get_int(DDI_DEV_T_ANY, sp->s_dip,

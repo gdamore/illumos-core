@@ -426,7 +426,7 @@ fail1:
 static int
 sfxge_gld_nd_get_ioctl(queue_t *q, mblk_t *mp, caddr_t arg, cred_t *credp)
 {
-	sfxge_ndd_param_t *snpp = (sfxge_ndd_param_t *)arg;
+	sfxge_ndd_param_t *snpp = (void *)arg;
 	sfxge_t *sp = snpp->snp_sp;
 	unsigned int id = snpp->snp_id;
 	uint32_t val;
@@ -709,7 +709,7 @@ static int
 sfxge_gld_nd_set_ioctl(queue_t *q, mblk_t *mp, char *valp, caddr_t arg,
     cred_t *credp)
 {
-	sfxge_ndd_param_t *snpp = (sfxge_ndd_param_t *)arg;
+	sfxge_ndd_param_t *snpp = (void *)arg;
 	sfxge_t *sp = snpp->snp_sp;
 	unsigned int id = snpp->snp_id;
 	long val;
