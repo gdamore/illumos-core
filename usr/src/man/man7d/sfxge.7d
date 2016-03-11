@@ -29,10 +29,6 @@ These devices generally support the standard Ethernet features, including
 autonegotiation, etc.  They also support full size MTUs (1500 bytes),
 even when used with VLANs, and hardware based flow control.
 .Lp
-Both physical and virtual functions are supported, when the virtual
-function is made available to a guest operating system.
-.
-.Lp
 The device driver supports the
 .Xr ieee802.3 5
 properties, which can be configured with
