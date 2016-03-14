@@ -88,6 +88,7 @@ hunt_bist_poll(
 	uint32_t value_mask = 0;
 	uint32_t result;
 	efx_rc_t rc;
+	_NOTE(ARGUNUSED(type))
 
 	(void) memset(payload, 0, sizeof (payload));
 	req.emr_cmd = MC_CMD_POLL_BIST;
