@@ -544,13 +544,12 @@ typedef	clock_t	efsys_timestamp_t;
 	_NOTE(CONSTANTCONDITION)					\
 	} while (B_FALSE)
 
-#ifdef	lint
 #define	EFSYS_KMEM_FREE(_esip, _size, _p)				\
-	kmem_free((_p), (_size)+(uintptr_t)(_esip))
-#else
-#define	EFSYS_KMEM_FREE(_esip, _size, _p)				\
-	kmem_free((_p), (_size))
-#endif
+	do {								\
+		(_esip) = (_esip);					\
+		kmem_free((_p), (_size));				\
+	_NOTE(CONSTANTCONDITION)					\
+	} while (B_FALSE)
 
 /* LOCK */
 
