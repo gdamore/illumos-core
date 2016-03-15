@@ -58,10 +58,6 @@ extern "C" {
 #endif
 #include "efx_types.h"
 
-#ifdef _USE_GLD_V3_SOL10
-#include "compat.h"
-#endif
-
 /* Modifiers used for Windows builds */
 #define	__in
 #define	__in_opt

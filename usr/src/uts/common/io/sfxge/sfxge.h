@@ -61,10 +61,6 @@ extern "C" {
 #include "efx.h"
 #include "efx_regs.h"
 
-#ifdef _USE_GLD_V3_SOL10
-#include "compat.h"
-#endif
-
 #if defined(_USE_MAC_PRIV_PROP) && !defined(_USE_GLD_V3_PROPS)
 #error "The _USE_MAC_PRIV_PROP build option is dependent on _USE_GLD_V3_PROPS"
 #endif
