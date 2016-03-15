@@ -464,7 +464,7 @@ sfxge_stop_locked(sfxge_t *sp)
 	efx_filter_fini(sp->s_enp);
 
 	efx_nic_fini(sp->s_enp);
-	efx_nic_reset(sp->s_enp);
+	(void) efx_nic_reset(sp->s_enp);
 
 	ASSERT3U(sp->s_state, ==, SFXGE_STOPPING);
 	sp->s_state = SFXGE_REGISTERED;

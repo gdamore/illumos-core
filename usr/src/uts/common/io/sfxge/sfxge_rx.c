@@ -110,8 +110,7 @@ static ddi_dma_attr_t sfxge_rxq_dma_attr = {
 };
 
 /* Forward declaration */
-static int
-sfxge_rx_qpreallocate(sfxge_rxq_t *srp, int nprealloc);
+static void sfxge_rx_qpreallocate(sfxge_rxq_t *srp, int nprealloc);
 
 static int
 sfxge_rx_packet_ctor(void *buf, void *arg, int kmflags)
@@ -860,7 +859,7 @@ out:
 }
 
 /* Preallocate packets and put them in the free packet pool */
-static int
+static void
 sfxge_rx_qpreallocate(sfxge_rxq_t *srp, int nprealloc)
 {
 	sfxge_rx_fpp_t *srfppp = &((srp)->sr_fpp);
@@ -872,7 +871,6 @@ sfxge_rx_qpreallocate(sfxge_rxq_t *srp, int nprealloc)
 			break;
 		sfxge_rx_qfpp_put(srp, srpp);
 	}
-	return (0);
 }
 
 /* Try to refill the RX descriptor ring by allocating new packets */

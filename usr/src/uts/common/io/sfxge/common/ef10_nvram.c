@@ -390,7 +390,7 @@ tlv_write(
 
 	if (len > 0) {
 		ptr[(len - 1) / sizeof (uint32_t)] = 0;
-		memcpy(ptr, data, len);
+		(void) memcpy(ptr, data, len);
 	}
 }
 
@@ -426,7 +426,7 @@ tlv_insert(
 	}
 
 	/* Move data up: new space at cursor->current */
-	memmove(cursor->current + delta, cursor->current,
+	(void) memmove(cursor->current + delta, cursor->current,
 	    (last_segment_end + 1 - cursor->current) * sizeof (uint32_t));
 
 	/* Adjust the end pointer */
@@ -473,10 +473,11 @@ tlv_delete(
 	last_segment_end = tlv_last_segment_end(cursor);
 
 	/* Shuffle things down, destroying the item at cursor->current */
-	memmove(cursor->current, cursor->current + delta,
+	(void) memmove(cursor->current, cursor->current + delta,
 	    (last_segment_end + 1 - cursor->current) * sizeof (uint32_t));
 	/* Zero the new space at the end of the TLV chain */
-	memset(last_segment_end + 1 - delta, 0, delta * sizeof (uint32_t));
+	(void) memset(last_segment_end + 1 - delta, 0,
+	    delta * sizeof (uint32_t));
 	/* Adjust the end pointer */
 	cursor->end -= delta;
 
@@ -538,7 +539,7 @@ tlv_modify(
 		}
 
 		/* Move up: new space at (cursor->current + old_ndwords) */
-		memmove(pos + delta, pos,
+		(void) memmove(pos + delta, pos,
 		    (last_segment_end + 1 - pos) * sizeof (uint32_t));
 
 		/* Adjust the end pointer */
@@ -550,11 +551,11 @@ tlv_modify(
 		pos = cursor->current + new_ndwords;
 
 		/* Move down: remove words at (cursor->current + new_ndwords) */
-		memmove(pos, pos + delta,
+		(void) memmove(pos, pos + delta,
 		    (last_segment_end + 1 - pos) * sizeof (uint32_t));
 
 		/* Zero the new space at the end of the TLV chain */
-		memset(last_segment_end + 1 - delta, 0,
+		(void) memset(last_segment_end + 1 - delta, 0,
 		    delta * sizeof (uint32_t));
 
 		/* Adjust the end pointer */
@@ -619,7 +620,7 @@ tlv_update_partition_len_and_cks(
 	 * that may fail here.
 	 */
 	partition.data = cursor->block;
-	memcpy(&partition.tlv_cursor, cursor, sizeof (*cursor));
+	(void) memcpy(&partition.tlv_cursor, cursor, sizeof (*cursor));
 	header = (struct tlv_partition_header *)partition.data;
 	/* Sanity check. */
 	if (__LE_TO_CPU_32(header->tag) != TLV_TAG_PARTITION_HEADER) {
@@ -774,7 +775,7 @@ ef10_nvram_buffer_create(
 		goto fail1;
 	}
 
-	memset(buf, 0xff, partn_size);
+	(void) memset(buf, 0xff, partn_size);
 
 	tlv_init_block(buf);
 	if ((rc = tlv_init_cursor(&cursor, buf,
@@ -987,7 +988,7 @@ ef10_nvram_buffer_get_item(
 		rc = ENOSPC;
 		goto fail3;
 	}
-	memcpy(itemp, tlv_value(&cursor), item_length);
+	(void) memcpy(itemp, tlv_value(&cursor), item_length);
 
 	*lengthp = item_length;
 
@@ -1283,7 +1284,7 @@ ef10_nvram_buf_read_tlv(
 			rc = ENOMEM;
 			goto fail4;
 		}
-		memcpy(data, value, length);
+		(void) memcpy(data, value, length);
 	}
 
 	*datap = data;

@@ -174,7 +174,7 @@ siena_mac_reconfigure(
 	req.emr_out_buf = payload;
 	req.emr_out_length = MC_CMD_SET_MCAST_HASH_OUT_LEN;
 
-	memcpy(MCDI_IN2(req, uint8_t, SET_MCAST_HASH_IN_HASH0),
+	(void) memcpy(MCDI_IN2(req, uint8_t, SET_MCAST_HASH_IN_HASH0),
 	    multicast_hash, sizeof (multicast_hash));
 
 	efx_mcdi_execute(enp, &req);

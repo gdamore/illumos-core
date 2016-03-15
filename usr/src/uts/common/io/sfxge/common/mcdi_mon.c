@@ -191,7 +191,7 @@ mcdi_mon_decode_stats(
 
 	port_mask = 1U << emip->emi_port;
 
-	memset(stat_mask, 0, sizeof (stat_mask));
+	(void) memset(stat_mask, 0, sizeof (stat_mask));
 
 	/*
 	 * The MCDI sensor readings in the DMA buffer are a packed array of
@@ -246,7 +246,7 @@ mcdi_mon_decode_stats(
 	}
 
 	if (stat_maskp != NULL) {
-		memcpy(stat_maskp, stat_mask, sizeof (stat_mask));
+		(void) memcpy(stat_maskp, stat_mask, sizeof (stat_mask));
 	}
 }
 

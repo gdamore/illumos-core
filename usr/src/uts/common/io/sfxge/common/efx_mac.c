@@ -401,12 +401,12 @@ efx_mac_multicast_list_set(
 		}
 
 		/* Save the old list in case we need to rollback */
-		memcpy(old_mulcst_addr_list, epp->ep_mulcst_addr_list,
+		(void) memcpy(old_mulcst_addr_list, epp->ep_mulcst_addr_list,
 			old_mulcst_addr_count * EFX_MAC_ADDR_LEN);
 	}
 
 	/* Store the new list */
-	memcpy(epp->ep_mulcst_addr_list, addrs,
+	(void) memcpy(epp->ep_mulcst_addr_list, addrs,
 		count * EFX_MAC_ADDR_LEN);
 	epp->ep_mulcst_addr_count = count;
 
@@ -427,7 +427,7 @@ fail3:
 	/* Restore original list on failure */
 	epp->ep_mulcst_addr_count = old_mulcst_addr_count;
 	if (old_mulcst_addr_count > 0) {
-		memcpy(epp->ep_mulcst_addr_list, old_mulcst_addr_list,
+		(void) memcpy(epp->ep_mulcst_addr_list, old_mulcst_addr_list,
 			old_mulcst_addr_count * EFX_MAC_ADDR_LEN);
 
 		EFSYS_KMEM_FREE(enp->en_esip,
@@ -780,7 +780,7 @@ siena_mac_multicast_list_set(
 	EFSYS_ASSERT3U(enp->en_magic, ==, EFX_NIC_MAGIC);
 	EFSYS_ASSERT3U(enp->en_mod_flags, &, EFX_MOD_PORT);
 
-	memcpy(old_hash, epp->ep_multicst_hash, sizeof (old_hash));
+	(void) memcpy(old_hash, epp->ep_multicst_hash, sizeof (old_hash));
 
 	siena_mac_multicast_hash_compute(
 	    epp->ep_mulcst_addr_list,
@@ -796,7 +796,7 @@ siena_mac_multicast_list_set(
 fail1:
 	EFSYS_PROBE1(fail1, efx_rc_t, rc);
 
-	memcpy(epp->ep_multicst_hash, old_hash, sizeof (old_hash));
+	(void) memcpy(epp->ep_multicst_hash, old_hash, sizeof (old_hash));
 
 	return (rc);
 }

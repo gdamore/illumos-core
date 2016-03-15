@@ -118,7 +118,7 @@ siena_vpd_get_static(
 			rc = ENOMEM;
 			goto fail8;
 		}
-		memcpy(svpd, (caddr_t)scfg + vpd_offset, vpd_length);
+		(void) memcpy(svpd, (caddr_t)scfg + vpd_offset, vpd_length);
 	}
 
 	EFSYS_KMEM_FREE(enp->en_esip, size, scfg);
@@ -262,10 +262,10 @@ siena_vpd_read(
 	}
 
 	EFSYS_ASSERT3U(vpd_length, <=, size);
-	memcpy(data, (caddr_t)dcfg + vpd_offset, vpd_length);
+	(void) memcpy(data, (caddr_t)dcfg + vpd_offset, vpd_length);
 
 	/* Pad data with all-1s, consistent with update operations */
-	memset(data + vpd_length, 0xff, size - vpd_length);
+	(void) memset(data + vpd_length, 0xff, size - vpd_length);
 
 	EFSYS_KMEM_FREE(enp->en_esip, dcfg_size, dcfg);
 
@@ -424,7 +424,7 @@ siena_vpd_get(
 		    enp->en_u.siena.enu_svpd_length, evvp->evv_tag,
 		    evvp->evv_keyword, &offset, &length)) == 0) {
 			evvp->evv_length = length;
-			memcpy(evvp->evv_value,
+			(void) memcpy(evvp->evv_value,
 			    enp->en_u.siena.enu_svpd + offset, length);
 			return (0);
 		} else if (rc != ENOENT)
@@ -437,7 +437,7 @@ siena_vpd_get(
 		goto fail2;
 
 	evvp->evv_length = length;
-	memcpy(evvp->evv_value, data + offset, length);
+	(void) memcpy(evvp->evv_value, data + offset, length);
 
 	return (0);
 
@@ -548,7 +548,7 @@ siena_vpd_write(
 	/* Copy in new vpd and update header */
 	vpd_offset = dcfg_size - vpd_length;
 	EFX_POPULATE_DWORD_1(dcfg->dynamic_vpd_offset, EFX_DWORD_0, vpd_offset);
-	memcpy((caddr_t)dcfg + vpd_offset, data, vpd_length);
+	(void) memcpy((caddr_t)dcfg + vpd_offset, data, vpd_length);
 	EFX_POPULATE_DWORD_1(dcfg->dynamic_vpd_length, EFX_DWORD_0, vpd_length);
 
 	/* Update the checksum */

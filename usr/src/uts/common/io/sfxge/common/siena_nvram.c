@@ -542,7 +542,7 @@ siena_nvram_partn_get_version(
 		temp[2] = EFX_WORD_FIELD(verp->version_y, EFX_WORD_0);
 		temp[3] = EFX_WORD_FIELD(verp->version_z, EFX_WORD_0);
 		if (memcmp(version, temp, sizeof (temp)) < 0)
-			memcpy(version, temp, sizeof (temp));
+			(void) memcpy(version, temp, sizeof (temp));
 
 done:
 		EFSYS_KMEM_FREE(enp->en_esip, length, dcfg);

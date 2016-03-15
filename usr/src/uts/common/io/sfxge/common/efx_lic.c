@@ -588,7 +588,7 @@ efx_lic_v1v2_read_key(
 		rc = ENOSPC;
 		goto fail1;
 	}
-	memcpy(keyp, &bufferp[offset], length);
+	(void) memcpy(keyp, &bufferp[offset], length);
 
 	*lengthp = length;
 
@@ -625,7 +625,7 @@ efx_lic_v1v2_write_key(
 		goto fail1;
 	}
 
-	memcpy(bufferp + offset, keyp, length);
+	(void) memcpy(bufferp + offset, keyp, length);
 
 	*lengthp = length;
 
@@ -676,7 +676,7 @@ efx_lic_v1v2_create_partition(
 	EFSYS_ASSERT(EFX_LICENSE_V1V2_HEADER_LENGTH <= buffer_size);
 
 	// Write terminator
-	memset(bufferp, '\0', EFX_LICENSE_V1V2_HEADER_LENGTH);
+	(void) memset(bufferp, '\0', EFX_LICENSE_V1V2_HEADER_LENGTH);
 	return (0);
 }
 
@@ -1078,7 +1078,8 @@ efx_mcdi_licensing_v3_get_id(
 		memmove(bufferp,
 		  bufferp+MC_CMD_LICENSING_GET_ID_V3_OUT_LICENSE_ID_OFST,
 		  *lengthp);
-		memset(bufferp+(*lengthp), 0, MC_CMD_LICENSING_GET_ID_V3_OUT_LICENSE_ID_OFST);
+		(void) memset(bufferp+(*lengthp), 0,
+		    MC_CMD_LICENSING_GET_ID_V3_OUT_LICENSE_ID_OFST);
 	}
 
 	return (0);

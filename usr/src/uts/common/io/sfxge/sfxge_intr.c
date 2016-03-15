@@ -266,7 +266,7 @@ sfxge_intr_bus_enable(sfxge_t *sp)
 			dev_err(sp->s_dip, CE_WARN, SFXGE_CMN_ERR
 			    "bus_enable: ddi_intr_block_enable failed"
 			    " err=%d (table=%p nalloc=%d)",
-			    err, sip->si_table, sip->si_nalloc);
+			    err, (void *)sip->si_table, sip->si_nalloc);
 
 			rc = (err == DDI_EINVAL) ? EINVAL : EFAULT;
 			goto fail4;
@@ -278,8 +278,8 @@ sfxge_intr_bus_enable(sfxge_t *sp)
 				dev_err(sp->s_dip, CE_WARN, SFXGE_CMN_ERR
 				    "bus_enable: ddi_intr_enable failed"
 				    " err=%d (h=%p idx=%d nalloc=%d)",
-				    err, sip->si_table[en_index], en_index,
-				    sip->si_nalloc);
+				    err, (void *)sip->si_table[en_index],
+				    en_index, sip->si_nalloc);
 
 				rc = (err == DDI_EINVAL) ? EINVAL : EFAULT;
 				goto fail4;

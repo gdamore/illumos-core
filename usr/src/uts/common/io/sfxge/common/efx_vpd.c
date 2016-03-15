@@ -607,12 +607,13 @@ efx_vpd_hunk_reinit(
 	}
 
 	if (wantpid) {
-		memcpy(data + offset, __efx_vpd_blank_pid,
+		(void) memcpy(data + offset, __efx_vpd_blank_pid,
 		    sizeof (__efx_vpd_blank_pid));
 		offset += sizeof (__efx_vpd_blank_pid);
 	}
 
-	memcpy(data + offset, __efx_vpd_blank_r, sizeof (__efx_vpd_blank_r));
+	(void) memcpy(data + offset, __efx_vpd_blank_r,
+	    sizeof (__efx_vpd_blank_r));
 	offset += sizeof (__efx_vpd_blank_r);
 
 	/* Update checksum */
@@ -909,7 +910,7 @@ efx_vpd_hunk_set(
 		(void) memmove(data + dest, data + source, used - source);
 
 		/* Copy contents */
-		memcpy(data + dest - evvp->evv_length, evvp->evv_value,
+		(void) memcpy(data + dest - evvp->evv_length, evvp->evv_value,
 		    evvp->evv_length);
 
 		/* Insert new keyword header if required */

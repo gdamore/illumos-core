@@ -371,7 +371,7 @@ efx_mcdi_read_response_header(
 	if (error && (data_len == 0)) {
 		/* The MC has rebooted since the request was sent. */
 		EFSYS_SPIN(EFX_MCDI_STATUS_SLEEP_US);
-		efx_mcdi_poll_reboot(enp);
+		(void) efx_mcdi_poll_reboot(enp);
 		rc = EIO;
 		goto fail1;
 	}
@@ -984,7 +984,7 @@ version:
 
 out:
 	if (versionp != NULL)
-		memcpy(versionp, version, sizeof (version));
+		(void) memcpy(versionp, version, sizeof (version));
 	if (buildp != NULL)
 		*buildp = build;
 	if (statusp != NULL)
@@ -1415,7 +1415,7 @@ efx_mcdi_get_phy_cfg(
 #endif	/* EFSYS_OPT_NAMES */
 	(void) memset(encp->enc_phy_revision, 0,
 	    sizeof (encp->enc_phy_revision));
-	memcpy(encp->enc_phy_revision,
+	(void) memcpy(encp->enc_phy_revision,
 		MCDI_OUT2(req, char, GET_PHY_CFG_OUT_REVISION),
 		MIN(sizeof (encp->enc_phy_revision) - 1,
 		    MC_CMD_GET_PHY_CFG_OUT_REVISION_LEN));
@@ -2115,7 +2115,7 @@ efx_mcdi_get_phy_media_info(
 		goto fail3;
 	}
 
-	memcpy(data,
+	(void) memcpy(data,
 	    MCDI_OUT2(req, uint8_t, GET_PHY_MEDIA_INFO_OUT_DATA) + offset,
 	    len);
 

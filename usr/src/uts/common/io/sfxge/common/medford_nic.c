@@ -45,7 +45,7 @@ efx_mcdi_get_rxdp_config(
 	uint32_t end_padding;
 	efx_rc_t rc;
 
-	memset(payload, 0, sizeof (payload));
+	(void) memset(payload, 0, sizeof (payload));
 	req.emr_cmd = MC_CMD_GET_RXDP_CONFIG;
 	req.emr_in_buf = payload;
 	req.emr_in_length = MC_CMD_GET_RXDP_CONFIG_IN_LEN;

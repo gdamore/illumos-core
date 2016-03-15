@@ -843,7 +843,7 @@ siena_tx_qflush(
 	efx_oword_t oword;
 	uint32_t label;
 
-	efx_tx_qpace(etp, 0);
+	(void) efx_tx_qpace(etp, 0);
 
 	label = etp->et_index;
 

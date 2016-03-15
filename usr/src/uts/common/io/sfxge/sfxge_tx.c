@@ -2571,7 +2571,7 @@ sfxge_tx_qfini(sfxge_t *sp, unsigned int index)
 	sp->s_tx_qcount--;
 
 	/* Free the EVQ label for events from this TXQ */
-	sfxge_ev_txlabel_free(sp, stp->st_evq, stp, stp->st_label);
+	(void) sfxge_ev_txlabel_free(sp, stp->st_evq, stp, stp->st_label);
 	stp->st_label = 0;
 
 	/* Tear down the statistics */
@@ -2823,8 +2823,9 @@ sfxge_tx_packet_add(sfxge_t *sp, mblk_t *mp)
 				 * now so we can calculate the hash.
 				 */
 				if (thp == NULL) {
-					sfxge_pkthdr_parse(mp, &etherhp, &iphp,
-					    &thp, &off, &size, &sport, &dport);
+					(void) sfxge_pkthdr_parse(mp, &etherhp,
+					    &iphp, &thp, &off, &size,
+					    &sport, &dport);
 				}
 
 				if (thp != NULL) {

@@ -464,7 +464,7 @@ ef10_phy_stats_update(
 {
 	/* TBD: no stats support in firmware yet */
 	_NOTE(ARGUNUSED(enp, esmp))
-	memset(stat, 0, EFX_PHY_NSTATS * sizeof (*stat));
+	(void) memset(stat, 0, EFX_PHY_NSTATS * sizeof (*stat));
 
 	return (0);
 }

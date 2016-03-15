@@ -205,7 +205,7 @@ efx_bootcfg_read(
 		goto fail5;
 	}
 	if (sector_length > size) {
-		memcpy(data, payload, used_bytes);
+		(void) memcpy(data, payload, used_bytes);
 		EFSYS_KMEM_FREE(enp->en_esip, sector_length, payload);
 	}
 
@@ -300,7 +300,7 @@ efx_bootcfg_write(
 		/* Fill chunk */
 		(void) memset(chunk, 0x0, chunk_length);
 		if (offset < used_bytes)
-			memcpy(chunk, data + offset,
+			(void) memcpy(chunk, data + offset,
 			    MIN(remaining, used_bytes - offset));
 
 		/* Adjust checksum */

@@ -355,8 +355,8 @@ efx_mcdi_rss_context_set_key(
 		goto fail2;
 	}
 
-	memcpy(MCDI_IN2(req, uint8_t, RSS_CONTEXT_SET_KEY_IN_TOEPLITZ_KEY),
-	    key, n);
+	(void) memcpy(MCDI_IN2(req, uint8_t,
+	    RSS_CONTEXT_SET_KEY_IN_TOEPLITZ_KEY), key, n);
 
 	efx_mcdi_execute(enp, &req);
 

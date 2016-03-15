@@ -157,7 +157,7 @@ siena_mcdi_read_response(
 	for (pos = 0; pos < length; pos += sizeof (efx_dword_t)) {
 		EFX_BAR_TBL_READD(enp, FR_CZ_MC_TREG_SMEM,
 		    pdur + ((offset + pos) >> 2), &data, B_FALSE);
-		memcpy((uint8_t *)bufferp + pos, &data,
+		(void) memcpy((uint8_t *)bufferp + pos, &data,
 		    MIN(sizeof (data), length - pos));
 	}
 }

@@ -187,7 +187,7 @@ efx_mcdi_filter_op_add(
 	uint32_t match_fields = 0;
 	efx_rc_t rc;
 
-	memset(payload, 0, sizeof (payload));
+	(void) memset(payload, 0, sizeof (payload));
 	req.emr_cmd = MC_CMD_FILTER_OP;
 	req.emr_in_buf = payload;
 	req.emr_in_length = MC_CMD_FILTER_OP_IN_LEN;
@@ -251,9 +251,9 @@ efx_mcdi_filter_op_add(
 		 * NOTE: Unlike most MCDI requests, the filter fields
 		 * are presented in network (big endian) byte order.
 		 */
-		memcpy(MCDI_IN2(req, uint8_t, FILTER_OP_IN_SRC_MAC),
+		(void) memcpy(MCDI_IN2(req, uint8_t, FILTER_OP_IN_SRC_MAC),
 		    spec->efs_rem_mac, EFX_MAC_ADDR_LEN);
-		memcpy(MCDI_IN2(req, uint8_t, FILTER_OP_IN_DST_MAC),
+		(void) memcpy(MCDI_IN2(req, uint8_t, FILTER_OP_IN_DST_MAC),
 		    spec->efs_loc_mac, EFX_MAC_ADDR_LEN);
 
 		MCDI_IN_SET_WORD(req, FILTER_OP_IN_SRC_PORT,
@@ -278,10 +278,10 @@ efx_mcdi_filter_op_add(
 		EFX_STATIC_ASSERT(sizeof (spec->efs_loc_host) ==
 		    MC_CMD_FILTER_OP_IN_DST_IP_LEN);
 
-		memcpy(MCDI_IN2(req, uint8_t, FILTER_OP_IN_SRC_IP),
+		(void) memcpy(MCDI_IN2(req, uint8_t, FILTER_OP_IN_SRC_IP),
 		    &spec->efs_rem_host.eo_byte[0],
 		    MC_CMD_FILTER_OP_IN_SRC_IP_LEN);
-		memcpy(MCDI_IN2(req, uint8_t, FILTER_OP_IN_DST_IP),
+		(void) memcpy(MCDI_IN2(req, uint8_t, FILTER_OP_IN_DST_IP),
 		    &spec->efs_loc_host.eo_byte[0],
 		    MC_CMD_FILTER_OP_IN_DST_IP_LEN);
 	}
@@ -325,7 +325,7 @@ efx_mcdi_filter_op_delete(
 			    MC_CMD_FILTER_OP_OUT_LEN)];
 	efx_rc_t rc;
 
-	memset(payload, 0, sizeof (payload));
+	(void) memset(payload, 0, sizeof (payload));
 	req.emr_cmd = MC_CMD_FILTER_OP;
 	req.emr_in_buf = payload;
 	req.emr_in_length = MC_CMD_FILTER_OP_IN_LEN;
@@ -919,7 +919,7 @@ efx_mcdi_get_parser_disp_info(
 		goto fail2;
 	}
 
-	memcpy(list,
+	(void) memcpy(list,
 	    MCDI_OUT2(req,
 	    void,
 	    GET_PARSER_DISP_INFO_OUT_SUPPORTED_MATCHES),
@@ -992,7 +992,8 @@ ef10_filter_insert_unicast(
 	efx_filter_spec_init_rx(&spec, EFX_FILTER_PRI_AUTO,
 	    filter_flags,
 	    eftp->eft_default_rxq);
-	efx_filter_spec_set_eth_local(&spec, EFX_FILTER_SPEC_VID_UNSPEC, addr);
+	(void) efx_filter_spec_set_eth_local(&spec, EFX_FILTER_SPEC_VID_UNSPEC,
+	    addr);
 
 	rc = ef10_filter_add_internal(enp, &spec, B_TRUE,
 	    &eftp->eft_unicst_filter_indexes[eftp->eft_unicst_filter_count]);
@@ -1023,7 +1024,7 @@ ef10_filter_insert_all_unicast(
 	efx_filter_spec_init_rx(&spec, EFX_FILTER_PRI_AUTO,
 	    filter_flags,
 	    eftp->eft_default_rxq);
-	efx_filter_spec_set_uc_def(&spec);
+	(void) efx_filter_spec_set_uc_def(&spec);
 	rc = ef10_filter_add_internal(enp, &spec, B_TRUE,
 	    &eftp->eft_unicst_filter_indexes[eftp->eft_unicst_filter_count]);
 	if (rc != 0)
@@ -1076,7 +1077,7 @@ ef10_filter_insert_multicast_list(
 		    filter_flags,
 		    eftp->eft_default_rxq);
 
-		efx_filter_spec_set_eth_local(&spec,
+		(void) efx_filter_spec_set_eth_local(&spec,
 		    EFX_FILTER_SPEC_VID_UNSPEC,
 		    &addrs[i * EFX_MAC_ADDR_LEN]);
 
@@ -1101,7 +1102,8 @@ ef10_filter_insert_multicast_list(
 		    eftp->eft_default_rxq);
 
 		EFX_MAC_BROADCAST_ADDR_SET(addr);
-		efx_filter_spec_set_eth_local(&spec, EFX_FILTER_SPEC_VID_UNSPEC,
+		(void) efx_filter_spec_set_eth_local(&spec,
+		    EFX_FILTER_SPEC_VID_UNSPEC,
 		    addr);
 
 		rc = ef10_filter_add_internal(enp, &spec, B_TRUE,
@@ -1150,7 +1152,7 @@ ef10_filter_insert_all_multicast(
 	efx_filter_spec_init_rx(&spec, EFX_FILTER_PRI_AUTO,
 	    filter_flags,
 	    eftp->eft_default_rxq);
-	efx_filter_spec_set_mc_def(&spec);
+	(void) efx_filter_spec_set_mc_def(&spec);
 
 	rc = ef10_filter_add_internal(enp, &spec, B_TRUE,
 	    &eftp->eft_mulcst_filter_indexes[0]);

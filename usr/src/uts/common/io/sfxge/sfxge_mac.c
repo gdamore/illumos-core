@@ -699,7 +699,7 @@ sfxge_mac_link_update_locked(sfxge_t *sp, efx_link_mode_t mode)
 	duplex = (smp->sm_link_duplex == SFXGE_LINK_DUPLEX_FULL) ?
 	    "full" : "half";
 	change = (smp->sm_link_up) ? "UP" : "DOWN";
-	snprintf(info, sizeof (info), ": now %dMbps %s duplex",
+	(void) snprintf(info, sizeof (info), ": now %dMbps %s duplex",
 	    smp->sm_link_speed, duplex);
 
 	dev_err(sp->s_dip, CE_NOTE, SFXGE_CMN_ERR "Link %s%s",

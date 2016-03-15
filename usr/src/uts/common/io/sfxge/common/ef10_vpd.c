@@ -157,10 +157,10 @@ ef10_vpd_read(
 		rc = ENOSPC;
 		goto fail2;
 	}
-	memcpy(data, dvpd, dvpd_size);
+	(void) memcpy(data, dvpd, dvpd_size);
 
 	/* Pad data with all-1s, consistent with update operations */
-	memset(data + dvpd_size, 0xff, size - dvpd_size);
+	(void) memset(data + dvpd_size, 0xff, size - dvpd_size);
 
 	EFSYS_KMEM_FREE(enp->en_esip, dvpd_size, dvpd);
 
@@ -320,7 +320,7 @@ ef10_vpd_get(
 		    enp->en_arch.ef10.ena_svpd_length, evvp->evv_tag,
 		    evvp->evv_keyword, &offset, &length)) == 0) {
 			evvp->evv_length = length;
-			memcpy(evvp->evv_value,
+			(void) memcpy(evvp->evv_value,
 			    enp->en_arch.ef10.ena_svpd + offset, length);
 			return (0);
 		} else if (rc != ENOENT)
@@ -333,7 +333,7 @@ ef10_vpd_get(
 		goto fail2;
 
 	evvp->evv_length = length;
-	memcpy(evvp->evv_value, data + offset, length);
+	(void) memcpy(evvp->evv_value, data + offset, length);
 
 	return (0);
 

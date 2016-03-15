@@ -281,7 +281,7 @@ efx_filter_spec_init_rx(
 	EFSYS_ASSERT((flags & ~(EFX_FILTER_FLAG_RX_RSS |
 				EFX_FILTER_FLAG_RX_SCATTER)) == 0);
 
-	memset(spec, 0, sizeof (*spec));
+	(void) memset(spec, 0, sizeof (*spec));
 	spec->efs_priority = priority;
 	spec->efs_flags = EFX_FILTER_FLAG_RX | flags;
 	spec->efs_rss_context = EFX_FILTER_SPEC_RSS_CONTEXT_DEFAULT;
@@ -296,7 +296,7 @@ efx_filter_spec_init_tx(
 	EFSYS_ASSERT3P(spec, !=, NULL);
 	EFSYS_ASSERT3P(etp, !=, NULL);
 
-	memset(spec, 0, sizeof (*spec));
+	(void) memset(spec, 0, sizeof (*spec));
 	spec->efs_priority = EFX_FILTER_PRI_REQUIRED;
 	spec->efs_flags = EFX_FILTER_FLAG_TX;
 	spec->efs_dmaq_id = (uint16_t)etp->et_index;
@@ -373,7 +373,7 @@ efx_filter_spec_set_eth_local(
 	}
 	if (addr != NULL) {
 		spec->efs_match_flags |= EFX_FILTER_MATCH_LOC_MAC;
-		memcpy(spec->efs_loc_mac, addr, EFX_MAC_ADDR_LEN);
+		(void) memcpy(spec->efs_loc_mac, addr, EFX_MAC_ADDR_LEN);
 	}
 	return (0);
 }
@@ -1009,11 +1009,11 @@ siena_filter_clear_entry(
 		siena_filter_clear_used(sftp, index);
 
 		EFX_ZERO_OWORD(filter);
-		siena_filter_push_entry(enp,
+		(void) siena_filter_push_entry(enp,
 		    sftp->sft_spec[index].sfs_type,
 		    index, &filter);
 
-		memset(&sftp->sft_spec[index],
+		(void) memset(&sftp->sft_spec[index],
 		    0, sizeof (sftp->sft_spec[0]));
 	}
 }
@@ -1103,7 +1103,7 @@ siena_filter_init(
 			rc = ENOMEM;
 			goto fail4;
 		}
-		memset(sftp->sft_spec, 0,
+		(void) memset(sftp->sft_spec, 0,
 		    sftp->sft_size * sizeof (*sftp->sft_spec));
 	}
 
@@ -1276,7 +1276,7 @@ siena_filter_add(
 			siena_filter_push_rx_limits(enp);
 	}
 
-	siena_filter_push_entry(enp, sf_spec.sfs_type,
+	(void) siena_filter_push_entry(enp, sf_spec.sfs_type,
 	    filter_idx, &filter);
 
 	EFSYS_UNLOCK(enp->en_eslp, state);
@@ -1382,7 +1382,7 @@ siena_filter_supported_filters(
 	EFSYS_ASSERT3U(index, <=, MAX_SUPPORTED);
 
 	*length = index;
-	memcpy(list, rx_matches, *length);
+	(void) memcpy(list, rx_matches, *length);
 
 	return (0);
 

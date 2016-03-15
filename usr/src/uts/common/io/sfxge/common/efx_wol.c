@@ -170,7 +170,8 @@ efx_wol_filter_add(
 			}
 		}
 
-		memcpy(MCDI_IN2(req, uint8_t, WOL_FILTER_SET_IN_BITMAP_BITMAP),
+		(void) memcpy(MCDI_IN2(req, uint8_t,
+		    WOL_FILTER_SET_IN_BITMAP_BITMAP),
 		    paramp->ewp_bitmap.value,
 		    sizeof (paramp->ewp_bitmap.value));
 
@@ -303,11 +304,12 @@ efx_lightsout_offload_add(
 		EFX_MAC_ADDR_COPY(MCDI_IN2(req, uint8_t,
 					    ADD_LIGHTSOUT_OFFLOAD_IN_NS_MAC),
 				    paramp->elop_ns.mac_addr);
-		memcpy(MCDI_IN2(req, uint8_t,
+		(void) memcpy(MCDI_IN2(req, uint8_t,
 		    ADD_LIGHTSOUT_OFFLOAD_IN_NS_SNIPV6),
 		    paramp->elop_ns.solicited_node,
 		    sizeof (paramp->elop_ns.solicited_node));
-		memcpy(MCDI_IN2(req, uint8_t, ADD_LIGHTSOUT_OFFLOAD_IN_NS_IPV6),
+		(void) memcpy(MCDI_IN2(req, uint8_t,
+		    ADD_LIGHTSOUT_OFFLOAD_IN_NS_IPV6),
 		    paramp->elop_ns.ip, sizeof (paramp->elop_ns.ip));
 		break;
 	default:

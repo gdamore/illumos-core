@@ -525,7 +525,7 @@ efx_mcdi_nvram_partitions(
 
 	*npartnp = npartn;
 
-	memcpy(data,
+	(void) memcpy(data,
 	    MCDI_OUT2(req, void, NVRAM_PARTITIONS_OUT_TYPE_ID),
 	    (npartn * sizeof (uint32_t)));
 
@@ -611,7 +611,7 @@ efx_mcdi_nvram_metadata(
 				goto fail3;
 			}
 
-			memcpy(descp, MCDI_OUT2(req, char,
+			(void) memcpy(descp, MCDI_OUT2(req, char,
 				NVRAM_METADATA_OUT_DESCRIPTION),
 			    desclen);
 
@@ -770,7 +770,7 @@ efx_mcdi_nvram_read(
 		goto fail2;
 	}
 
-	memcpy(data,
+	(void) memcpy(data,
 	    MCDI_OUT2(req, uint8_t, NVRAM_READ_OUT_READ_BUFFER),
 	    size);
 
@@ -863,7 +863,7 @@ efx_mcdi_nvram_write(
 	MCDI_IN_SET_DWORD(req, NVRAM_WRITE_IN_OFFSET, offset);
 	MCDI_IN_SET_DWORD(req, NVRAM_WRITE_IN_LENGTH, size);
 
-	memcpy(MCDI_IN2(req, uint8_t, NVRAM_WRITE_IN_WRITE_BUFFER),
+	(void) memcpy(MCDI_IN2(req, uint8_t, NVRAM_WRITE_IN_WRITE_BUFFER),
 	    data, size);
 
 	efx_mcdi_execute(enp, &req);
