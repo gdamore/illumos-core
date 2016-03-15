@@ -330,9 +330,6 @@ sfxge_mac_init(sfxge_t *sp)
 	sfxge_dma_buffer_attr_t dma_attr;
 	const efx_nic_cfg_t *encp;
 	unsigned char *bytes;
-	char buf[8];	/* sufficient for "true" or "false" plus NULL */
-	char name[MAXNAMELEN];
-	int *ints;
 	unsigned int n;
 	int err, rc;
 
@@ -352,10 +349,7 @@ sfxge_mac_init(sfxge_t *sp)
 	cv_init(&(smp->sm_link_poll_kv), NULL, CV_DRIVER, NULL);
 
 	/* Create link poll taskq */
-	(void) snprintf(name, MAXNAMELEN - 1, "%s_mac_tq",
-	    ddi_driver_name(dip));
-	smp->sm_tqp = ddi_taskq_create(dip, name, 1, TASKQ_DEFAULTPRI,
-	    DDI_SLEEP);
+	smp->sm_tqp = ddi_taskq_create(dip, "mac_tq", 1, TASKQ_DEFAULTPRI, 0);
 	if (smp->sm_tqp == NULL) {
 		rc = ENOMEM;
 		goto fail1;
@@ -384,14 +378,10 @@ sfxge_mac_init(sfxge_t *sp)
 	 * Determine the 'burnt-in' MAC address:
 	 *
 	 * A: if the "mac-address" property is set on our device node use that.
-	 * B: otherwise, if the system property "local-mac-address?" is set to
-	 *    "false" then we use the system MAC address.
-	 * C: otherwise, if the "local-mac-address" property is set on our
-	 *    device node use that.
-	 * D: otherwise, use the value from NVRAM.
+	 * B: otherwise, use the value from NVRAM.
 	 */
 
-	/* A */
+	/* A: property  */
 	err = ddi_prop_lookup_byte_array(DDI_DEV_T_ANY, dip, DDI_PROP_DONTPASS,
 	    "mac-address", &bytes, &n);
 	switch (err) {
@@ -408,61 +398,7 @@ sfxge_mac_init(sfxge_t *sp)
 		break;
 	}
 
-	/* B */
-	n = sizeof (buf);
-	bzero(buf, n--);
-	(void) ddi_getlongprop_buf(DDI_DEV_T_ANY, dip, DDI_PROP_CANSLEEP,
-	    "local-mac-address?", buf, (int *)&n);
-
-	if (strcmp(buf, "false") == 0) {
-		struct ether_addr addr;
-
-		if (localetheraddr(NULL, &addr) != 0) {
-			bcopy((uint8_t *)&addr, smp->sm_bia, ETHERADDRL);
-			goto done;
-		}
-	}
-
-	/*
-	 * C
-	 *
-	 * NOTE: "local-mac_address" maybe coded as an integer or byte array.
-	 */
-	err = ddi_prop_lookup_int_array(DDI_DEV_T_ANY, dip, DDI_PROP_DONTPASS,
-	    "local-mac-address", &ints, &n);
-	switch (err) {
-	case DDI_PROP_SUCCESS:
-		if (n == ETHERADDRL) {
-			while (n-- != 0)
-				smp->sm_bia[n] = ints[n] & 0xff;
-
-			goto done;
-		}
-
-		ddi_prop_free(ints);
-		break;
-
-	default:
-		break;
-	}
-
-	err = ddi_prop_lookup_byte_array(DDI_DEV_T_ANY, dip, DDI_PROP_DONTPASS,
-	    "local-mac-address", &bytes, &n);
-	switch (err) {
-	case DDI_PROP_SUCCESS:
-		if (n == ETHERADDRL) {
-			bcopy(bytes, smp->sm_bia, ETHERADDRL);
-			goto done;
-		}
-
-		ddi_prop_free(bytes);
-		break;
-
-	default:
-		break;
-	}
-
-	/* D */
+	/* B: NVRAM */
 	bcopy(encp->enc_mac_addr, smp->sm_bia, ETHERADDRL);
 
 done:

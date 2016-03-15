@@ -88,7 +88,6 @@ sfxge_create(dev_info_t *dip, sfxge_t **spp)
 	int instance = ddi_get_instance(dip);
 	sfxge_t *sp;
 	efx_nic_t *enp;
-	char name[MAXNAMELEN];
 	unsigned int rxq_size;
 	int rxq_poll_usec;
 	int rc;
@@ -106,7 +105,7 @@ sfxge_create(dev_info_t *dip, sfxge_t **spp)
 
 	sp->s_dip = dip;
 
-	mutex_init(&(sp->s_state_lock), "", MUTEX_DRIVER, NULL);
+	mutex_init(&(sp->s_state_lock), NULL, MUTEX_DRIVER, NULL);
 	sp->s_state = SFXGE_UNINITIALIZED;
 
 	/* Get property values */
@@ -136,8 +135,7 @@ sfxge_create(dev_info_t *dip, sfxge_t **spp)
 #endif
 
 	/* Create a taskq */
-	(void) snprintf(name, MAXNAMELEN - 1, "%s_tq", ddi_driver_name(dip));
-	sp->s_tqp = ddi_taskq_create(dip, name, 1, TASKQ_DEFAULTPRI, DDI_SLEEP);
+	sp->s_tqp = ddi_taskq_create(dip, "tq", 1, TASKQ_DEFAULTPRI, 0);
 	if (sp->s_tqp == NULL) {
 		rc = ENOMEM;
 		goto fail2;
@@ -210,9 +208,9 @@ sfxge_create(dev_info_t *dip, sfxge_t **spp)
 	if ((rc = sfxge_mon_init(sp)) != 0)
 		goto fail16;
 
-	mutex_init(&(sp->s_tx_flush_lock), "", MUTEX_DRIVER,
+	mutex_init(&(sp->s_tx_flush_lock), NULL, MUTEX_DRIVER,
 	    DDI_INTR_PRI(sp->s_intr.si_intr_pri));
-	cv_init(&(sp->s_tx_flush_kv), "", CV_DRIVER, NULL);
+	cv_init(&(sp->s_tx_flush_kv), NULL, CV_DRIVER, NULL);
 
 	sp->s_state = SFXGE_INITIALIZED;
 
