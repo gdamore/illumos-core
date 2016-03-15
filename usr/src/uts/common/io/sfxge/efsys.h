@@ -162,7 +162,7 @@ typedef struct efsys_mem_s {
 
 #define	EFSYS_MEM_ZERO(_esmp, _size)					\
 	do {								\
-		(void) memset((_esmp)->esm_base, 0, (_size));		\
+		(void) bzero((_esmp)->esm_base, (_size));		\
 									\
 	_NOTE(CONSTANTCONDITION)					\
 	} while (B_FALSE)

@@ -398,7 +398,7 @@ sfxge_intr_nic_enable(sfxge_t *sp)
 	int rc;
 
 	/* Zero the memory */
-	(void) memset(esmp->esm_base, 0, EFX_INTR_SIZE);
+	bzero(esmp->esm_base, EFX_INTR_SIZE);
 
 	/* Enable interrupts at the NIC */
 	if ((rc = efx_intr_init(enp, sip->si_type, esmp)) != 0)

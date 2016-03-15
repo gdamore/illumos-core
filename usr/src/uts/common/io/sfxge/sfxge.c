@@ -942,7 +942,7 @@ _sfxge_vpd_kstat_init(sfxge_t *sp, caddr_t vpd, size_t size, efx_vpd_tag_t tag,
 
 	if (efx_vpd_get(enp, vpd, size, evvp) != 0) {
 		evvp->evv_length = strlen(unknown) + 1;
-		memcpy(evvp->evv_value, unknown, evvp->evv_length);
+		bcopy(unknown, evvp->evv_value, evvp->evv_length);
 	}
 
 	knp = &(svkp->svk_stat[type]);

@@ -1179,7 +1179,7 @@ sfxge_tx_qstart(sfxge_t *sp, unsigned int index)
 	ASSERT3U(sep->se_state, ==, SFXGE_EVQ_STARTED);
 
 	/* Zero the memory */
-	(void) memset(esmp->esm_base, 0, EFX_TXQ_SIZE(SFXGE_TX_NDESCS));
+	bzero(esmp->esm_base, EFX_TXQ_SIZE(SFXGE_TX_NDESCS));
 
 	/* Program the buffer table */
 	if ((rc = sfxge_sram_buf_tbl_set(sp, stp->st_id, esmp,
