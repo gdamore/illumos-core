@@ -42,21 +42,15 @@ extern "C" {
 #include <sys/ethernet.h>
 #include <sys/cpuvar.h>
 
-#ifdef _USE_GLD_V3
 #include <sys/mac.h>
 #include <sys/mac_ether.h>
 #include <sys/mac_provider.h>
-#endif
 
 #include "sfxge_ioc.h"
 #include "sfxge_debug.h"
 
 #include "efx.h"
 #include "efx_regs.h"
-
-#if defined(_USE_MAC_PRIV_PROP) && !defined(_USE_GLD_V3_PROPS)
-#error "The _USE_MAC_PRIV_PROP build option is dependent on _USE_GLD_V3_PROPS"
-#endif
 
 #ifdef	_KERNEL
 
@@ -701,17 +695,6 @@ typedef struct sfxge_rx_scale_s {
 } sfxge_rx_scale_t;
 
 
-#if defined(_USE_GLD_V3_SOL10)
-typedef struct sfxge_ndd_param_s {
-	sfxge_t		*snp_sp;
-	unsigned int	snp_id;
-	const char	*snp_name;
-	int		(*snp_get)(queue_t *, mblk_t *, caddr_t, cred_t *);
-	int		(*snp_set)(queue_t *, mblk_t *, char *, caddr_t,
-	    cred_t *);
-} sfxge_ndd_param_t;
-
-#endif
 typedef enum sfxge_rx_coalesce_mode_e {
 	SFXGE_RX_COALESCE_OFF = 0,
 	SFXGE_RX_COALESCE_DISALLOW_PUSH = 1,
@@ -822,20 +805,10 @@ struct sfxge_s {
 	kstat_t				*s_cfg_ksp;
 	size_t				s_mtu;
 	int				s_rxq_poll_usec;
-#ifdef _USE_GLD_V3
 	mac_callbacks_t			s_mc;
 	mac_handle_t			s_mh;
-#ifdef _USE_MAC_PRIV_PROP
 	sfxge_mac_priv_prop_t		*s_mac_priv_props;
 	int				s_mac_priv_props_alloc;
-#endif
-#endif
-#if defined(_USE_GLD_V3)
-	sfxge_ndd_param_t		*s_ndp;
-	kstat_named_t			*s_nd_stat;
-	caddr_t				s_ndh;
-	kstat_t				*s_nd_ksp;
-#endif
 	volatile uint32_t		s_nested_restarts;
 	uint32_t			s_num_restarts;
 	uint32_t			s_num_restarts_hw_err;
@@ -882,9 +855,6 @@ extern void			sfxge_gld_rx_post(sfxge_t *, unsigned int,
 extern void			sfxge_gld_rx_push(sfxge_t *);
 extern int			sfxge_gld_register(sfxge_t *);
 extern int			sfxge_gld_unregister(sfxge_t *);
-
-extern int			sfxge_gld_nd_register(sfxge_t *);
-extern void			sfxge_gld_nd_unregister(sfxge_t *);
 
 extern int			sfxge_dma_buffer_create(efsys_mem_t *,
     const sfxge_dma_buffer_attr_t *);

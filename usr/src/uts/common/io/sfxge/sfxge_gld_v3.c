@@ -28,8 +28,6 @@
  * policies, either expressed or implied, of the FreeBSD Project.
  */
 
-#ifdef _USE_GLD_V3
-
 #include <sys/types.h>
 #include <sys/ddi.h>
 #include <sys/sunddi.h>
@@ -37,9 +35,6 @@
 #include <sys/strsun.h>
 #include <sys/strsubr.h>
 #include <sys/dlpi.h>
-#ifndef _USE_GLD_V3_SOL10
-#include <sys/dld.h>
-#endif
 #include <sys/ksynch.h>
 #include <sys/cpuvar.h>
 #include <sys/cpu.h>
@@ -47,11 +42,6 @@
 #include <inet/tcp.h>
 
 #include "sfxge.h"
-
-#ifndef MAC_VERSION_V1
-/* GLDv3 interface version for sol10 (u8/u9) */
-#define	MAC_VERSION_V1 MAC_VERSION
-#endif
 
 /* A vlan tag is 4 bytes */
 #define	SFXGE_VLAN_TAGSZ 4
@@ -169,16 +159,12 @@ sfxge_gld_getstat(void *arg, unsigned int id, uint64_t *valp)
 		break;
 	}
 
-#ifdef ETHER_STAT_CAP_40GFDX
 	case ETHER_STAT_CAP_40GFDX:
 		*valp = sfxge_phy_dfl_cap_test64(sp, EFX_PHY_CAP_40000FDX);
 		break;
-#endif
-#ifdef ETHER_STAT_CAP_10GFDX
 	case ETHER_STAT_CAP_10GFDX:
 		*valp = sfxge_phy_dfl_cap_test64(sp, EFX_PHY_CAP_10000FDX);
 		break;
-#endif
 	case ETHER_STAT_CAP_1000FDX:
 		*valp = sfxge_phy_dfl_cap_test64(sp, EFX_PHY_CAP_1000FDX);
 		break;
@@ -206,17 +192,12 @@ sfxge_gld_getstat(void *arg, unsigned int id, uint64_t *valp)
 	case ETHER_STAT_CAP_AUTONEG:
 		*valp = sfxge_phy_dfl_cap_test64(sp, EFX_PHY_CAP_AN);
 		break;
-
-#ifdef ETHER_STAT_ADV_CAP_40GFDX
 	case ETHER_STAT_ADV_CAP_40GFDX:
 		*valp = sfxge_phy_cur_cap_test64(sp, EFX_PHY_CAP_40000FDX);
 		break;
-#endif
-#ifdef ETHER_STAT_ADV_CAP_10GFDX
 	case ETHER_STAT_ADV_CAP_10GFDX:
 		*valp = sfxge_phy_cur_cap_test64(sp, EFX_PHY_CAP_10000FDX);
 		break;
-#endif
 	case ETHER_STAT_ADV_CAP_1000FDX:
 		*valp = sfxge_phy_cur_cap_test64(sp, EFX_PHY_CAP_1000FDX);
 		break;
@@ -244,17 +225,12 @@ sfxge_gld_getstat(void *arg, unsigned int id, uint64_t *valp)
 	case ETHER_STAT_ADV_CAP_AUTONEG:
 		*valp = sfxge_phy_cur_cap_test64(sp, EFX_PHY_CAP_AN);
 		break;
-
-#ifdef ETHER_STAT_LP_CAP_40GFDX
 	case ETHER_STAT_LP_CAP_40GFDX:
 		*valp = sfxge_phy_lp_cap_test64(sp, EFX_PHY_CAP_40000FDX);
 		break;
-#endif
-#ifdef ETHER_STAT_LP_CAP_10GFDX
 	case ETHER_STAT_LP_CAP_10GFDX:
 		*valp = sfxge_phy_lp_cap_test64(sp, EFX_PHY_CAP_10000FDX);
 		break;
-#endif
 	case ETHER_STAT_LP_CAP_1000FDX:
 		*valp = sfxge_phy_lp_cap_test64(sp, EFX_PHY_CAP_1000FDX);
 		break;
@@ -438,23 +414,8 @@ static void
 sfxge_gld_ioctl(void *arg, queue_t *wq, mblk_t *mp)
 {
 	sfxge_t *sp = arg;
-	struct iocblk *iocp = (void *)mp->b_rptr;
 
-	switch (iocp->ioc_cmd) {
-#ifdef _USE_NDD_PROPS
-	case ND_GET:
-	case ND_SET:
-		if (!nd_getset(wq, sp->s_ndh, mp))
-			miocnak(wq, mp, 0, EINVAL);
-		else
-			qreply(wq, mp);
-		break;
-#endif
-
-	default:
-		sfxge_ioctl(sp, wq, mp);
-		break;
-	}
+	sfxge_ioctl(sp, wq, mp);
 }
 
 
@@ -530,8 +491,6 @@ fail1:
 
 	return (B_FALSE);
 }
-
-#ifdef _USE_MAC_PRIV_PROP
 
 /*
  * GLDv3 driver-private property names must be preceded by an underscore - see
@@ -775,10 +734,8 @@ sfxge_gld_priv_prop_fini(sfxge_t *sp)
 	    sp->s_mac_priv_props_alloc);
 	sp->s_mac_priv_props = NULL;
 }
-#endif /* _USE_MAC_PRIV_PROP */
 
 
-#ifdef _USE_GLD_V3_PROPS
 static int
 sfxge_gld_getprop(void *arg, const char *name, mac_prop_id_t id,
     unsigned int size, void *valp)
@@ -817,10 +774,8 @@ sfxge_gld_getprop(void *arg, const char *name, mac_prop_id_t id,
 		break;
 	case MAC_PROP_EN_AUTONEG:
 	case MAC_PROP_AUTONEG:
-#ifdef MAC_PROP_EN_40GFDX_CAP
 	case MAC_PROP_EN_40GFDX_CAP:
 	case MAC_PROP_ADV_40GFDX_CAP:
-#endif
 	case MAC_PROP_EN_10GFDX_CAP:
 	case MAC_PROP_ADV_10GFDX_CAP:
 	case MAC_PROP_EN_1000FDX_CAP:
@@ -840,11 +795,9 @@ sfxge_gld_getprop(void *arg, const char *name, mac_prop_id_t id,
 			goto fail1;
 		}
 		break;
-#ifdef _USE_MAC_PRIV_PROP
 	case MAC_PROP_PRIVATE:
 		/* sfxge_gld_priv_prop_get should do any size checking */
 		break;
-#endif
 	default:
 		rc = ENOTSUP;
 		goto fail1;
@@ -899,12 +852,10 @@ sfxge_gld_getprop(void *arg, const char *name, mac_prop_id_t id,
 	case MAC_PROP_AUTONEG:
 		*v8 = sfxge_phy_cap_test(sp, flag, EFX_PHY_CAP_AN, NULL);
 		break;
-#ifdef MAC_PROP_EN_40GFDX_CPA
 	case MAC_PROP_EN_40GFDX_CAP:
 	case MAC_PROP_ADV_40GFDX_CAP:
 		*v8 = sfxge_phy_cap_test(sp, flag, EFX_PHY_CAP_40000FDX, NULL);
 		break;
-#endif
 	case MAC_PROP_EN_10GFDX_CAP:
 	case MAC_PROP_ADV_10GFDX_CAP:
 		*v8 = sfxge_phy_cap_test(sp, flag, EFX_PHY_CAP_10000FDX, NULL);
@@ -965,12 +916,10 @@ sfxge_gld_getprop(void *arg, const char *name, mac_prop_id_t id,
 		}
 		break;
 	}
-#ifdef _USE_MAC_PRIV_PROP
 	case MAC_PROP_PRIVATE:
 		if ((rc = sfxge_gld_priv_prop_get(sp, name, size, valp)) != 0)
 			goto fail2;
 		break;
-#endif
 	default:
 		rc = ENOTSUP;
 		goto fail3;
@@ -981,20 +930,16 @@ sfxge_gld_getprop(void *arg, const char *name, mac_prop_id_t id,
 fail3:
 	DTRACE_PROBE(fail3);
 
-#ifdef _USE_MAC_PRIV_PROP
 fail2:
 	DTRACE_PROBE(fail2);
-#endif
 
 fail1:
 	DTRACE_PROBE1(fail1, int, rc);
 
 	return (rc);
 }
-#endif
 
 
-#ifdef _USE_GLD_V3_PROPS
 static int
 sfxge_gld_setprop(void *arg, const char *name, mac_prop_id_t id,
     unsigned int size, const void *valp)
@@ -1013,9 +958,7 @@ sfxge_gld_setprop(void *arg, const char *name, mac_prop_id_t id,
 	 */
 	case MAC_PROP_AUTONEG:
 	case MAC_PROP_EN_AUTONEG:
-#ifdef MAC_PROP_EN_40GFDX_CAP
 	case MAC_PROP_EN_40GFDX_CAP:
-#endif
 	case MAC_PROP_EN_10GFDX_CAP:
 	case MAC_PROP_EN_1000FDX_CAP:
 	case MAC_PROP_EN_1000HDX_CAP:
@@ -1040,11 +983,9 @@ sfxge_gld_setprop(void *arg, const char *name, mac_prop_id_t id,
 			goto fail1;
 		}
 		break;
-#ifdef _USE_MAC_PRIV_PROP
 	case MAC_PROP_PRIVATE:
 		/* sfxge_gld_priv_prop_set should do any size checking */
 		break;
-#endif
 	default:
 		rc = ENOTSUP;
 		goto fail1;
@@ -1060,12 +1001,10 @@ sfxge_gld_setprop(void *arg, const char *name, mac_prop_id_t id,
 		if ((rc = sfxge_phy_cap_set(sp, EFX_PHY_CAP_AN, v8)) != 0)
 			goto fail2;
 		break;
-#ifdef MAC_PROP_EN_40GFDX_CAP
 	case MAC_PROP_EN_40GFDX_CAP:
 		if ((rc = sfxge_phy_cap_set(sp, EFX_PHY_CAP_40000FDX, v8)) != 0)
 			goto fail2;
 		break;
-#endif
 	case MAC_PROP_EN_10GFDX_CAP: {
 		if ((rc = sfxge_phy_cap_set(sp, EFX_PHY_CAP_10000FDX, v8)) != 0)
 			goto fail2;
@@ -1147,13 +1086,11 @@ sfxge_gld_setprop(void *arg, const char *name, mac_prop_id_t id,
 
 		break;
 	}
-#ifdef _USE_MAC_PRIV_PROP
 	case MAC_PROP_PRIVATE:
 		if ((rc = sfxge_gld_priv_prop_set(sp, name, size, valp)) != 0)
 			goto fail4;
 
 		break;
-#endif
 	default:
 		rc = ENOTSUP;
 		goto fail5;
@@ -1164,10 +1101,8 @@ sfxge_gld_setprop(void *arg, const char *name, mac_prop_id_t id,
 fail5:
 	DTRACE_PROBE(fail5);
 
-#ifdef _USE_MAC_PRIV_PROP
 fail4:
 	DTRACE_PROBE(fail4);
-#endif
 
 fail3:
 	DTRACE_PROBE(fail3);
@@ -1180,9 +1115,7 @@ fail1:
 
 	return (rc);
 }
-#endif
 
-#ifdef _USE_GLD_V3_PROPS
 static void
 sfxge_gld_propinfo(void *arg, const char *name, mac_prop_id_t id,
     mac_prop_info_handle_t handle)
@@ -1212,11 +1145,9 @@ sfxge_gld_propinfo(void *arg, const char *name, mac_prop_id_t id,
 			mac_prop_info_set_default_uint32(handle, mtu_default);
 			return;
 			}
-#ifdef _USE_MAC_PRIV_PROP
 		case MAC_PROP_PRIVATE:
 			sfxge_gld_priv_prop_info(sp, name, handle);
 			return;
-#endif
 		case MAC_PROP_EN_AUTONEG:
 		case MAC_PROP_AUTONEG:
 			phy_cap = EFX_PHY_CAP_AN;
@@ -1265,7 +1196,6 @@ sfxge_gld_propinfo(void *arg, const char *name, mac_prop_id_t id,
 		mac_prop_info_set_default_uint8(handle, cap_default);
 	}
 }
-#endif
 
 int
 sfxge_gld_register(sfxge_t *sp)
@@ -1274,11 +1204,6 @@ sfxge_gld_register(sfxge_t *sp)
 	mac_register_t *mrp;
 	mac_handle_t mh;
 	int rc;
-
-#ifdef _USE_GLD_V3_SOL10
-	if ((rc = sfxge_gld_nd_register(sp)) != 0)
-		goto fail0;
-#endif
 
 	/*
 	 * NOTE: mac_register_t has additional fields in later kernels,
@@ -1329,7 +1254,6 @@ sfxge_gld_register(sfxge_t *sp)
 	mcp->mc_callbacks |= MC_GETCAPAB;
 	mcp->mc_getcapab = sfxge_gld_getcapab;
 
-#ifdef _USE_GLD_V3_PROPS
 	/* NOTE: mc_setprop, mc_getprop, mc_propinfo added in s10u9 */
 	mcp->mc_callbacks |= MC_SETPROP;
 	mcp->mc_setprop = sfxge_gld_setprop;
@@ -1339,7 +1263,6 @@ sfxge_gld_register(sfxge_t *sp)
 
 	mcp->mc_callbacks |= MC_PROPINFO;
 	mcp->mc_propinfo = sfxge_gld_propinfo;
-#endif
 
 	mrp->m_callbacks = mcp;
 
@@ -1352,15 +1275,12 @@ sfxge_gld_register(sfxge_t *sp)
 	mrp->m_min_sdu = 0;
 	mrp->m_max_sdu = sp->s_mtu;
 
-	/* NOTE: m_margin added in s10u9 */
 	mrp->m_margin = SFXGE_VLAN_TAGSZ;
 
 	/* Set up the private properties */
-#ifdef _USE_MAC_PRIV_PROP
 	/* NOTE: m_priv_props added in s10u9 */
 	mrp->m_priv_props = sp->s_mac_priv_props;
 	sfxge_gld_priv_prop_init(sp);
-#endif
 
 	/* NOTE: m_flags added in s11.0 */
 	/* NOTE: m_multicast_sdu added in s11.0 */
@@ -1387,22 +1307,14 @@ fail2:
 	/* Free the stack registration object */
 	kmem_free(mrp, sizeof (mac_register_t));
 
-#ifdef _USE_MAC_PRIV_PROP
 	/* Tear down the private properties */
 	sfxge_gld_priv_prop_fini(sp);
-#endif
 
 	/* Clear the callbacks */
 	bzero(&(sp->s_mc), sizeof (mac_callbacks_t));
 
 fail1:
 	DTRACE_PROBE1(fail1, int, rc);
-#ifdef _USE_GLD_V3_SOL10
-	sfxge_gld_nd_unregister(sp);
-
-fail0:
-	DTRACE_PROBE1(fail0, int, rc);
-#endif
 
 	return (rc);
 }
@@ -1418,13 +1330,8 @@ sfxge_gld_unregister(sfxge_t *sp)
 
 	sp->s_mh = NULL;
 
-#ifdef _USE_MAC_PRIV_PROP
 	/* Tear down the private properties */
 	sfxge_gld_priv_prop_fini(sp);
-#endif
-#ifdef _USE_GLD_V3_SOL10
-	sfxge_gld_nd_unregister(sp);
-#endif
 
 	/* Clear the callbacks */
 	bzero(&(sp->s_mc), sizeof (mac_callbacks_t));
@@ -1436,4 +1343,3 @@ fail1:
 
 	return (rc);
 }
-#endif	/* _USE_GLD_V3 */

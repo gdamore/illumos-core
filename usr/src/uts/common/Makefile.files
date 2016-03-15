@@ -2012,7 +2012,7 @@ IXGBE_OBJS =    ixgbe_82598.o ixgbe_82599.o ixgbe_api.o		\
 #	are generated from compiling the .h files.
 #
 SFXGE_OBJS =	sfxge_err.o sfxge_ev.o sfxge_hash.o sfxge_intr.o sfxge_mac.o \
-		sfxge_gld_ndd.o sfxge_gld_v3.o sfxge_mon.o sfxge_phy.o \
+		sfxge_gld_v3.o sfxge_mon.o sfxge_phy.o \
 		sfxge_sram.o sfxge_bar.o sfxge_pci.o sfxge_nvram.o \
 		sfxge_rx.o sfxge_tcp.o sfxge_tx.o sfxge_mcdi.o sfxge_vpd.o \
 		sfxge.o sfxge_dma.o \

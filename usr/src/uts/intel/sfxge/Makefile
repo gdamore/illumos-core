@@ -54,7 +54,7 @@ CFLAGS += $(CCVERBOSE)
 #
 # Driver depends on GLDv3 (mac)
 #
-LDFLAGS		+= -dy -N misc/mac -N drv/ip
+LDFLAGS		+= -dy -N misc/mac
 
 #
 # Default build targets.
