@@ -1063,9 +1063,8 @@ sfxge_rx_qpoll(void *arg)
 	if ((sep->se_state != SFXGE_EVQ_STARTED) ||
 	    (srp->sr_state != SFXGE_RXQ_STARTED) ||
 	    (!sep->se_eep)) {
-		cmn_err(CE_WARN, SFXGE_CMN_ERR
-			"[%s%d] RXQ[%d] bad state in sfxge_rx_qpoll %d %d %p",
-			ddi_driver_name(sp->s_dip), ddi_get_instance(sp->s_dip),
+		dev_err(sp->s_dip, CE_WARN, SFXGE_CMN_ERR
+			"RXQ[%d] bad state in sfxge_rx_qpoll %d %d %p",
 			index, sep->se_state, srp->sr_state, sep->se_eep);
 		return;
 	}
@@ -2038,17 +2037,15 @@ sfxge_rx_qstop(sfxge_t *sp, unsigned int index)
 		if (cv_timedwait(&(srp->sr_flush_kv), &(sep->se_lock),
 			timeout) < 0) {
 			/* Timeout waiting for successful or failed flush */
-			cmn_err(CE_NOTE,
-			    SFXGE_CMN_ERR "[%s%d] rxq[%d] flush timeout",
-			    ddi_driver_name(dip), ddi_get_instance(dip), index);
+			dev_err(dip, CE_NOTE,
+			    SFXGE_CMN_ERR "rxq[%d] flush timeout", index);
 			break;
 		}
 	}
 
 	if (srp->sr_flush == SFXGE_FLUSH_FAILED)
-		cmn_err(CE_NOTE,
-		    SFXGE_CMN_ERR "[%s%d] rxq[%d] flush failed",
-		    ddi_driver_name(dip), ddi_get_instance(dip), index);
+		dev_err(dip, CE_NOTE,
+		    SFXGE_CMN_ERR "rxq[%d] flush failed", index);
 
 	DTRACE_PROBE1(flush, sfxge_flush_state_t, srp->sr_flush);
 	srp->sr_flush = SFXGE_FLUSH_DONE;

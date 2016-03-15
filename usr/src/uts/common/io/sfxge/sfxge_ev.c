@@ -568,9 +568,8 @@ sfxge_ev_software(void *arg, uint16_t magic)
 		break;
 	}
 	default:
-		cmn_err(CE_NOTE,
-			SFXGE_CMN_ERR "[%s%d] unknown software event 0x%x",
-			ddi_driver_name(dip), ddi_get_instance(dip), magic);
+		dev_err(dip, CE_NOTE,
+			SFXGE_CMN_ERR "unknown software event 0x%x", magic);
 		break;
 	}
 
@@ -855,10 +854,8 @@ sfxge_ev_qstart(sfxge_t *sp, unsigned int index)
 			dev_info_t *dip = sp->s_dip;
 
 			DTRACE_PROBE(timeout);
-			cmn_err(CE_NOTE,
-			    SFXGE_CMN_ERR "[%s%d] evq[%d] qstart timeout",
-			    ddi_driver_name(dip), ddi_get_instance(dip),
-			    index);
+			dev_err(dip, CE_NOTE,
+			    SFXGE_CMN_ERR "evq[%d] qstart timeout", index);
 
 			rc = ETIMEDOUT;
 			goto fail6;

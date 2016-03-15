@@ -501,11 +501,11 @@ _sfxge_restart(void *arg)
 	sfxge_stop_locked(sp);
 
 	if (sp->s_hw_err && sp->s_action_on_hw_err == SFXGE_LEAVE_DEAD) {
-		cmn_err(CE_WARN, SFXGE_CMN_ERR "[%s%d] NIC error - interface is"
-		    " being left permanently DOWN per driver config",
-		    ddi_driver_name(sp->s_dip), ddi_get_instance(sp->s_dip));
+		dev_err(sp->s_dip, CE_WARN, SFXGE_CMN_ERR
+		    "NIC error - interface is"
+		    " being left permanently DOWN per driver config");
 
-		atomic_swap_32(&(sp->s_nested_restarts), 0);
+		(void) atomic_swap_32(&(sp->s_nested_restarts), 0);
 		mutex_exit(&(sp->s_state_lock));
 		return;
 	} else
@@ -516,19 +516,17 @@ _sfxge_restart(void *arg)
 		goto fail1;
 
 done:
-	atomic_swap_32(&(sp->s_nested_restarts), 0);
+	(void) atomic_swap_32(&(sp->s_nested_restarts), 0);
 	mutex_exit(&(sp->s_state_lock));
-	cmn_err(CE_WARN, SFXGE_CMN_ERR "[%s%d] NIC restart complete",
-	    ddi_driver_name(sp->s_dip), ddi_get_instance(sp->s_dip));
+	dev_err(sp->s_dip, CE_WARN, SFXGE_CMN_ERR "NIC restart complete");
 	return;
 
 fail1:
 	DTRACE_PROBE1(fail1, int, rc);
-	cmn_err(CE_WARN,
-	    SFXGE_CMN_ERR "[%s%d] FATAL ERROR: NIC restart failed rc=%d",
-	    ddi_driver_name(sp->s_dip), ddi_get_instance(sp->s_dip), rc);
+	dev_err(sp->s_dip, CE_WARN,
+	    SFXGE_CMN_ERR "FATAL ERROR: NIC restart failed rc=%d", rc);
 
-	atomic_swap_32(&(sp->s_nested_restarts), 0);
+	(void) atomic_swap_32(&(sp->s_nested_restarts), 0);
 	mutex_exit(&(sp->s_state_lock));
 }
 
@@ -551,9 +549,8 @@ sfxge_restart_dispatch(sfxge_t *sp, uint_t cflags, sfxge_hw_err_t hw_err,
 	DTRACE_PROBE2(sfxge_restart_dispatch, sfxge_hw_err_t, hw_err, char *,
 	    reason);
 
-	cmn_err(CE_WARN, SFXGE_CMN_ERR "[%s%d] NIC restart due to %s:%d",
-	    ddi_driver_name(sp->s_dip), ddi_get_instance(sp->s_dip), reason,
-	    errval);
+	dev_err(sp->s_dip, CE_WARN, SFXGE_CMN_ERR "NIC restart due to %s:%d",
+	    reason, errval);
 
 	/* If cflags == DDI_SLEEP then guaranteed to succeed */
 	return (ddi_taskq_dispatch(sp->s_tqp, _sfxge_restart, sp, cflags));
@@ -1131,20 +1128,16 @@ sfxge_attach(dev_info_t *dip, ddi_attach_cmd_t cmd)
 	switch (cmd) {
 	case DDI_ATTACH:
 		if (sp != NULL) {
-			cmn_err(CE_WARN, SFXGE_CMN_ERR
-			    "[%s%d] ATTACH for attached instance\n",
-			    ddi_driver_name(sp->s_dip),
-			    ddi_get_instance(sp->s_dip));
+			dev_err(dip, CE_WARN, SFXGE_CMN_ERR
+			    "ATTACH for attached instance");
 			return (DDI_FAILURE);
 		}
 		break;
 
 	case DDI_RESUME:
 		if (sp == NULL) {
-			cmn_err(CE_WARN, SFXGE_CMN_ERR
-			    "[%s%d] RESUME for missing instance\n",
-			    ddi_driver_name(sp->s_dip),
-			    ddi_get_instance(sp->s_dip));
+			dev_err(dip, CE_WARN, SFXGE_CMN_ERR
+			    "RESUME for missing instance");
 			return (DDI_FAILURE);
 		}
 		return (sfxge_resume(dip));
@@ -1220,20 +1213,16 @@ sfxge_detach(dev_info_t *dip, ddi_detach_cmd_t cmd)
 	switch (cmd) {
 	case DDI_DETACH:
 		if (sp == NULL) {
-			cmn_err(CE_WARN, SFXGE_CMN_ERR
-			    "[%s%d] DETACH for missing instance\n",
-			    ddi_driver_name(sp->s_dip),
-			    ddi_get_instance(sp->s_dip));
+			dev_err(dip, CE_WARN, SFXGE_CMN_ERR
+			    "DETACH for missing instance");
 			return (DDI_FAILURE);
 		}
 		break;
 
 	case DDI_SUSPEND:
 		if (sp == NULL) {
-			cmn_err(CE_WARN, SFXGE_CMN_ERR
-			    "[%s%d] SUSPEND for missing instance\n",
-			    ddi_driver_name(sp->s_dip),
-			    ddi_get_instance(sp->s_dip));
+			dev_err(dip, CE_WARN, SFXGE_CMN_ERR
+			    "SUSPEND for missing instance");
 			return (DDI_FAILURE);
 		}
 		return (sfxge_suspend(dip));
@@ -1254,10 +1243,8 @@ sfxge_detach(dev_info_t *dip, ddi_detach_cmd_t cmd)
 	 */
 	mutex_enter(&(sp->s_state_lock));
 	if (sp->s_state == SFXGE_STARTED) {
-		cmn_err(CE_WARN, SFXGE_CMN_ERR
-			    "[%s%d] STREAMS detach when STARTED\n",
-			    ddi_driver_name(sp->s_dip),
-			    ddi_get_instance(sp->s_dip));
+		dev_err(dip, CE_WARN, SFXGE_CMN_ERR
+		    "STREAMS detach when STARTED");
 		sfxge_stop_locked(sp);
 		ASSERT3U(sp->s_state, ==, SFXGE_REGISTERED);
 	}

@@ -177,8 +177,7 @@ sfxge_dma_buffer_destroy(efsys_mem_t *esmp)
 
 	rc = sfxge_dma_buffer_unbind_handle(esmp);
 	if (rc != 0) {
-		cmn_err(CE_WARN, SFXGE_CMN_ERR "ERROR: DMA Unbind failed rc=%d",
-		    rc);
+		cmn_err(CE_WARN, SFXGE_CMN_ERR "DMA Unbind failed rc=%d", rc);
 	}
 	sfxge_dma_buffer_mem_free(esmp);
 	sfxge_dma_buffer_handle_free(&(esmp->esm_dma_handle));

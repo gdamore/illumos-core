@@ -465,13 +465,10 @@ sfxge_phy_cap_apply(sfxge_t *sp, boolean_t use_default)
 			efx_phy_adv_cap_get(enp, EFX_PHY_CAP_DEFAULT, &adv_cap);
 			if ((rc = efx_phy_adv_cap_set(enp, adv_cap)) != 0)
 				goto fail1;
-			cmn_err(CE_WARN, SFXGE_CMN_ERR
-			    "[%s%d] Setting of advertised link "
-			    "capabilities failed. "
+			dev_err(sp->s_dip, CE_WARN, SFXGE_CMN_ERR
+			    "Setting of advertised link capabilities failed. "
 			    "Using default settings. "
 			    "(Requested 0x%x Given 0x%x Supported 0x%x)",
-			    ddi_driver_name(sp->s_dip),
-			    ddi_get_instance(sp->s_dip),
 			    requested,
 			    adv_cap,
 			    supported);

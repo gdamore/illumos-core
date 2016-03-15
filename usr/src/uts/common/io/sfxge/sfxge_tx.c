@@ -2508,16 +2508,13 @@ sfxge_tx_qstop(sfxge_t *sp, unsigned int index)
 
 	/* All queues should have been flushed */
 	if (stp->st_sp->s_tx_flush_pending != 0) {
-		cmn_err(CE_NOTE,
-		    SFXGE_CMN_ERR "[%s%d] txq[%d] stop with flush_pending=%d",
-		    ddi_driver_name(sp->s_dip), ddi_get_instance(sp->s_dip),
+		dev_err(sp->s_dip, CE_NOTE,
+		    SFXGE_CMN_ERR "txq[%d] stop with flush_pending=%d",
 		    index, stp->st_sp->s_tx_flush_pending);
 	}
 	if (stp->st_state == SFXGE_TXQ_FLUSH_FAILED) {
-		cmn_err(CE_NOTE,
-		    SFXGE_CMN_ERR "[%s%d] txq[%d] flush failed.",
-		    ddi_driver_name(sp->s_dip), ddi_get_instance(sp->s_dip),
-		    index);
+		dev_err(sp->s_dip, CE_NOTE,
+		    SFXGE_CMN_ERR "txq[%d] flush failed", index);
 	}
 
 	/* Destroy the transmit queue */
@@ -3165,9 +3162,8 @@ sfxge_tx_stop(sfxge_t *sp)
 			dev_info_t *dip = sp->s_dip;
 
 			DTRACE_PROBE(timeout);
-			cmn_err(CE_NOTE,
-			    SFXGE_CMN_ERR "[%s%d] tx qflush timeout",
-			    ddi_driver_name(dip), ddi_get_instance(dip));
+			dev_err(dip, CE_NOTE,
+			    SFXGE_CMN_ERR "tx qflush timeout");
 			break;
 		}
 	}

@@ -60,9 +60,8 @@ sfxge_err(efsys_identifier_t *arg, unsigned int code, uint32_t dword0,
 
 	ASSERT3U(code, <, EFX_ERR_NCODES);
 
-	cmn_err(CE_WARN, SFXGE_CMN_ERR "[%s%d] FATAL ERROR: %s (0x%08x%08x)",
-	    ddi_driver_name(dip), ddi_get_instance(dip), __sfxge_err[code],
-	    dword1, dword0);
+	dev_err(dip, CE_WARN, SFXGE_CMN_ERR "FATAL ERROR: %s (0x%08x%08x)",
+	    __sfxge_err[code], dword1, dword0);
 }
 
 void
@@ -77,12 +76,10 @@ sfxge_intr_fatal(sfxge_t *sp)
 	err = sfxge_restart_dispatch(sp, DDI_NOSLEEP, SFXGE_HW_ERR,
 	    "Fatal Interrupt", 0);
 	if (err != 0) {
-		cmn_err(CE_WARN, SFXGE_CMN_ERR
-			    "[%s%d] UNRECOVERABLE ERROR:"
+		dev_err(sp->s_dip, CE_WARN, SFXGE_CMN_ERR
+			    "UNRECOVERABLE ERROR:"
 			    " Could not schedule driver restart."
-			    " err=%d\n",
-			    ddi_driver_name(sp->s_dip),
-			    ddi_get_instance(sp->s_dip),
+			    " err=%d",
 			    err);
 		ASSERT(B_FALSE);
 	}

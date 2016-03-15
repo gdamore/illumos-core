@@ -95,8 +95,7 @@ _sfxge_mac_stat_update(sfxge_mac_t *smp, int tries, int delay_usec)
 	}
 
 	DTRACE_PROBE(mac_stat_timeout);
-	cmn_err(CE_NOTE, SFXGE_CMN_ERR "[%s%d] MAC stats timeout",
-	    ddi_driver_name(sp->s_dip), ddi_get_instance(sp->s_dip));
+	dev_err(sp->s_dip, CE_NOTE, SFXGE_CMN_ERR "MAC stats timeout");
 	return;
 
 done:
@@ -268,7 +267,7 @@ sfxge_mac_poll(void *arg)
 			goto done;
 
 		/* Zero the memory */
-		(void) memset(esmp->esm_base, 0, EFX_MAC_STATS_SIZE);
+		bzero(esmp->esm_base, EFX_MAC_STATS_SIZE);
 
 		/* Trigger upload the MAC statistics counters */
 		if (smp->sm_link_up &&
@@ -703,8 +702,7 @@ sfxge_mac_link_update_locked(sfxge_t *sp, efx_link_mode_t mode)
 	snprintf(info, sizeof (info), ": now %dMbps %s duplex",
 	    smp->sm_link_speed, duplex);
 
-	cmn_err(CE_NOTE, SFXGE_CMN_ERR "[%s%d] Link %s%s",
-	    ddi_driver_name(sp->s_dip), ddi_get_instance(sp->s_dip),
+	dev_err(sp->s_dip, CE_NOTE, SFXGE_CMN_ERR "Link %s%s",
 	    change, smp->sm_link_up ? info : "");
 
 	/* Push link state update to the OS */
@@ -919,7 +917,7 @@ sfxge_mac_multicst_add(sfxge_t *sp, const uint8_t *addr)
 	/* Check if the address is already in the list */
 	i = 0;
 	while (i < smp->sm_mcast_count) {
-		if (memcmp(smp->sm_mcast_addr + (i * ETHERADDRL),
+		if (bcmp(smp->sm_mcast_addr + (i * ETHERADDRL),
 			addr, ETHERADDRL) == 0)
 			goto done;
 		else
@@ -927,8 +925,8 @@ sfxge_mac_multicst_add(sfxge_t *sp, const uint8_t *addr)
 	}
 
 	/* Add to the list */
-	memcpy(smp->sm_mcast_addr + (smp->sm_mcast_count++ * ETHERADDRL),
-	    addr, ETHERADDRL);
+	bcopy(addr, smp->sm_mcast_addr + (smp->sm_mcast_count++ * ETHERADDRL),
+	    ETHERADDRL);
 
 	if ((rc = sfxge_mac_filter_apply(sp)) != 0)
 		goto fail1;
@@ -955,9 +953,9 @@ sfxge_mac_multicst_remove(sfxge_t *sp, const uint8_t *addr)
 
 	i = 0;
 	while (i < smp->sm_mcast_count) {
-		if (memcmp(smp->sm_mcast_addr + (i * ETHERADDRL),
+		if (bcmp(smp->sm_mcast_addr + (i * ETHERADDRL),
 			addr, ETHERADDRL) == 0) {
-			memmove(smp->sm_mcast_addr + (i * ETHERADDRL),
+			(void) memmove(smp->sm_mcast_addr + (i * ETHERADDRL),
 			    smp->sm_mcast_addr + ((i + 1) * ETHERADDRL),
 			    (smp->sm_mcast_count - (i + 1)) * ETHERADDRL);
 			smp->sm_mcast_count--;
@@ -1080,7 +1078,7 @@ sfxge_mac_fini(sfxge_t *sp)
 	smp->sm_link_mode = EFX_LINK_UNKNOWN;
 	smp->sm_promisc = SFXGE_PROMISC_OFF;
 
-	memset(smp->sm_mcast_addr, 0, SFXGE_MCAST_LIST_MAX * ETHERADDRL);
+	bzero(smp->sm_mcast_addr, SFXGE_MCAST_LIST_MAX * ETHERADDRL);
 	smp->sm_mcast_count = 0;
 
 	bzero(smp->sm_laa, ETHERADDRL);

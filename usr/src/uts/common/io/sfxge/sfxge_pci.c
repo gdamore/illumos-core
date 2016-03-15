@@ -190,7 +190,7 @@ sfxge_pci_init(sfxge_t *sp)
 	max_read_request = (devctl & PCIE_DEVCTL_MAX_READ_REQ_MASK)
 	    >> PCIE_DEVCTL_MAX_READ_REQ_SHIFT;
 
-	cmn_err(CE_NOTE,
+	dev_err(sp->s_dip, CE_NOTE,
 	    SFXGE_CMN_ERR "PCIe MRR: %d TLP: %d Link: %s Lanes: x%d",
 	    128 << max_read_request,
 	    128 << max_payload_size,
@@ -222,11 +222,9 @@ sfxge_pcie_check_link(sfxge_t *sp, unsigned int full_nlanes,
 {
 	if ((sp->s_pcie_linkspeed < full_speed) ||
 	    (sp->s_pcie_nlanes    < full_nlanes))
-		cmn_err(CE_NOTE,
-		    SFXGE_CMN_ERR "The %s%d device requires %d PCIe lanes "
+		dev_err(sp->s_dip, CE_NOTE,
+		    SFXGE_CMN_ERR "This device requires %d PCIe lanes "
 		    "at %s link speed to reach full bandwidth.",
-		    ddi_driver_name(sp->s_dip),
-		    ddi_get_instance(sp->s_dip),
 		    full_nlanes,
 		    (full_speed == 1) ? "2.5G" :
 		    (full_speed == 2) ? "5.0G" :

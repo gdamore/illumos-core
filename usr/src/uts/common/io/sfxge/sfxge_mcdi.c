@@ -120,8 +120,7 @@ sfxge_mcdi_timeout(sfxge_t *sp)
 {
 	dev_info_t *dip = sp->s_dip;
 
-	cmn_err(CE_WARN, SFXGE_CMN_ERR "[%s%d] MC_TIMEOUT",
-	    ddi_driver_name(dip), ddi_get_instance(dip));
+	dev_err(dip, CE_WARN, SFXGE_CMN_ERR "MC_TIMEOUT");
 
 	DTRACE_PROBE(mcdi_timeout);
 	(void) sfxge_restart_dispatch(sp, DDI_SLEEP, SFXGE_HW_ERR,
