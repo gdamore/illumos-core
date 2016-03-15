@@ -11,19 +11,19 @@
 .\"
 .\" Copyright 2016 Garrett D'Amore <garrett@damore.org>
 .\"
-.Dd Mar 10, 2016
+.Dd Mar 15, 2016
 .Dt SFXGE 7D
 .Os
 .Sh NAME
 .Nm sfxge
-.Nd SolarFlare Ethernet device driver
+.Nd Solarflare Ethernet device driver
 .Sh SYNOPSIS
 .Pa /dev/sfxge
 .Sh DESCRIPTION
 The
 .Nm
-driver provides support for SolarFlare family of 1, 10, and 40 Gbps
-Ethernet PCI controllers from the SFC 9000 family.
+driver provides support for 10 and 40 Gbps Ethernet adapters
+based on the Solarflare SFC9000 family of controllers.
 .Lp
 These devices generally support the standard Ethernet features, including
 autonegotiation, etc.  They also support full size MTUs (1500 bytes),
