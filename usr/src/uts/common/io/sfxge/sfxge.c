@@ -1262,24 +1262,6 @@ fail1:
 	return (DDI_FAILURE);
 }
 
-static int
-sfxge_quiesce(dev_info_t *dip)
-{
-	sfxge_t *sp = ddi_get_soft_state(sfxge_ss, ddi_get_instance(dip));
-	int rc;
-
-	/* Reset the hardware */
-	if ((rc = sfxge_reset(sp, B_FALSE)) != 0)
-		goto fail1;
-
-	return (DDI_SUCCESS);
-
-fail1:
-	DTRACE_PROBE1(fail1, int, rc);
-
-	return (DDI_FAILURE);
-}
-
 /*
  * modlinkage
  */
