@@ -160,7 +160,7 @@ sfxge_toeplitz_hash_init(sfxge_t *sp)
 	int rc;
 	uint8_t toeplitz_key[SFXGE_TOEPLITZ_KEY_LEN];
 
-	random_get_pseudo_bytes(toeplitz_key, sizeof (toeplitz_key));
+	(void) random_get_pseudo_bytes(toeplitz_key, sizeof (toeplitz_key));
 
 	if ((rc = efx_rx_scale_mode_set(sp->s_enp, EFX_RX_HASHALG_TOEPLITZ,
 	    (1 << EFX_RX_HASH_IPV4) | (1 << EFX_RX_HASH_TCPIPV4) |
