@@ -157,11 +157,7 @@ typedef struct efsys_mem_s {
 
 
 #define	EFSYS_MEM_ZERO(_esmp, _size)					\
-	do {								\
-		(void) bzero((_esmp)->esm_base, (_size));		\
-									\
-	_NOTE(CONSTANTCONDITION)					\
-	} while (B_FALSE)
+	(void) bzero((_esmp)->esm_base, (_size))
 
 #define	EFSYS_MEM_READD(_esmp, _offset, _edp)				\
 	do {								\
@@ -502,11 +498,9 @@ typedef struct efsys_bar_s {
 /* SPIN */
 
 #define	EFSYS_SPIN(_us)							\
-	do {								\
-		drv_usecwait(_us);					\
-	_NOTE(CONSTANTCONDITION)					\
-	} while (B_FALSE)
+	drv_usecwait(_us)
 
+/* TODO: Perhaps this should use delay(9F)? */
 #define	EFSYS_SLEEP	EFSYS_SPIN
 
 /* BARRIERS */
@@ -523,33 +517,21 @@ typedef struct efsys_bar_s {
  * and sync entire map.
  */
 #define	EFSYS_DMA_SYNC_FOR_KERNEL(_esmp, _offset, _size)		\
-	do {								\
-		(void) ddi_dma_sync((_esmp)->esm_dma_handle,		\
-		    (_offset),						\
-		    (_size),						\
-		    DDI_DMA_SYNC_FORKERNEL);				\
-	_NOTE(CONSTANTCONDITION)					\
-	} while (B_FALSE)
+	(void) ddi_dma_sync((_esmp)->esm_dma_handle,			\
+	    (_offset), (_size), DDI_DMA_SYNC_FORKERNEL)
 
 #define	EFSYS_DMA_SYNC_FOR_DEVICE(_esmp, _offset, _size)		\
-	do {								\
-		(void) ddi_dma_sync((_esmp)->esm_dma_handle,		\
-		    (_offset),						\
-		    (_size),						\
-		    DDI_DMA_SYNC_FORDEV);				\
-	_NOTE(CONSTANTCONDITION)					\
-	} while (B_FALSE)
+	(void) ddi_dma_sync((_esmp)->esm_dma_handle,			\
+	    (_offset), (_size), DDI_DMA_SYNC_FORDEV)
 
 /* TIMESTAMP */
 
 typedef	clock_t	efsys_timestamp_t;
 
+/* TODO: Arguably this could use gethrtime */
 #define	EFSYS_TIMESTAMP(_usp)						\
 	do {								\
-		clock_t now;						\
-									\
-		now = ddi_get_lbolt();					\
-		*(_usp) = drv_hztousec(now);				\
+		*(_usp) = drv_hztousec(ddi_get_lbolt());		\
 	_NOTE(CONSTANTCONDITION)					\
 	} while (B_FALSE)
 
@@ -562,12 +544,13 @@ typedef	clock_t	efsys_timestamp_t;
 	_NOTE(CONSTANTCONDITION)					\
 	} while (B_FALSE)
 
+#ifdef	lint
 #define	EFSYS_KMEM_FREE(_esip, _size, _p)				\
-	do {								\
-		(_esip) = (_esip);					\
-		kmem_free((_p), (_size));				\
-	_NOTE(CONSTANTCONDITION)					\
-	} while (B_FALSE)
+	kmem_free((_p), (_size)+(uintptr_t)(_esip))
+#else
+#define	EFSYS_KMEM_FREE(_esip, _size, _p)				\
+	kmem_free((_p), (_size))
+#endif
 
 /* LOCK */
 
@@ -643,10 +626,7 @@ extern void	sfxge_err(efsys_identifier_t *, unsigned int,
 
 #if EFSYS_OPT_DECODE_INTR_FATAL
 #define	EFSYS_ERR(_esip, _code, _dword0, _dword1)			\
-	do {								\
-		sfxge_err((_esip), (_code), (_dword0), (_dword1));	\
-	_NOTE(CONSTANTCONDITION)					\
-	} while (B_FALSE)
+	sfxge_err((_esip), (_code), (_dword0), (_dword1))
 #endif
 
 /* PROBE */
@@ -675,35 +655,19 @@ extern void	sfxge_err(efsys_identifier_t *, unsigned int,
 	DTRACE_PROBE5(_name, _type1, _arg1, _type2, _arg2,		\
 	    _type3, _arg3, _type4, _arg4, _type5, _arg5)
 
-#ifdef DTRACE_PROBE6
 #define	EFSYS_PROBE6(_name, _type1, _arg1, _type2, _arg2,		\
 	    _type3, _arg3, _type4, _arg4, _type5, _arg5,		\
 	    _type6, _arg6)						\
 	DTRACE_PROBE6(_name, _type1, _arg1, _type2, _arg2,		\
 	    _type3, _arg3, _type4, _arg4, _type5, _arg5,		\
 	    _type6, _arg6)
-#else
-#define	EFSYS_PROBE6(_name, _type1, _arg1, _type2, _arg2,		\
-	    _type3, _arg3, _type4, _arg4, _type5, _arg5,		\
-	    _type6, _arg6)						\
-	DTRACE_PROBE5(_name, _type1, _arg1, _type2, _arg2,		\
-	    _type3, _arg3, _type4, _arg4, _type5, _arg5)
-#endif
 
-#ifdef DTRACE_PROBE7
 #define	EFSYS_PROBE7(_name, _type1, _arg1, _type2, _arg2,		\
 	    _type3, _arg3, _type4, _arg4, _type5, _arg5,		\
 	    _type6, _arg6, _type7, _arg7)				\
 	DTRACE_PROBE7(_name, _type1, _arg1, _type2, _arg2,		\
 	    _type3, _arg3, _type4, _arg4, _type5, _arg5,		\
 	    _type6, _arg6, _type7, _arg7)
-#else
-#define	EFSYS_PROBE7(_name, _type1, _arg1, _type2, _arg2,		\
-	    _type3, _arg3, _type4, _arg4, _type5, _arg5,		\
-	    _type6, _arg6, _type7, _arg7)				\
-	DTRACE_PROBE5(_name, _type1, _arg1, _type2, _arg2,		\
-	    _type3, _arg3, _type4, _arg4, _type5, _arg5)
-#endif
 
 /* ASSERT */
 

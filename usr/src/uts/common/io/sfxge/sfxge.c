@@ -64,32 +64,10 @@ static void	*sfxge_ss;
  * show 32 characters of our sfxge_ident string. Currently SFXGE_VERSION_STRING
  * is 12 characters. To show the whole string use 'modinfo -w'.
  */
-#if defined(_USE_GLD_V3_SOL10) && !defined(_USE_GLD_V3_SOL11)
 #ifdef DEBUG
-/*
- * The (DEBUG) part of this string will not be displayed in modinfo by
- * default. See previous comment.
- */
-const char sfxge_ident[] =
-    SFXGE_VERSION_STRING" for Sol10 (u8 and later) (DEBUG)";
+const char sfxge_ident[] = SFXGE_VERSION_STRING" for illumos (DEBUG)";
 #else
-const char sfxge_ident[] =
-    SFXGE_VERSION_STRING" for Sol10 (u8 and later)";
-#endif
-#elif defined(_USE_GLD_V3_SOL11)
-#ifdef DEBUG
-const char sfxge_ident[] = SFXGE_VERSION_STRING" for Sol11 (DEBUG)";
-#else
-const char sfxge_ident[] = SFXGE_VERSION_STRING" for Sol11";
-#endif
-#elif defined(_USE_GLD_V3)
-#ifdef DEBUG
-const char sfxge_ident[] = SFXGE_VERSION_STRING" GLDv3 (DEBUG)";
-#else
-const char sfxge_ident[] = SFXGE_VERSION_STRING" GLDv3";
-#endif
-#else
-#error "sfxge_ident undefined"
+const char sfxge_ident[] = SFXGE_VERSION_STRING" for illumos";
 #endif
 const char sfxge_version[] = SFXGE_VERSION_STRING;
 
@@ -1284,8 +1262,6 @@ fail1:
 	return (DDI_FAILURE);
 }
 
-#ifdef _USE_GLD_V3
-#ifndef _USE_GLD_V3_SOL10
 static int
 sfxge_quiesce(dev_info_t *dip)
 {
@@ -1303,25 +1279,13 @@ fail1:
 
 	return (DDI_FAILURE);
 }
-#endif
-#endif
 
 /*
  * modlinkage
  */
 
-#ifdef _USE_GLD_V3
-#if defined(_USE_GLD_V3_SOL11)
 DDI_DEFINE_STREAM_OPS(sfxge_dev_ops, nulldev, nulldev, sfxge_attach,
     sfxge_detach, nulldev, NULL, D_MP, NULL, NULL);
-#elif defined(_USE_GLD_V3_SOL10)
-DDI_DEFINE_STREAM_OPS(sfxge_dev_ops, nulldev, nulldev, sfxge_attach,
-    sfxge_detach, nulldev, NULL, D_MP, NULL);
-#else
-DDI_DEFINE_STREAM_OPS(sfxge_dev_ops, nulldev, nulldev, sfxge_attach,
-    sfxge_detach, nulldev, NULL, D_MP, NULL, sfxge_quiesce);
-#endif
-#endif
 
 static struct modldrv		sfxge_modldrv = {
 	&mod_driverops,
@@ -1350,9 +1314,7 @@ _init(void)
 	if ((rc = ddi_soft_state_init(&sfxge_ss, sizeof (sfxge_t), 0)) != 0)
 		goto fail1;
 
-#ifdef _USE_GLD_V3
 	mac_init_ops(&sfxge_dev_ops, SFXGE_DRIVER_NAME);
-#endif
 
 	if ((rc = mod_install(&sfxge_modlinkage)) != 0)
 		goto fail2;
@@ -1393,9 +1355,7 @@ _fini(void)
 	    "UNLOAD: Solarflare Ethernet Driver (%s) %s",
 	    SFXGE_DRIVER_NAME, sfxge_ident);
 
-#ifdef _USE_GLD_V3
 	mac_fini_ops(&sfxge_dev_ops);
-#endif
 
 	ddi_soft_state_fini(&sfxge_ss);
 

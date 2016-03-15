@@ -28,13 +28,6 @@
  * policies, either expressed or implied, of the FreeBSD Project.
  */
 
-/*
- * Solaris 10 9/10 (U9) is required to build this driver, as earlier Solaris
- * releases do not ship with the required header files for GLDv3.  The driver
- * will run on Solaris 10 10/09 (U8) and later versions.
- */
-
-
 #ifndef	_SYS_SFXGE_H
 #define	_SYS_SFXGE_H
 
