@@ -123,6 +123,7 @@ sfxge_mon_kstat_init(sfxge_t *sp)
 	unsigned int id;
 	const efx_nic_cfg_t *encp = efx_nic_cfg_get(sp->s_enp);
 	int rc;
+	int nstat;
 
 	if ((smp->sm_statbuf = kmem_zalloc(sizeof (uint32_t) * EFX_MON_NSTATS,
 	    KM_NOSLEEP)) == NULL) {
@@ -133,10 +134,18 @@ sfxge_mon_kstat_init(sfxge_t *sp)
 	(void) snprintf(name, MAXNAMELEN - 1, "%s_%s", ddi_driver_name(dip),
 	    efx_mon_name(enp));
 
+
 	/* Create the set */
+	for (id = 0, nstat = 0; id < EFX_MON_NSTATS; id++) {
+		if (encp->enc_mon_stat_mask[id / EFX_MON_MASK_ELEMENT_SIZE] &
+		    (1 << (id % EFX_MON_MASK_ELEMENT_SIZE)))  {
+			nstat++;
+		}
+	}
+
 	if ((ksp = kstat_create((char *)ddi_driver_name(dip),
 	    ddi_get_instance(dip), name, "mon", KSTAT_TYPE_NAMED,
-	    EFX_MON_NSTATS+2, 0)) == NULL) {
+	    nstat+2, 0)) == NULL) {
 		rc = ENOMEM;
 		goto fail2;
 	}
