@@ -952,6 +952,7 @@ sfxge_vpd_kstat_init(sfxge_t *sp)
 	_sfxge_vpd_kstat_init(sp, vpd, size, EFX_VPD_RO, "PN", SFXGE_VPD_PN);
 	_sfxge_vpd_kstat_init(sp, vpd, size, EFX_VPD_RO, "SN", SFXGE_VPD_SN);
 	_sfxge_vpd_kstat_init(sp, vpd, size, EFX_VPD_RO, "EC", SFXGE_VPD_EC);
+	_sfxge_vpd_kstat_init(sp, vpd, size, EFX_VPD_RO, "MN", SFXGE_VPD_MN);
 	_sfxge_vpd_kstat_init(sp, vpd, size, EFX_VPD_RO, "VD", SFXGE_VPD_VD);
 	_sfxge_vpd_kstat_init(sp, vpd, size, EFX_VPD_RO, "VE", SFXGE_VPD_VE);
 
