@@ -56,9 +56,6 @@ boolean_t sfxge_aask = B_FALSE;
 /* Broadcast address */
 uint8_t	sfxge_brdcst[] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 
-/* Soft state head */
-static void	*sfxge_ss;
-
 /*
  * By default modinfo will display lines truncated to 80 characters and so just
  * show 32 characters of our sfxge_ident string.
@@ -80,25 +77,16 @@ sfxge_cfg_build(sfxge_t *sp)
 static int
 sfxge_create(dev_info_t *dip, sfxge_t **spp)
 {
-	int instance = ddi_get_instance(dip);
 	sfxge_t *sp;
 	efx_nic_t *enp;
 	unsigned int rxq_size;
 	int rxq_poll_usec;
 	int rc;
 
-	/* Allocate the soft state object */
-	if (ddi_soft_state_zalloc(sfxge_ss, instance) != DDI_SUCCESS) {
-		rc = ENOMEM;
-		goto fail1;
-	}
-
-	sp = ddi_get_soft_state(sfxge_ss, instance);
-	ASSERT(sp != NULL);
-
-	SFXGE_OBJ_CHECK(sp, sfxge_t);
-
+	/* Allocate the object */
+	sp = kmem_zalloc(sizeof (*sp), KM_SLEEP);
 	sp->s_dip = dip;
+	ddi_set_driver_private(dip, sp);
 
 	mutex_init(&(sp->s_state_lock), NULL, MUTEX_DRIVER, NULL);
 	sp->s_state = SFXGE_UNINITIALIZED;
@@ -284,10 +272,7 @@ fail2:
 	sp->s_dip = NULL;
 
 	SFXGE_OBJ_CHECK(sp, sfxge_t);
-	ddi_soft_state_free(sfxge_ss, instance);
-
-fail1:
-	DTRACE_PROBE1(fail1, int, rc);
+	kmem_free(sp, sizeof (*sp));
 
 	return (rc);
 }
@@ -555,8 +540,6 @@ sfxge_can_destroy(sfxge_t *sp)
 static int
 sfxge_destroy(sfxge_t *sp)
 {
-	dev_info_t *dip = sp->s_dip;
-	int instance = ddi_get_instance(dip);
 	ddi_taskq_t *tqp;
 	efx_nic_t *enp;
 	int rc;
@@ -614,7 +597,7 @@ sfxge_destroy(sfxge_t *sp)
 	sp->s_dip = NULL;
 
 	SFXGE_OBJ_CHECK(sp, sfxge_t);
-	ddi_soft_state_free(sfxge_ss, instance);
+	kmem_free(sp, sizeof (*sp));
 
 	return (0);
 
@@ -1073,9 +1056,8 @@ sfxge_cfg_kstat_fini(sfxge_t *sp)
 }
 
 static int
-sfxge_resume(dev_info_t *dip)
+sfxge_resume(sfxge_t *sp)
 {
-	sfxge_t *sp = ddi_get_soft_state(sfxge_ss, ddi_get_instance(dip));
 	int rc;
 
 	/* Start processing */
@@ -1093,25 +1075,17 @@ fail1:
 static int
 sfxge_attach(dev_info_t *dip, ddi_attach_cmd_t cmd)
 {
-	sfxge_t *sp = ddi_get_soft_state(sfxge_ss, ddi_get_instance(dip));
+	sfxge_t *sp;
 	int rc;
 
 	switch (cmd) {
 	case DDI_ATTACH:
-		if (sp != NULL) {
-			dev_err(dip, CE_WARN, SFXGE_CMN_ERR
-			    "ATTACH for attached instance");
-			return (DDI_FAILURE);
-		}
 		break;
 
 	case DDI_RESUME:
-		if (sp == NULL) {
-			dev_err(dip, CE_WARN, SFXGE_CMN_ERR
-			    "RESUME for missing instance");
+ 		if ((sp = ddi_get_driver_private(dip)) == NULL)
 			return (DDI_FAILURE);
-		}
-		return (sfxge_resume(dip));
+		return (sfxge_resume(sp));
 
 	default:
 		return (DDI_FAILURE);
@@ -1165,10 +1139,8 @@ fail1:
 }
 
 static int
-sfxge_suspend(dev_info_t *dip)
+sfxge_suspend(sfxge_t *sp)
 {
-	sfxge_t *sp = ddi_get_soft_state(sfxge_ss, ddi_get_instance(dip));
-
 	/* Stop processing */
 	sfxge_stop(sp);
 
@@ -1178,7 +1150,7 @@ sfxge_suspend(dev_info_t *dip)
 static int
 sfxge_detach(dev_info_t *dip, ddi_detach_cmd_t cmd)
 {
-	sfxge_t *sp = ddi_get_soft_state(sfxge_ss, ddi_get_instance(dip));
+	sfxge_t *sp = ddi_get_driver_private(dip);
 	int rc;
 
 	switch (cmd) {
@@ -1190,7 +1162,7 @@ sfxge_detach(dev_info_t *dip, ddi_detach_cmd_t cmd)
 	case DDI_SUSPEND:
 		if (sp == NULL)
 			return (DDI_FAILURE);
-		return (sfxge_suspend(dip));
+		return (sfxge_suspend(sp));
 
 	default:
 		return (DDI_FAILURE);
@@ -1280,25 +1252,17 @@ _init(void)
 	/* Create tables for CPU, core, cache and chip counts */
 	sfxge_cpu = kmem_zalloc(sizeof (unsigned int) * NCPU, KM_SLEEP);
 
-	if ((rc = ddi_soft_state_init(&sfxge_ss, sizeof (sfxge_t), 0)) != 0)
-		goto fail1;
-
 	mac_init_ops(&sfxge_dev_ops, SFXGE_DRIVER_NAME);
 
 	if ((rc = mod_install(&sfxge_modlinkage)) != 0)
-		goto fail2;
+		goto fail1;
 
 	return (0);
 
-fail2:
+fail1:
 	DTRACE_PROBE(fail2);
 
 	mac_fini_ops(&sfxge_dev_ops);
-
-	ddi_soft_state_fini(&sfxge_ss);
-
-fail1:
-	DTRACE_PROBE1(fail1, int, rc);
 
 	kmem_free(sfxge_cpu, sizeof (unsigned int) * NCPU);
 	mutex_destroy(&sfxge_global_lock);
@@ -1315,8 +1279,6 @@ _fini(void)
 		return (rc);
 
 	mac_fini_ops(&sfxge_dev_ops);
-
-	ddi_soft_state_fini(&sfxge_ss);
 
 	/* Destroy tables */
 	kmem_free(sfxge_cpu, sizeof (unsigned int) * NCPU);
