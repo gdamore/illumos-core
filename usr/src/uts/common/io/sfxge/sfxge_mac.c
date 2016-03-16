@@ -127,6 +127,8 @@ sfxge_mac_kstat_update(kstat_t *ksp, int rw)
 	sfxge_mac_t *smp = ksp->ks_private;
 	kstat_named_t *knp;
 	int rc;
+	unsigned int val;
+	sfxge_rx_coalesce_mode_t rxmode;
 
 	if (rw != KSTAT_READ) {
 		rc = EACCES;
@@ -150,6 +152,23 @@ sfxge_mac_kstat_update(kstat_t *ksp, int rw)
 	knp++;
 
 	knp->value.ui64 = smp->sm_link_duplex;
+	knp++;
+
+	knp->value.ui64 = (smp->sm_fcntl & EFX_FCNTL_GENERATE) ? 1 : 0;
+	knp++;
+
+	knp->value.ui64 = (smp->sm_fcntl & EFX_FCNTL_RESPOND) ? 1 : 0;
+	knp++;
+
+	sfxge_ev_moderation_get(smp->sm_sp, &val);
+	knp->value.ui64 = val;
+	knp++;
+
+	sfxge_rx_coalesce_mode_get(smp->sm_sp, &rxmode);
+	knp->value.ui64 = (uint64_t)rxmode;
+
+	sfxge_rx_scale_count_get(smp->sm_sp, &val);
+	knp->value.ui64 = val;
 	knp++;
 
 done:
@@ -177,7 +196,7 @@ sfxge_mac_kstat_init(sfxge_t *sp)
 
 	if ((ksp = kstat_create((char *)ddi_driver_name(dip),
 	    ddi_get_instance(dip), name, "mac", KSTAT_TYPE_NAMED,
-	    EFX_MAC_NSTATS + 4, 0)) == NULL) {
+	    EFX_MAC_NSTATS + 8, 0)) == NULL) {
 		rc = ENOMEM;
 		goto fail1;
 	}
@@ -199,6 +218,11 @@ sfxge_mac_kstat_init(sfxge_t *sp)
 	kstat_named_init(knp++, "link_up", KSTAT_DATA_UINT64);
 	kstat_named_init(knp++, "link_speed", KSTAT_DATA_UINT64);
 	kstat_named_init(knp++, "link_duplex", KSTAT_DATA_UINT64);
+	kstat_named_init(knp++, "fcntl_generate", KSTAT_DATA_UINT64);
+	kstat_named_init(knp++, "fcntl_respond", KSTAT_DATA_UINT64);
+	kstat_named_init(knp++, "intr_moderation", KSTAT_DATA_UINT64);
+	kstat_named_init(knp++, "rx_coalesce_mode", KSTAT_DATA_UINT64);
+	kstat_named_init(knp++, "rx_scale_count", KSTAT_DATA_UINT64);
 
 	kstat_install(ksp);
 

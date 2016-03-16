@@ -163,7 +163,11 @@ sfxge_gld_getstat(void *arg, unsigned int id, uint64_t *valp)
 		*valp = sfxge_phy_dfl_cap_test64(sp, EFX_PHY_CAP_40000FDX);
 		break;
 	case ETHER_STAT_CAP_10GFDX:
+		*valp = sfxge_phy_cap_test(sp, EFX_PHY_CAP_DEFAULT,
+			EFX_PHY_CAP_10000FDX, NULL);
+#if 0
 		*valp = sfxge_phy_dfl_cap_test64(sp, EFX_PHY_CAP_10000FDX);
+#endif
 		break;
 	case ETHER_STAT_CAP_1000FDX:
 		*valp = sfxge_phy_dfl_cap_test64(sp, EFX_PHY_CAP_1000FDX);
@@ -196,7 +200,11 @@ sfxge_gld_getstat(void *arg, unsigned int id, uint64_t *valp)
 		*valp = sfxge_phy_cur_cap_test64(sp, EFX_PHY_CAP_40000FDX);
 		break;
 	case ETHER_STAT_ADV_CAP_10GFDX:
+		*valp = sfxge_phy_cap_test(sp, EFX_PHY_CAP_CURRENT,
+			EFX_PHY_CAP_10000FDX, NULL);
+#if 0
 		*valp = sfxge_phy_cur_cap_test64(sp, EFX_PHY_CAP_10000FDX);
+#endif
 		break;
 	case ETHER_STAT_ADV_CAP_1000FDX:
 		*valp = sfxge_phy_cur_cap_test64(sp, EFX_PHY_CAP_1000FDX);
