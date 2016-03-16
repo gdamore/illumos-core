@@ -61,14 +61,9 @@ static void	*sfxge_ss;
 
 /*
  * By default modinfo will display lines truncated to 80 characters and so just
- * show 32 characters of our sfxge_ident string. Currently SFXGE_VERSION_STRING
- * is 12 characters. To show the whole string use 'modinfo -w'.
+ * show 32 characters of our sfxge_ident string.
  */
-#ifdef DEBUG
-const char sfxge_ident[] = SFXGE_VERSION_STRING" for illumos (DEBUG)";
-#else
-const char sfxge_ident[] = SFXGE_VERSION_STRING" for illumos";
-#endif
+const char sfxge_ident[] = "Solarflare 10Gb/40Gb Ethernet";
 const char sfxge_version[] = SFXGE_VERSION_STRING;
 
 static void
@@ -1188,19 +1183,13 @@ sfxge_detach(dev_info_t *dip, ddi_detach_cmd_t cmd)
 
 	switch (cmd) {
 	case DDI_DETACH:
-		if (sp == NULL) {
-			dev_err(dip, CE_WARN, SFXGE_CMN_ERR
-			    "DETACH for missing instance");
+		if (sp == NULL)
 			return (DDI_FAILURE);
-		}
 		break;
 
 	case DDI_SUSPEND:
-		if (sp == NULL) {
-			dev_err(dip, CE_WARN, SFXGE_CMN_ERR
-			    "SUSPEND for missing instance");
+		if (sp == NULL)
 			return (DDI_FAILURE);
-		}
 		return (sfxge_suspend(dip));
 
 	default:
@@ -1299,18 +1288,12 @@ _init(void)
 	if ((rc = mod_install(&sfxge_modlinkage)) != 0)
 		goto fail2;
 
-	cmn_err(CE_NOTE, SFXGE_CMN_ERR
-	    "LOAD: Solarflare Ethernet Driver (%s) %s",
-	    SFXGE_DRIVER_NAME, sfxge_ident);
-
 	return (0);
 
 fail2:
 	DTRACE_PROBE(fail2);
 
-#ifdef _USE_GLD_V3
 	mac_fini_ops(&sfxge_dev_ops);
-#endif
 
 	ddi_soft_state_fini(&sfxge_ss);
 
@@ -1330,10 +1313,6 @@ _fini(void)
 
 	if ((rc = mod_remove(&sfxge_modlinkage)) != 0)
 		return (rc);
-
-	cmn_err(CE_NOTE, SFXGE_CMN_ERR
-	    "UNLOAD: Solarflare Ethernet Driver (%s) %s",
-	    SFXGE_DRIVER_NAME, sfxge_ident);
 
 	mac_fini_ops(&sfxge_dev_ops);
 
