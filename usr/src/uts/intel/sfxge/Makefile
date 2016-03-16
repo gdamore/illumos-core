@@ -41,12 +41,6 @@ INC_PATH += -I$(UTSBASE)/common/io/sfxge -I$(UTSBASE)/common/io/sfxge/common
 # Some of them need further cleanup as well (e.g. we shouldn't bother with
 # supporting NDD directly.)
 #
-CPPFLAGS += -D_USE_GLD_V3
-CPPFLAGS += -D_USE_GLD_V3_SOL10
-CPPFLAGS += -D_USE_GLD_V3_SOL11
-CPPFLAGS += -D_USE_GLD_V3_PROPS
-CPPFLAGS += -D_USE_MAC_PRIV_PROP
-CPPFLAGS += -D_USE_NDD_PROPS
 CPPFLAGS += -U_USE_MTU_UPDATE
 
 CFLAGS += $(CCVERBOSE)
