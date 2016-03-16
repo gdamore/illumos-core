@@ -166,6 +166,7 @@ sfxge_mac_kstat_update(kstat_t *ksp, int rw)
 
 	sfxge_rx_coalesce_mode_get(smp->sm_sp, &rxmode);
 	knp->value.ui64 = (uint64_t)rxmode;
+	knp++;
 
 	sfxge_rx_scale_count_get(smp->sm_sp, &val);
 	knp->value.ui64 = val;
