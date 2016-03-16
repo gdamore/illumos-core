@@ -1197,6 +1197,7 @@ sfxge_rx_kstat_init(sfxge_rxq_t *srp)
 	kstat_named_init(knp, "dma_bind_fail", KSTAT_DATA_UINT32);
 	knp++;
 	kstat_named_init(knp, "desballoc_fail", KSTAT_DATA_UINT32);
+	knp++;
 	kstat_named_init(knp, "rxq_empty_discard", KSTAT_DATA_UINT32);
 
 	kstat_install(ksp);
