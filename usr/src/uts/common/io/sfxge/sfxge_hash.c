@@ -57,8 +57,7 @@ toeplitz_hash(const uint32_t *cache, const uint8_t *input,
 
 uint32_t
 sfxge_toeplitz_hash(sfxge_t *sp, unsigned int addr_size,
-		uint8_t *src_addr, uint16_t src_port,
-		uint8_t *dst_addr, uint16_t dst_port)
+    uint8_t *src_addr, uint16_t src_port, uint8_t *dst_addr, uint16_t dst_port)
 {
 	uint32_t hash = 0;
 	unsigned pos = 0;
@@ -69,12 +68,10 @@ sfxge_toeplitz_hash(sfxge_t *sp, unsigned int addr_size,
 	pos += addr_size;
 	if (src_port != 0 || dst_port != 0) {
 		hash ^= toeplitz_hash(sp->s_toeplitz_cache,
-					(const uint8_t *)&src_port,
-					pos, sizeof (src_port));
+		    (const uint8_t *)&src_port, pos, sizeof (src_port));
 		pos += sizeof (src_port);
 		hash ^= toeplitz_hash(sp->s_toeplitz_cache,
-					(const uint8_t *)&dst_port,
-					pos, sizeof (dst_port));
+		    (const uint8_t *)&dst_port, pos, sizeof (dst_port));
 	}
 	return (hash);
 }
@@ -119,7 +116,7 @@ const uint32_t *
 toeplitz_cache_init(const uint8_t *key)
 {
 	uint32_t *cache = kmem_alloc(SFXGE_TOEPLITZ_CACHE_SIZE *
-				sizeof (uint32_t), KM_SLEEP);
+	    sizeof (uint32_t), KM_SLEEP);
 	unsigned i;
 
 	for (i = 0; i < SFXGE_TOEPLITZ_IN_MAX; i++, key++) {
@@ -142,8 +139,8 @@ toeplitz_cache_init(const uint8_t *key)
 		for (byte = 0; byte <= UINT8_MAX; byte++) {
 			uint32_t res = 0;
 			for (j = 0, mask = 1 << (NBBY - 1);
-				j < NBBY;
-				j++, mask >>= 1) {
+			    j < NBBY;
+			    j++, mask >>= 1) {
 				if (byte & mask)
 					res ^= key_bits[j];
 			}
@@ -168,7 +165,7 @@ sfxge_toeplitz_hash_init(sfxge_t *sp)
 		return (rc);
 
 	if ((rc = efx_rx_scale_key_set(sp->s_enp, toeplitz_key,
-					sizeof (toeplitz_key))) != 0)
+	    sizeof (toeplitz_key))) != 0)
 		return (rc);
 
 	sp->s_toeplitz_cache = toeplitz_cache_init(toeplitz_key);
@@ -181,7 +178,7 @@ sfxge_toeplitz_hash_fini(sfxge_t *sp)
 {
 	if (sp->s_toeplitz_cache != NULL) {
 		kmem_free((void *)sp->s_toeplitz_cache,
-			SFXGE_TOEPLITZ_CACHE_SIZE);
+		    SFXGE_TOEPLITZ_CACHE_SIZE);
 		sp->s_toeplitz_cache = NULL;
 	}
 }

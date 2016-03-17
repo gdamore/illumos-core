@@ -569,7 +569,7 @@ sfxge_ev_software(void *arg, uint16_t magic)
 	}
 	default:
 		dev_err(dip, CE_NOTE,
-			SFXGE_CMN_ERR "unknown software event 0x%x", magic);
+		    SFXGE_CMN_ERR "unknown software event 0x%x", magic);
 		break;
 	}
 
@@ -849,7 +849,7 @@ sfxge_ev_qstart(sfxge_t *sp, unsigned int index)
 	timeout = ddi_get_lbolt() + drv_usectohz(SFXGE_EV_QSTART_TIMEOUT_USEC);
 	while (sep->se_state != SFXGE_EVQ_STARTED) {
 		if (cv_timedwait(&(sep->se_init_kv), &(sep->se_lock),
-			timeout) < 0) {
+		    timeout) < 0) {
 			/* Timeout waiting for initialization */
 			dev_info_t *dip = sp->s_dip;
 

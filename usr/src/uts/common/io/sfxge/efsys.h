@@ -125,7 +125,7 @@ extern "C" {
 #define	EFSYS_OPT_NVRAM 1
 #define	EFSYS_OPT_BOOTCFG 1
 
-#define	EFSYS_OPT_DIAG 1
+#define	EFSYS_OPT_DIAG 0
 #define	EFSYS_OPT_WOL 1
 #define	EFSYS_OPT_RX_SCALE 1
 #define	EFSYS_OPT_QSTATS 1

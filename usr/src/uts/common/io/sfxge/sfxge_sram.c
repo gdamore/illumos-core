@@ -183,69 +183,6 @@ sfxge_sram_buf_tbl_free(sfxge_t *sp, uint32_t id, size_t n)
 	mutex_exit(&(ssp->ss_lock));
 }
 
-static int
-sfxge_sram_test(sfxge_t *sp, efx_pattern_type_t type)
-{
-	sfxge_sram_t *ssp = &(sp->s_sram);
-	int rc;
-
-	if (ssp->ss_state != SFXGE_SRAM_INITIALIZED) {
-		rc = EFAULT;
-		goto fail1;
-	}
-
-	if (type >= EFX_PATTERN_NTYPES) {
-		rc = EINVAL;
-		goto fail2;
-	}
-
-	mutex_enter(&(ssp->ss_lock));
-
-	if ((rc = efx_sram_test(sp->s_enp, type)) != 0)
-		goto fail3;
-
-	mutex_exit(&(ssp->ss_lock));
-
-	return (0);
-
-fail3:
-	DTRACE_PROBE(fail3);
-	mutex_exit(&(ssp->ss_lock));
-fail2:
-	DTRACE_PROBE(fail2);
-fail1:
-	DTRACE_PROBE1(fail1, int, rc);
-
-	return (rc);
-}
-
-int
-sfxge_sram_ioctl(sfxge_t *sp, sfxge_sram_ioc_t *ssip)
-{
-	int rc;
-
-	switch (ssip->ssi_op) {
-	case SFXGE_SRAM_OP_TEST: {
-		efx_pattern_type_t type = ssip->ssi_data;
-
-		if ((rc = sfxge_sram_test(sp, type)) != 0)
-			goto fail1;
-
-		break;
-	}
-	default:
-		rc = ENOTSUP;
-		goto fail1;
-	}
-
-	return (0);
-
-fail1:
-	DTRACE_PROBE1(fail1, int, rc);
-
-	return (rc);
-}
-
 void
 sfxge_sram_fini(sfxge_t *sp)
 {

@@ -51,88 +51,19 @@ extern "C" {
 
 /* SPI was SFXGE_IOC 0x05 */
 
-/* BAR */
+/* BAR was SFXGE_IOC 0x06 */
 
-#define	SFXGE_BAR_IOC	(SFXGE_IOC | 0x06)
+/* PCI was SFXGE_IOC 0x07 */
 
-typedef	struct sfxge_bar_ioc_s {
-	uint32_t	sbi_op;
-	uint32_t	sbi_addr;
-	uint32_t	sbi_data[4];
-} sfxge_bar_ioc_t;
+/* MAC was SFXGE_IOC 0x08 */
 
-#define	SFXGE_BAR_OP_READ	0x00000001
-#define	SFXGE_BAR_OP_WRITE	0x00000002
+/* PHY was SFXGE_IOC 0x09 */
 
-/* PCI */
+/* SRAM was SFXGE_IOC 0x0a */
 
-#define	SFXGE_PCI_IOC	(SFXGE_IOC | 0x07)
+/* TX was SFXGE_IOC 0x0b */
 
-typedef	struct sfxge_pci_ioc_s {
-	uint32_t	spi_op;
-	uint8_t		spi_addr;
-	uint8_t		spi_data;
-} sfxge_pci_ioc_t;
-
-#define	SFXGE_PCI_OP_READ	0x00000001
-#define	SFXGE_PCI_OP_WRITE	0x00000002
-
-/* MAC */
-
-#define	SFXGE_MAC_IOC	(SFXGE_IOC | 0x08)
-
-typedef	struct sfxge_mac_ioc_s {
-	uint32_t	smi_op;
-	uint32_t	smi_data;
-} sfxge_mac_ioc_t;
-
-#define	SFXGE_MAC_OP_LOOPBACK	0x00000001
-
-/* PHY */
-
-#define	SFXGE_PHY_IOC	(SFXGE_IOC | 0x09)
-
-typedef	struct sfxge_phy_ioc_s {
-	uint32_t	spi_op;
-	uint32_t	spi_data;
-} sfxge_phy_ioc_t;
-
-#define	SFXGE_PHY_OP_LOOPBACK	0x00000001
-#define	SFXGE_PHY_OP_LINK	0x00000002
-#define	SFXGE_PHY_OP_LED	0x00000003
-
-/* SRAM */
-
-#define	SFXGE_SRAM_IOC	(SFXGE_IOC | 0x0a)
-
-typedef	struct sfxge_sram_ioc_s {
-	uint32_t	ssi_op;
-	uint32_t	ssi_data;
-} sfxge_sram_ioc_t;
-
-#define	SFXGE_SRAM_OP_TEST	0x00000001
-
-/* TX */
-
-#define	SFXGE_TX_IOC	(SFXGE_IOC | 0x0b)
-
-typedef	struct sfxge_tx_ioc_s {
-	uint32_t	sti_op;
-	uint32_t	sti_data;
-} sfxge_tx_ioc_t;
-
-#define	SFXGE_TX_OP_LOOPBACK	0x00000001
-
-/* RX */
-
-#define	SFXGE_RX_IOC	(SFXGE_IOC | 0x0c)
-
-typedef	struct sfxge_rx_ioc_s {
-	uint32_t	sri_op;
-	uint32_t	sri_data;
-} sfxge_rx_ioc_t;
-
-#define	SFXGE_RX_OP_LOOPBACK	0x00000001
+/* RX was SFXGE_IOC 0x0c */
 
 /* NVRAM */
 
@@ -172,31 +103,7 @@ typedef	struct sfxge_nvram_ioc_s {
 #define	SFXGE_NVRAM_TYPE_DYNAMIC_CFG	0x0000000b
 
 
-/* PHY BIST */
-
-#define	SFXGE_PHY_BIST_IOC	(SFXGE_IOC | 0x0e)
-
-typedef	struct sfxge_phy_bist_ioc_s {
-	boolean_t	spbi_break_link;
-	uint8_t		spbi_status_a;
-	uint8_t		spbi_status_b;
-	uint8_t		spbi_status_c;
-	uint8_t		spbi_status_d;
-	uint16_t	spbi_length_ind_a;
-	uint16_t	spbi_length_ind_b;
-	uint16_t	spbi_length_ind_c;
-	uint16_t	spbi_length_ind_d;
-} sfxge_phy_bist_ioc_t;
-
-#define	SFXGE_PHY_BIST_CABLE_OK			0
-#define	SFXGE_PHY_BIST_CABLE_INVALID		1
-#define	SFXGE_PHY_BIST_CABLE_OPEN		2
-#define	SFXGE_PHY_BIST_CABLE_INTRAPAIRSHORT	3
-#define	SFXGE_PHY_BIST_CABLE_INTERPAIRSHORT	4
-#define	SFXGE_PHY_BIST_CABLE_BUSY		5
-#define	SFXGE_PHY_BIST_CABLE_UNKNOWN		6
-
-/* MCDIv1 */
+/* PHY BIST was IOC 0x0e */
 
 /* Legacy IOC for MCDIv1 protocol - do not use in new code */
 #define	SFXGE_MCDI_IOC	(SFXGE_IOC | 0x0f)

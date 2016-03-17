@@ -68,10 +68,10 @@ sfxge_cfg_build(sfxge_t *sp)
 {
 	const efx_nic_cfg_t *encp = efx_nic_cfg_get(sp->s_enp);
 	(void) snprintf(sp->s_cfg_kstat.buf.sck_mac, 64,
-			"%02X:%02X:%02X:%02X:%02X:%02X",
-			encp->enc_mac_addr[0], encp->enc_mac_addr[1],
-			encp->enc_mac_addr[2], encp->enc_mac_addr[3],
-			encp->enc_mac_addr[4], encp->enc_mac_addr[5]);
+	    "%02X:%02X:%02X:%02X:%02X:%02X",
+	    encp->enc_mac_addr[0], encp->enc_mac_addr[1],
+	    encp->enc_mac_addr[2], encp->enc_mac_addr[3],
+	    encp->enc_mac_addr[4], encp->enc_mac_addr[5]);
 }
 
 static int
@@ -107,7 +107,7 @@ sfxge_create(dev_info_t *dip, sfxge_t **spp)
 
 	/* Configure polling interval for queue refill/trim */
 	rxq_poll_usec = ddi_prop_get_int(DDI_DEV_T_ANY, sp->s_dip,
-		DDI_PROP_DONTPASS, "rxq_poll_usec", SFXGE_RX_QPOLL_USEC);
+	    DDI_PROP_DONTPASS, "rxq_poll_usec", SFXGE_RX_QPOLL_USEC);
 	if (rxq_poll_usec <= 0)
 		rxq_poll_usec = SFXGE_RX_QPOLL_USEC;
 	sp->s_rxq_poll_usec = rxq_poll_usec;
@@ -624,30 +624,6 @@ sfxge_ioctl(sfxge_t *sp, queue_t *wq, mblk_t *mp)
 	iocp = (struct iocblk *)mp->b_rptr;
 
 	switch (iocp->ioc_cmd) {
-	case SFXGE_TX_IOC:
-		ioclen = sizeof (sfxge_tx_ioc_t);
-		break;
-	case SFXGE_RX_IOC:
-		ioclen = sizeof (sfxge_rx_ioc_t);
-		break;
-	case SFXGE_BAR_IOC:
-		ioclen = sizeof (sfxge_bar_ioc_t);
-		break;
-	case SFXGE_PCI_IOC:
-		ioclen = sizeof (sfxge_pci_ioc_t);
-		break;
-	case SFXGE_MAC_IOC:
-		ioclen = sizeof (sfxge_mac_ioc_t);
-		break;
-	case SFXGE_PHY_IOC:
-		ioclen = sizeof (sfxge_phy_ioc_t);
-		break;
-	case SFXGE_PHY_BIST_IOC:
-		ioclen = sizeof (sfxge_phy_bist_ioc_t);
-		break;
-	case SFXGE_SRAM_IOC:
-		ioclen = sizeof (sfxge_sram_ioc_t);
-		break;
 	case SFXGE_NVRAM_IOC:
 		ioclen = sizeof (sfxge_nvram_ioc_t);
 		break;
@@ -660,8 +636,6 @@ sfxge_ioctl(sfxge_t *sp, queue_t *wq, mblk_t *mp)
 	case SFXGE_VPD_IOC:
 		ioclen = sizeof (sfxge_vpd_ioc_t);
 		break;
-	case SFXGE_START_IOC:
-	case SFXGE_STOP_IOC:
 	case SFXGE_NIC_RESET_IOC:
 		break;
 	default:
@@ -680,82 +654,6 @@ sfxge_ioctl(sfxge_t *sp, queue_t *wq, mblk_t *mp)
 	}
 
 	switch (iocp->ioc_cmd) {
-	case SFXGE_START_IOC:
-		if ((rc = sfxge_start_locked(sp, B_TRUE)) != 0)
-			goto fail4;
-
-		break;
-
-	case SFXGE_STOP_IOC:
-		sfxge_stop_locked(sp);
-		break;
-
-	case SFXGE_TX_IOC: {
-		sfxge_tx_ioc_t *stip = (sfxge_tx_ioc_t *)mp->b_cont->b_rptr;
-
-		if ((rc = sfxge_tx_ioctl(sp, stip)) != 0)
-			goto fail4;
-
-		break;
-	}
-	case SFXGE_RX_IOC: {
-		sfxge_rx_ioc_t *srip = (sfxge_rx_ioc_t *)mp->b_cont->b_rptr;
-
-		if ((rc = sfxge_rx_ioctl(sp, srip)) != 0)
-			goto fail4;
-
-		break;
-	}
-	case SFXGE_BAR_IOC: {
-		sfxge_bar_ioc_t *sbip = (sfxge_bar_ioc_t *)mp->b_cont->b_rptr;
-
-		if ((rc = sfxge_bar_ioctl(sp, sbip)) != 0)
-			goto fail4;
-
-		break;
-	}
-	case SFXGE_PCI_IOC: {
-		sfxge_pci_ioc_t *spip = (sfxge_pci_ioc_t *)mp->b_cont->b_rptr;
-
-		if ((rc = sfxge_pci_ioctl(sp, spip)) != 0)
-			goto fail4;
-
-		break;
-	}
-	case SFXGE_MAC_IOC: {
-		sfxge_mac_ioc_t *smip = (sfxge_mac_ioc_t *)mp->b_cont->b_rptr;
-
-		if ((rc = sfxge_mac_ioctl(sp, smip)) != 0)
-			goto fail4;
-
-		break;
-	}
-	case SFXGE_PHY_IOC: {
-		sfxge_phy_ioc_t *spip = (sfxge_phy_ioc_t *)mp->b_cont->b_rptr;
-
-		if ((rc = sfxge_phy_ioctl(sp, spip)) != 0)
-			goto fail4;
-
-		break;
-	}
-	case SFXGE_PHY_BIST_IOC: {
-		sfxge_phy_bist_ioc_t *spbip;
-
-		spbip = (sfxge_phy_bist_ioc_t *)mp->b_cont->b_rptr;
-
-		if ((rc = sfxge_phy_bist_ioctl(sp, spbip)) != 0)
-			goto fail4;
-
-		break;
-	}
-	case SFXGE_SRAM_IOC: {
-		sfxge_sram_ioc_t *ssip = (sfxge_sram_ioc_t *)mp->b_cont->b_rptr;
-
-		if ((rc = sfxge_sram_ioctl(sp, ssip)) != 0)
-			goto fail4;
-
-		break;
-	}
 	case SFXGE_NVRAM_IOC: {
 		sfxge_nvram_ioc_t *snip =
 		    (sfxge_nvram_ioc_t *)mp->b_cont->b_rptr;
@@ -1084,7 +982,7 @@ sfxge_attach(dev_info_t *dip, ddi_attach_cmd_t cmd)
 		break;
 
 	case DDI_RESUME:
- 		if ((sp = ddi_get_driver_private(dip)) == NULL)
+		if ((sp = ddi_get_driver_private(dip)) == NULL)
 			return (DDI_FAILURE);
 		return (sfxge_resume(sp));
 

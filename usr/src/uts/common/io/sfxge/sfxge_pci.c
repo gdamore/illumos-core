@@ -114,9 +114,8 @@ sfxge_pci_init(sfxge_t *sp)
 	 * See pci(4) and the definition of "struct pci_phys_spec" in sys/pci.h
 	 */
 	if (ddi_prop_lookup_int_array(DDI_DEV_T_ANY, sp->s_dip,
-					DDI_PROP_DONTPASS, "reg",
-					(int **)&pci_regs, &pci_nregs)
-			!= DDI_PROP_SUCCESS) {
+	    DDI_PROP_DONTPASS, "reg", (int **)&pci_regs, &pci_nregs) !=
+	    DDI_PROP_SUCCESS) {
 		rc = ENODEV;
 		goto fail1;
 	}
@@ -230,35 +229,6 @@ sfxge_pcie_check_link(sfxge_t *sp, unsigned int full_nlanes,
 		    (full_speed == 2) ? "5.0G" :
 		    (full_speed == 3) ? "8.0G" :
 		    "UNKNOWN");
-}
-
-int
-sfxge_pci_ioctl(sfxge_t *sp, sfxge_pci_ioc_t *spip)
-{
-	int rc;
-
-	switch (spip->spi_op) {
-	case SFXGE_PCI_OP_READ:
-		spip->spi_data = pci_config_get8(sp->s_pci_handle,
-		    spip->spi_addr);
-		break;
-
-	case SFXGE_PCI_OP_WRITE:
-		pci_config_put8(sp->s_pci_handle,
-		    spip->spi_addr, spip->spi_data);
-		break;
-
-	default:
-		rc = ENOTSUP;
-		goto fail1;
-	}
-
-	return (0);
-
-fail1:
-	DTRACE_PROBE1(fail1, int, rc);
-
-	return (0);
 }
 
 void

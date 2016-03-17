@@ -63,54 +63,6 @@ fail1:
 	return (rc);
 }
 
-int
-sfxge_bar_ioctl(sfxge_t *sp, sfxge_bar_ioc_t *sbip)
-{
-	efsys_bar_t *esbp = &(sp->s_bar);
-	efx_oword_t oword;
-	int rc;
-
-	if (!IS_P2ALIGNED(sbip->sbi_addr, sizeof (efx_oword_t))) {
-		rc = EINVAL;
-		goto fail1;
-	}
-
-	switch (sbip->sbi_op) {
-	case SFXGE_BAR_OP_READ:
-		EFSYS_BAR_READO(esbp, sbip->sbi_addr, &oword, B_TRUE);
-
-		sbip->sbi_data[0] = EFX_OWORD_FIELD(oword, EFX_DWORD_0);
-		sbip->sbi_data[1] = EFX_OWORD_FIELD(oword, EFX_DWORD_1);
-		sbip->sbi_data[2] = EFX_OWORD_FIELD(oword, EFX_DWORD_2);
-		sbip->sbi_data[3] = EFX_OWORD_FIELD(oword, EFX_DWORD_3);
-
-		break;
-
-	case SFXGE_BAR_OP_WRITE:
-		EFX_POPULATE_OWORD_4(oword,
-		    EFX_DWORD_0, sbip->sbi_data[0],
-		    EFX_DWORD_1, sbip->sbi_data[1],
-		    EFX_DWORD_2, sbip->sbi_data[2],
-		    EFX_DWORD_3, sbip->sbi_data[3]);
-
-		EFSYS_BAR_WRITEO(esbp, sbip->sbi_addr, &oword, B_TRUE);
-		break;
-
-	default:
-		rc = ENOTSUP;
-		goto fail2;
-	}
-
-	return (0);
-
-fail2:
-	DTRACE_PROBE(fail2);
-fail1:
-	DTRACE_PROBE1(fail1, int, rc);
-
-	return (rc);
-}
-
 void
 sfxge_bar_fini(sfxge_t *sp)
 {

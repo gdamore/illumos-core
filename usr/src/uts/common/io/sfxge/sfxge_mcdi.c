@@ -227,7 +227,7 @@ sfxge_mcdi_do_log(char *buffer, void *data, size_t data_size,
 			position = pfxsize;
 		}
 		snprintf(buffer + position, SFXGE_MCDI_LOG_BUF_SIZE - position,
-			" %08x", *words);
+		    " %08x", *words);
 		words++;
 		position += 2 * sizeof (uint32_t) + 1;
 	}
@@ -237,8 +237,7 @@ sfxge_mcdi_do_log(char *buffer, void *data, size_t data_size,
 
 static void
 sfxge_mcdi_logger(void *arg, efx_log_msg_t type,
-		void *header, size_t header_size,
-		void *data, size_t data_size)
+    void *header, size_t header_size, void *data, size_t data_size)
 {
 	sfxge_t *sp = (sfxge_t *)arg;
 	char buffer[SFXGE_MCDI_LOG_BUF_SIZE];
@@ -249,17 +248,17 @@ sfxge_mcdi_logger(void *arg, efx_log_msg_t type,
 		return;
 
 	pfxsize = snprintf(buffer, sizeof (buffer),
-			"sfc %04x:%02x:%02x.%02x %s%d MCDI RPC %s:",
-			0,
-			PCI_REG_BUS_G(sp->s_bus_addr),
-			PCI_REG_DEV_G(sp->s_bus_addr),
-			PCI_REG_FUNC_G(sp->s_bus_addr),
-			ddi_driver_name(sp->s_dip),
-			ddi_get_instance(sp->s_dip),
-			type == EFX_LOG_MCDI_REQUEST ? "REQ" :
-			type == EFX_LOG_MCDI_RESPONSE ? "RESP" : "???");
+	    "sfc %04x:%02x:%02x.%02x %s%d MCDI RPC %s:",
+	    0,
+	    PCI_REG_BUS_G(sp->s_bus_addr),
+	    PCI_REG_DEV_G(sp->s_bus_addr),
+	    PCI_REG_FUNC_G(sp->s_bus_addr),
+	    ddi_driver_name(sp->s_dip),
+	    ddi_get_instance(sp->s_dip),
+	    type == EFX_LOG_MCDI_REQUEST ? "REQ" :
+	    type == EFX_LOG_MCDI_RESPONSE ? "RESP" : "???");
 	start = sfxge_mcdi_do_log(buffer, header, header_size,
-				pfxsize, pfxsize);
+	    pfxsize, pfxsize);
 	start = sfxge_mcdi_do_log(buffer, data, data_size, pfxsize, start);
 	if (start != pfxsize) {
 		buffer[start] = '\0';

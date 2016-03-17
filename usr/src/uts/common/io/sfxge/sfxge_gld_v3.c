@@ -616,7 +616,7 @@ sfxge_gld_priv_prop_set(sfxge_t *sp, const char *name, unsigned int size,
 
 	if (strcmp(name, SFXGE_PRIV_PROP_NAME(rx_coalesce_mode)) == 0) {
 		if ((rc = sfxge_rx_coalesce_mode_set(sp,
-			    (sfxge_rx_coalesce_mode_t)val)) != 0)
+		    (sfxge_rx_coalesce_mode_t)val)) != 0)
 			goto fail1;
 
 		goto done;

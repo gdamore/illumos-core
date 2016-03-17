@@ -168,7 +168,8 @@ sfxge_mac_kstat_update(kstat_t *ksp, int rw)
 	knp->value.ui64 = (uint64_t)rxmode;
 	knp++;
 
-	sfxge_rx_scale_count_get(smp->sm_sp, &val);
+	if (sfxge_rx_scale_count_get(smp->sm_sp, &val) != 0)
+		val = 0;
 	knp->value.ui64 = val;
 	knp++;
 
@@ -304,7 +305,7 @@ sfxge_mac_poll(void *arg)
 		    SFXGE_MAC_POLL_PERIOD_MS);
 		while (smp->sm_state == SFXGE_MAC_STARTED) {
 			if (cv_timedwait(&(smp->sm_link_poll_kv),
-				&(smp->sm_lock), timeout) < 0) {
+			    &(smp->sm_lock), timeout) < 0) {
 				/* Timeout - poll if polling still enabled */
 				break;
 			}
@@ -365,9 +366,9 @@ sfxge_mac_init(sfxge_t *sp)
 	smp->sm_sp = sp;
 	encp = efx_nic_cfg_get(sp->s_enp);
 	smp->sm_link_poll_reqd = (~encp->enc_features &
-				    EFX_FEATURE_LINK_EVENTS);
+	    EFX_FEATURE_LINK_EVENTS);
 	smp->sm_mac_stats_timer_reqd = (~encp->enc_features &
-				    EFX_FEATURE_PERIODIC_MAC_STATS);
+	    EFX_FEATURE_PERIODIC_MAC_STATS);
 
 	mutex_init(&(smp->sm_lock), NULL, MUTEX_DRIVER,
 	    DDI_INTR_PRI(sp->s_intr.si_intr_pri));
@@ -493,12 +494,11 @@ sfxge_mac_filter_apply(sfxge_t *sp)
 		brdcst = B_TRUE;
 
 		if ((rc = efx_mac_filter_set(enp, all_unicst, mulcst,
-			    all_mulcst, brdcst)) != 0) {
+		    all_mulcst, brdcst)) != 0) {
 			goto fail1;
 		}
 		if ((rc = efx_mac_multicast_list_set(enp,
-			    smp->sm_mcast_addr,
-			    smp->sm_mcast_count)) != 0)
+		    smp->sm_mcast_addr, smp->sm_mcast_count)) != 0)
 			goto fail2;
 	}
 
@@ -879,7 +879,7 @@ sfxge_mac_multicst_add(sfxge_t *sp, const uint8_t *addr)
 	i = 0;
 	while (i < smp->sm_mcast_count) {
 		if (bcmp(smp->sm_mcast_addr + (i * ETHERADDRL),
-			addr, ETHERADDRL) == 0)
+		    addr, ETHERADDRL) == 0)
 			goto done;
 		else
 			i++;
@@ -915,7 +915,7 @@ sfxge_mac_multicst_remove(sfxge_t *sp, const uint8_t *addr)
 	i = 0;
 	while (i < smp->sm_mcast_count) {
 		if (bcmp(smp->sm_mcast_addr + (i * ETHERADDRL),
-			addr, ETHERADDRL) == 0) {
+		    addr, ETHERADDRL) == 0) {
 			(void) memmove(smp->sm_mcast_addr + (i * ETHERADDRL),
 			    smp->sm_mcast_addr + ((i + 1) * ETHERADDRL),
 			    (smp->sm_mcast_count - (i + 1)) * ETHERADDRL);
@@ -933,56 +933,6 @@ sfxge_mac_multicst_remove(sfxge_t *sp, const uint8_t *addr)
 fail1:
 	DTRACE_PROBE1(fail1, int, rc);
 	mutex_exit(&(smp->sm_lock));
-
-	return (rc);
-}
-
-static int
-sfxge_mac_loopback_set(sfxge_t *sp, efx_loopback_type_t type)
-{
-	sfxge_mac_t *smp = &(sp->s_mac);
-	efx_nic_t *enp = sp->s_enp;
-	int rc;
-
-	mutex_enter(&(smp->sm_lock));
-	ASSERT3U(smp->sm_state, ==, SFXGE_MAC_STARTED);
-
-	if ((rc = efx_port_loopback_set(enp, EFX_LINK_UNKNOWN, type)) != 0)
-		goto fail1;
-
-	mutex_exit(&(smp->sm_lock));
-	return (0);
-
-fail1:
-	DTRACE_PROBE1(fail1, int, rc);
-	mutex_exit(&(smp->sm_lock));
-
-	return (rc);
-}
-
-int
-sfxge_mac_ioctl(sfxge_t *sp, sfxge_mac_ioc_t *smip)
-{
-	int rc;
-
-	switch (smip->smi_op) {
-	case SFXGE_MAC_OP_LOOPBACK: {
-		efx_loopback_type_t type = smip->smi_data;
-
-		if ((rc = sfxge_mac_loopback_set(sp, type)) != 0)
-			goto fail1;
-
-		break;
-	}
-	default:
-		rc = ENOTSUP;
-		goto fail1;
-	}
-
-	return (0);
-
-fail1:
-	DTRACE_PROBE1(fail1, int, rc);
 
 	return (rc);
 }

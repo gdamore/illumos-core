@@ -236,8 +236,6 @@ sfxge_tx_mapping_dtor(void *buf, void *arg)
 {
 	sfxge_tx_mapping_t *stmp = buf;
 
-	_NOTE(ARGUNUSED(arg))
-
 	ASSERT3P(stmp->stm_sp, ==, arg);
 
 	/* Free the DMA handle */
@@ -1208,8 +1206,8 @@ sfxge_tx_qstart(sfxge_t *sp, unsigned int index)
 
 	/* Create the transmit queue */
 	if ((rc = efx_tx_qcreate(enp, index, stp->st_label, esmp,
-		    SFXGE_TX_NDESCS, stp->st_id, flags, sep->se_eep,
-		    &(stp->st_etp), &desc_index)) != 0)
+	    SFXGE_TX_NDESCS, stp->st_id, flags, sep->se_eep,
+	    &(stp->st_etp), &desc_index)) != 0)
 		goto fail2;
 
 	/* Initialise queue descriptor indexes */
@@ -1244,7 +1242,7 @@ fail1:
 
 static inline int
 sfxge_tx_qmapping_add(sfxge_txq_t *stp, sfxge_tx_mapping_t *stmp,
-size_t *offp, size_t *limitp)
+    size_t *offp, size_t *limitp)
 {
 	mblk_t *mp;
 	size_t mapping_off;
@@ -1272,8 +1270,7 @@ size_t *offp, size_t *limitp)
 		efx_buffer_t *ebp;
 
 		ASSERT3U(page, <, SFXGE_TX_MAPPING_NADDR);
-		ASSERT((stmp->stm_addr[page] &
-			SFXGE_TX_DESCMASK) != 0);
+		ASSERT((stmp->stm_addr[page] & SFXGE_TX_DESCMASK) != 0);
 
 		page_size = MIN(page_size, mapping_size);
 		page_size = MIN(page_size, *limitp);
@@ -3014,112 +3011,6 @@ fail1:
 	return (rc);
 }
 
-int
-sfxge_tx_loopback(sfxge_t *sp, unsigned int count)
-{
-	uint8_t unicst[ETHERADDRL];
-	size_t mtu;
-	mblk_t *mp;
-	struct ether_header *etherhp;
-	unsigned int byte;
-	int rc;
-
-	if (count == 0) {
-		rc = EINVAL;
-		goto fail1;
-	}
-
-	rc = sfxge_mac_unicst_get(sp, SFXGE_UNICST_LAA, unicst);
-
-	if (rc == ENOENT)
-		rc = sfxge_mac_unicst_get(sp, SFXGE_UNICST_BIA, unicst);
-
-	if (rc != 0)
-		goto fail2;
-
-	mtu = sp->s_mtu;
-
-	if ((mp = allocb(sizeof (struct ether_header) + mtu,
-	    BPRI_HI)) == NULL) {
-		rc = ENOMEM;
-		goto fail3;
-	}
-
-	mp->b_wptr = mp->b_rptr + sizeof (struct ether_header);
-	bzero(mp->b_rptr, MBLKL(mp));
-
-	/*LINTED*/
-	etherhp = (struct ether_header *)(mp->b_rptr);
-	bcopy(sfxge_brdcst, &(etherhp->ether_dhost), ETHERADDRL);
-	bcopy(unicst, &(etherhp->ether_shost), ETHERADDRL);
-	etherhp->ether_type = htons(SFXGE_ETHERTYPE_LOOPBACK);
-
-	for (byte = 0; byte < 30; byte++)
-		*(mp->b_wptr++) = (byte & 1) ? 0xaa : 0x55;
-
-	do {
-		mblk_t *nmp;
-
-		if ((nmp = dupb(mp)) == NULL) {
-			rc = ENOMEM;
-			goto fail4;
-		}
-
-		rc = sfxge_tx_packet_add(sp, nmp);
-		if (rc != 0) {
-			freeb(nmp);
-			goto fail5;
-		}
-
-	} while (--count != 0);
-
-	freeb(mp);
-	return (0);
-
-fail5:
-	DTRACE_PROBE(fail5);
-fail4:
-	DTRACE_PROBE(fail4);
-
-	freeb(mp);
-
-fail3:
-	DTRACE_PROBE(fail3);
-fail2:
-	DTRACE_PROBE(fail2);
-fail1:
-	DTRACE_PROBE1(fail1, int, rc);
-
-	return (rc);
-}
-
-int
-sfxge_tx_ioctl(sfxge_t *sp, sfxge_tx_ioc_t *stip)
-{
-	int rc;
-
-	switch (stip->sti_op) {
-	case SFXGE_TX_OP_LOOPBACK: {
-		unsigned int count = stip->sti_data;
-
-		if ((rc = sfxge_tx_loopback(sp, count)) != 0)
-			goto fail1;
-
-		break;
-	}
-	default:
-		rc = ENOTSUP;
-		goto fail1;
-	}
-
-	return (0);
-
-fail1:
-	DTRACE_PROBE1(fail1, int, rc);
-
-	return (rc);
-}
-
 void
 sfxge_tx_stop(sfxge_t *sp)
 {
@@ -3158,7 +3049,7 @@ sfxge_tx_stop(sfxge_t *sp)
 
 	while (sp->s_tx_flush_pending > 0) {
 		if (cv_timedwait(&(sp->s_tx_flush_kv), &(sp->s_tx_flush_lock),
-			timeout) < 0) {
+		    timeout) < 0) {
 			/* Timeout waiting for queues to flush */
 			dev_info_t *dip = sp->s_dip;
 

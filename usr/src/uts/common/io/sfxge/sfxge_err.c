@@ -77,10 +77,9 @@ sfxge_intr_fatal(sfxge_t *sp)
 	    "Fatal Interrupt", 0);
 	if (err != 0) {
 		dev_err(sp->s_dip, CE_WARN, SFXGE_CMN_ERR
-			    "UNRECOVERABLE ERROR:"
-			    " Could not schedule driver restart."
-			    " err=%d",
-			    err);
+		    "UNRECOVERABLE ERROR:"
+		    " Could not schedule driver restart. err=%d",
+		    err);
 		ASSERT(B_FALSE);
 	}
 }

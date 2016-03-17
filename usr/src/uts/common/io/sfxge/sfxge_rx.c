@@ -222,7 +222,7 @@ sfxge_rx_qctor(void *buf, void *arg, int kmflags)
 	/* Initialize the free packet pool */
 	srfppp = &(srp->sr_fpp);
 	if ((srfppp->srfpp_putp = kmem_zalloc(SFXGE_CPU_CACHE_SIZE *
-		SFXGE_RX_FPP_NSLOTS, kmflags)) == NULL) {
+	    SFXGE_RX_FPP_NSLOTS, kmflags)) == NULL) {
 		rc = ENOMEM;
 		goto fail5;
 	}
@@ -1062,15 +1062,15 @@ sfxge_rx_qpoll(void *arg)
 	    (srp->sr_state != SFXGE_RXQ_STARTED) ||
 	    (!sep->se_eep)) {
 		dev_err(sp->s_dip, CE_WARN, SFXGE_CMN_ERR
-			"RXQ[%d] bad state in sfxge_rx_qpoll %d %d %p",
-			index, sep->se_state, srp->sr_state, sep->se_eep);
+		    "RXQ[%d] bad state in sfxge_rx_qpoll %d %d %p",
+		    index, sep->se_state, srp->sr_state, sep->se_eep);
 		return;
 	}
 #endif
 	efx_ev_qpost(sep->se_eep, magic);
 
 	srp->sr_tid = timeout(sfxge_rx_qpoll, srp,
-		drv_usectohz(sp->s_rxq_poll_usec));
+	    drv_usectohz(sp->s_rxq_poll_usec));
 }
 
 static void
@@ -1929,22 +1929,6 @@ discard:
 	}
 }
 
-static unsigned int
-sfxge_rx_qloopback(sfxge_t *sp, unsigned int index)
-{
-	sfxge_evq_t *sep = sp->s_sep[index];
-	sfxge_rxq_t *srp;
-	unsigned int count;
-
-	mutex_enter(&(sep->se_lock));
-	srp = sp->s_srp[index];
-	count = srp->sr_loopback;
-	srp->sr_loopback = 0;
-	mutex_exit(&(sep->se_lock));
-
-	return (count);
-}
-
 void
 sfxge_rx_qflush_done(sfxge_rxq_t *srp)
 {
@@ -2035,7 +2019,7 @@ sfxge_rx_qstop(sfxge_t *sp, unsigned int index)
 		}
 		srp->sr_flush = SFXGE_FLUSH_PENDING;
 		if (cv_timedwait(&(srp->sr_flush_kv), &(sep->se_lock),
-			timeout) < 0) {
+		    timeout) < 0) {
 			/* Timeout waiting for successful or failed flush */
 			dev_err(dip, CE_NOTE,
 			    SFXGE_CMN_ERR "rxq[%d] flush timeout", index);
@@ -2126,7 +2110,7 @@ sfxge_rx_scale_kstat_update(kstat_t *ksp, int rw)
 	}
 
 	if ((freq = kmem_zalloc(sizeof (unsigned int) * sip->si_nalloc,
-				KM_NOSLEEP)) == NULL) {
+	    KM_NOSLEEP)) == NULL) {
 		rc = ENOMEM;
 		goto fail2;
 	}
@@ -2222,8 +2206,7 @@ sfxge_rx_scale_prop_get(sfxge_t *sp)
 	int rx_scale;
 
 	rx_scale = ddi_prop_get_int(DDI_DEV_T_ANY, sp->s_dip,
-				    DDI_PROP_DONTPASS, "rx_scale_count",
-				    SFXGE_RX_SCALE_MAX);
+	    DDI_PROP_DONTPASS, "rx_scale_count", SFXGE_RX_SCALE_MAX);
 	/* 0 and all -ve numbers sets to number of logical CPUs */
 	if (rx_scale <= 0)
 		rx_scale = ncpus;
@@ -2289,14 +2272,14 @@ sfxge_rx_scale_update(void *arg)
 	}
 
 	if ((tbl =  kmem_zalloc(sizeof (unsigned int) * SFXGE_RX_SCALE_MAX,
-			    KM_NOSLEEP)) == NULL) {
+	    KM_NOSLEEP)) == NULL) {
 		rc = ENOMEM;
 		goto fail2;
 	}
 
 	sip = &(sp->s_intr);
 	if ((rating = kmem_zalloc(sizeof (unsigned int) * sip->si_nalloc,
-			    KM_NOSLEEP)) == NULL) {
+	    KM_NOSLEEP)) == NULL) {
 		rc = ENOMEM;
 		goto fail3;
 	}
@@ -2709,7 +2692,7 @@ sfxge_rx_start(sfxge_t *sp)
 	/* It is sufficient to have Rx scale initialized */
 	ASSERT3U(sp->s_rx_scale.srs_state, ==, SFXGE_RX_SCALE_STARTED);
 	rc = efx_mac_filter_default_rxq_set(sp->s_enp, sp->s_srp[0]->sr_erp,
-					    sp->s_rx_scale.srs_count > 1);
+	    sp->s_rx_scale.srs_count > 1);
 	if (rc != 0)
 		goto fail4;
 
@@ -2766,45 +2749,6 @@ sfxge_rx_coalesce_mode_set(sfxge_t *sp, sfxge_rx_coalesce_mode_t mode)
 	}
 
 	sp->s_rx_coalesce_mode = mode;
-
-	return (0);
-
-fail1:
-	DTRACE_PROBE1(fail1, int, rc);
-
-	return (rc);
-}
-
-void
-sfxge_rx_loopback(sfxge_t *sp, unsigned int *countp)
-{
-	sfxge_intr_t *sip = &(sp->s_intr);
-	int index;
-
-	*countp = 0;
-	for (index = 0; index < sip->si_nalloc; index++)
-		*countp += sfxge_rx_qloopback(sp, index);
-}
-
-int
-sfxge_rx_ioctl(sfxge_t *sp, sfxge_rx_ioc_t *srip)
-{
-	int rc;
-
-	switch (srip->sri_op) {
-	case SFXGE_RX_OP_LOOPBACK: {
-		unsigned int count;
-
-		sfxge_rx_loopback(sp, &count);
-
-		srip->sri_data = count;
-
-		break;
-	}
-	default:
-		rc = ENOTSUP;
-		goto fail1;
-	}
 
 	return (0);
 

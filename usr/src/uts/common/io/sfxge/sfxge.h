@@ -909,7 +909,6 @@ extern int			sfxge_mac_multicst_add(sfxge_t *,
     uint8_t const *addr);
 extern int			sfxge_mac_multicst_remove(sfxge_t *,
     uint8_t const *addr);
-extern int			sfxge_mac_ioctl(sfxge_t *, sfxge_mac_ioc_t *);
 extern void			sfxge_mac_stop(sfxge_t *);
 extern void			sfxge_mac_fini(sfxge_t *);
 extern void			sfxge_mac_link_update(sfxge_t *sp,
@@ -925,9 +924,6 @@ extern int			sfxge_mcdi2_ioctl(sfxge_t *sp,
 extern int			sfxge_phy_init(sfxge_t *);
 extern void			sfxge_phy_link_mode_get(sfxge_t *,
     efx_link_mode_t *);
-extern int			sfxge_phy_ioctl(sfxge_t *, sfxge_phy_ioc_t *);
-extern int			sfxge_phy_bist_ioctl(sfxge_t *,
-    sfxge_phy_bist_ioc_t *);
 extern void			sfxge_phy_fini(sfxge_t *);
 extern int			sfxge_phy_kstat_init(sfxge_t *sp);
 extern void			sfxge_phy_kstat_fini(sfxge_t *sp);
@@ -956,7 +952,6 @@ extern void			sfxge_rx_qcomplete(sfxge_rxq_t *, boolean_t);
 extern void			sfxge_rx_qflush_done(sfxge_rxq_t *);
 extern void			sfxge_rx_qflush_failed(sfxge_rxq_t *);
 extern void			sfxge_rx_qfpp_trim(sfxge_rxq_t *);
-extern int			sfxge_rx_ioctl(sfxge_t *, sfxge_rx_ioc_t *);
 extern void			sfxge_rx_stop(sfxge_t *);
 extern unsigned int 		sfxge_rx_loaned(sfxge_t *);
 extern void			sfxge_rx_fini(sfxge_t *);
@@ -966,7 +961,6 @@ extern int			sfxge_tx_start(sfxge_t *);
 extern int			sfxge_tx_packet_add(sfxge_t *, mblk_t *);
 extern void			sfxge_tx_qcomplete(sfxge_txq_t *);
 extern void			sfxge_tx_qflush_done(sfxge_txq_t *);
-extern int			sfxge_tx_ioctl(sfxge_t *, sfxge_tx_ioc_t *);
 extern void			sfxge_tx_stop(sfxge_t *);
 extern void			sfxge_tx_fini(sfxge_t *);
 extern void			sfxge_tx_qdpl_flush(sfxge_txq_t *stp);
@@ -982,7 +976,6 @@ extern void			sfxge_sram_buf_tbl_clear(sfxge_t *, uint32_t,
 extern void			sfxge_sram_stop(sfxge_t *);
 extern void			sfxge_sram_buf_tbl_free(sfxge_t *, uint32_t,
     size_t);
-extern int			sfxge_sram_ioctl(sfxge_t *, sfxge_sram_ioc_t *);
 extern void			sfxge_sram_fini(sfxge_t *);
 
 extern sfxge_packet_type_t	sfxge_pkthdr_parse(mblk_t *,
@@ -1024,11 +1017,9 @@ extern int		sfxge_nvram_ioctl(sfxge_t *, sfxge_nvram_ioc_t *);
 extern int		sfxge_pci_init(sfxge_t *);
 extern void		sfxge_pcie_check_link(sfxge_t *, unsigned int,
     unsigned int);
-extern int		sfxge_pci_ioctl(sfxge_t *, sfxge_pci_ioc_t *);
 extern void		sfxge_pci_fini(sfxge_t *);
 
 extern int		sfxge_bar_init(sfxge_t *);
-extern int		sfxge_bar_ioctl(sfxge_t *, sfxge_bar_ioc_t *);
 extern void		sfxge_bar_fini(sfxge_t *);
 
 extern int		sfxge_vpd_ioctl(sfxge_t *, sfxge_vpd_ioc_t *);
