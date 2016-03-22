@@ -1423,20 +1423,6 @@ sfxge_rx_qflow_add(sfxge_rxq_t *srp, sfxge_rx_flow_t *srfp,
 
 	ASSERT(mp->b_cont == NULL);
 
-#ifdef _USE_GLD_V3_SOL10
-	/* GARRETT: XXX: This is fixed in illumos - maybe ditchi this now? */
-	/*
-	 * The IP and UDP layers in Solaris 10 have slow paths for
-	 * handling mblks with more than 2 fragments.
-	 * UDP: see OpenSolaris CR 6305037
-	 * IP: see <http://www.mail-archive.com/networking-discuss@
-	 *   opensolaris.org/msg07366.html>
-	 */
-	if (srfp->srf_mp && srfp->srf_mp->b_cont) {
-		sfxge_rx_qflow_complete(srp, srfp);
-	}
-#endif
-
 	if (srfp->srf_mp == NULL) {
 		/* First packet in this flow */
 		srfp->srf_etherhp = etherhp;
