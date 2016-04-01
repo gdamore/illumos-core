@@ -446,7 +446,7 @@ sfxge_gld_tx(void *arg, mblk_t *mp)
 	return (NULL);
 }
 
-static boolean_t	sfxge_lso = B_TRUE;
+boolean_t	sfxge_lso = B_TRUE;
 
 static boolean_t
 sfxge_gld_getcapab(void *arg, mac_capab_t cap, void *cap_arg)

@@ -45,7 +45,11 @@ sfxge_vpd_get_keyword(sfxge_t *sp, sfxge_vpd_ioc_t *svip)
 	if ((rc = efx_vpd_size(enp, &size)) != 0)
 		goto fail1;
 
-	buf = kmem_zalloc(size, KM_SLEEP);
+	buf = kmem_zalloc(size, KM_NOSLEEP);
+	if (buf == NULL) {
+		rc = ENOMEM;
+		goto fail1;
+	}
 	ASSERT(buf);
 
 	if ((rc = efx_vpd_read(enp, buf, size)) != 0)
@@ -96,7 +100,11 @@ sfxge_vpd_set_keyword(sfxge_t *sp, sfxge_vpd_ioc_t *svip)
 	if ((rc = efx_vpd_size(enp, &size)) != 0)
 		goto fail1;
 
-	buf = kmem_zalloc(size, KM_SLEEP);
+	buf = kmem_zalloc(size, KM_NOSLEEP);
+	if (buf == NULL) {
+		rc = ENOMEM;
+		goto fail1;
+	}
 	ASSERT(buf);
 
 	if ((rc = efx_vpd_read(enp, buf, size)) != 0)

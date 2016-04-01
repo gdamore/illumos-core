@@ -265,7 +265,7 @@ sfxge_mcdi_logger(void *arg, efx_log_msg_t type,
 		cmn_err(CE_NOTE, "%s", buffer);
 	}
 }
-#endif
+#endif /* EFSYS_OPT_MCDI_LOGGING */
 
 int
 sfxge_mcdi_init(sfxge_t *sp)
@@ -383,7 +383,8 @@ sfxge_mcdi_ioctl(sfxge_t *sp, sfxge_mcdi_ioc_t *smip)
 		goto fail2;
 	}
 
-	if ((out = kmem_zalloc(sizeof (smip->smi_payload), KM_SLEEP)) == NULL) {
+	out = kmem_zalloc(sizeof (smip->smi_payload), KM_NOSLEEP);
+	if (out == NULL) {
 		rc = ENOMEM;
 		goto fail3;
 	}
@@ -446,7 +447,8 @@ sfxge_mcdi2_ioctl(sfxge_t *sp, sfxge_mcdi2_ioc_t *smip)
 		goto fail2;
 	}
 
-	if ((out = kmem_zalloc(sizeof (smip->smi_payload), KM_SLEEP)) == NULL) {
+	out = kmem_zalloc(sizeof (smip->smi_payload), KM_NOSLEEP);
+	if (out = NULL) {
 		rc = ENOMEM;
 		goto fail3;
 	}
