@@ -618,13 +618,15 @@ sfxge_ev_wake_up(void *arg, uint32_t index)
 	return (B_FALSE);
 }
 
+#if 0
 static boolean_t
-sfxge_ev_monitor(void *arg, efx_mon_stat_t id, efx_mon_stat_value_t value)
+sfxge_ev_monitor(void)
 {
 	_NOTE(ARGUNUSED(arg, id, value))
 
 	return (B_FALSE);
 }
+#endif
 
 static boolean_t
 sfxge_ev_link_change(void *arg, efx_link_mode_t	link_mode)
@@ -822,7 +824,9 @@ sfxge_ev_qstart(sfxge_t *sp, unsigned int index)
 	eecp->eec_wake_up = sfxge_ev_wake_up;
 	eecp->eec_timer = sfxge_ev_timer;
 	eecp->eec_link_change = sfxge_ev_link_change;
-	eecp->eec_monitor = sfxge_ev_monitor;
+#if 0
+	eecp->eec_monitor = (void *)sfxge_ev_monitor;
+#endif
 
 	/* Create the event queue */
 	if ((rc = efx_ev_qcreate(enp, index, esmp, evq_size, sep->se_id,

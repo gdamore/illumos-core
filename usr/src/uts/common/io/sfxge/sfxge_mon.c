@@ -38,6 +38,7 @@
 
 #include "efx.h"
 
+#if 0
 /* Monitor DMA attributes */
 static ddi_device_acc_attr_t sfxge_mon_devacc = {
 
@@ -60,8 +61,10 @@ static ddi_dma_attr_t sfxge_mon_dma_attr = {
 	1,			/* dma_attr_granular	*/
 	0			/* dma_attr_flags	*/
 };
+#endif
 
 
+#if 0
 static int
 sfxge_mon_kstat_update(kstat_t *ksp, int rw)
 {
@@ -323,3 +326,4 @@ sfxge_mon_fini(sfxge_t *sp)
 
 	SFXGE_OBJ_CHECK(smp, sfxge_mon_t);
 }
+#endif

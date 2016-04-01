@@ -143,6 +143,7 @@ typedef struct sfxge_mac_s {
 	uint32_t		sm_phy_cap_to_unset;
 } sfxge_mac_t;
 
+#if 0
 typedef enum sfxge_mon_state_e {
 	SFXGE_MON_UNINITIALIZED = 0,
 	SFXGE_MON_INITIALIZED,
@@ -160,6 +161,7 @@ typedef struct sfxge_mon_s {
 	sfxge_mon_state_t	sm_state;
 	efsys_mem_t		sm_mem;
 } sfxge_mon_t;
+#endif
 
 typedef enum sfxge_sram_state_e {
 	SFXGE_SRAM_UNINITIALIZED = 0,
@@ -770,7 +772,9 @@ struct sfxge_s {
 	efsys_bar_t			s_bar;
 	sfxge_intr_t			s_intr;
 	sfxge_mac_t			s_mac;
+#if 0
 	sfxge_mon_t			s_mon;
+#endif
 	sfxge_sram_t			s_sram;
 	sfxge_mcdi_t			s_mcdi;
 	kmem_cache_t			*s_eq0c; /* eventQ 0 */

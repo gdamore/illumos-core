@@ -188,8 +188,10 @@ sfxge_create(dev_info_t *dip, sfxge_t **spp)
 	if ((rc = sfxge_tx_init(sp)) != 0)
 		goto fail15;
 
+#if 0
 	if ((rc = sfxge_mon_init(sp)) != 0)
 		goto fail16;
+#endif
 
 	mutex_init(&(sp->s_tx_flush_lock), NULL, MUTEX_DRIVER,
 	    DDI_INTR_PRI(sp->s_intr.si_intr_pri));
@@ -200,9 +202,11 @@ sfxge_create(dev_info_t *dip, sfxge_t **spp)
 	*spp = sp;
 	return (0);
 
+#if 0
 fail16:
 	DTRACE_PROBE(fail15);
 	sfxge_tx_fini(sp);
+#endif
 
 fail15:
 	DTRACE_PROBE(fail14);
@@ -324,8 +328,10 @@ sfxge_start_locked(sfxge_t *sp, boolean_t restart)
 	if ((rc = sfxge_tx_start(sp)) != 0)
 		goto fail10;
 
+#if 0
 	if ((rc = sfxge_mon_start(sp)) != 0)
 		goto fail11;
+#endif
 
 	ASSERT3U(sp->s_state, ==, SFXGE_STARTING);
 	sp->s_state = SFXGE_STARTED;
@@ -336,9 +342,11 @@ sfxge_start_locked(sfxge_t *sp, boolean_t restart)
 done:
 	return (0);
 
+#if 0
 fail11:
 	DTRACE_PROBE(fail11);
 	sfxge_tx_stop(sp);
+#endif
 
 fail10:
 	DTRACE_PROBE(fail10);
@@ -407,7 +415,9 @@ sfxge_stop_locked(sfxge_t *sp)
 	}
 	sp->s_state = SFXGE_STOPPING;
 
+#if 0
 	sfxge_mon_stop(sp);
+#endif
 	sfxge_tx_stop(sp);
 	sfxge_rx_stop(sp);
 	sfxge_mac_stop(sp);
@@ -557,7 +567,9 @@ sfxge_destroy(sfxge_t *sp)
 	cv_destroy(&(sp->s_tx_flush_kv));
 	mutex_destroy(&(sp->s_tx_flush_lock));
 
+#if 0
 	sfxge_mon_fini(sp);
+#endif
 	sfxge_tx_fini(sp);
 	sfxge_rx_fini(sp);
 	sfxge_mac_fini(sp);
