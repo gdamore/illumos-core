@@ -223,7 +223,10 @@ sfxge_intr_bus_enable(sfxge_t *sp)
 	for (add_index = 0; add_index < sip->si_nalloc; add_index++) {
 		unsigned int pri;
 
-		(void) ddi_intr_get_pri(sip->si_table[add_index], &pri);
+		/* This cannot fail unless given invalid inputs. */
+		err = ddi_intr_get_pri(sip->si_table[add_index], &pri);
+		ASSERT(err == DDI_SUCCESS);
+
 		DTRACE_PROBE2(pri, unsigned int, add_index, unsigned int, pri);
 
 		err = ddi_intr_add_handler(sip->si_table[add_index], handler,

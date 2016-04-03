@@ -343,7 +343,7 @@ sfxge_mac_poll_stop(sfxge_t *sp)
 	ddi_taskq_wait(smp->sm_tqp);
 	mutex_enter(&(smp->sm_lock));
 
-	/* Wait for any pending DMAed stats to complete */
+	/* Collect the final statistics. */
 	sfxge_mac_stat_update_wait(smp);
 }
 
@@ -467,8 +467,6 @@ fail1:
 	mutex_destroy(&(smp->sm_lock));
 
 	smp->sm_sp = NULL;
-
-	SFXGE_OBJ_CHECK(smp, sfxge_mac_t);
 
 	return (rc);
 }
@@ -1012,6 +1010,4 @@ sfxge_mac_fini(sfxge_t *sp)
 	mutex_destroy(&(smp->sm_lock));
 
 	smp->sm_sp = NULL;
-
-	SFXGE_OBJ_CHECK(smp, sfxge_mac_t);
 }

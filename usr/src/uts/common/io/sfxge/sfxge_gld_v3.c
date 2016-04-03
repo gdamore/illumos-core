@@ -38,13 +38,11 @@
 #include <sys/ksynch.h>
 #include <sys/cpuvar.h>
 #include <sys/cpu.h>
+#include <sys/vlan.h>
 
 #include <inet/tcp.h>
 
 #include "sfxge.h"
-
-/* A vlan tag is 4 bytes */
-#define	SFXGE_VLAN_TAGSZ 4
 
 void
 sfxge_gld_link_update(sfxge_t *sp)
@@ -1203,34 +1201,13 @@ sfxge_gld_register(sfxge_t *sp)
 	mac_callbacks_t *mcp;
 	mac_register_t *mrp;
 	mac_handle_t mh;
+	uint8_t addr[ETHERADDRL];
 	int rc;
 
-	/*
-	 * NOTE: mac_register_t has additional fields in later kernels,
-	 * so the buffer returned by mac_alloc(9F) changes size. This
-	 * is not a problem for forward compatibility (a driver binary
-	 * built with older headers/libs running on a newer kernel).
-	 *
-	 * For Solaris 10, we build the sfxge driver on s10u9 to run on
-	 * s10u8, and later. This requries backward compatibility and
-	 * causes a problem. The mac_register_t in s10u8 is smaller than
-	 * the version in s10u9, so writing to the mc_margin field causes
-	 * a buffer overflow (and a hard-to-debug panic).
-	 *
-	 * Work around this problem by allocating mac_register_t using
-	 * kmem_alloc(9F) so it has the size expected by the driver. The
-	 * running kernel ignores the additional fields.
-	 *
-	 * Replace mac_alloc() with kmem_zalloc() and then set m_version.
-	 * Replace mac_free() with kmem_free().
-	 *
-	 * See bug 33189 and bug33213 for details.
-	 */
-	if ((mrp = kmem_zalloc(sizeof (mac_register_t), KM_SLEEP)) == NULL) {
-		rc = ENOMEM;
+        if ((mrp = mac_alloc(MAC_VERSION)) == NULL) {
+		rc = ENOTSUP;
 		goto fail1;
 	}
-	mrp->m_version = MAC_VERSION;
 
 	mrp->m_type_ident = MAC_PLUGIN_IDENT_ETHER;
 	mrp->m_driver = sp;
@@ -1254,7 +1231,6 @@ sfxge_gld_register(sfxge_t *sp)
 	mcp->mc_callbacks |= MC_GETCAPAB;
 	mcp->mc_getcapab = sfxge_gld_getcapab;
 
-	/* NOTE: mc_setprop, mc_getprop, mc_propinfo added in s10u9 */
 	mcp->mc_callbacks |= MC_SETPROP;
 	mcp->mc_setprop = sfxge_gld_setprop;
 
@@ -1266,7 +1242,7 @@ sfxge_gld_register(sfxge_t *sp)
 
 	mrp->m_callbacks = mcp;
 
-	mrp->m_src_addr = kmem_alloc(ETHERADDRL, KM_SLEEP);
+	mrp->m_src_addr = addr;
 
 	if ((rc = sfxge_mac_unicst_get(sp, SFXGE_UNICST_BIA,
 	    mrp->m_src_addr)) != 0)
@@ -1275,7 +1251,7 @@ sfxge_gld_register(sfxge_t *sp)
 	mrp->m_min_sdu = 0;
 	mrp->m_max_sdu = sp->s_mtu;
 
-	mrp->m_margin = SFXGE_VLAN_TAGSZ;
+	mrp->m_margin = VLAN_TAGSZ;
 
 	/* Set up the private properties */
 	/* NOTE: m_priv_props added in s10u9 */
@@ -1302,10 +1278,8 @@ fail3:
 fail2:
 	DTRACE_PROBE(fail2);
 
-	kmem_free(mrp->m_src_addr, ETHERADDRL);
-
 	/* Free the stack registration object */
-	kmem_free(mrp, sizeof (mac_register_t));
+	mac_free(mrp);
 
 	/* Tear down the private properties */
 	sfxge_gld_priv_prop_fini(sp);

@@ -92,7 +92,7 @@ sfxge_mcdi_acquire(sfxge_mcdi_t *smp)
 	ASSERT3U(smp->sm_state, !=, SFXGE_MCDI_UNINITIALIZED);
 
 	while (smp->sm_state != SFXGE_MCDI_INITIALIZED) {
-		(void) cv_wait_sig(&(smp->sm_kv), &(smp->sm_lock));
+		(void) cv_wait(&(smp->sm_kv), &(smp->sm_lock));
 	}
 	smp->sm_state = SFXGE_MCDI_BUSY;
 
@@ -448,7 +448,7 @@ sfxge_mcdi2_ioctl(sfxge_t *sp, sfxge_mcdi2_ioc_t *smip)
 	}
 
 	out = kmem_zalloc(sizeof (smip->smi_payload), KM_NOSLEEP);
-	if (out = NULL) {
+	if (out == NULL) {
 		rc = ENOMEM;
 		goto fail3;
 	}

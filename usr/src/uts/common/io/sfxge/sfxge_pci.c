@@ -102,8 +102,8 @@ sfxge_pci_init(sfxge_t *sp)
 	uint_t pci_nregs = 0;
 
 	/*
-	 * We need PCI bus address to format MCDI logging output in the same
-	 * way as on other platforms.
+	 * We need the PCI bus address to format MCDI logging output in the
+	 * same way as on other platforms.
 	 * It appears there's no straightforward way to extract the address
 	 * from a "dev_info_t" structure, though.
 	 * The "reg" property is supported by all PCIe devices, and contains
