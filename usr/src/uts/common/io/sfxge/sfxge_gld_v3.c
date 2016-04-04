@@ -503,39 +503,39 @@ static void
 sfxge_gld_priv_prop_info(sfxge_t *sp, const char *name,
     mac_prop_info_handle_t handle)
 {
-	_NOTE(ARGUNUSED(sp));
-
-	/*
-	 * Using mac_prop_info_set_default_str rather than the the corresponding
-	 * mac_prop_info_set_default_uint32 etc as it gives readable output in
-	 * "dladm show-linkprop" commands for private properties. Note this does
-	 * not break "dladm reset-linkprop" as might have been expected.
-	 */
 	if (strcmp(name, SFXGE_PRIV_PROP_NAME(rx_coalesce_mode)) == 0) {
-		mac_prop_info_set_default_str(handle,
-		    SFXGE_XSTR(SFXGE_RX_COALESCE_OFF));
+		mac_prop_info_set_default_uint32(handle,
+		    SFXGE_RX_COALESCE_OFF);
 		mac_prop_info_set_perm(handle, MAC_PROP_PERM_RW);
 		return;
 	}
 
 	if (strcmp(name, SFXGE_PRIV_PROP_NAME(rx_scale_count)) == 0) {
-		mac_prop_info_set_default_str(handle,
-		    SFXGE_XSTR(SFXGE_RX_SCALE_MAX));
+		mac_prop_info_set_default_uint32(handle, ncpus);
+		mac_prop_info_set_range_uint32(handle, 1,
+		    (uint32_t)sp->s_intr.si_nalloc);
 		mac_prop_info_set_perm(handle, MAC_PROP_PERM_RW);
 		return;
 	}
 
 	if (strcmp(name, SFXGE_PRIV_PROP_NAME(intr_moderation)) == 0) {
-		mac_prop_info_set_default_str(handle,
-		    SFXGE_XSTR(SFXGE_DEFAULT_MODERATION));
+		mac_prop_info_set_default_uint32(handle,
+		    SFXGE_DEFAULT_MODERATION);
+		mac_prop_info_set_range_uint32(handle,
+		    0, efx_nic_cfg_get(sp->s_enp)->enc_evq_timer_max_us);
+		mac_prop_info_set_perm(handle, MAC_PROP_PERM_RW);
+		return;
+	}
+
+	if (strcmp(name, SFXGE_PRIV_PROP_NAME(mon_polling)) == 0) {
+		mac_prop_info_set_default_uint8(handle, 0);
 		mac_prop_info_set_perm(handle, MAC_PROP_PERM_RW);
 		return;
 	}
 
 #if EFSYS_OPT_MCDI_LOGGING
 	if (strcmp(name, SFXGE_PRIV_PROP_NAME(mcdi_logging)) == 0) {
-		mac_prop_info_set_default_str(handle,
-		    SFXGE_XSTR(0));
+		mac_prop_info_set_default_uint8(handle, 0);
 		mac_prop_info_set_perm(handle, MAC_PROP_PERM_RW);
 		return;
 	}
@@ -576,6 +576,11 @@ sfxge_gld_priv_prop_get(sfxge_t *sp, const char *name,
 		sfxge_ev_moderation_get(sp, &us);
 
 		val = (long)us;
+		goto done;
+	}
+
+	if (strcmp(name, SFXGE_PRIV_PROP_NAME(mon_polling)) == 0) {
+		val = (long)sp->s_mon.sm_polling;
 		goto done;
 	}
 
@@ -634,6 +639,11 @@ sfxge_gld_priv_prop_set(sfxge_t *sp, const char *name, unsigned int size,
 		goto done;
 	}
 
+	if (strcmp(name, SFXGE_PRIV_PROP_NAME(mon_polling)) == 0) {
+		sp->s_mon.sm_polling = (int)val;
+		goto done;
+	}
+
 #if EFSYS_OPT_MCDI_LOGGING
 	if (strcmp(name, SFXGE_PRIV_PROP_NAME(mcdi_logging)) == 0) {
 		sp->s_mcdi_logging = (int)val;
@@ -668,7 +678,7 @@ sfxge_gld_priv_prop_init(sfxge_t *sp)
 	unsigned int nprops = 0;
 
 	/*
-	 * We have nnamed_props (3 or 4) named properties and the structure must
+	 * We have named_props (3 or 4) named properties and the structure must
 	 * be finished by a NULL pointer.
 	 */
 	sp->s_mac_priv_props_alloc = SFXGE_N_NAMED_PROPS + 1;

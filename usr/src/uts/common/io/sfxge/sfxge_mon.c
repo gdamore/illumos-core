@@ -37,7 +37,6 @@
 
 #include "efx.h"
 
-#if 0
 /* Monitor DMA attributes */
 static ddi_device_acc_attr_t sfxge_mon_devacc = {
 
@@ -60,10 +59,8 @@ static ddi_dma_attr_t sfxge_mon_dma_attr = {
 	1,			/* dma_attr_granular	*/
 	0			/* dma_attr_flags	*/
 };
-#endif
 
 
-#if 0
 static int
 sfxge_mon_kstat_update(kstat_t *ksp, int rw)
 {
@@ -85,8 +82,11 @@ sfxge_mon_kstat_update(kstat_t *ksp, int rw)
 	if (smp->sm_state != SFXGE_MON_STARTED)
 		goto done;
 
-	if ((rc = efx_mon_stats_update(enp, esmp, smp->sm_statbuf)) != 0)
-		goto fail2;
+	if (smp->sm_polling) {
+		rc = efx_mon_stats_update(enp, esmp, smp->sm_statbuf);
+		if (rc != 0)
+			goto fail2;
+	}
 
 	knp = smp->sm_stat;
 	for (sn = 0; sn < EFX_MON_NSTATS; sn++) {
@@ -100,6 +100,8 @@ sfxge_mon_kstat_update(kstat_t *ksp, int rw)
 	knp->value.ui32 = sp->s_num_restarts;
 	knp++;
 	knp->value.ui32 = sp->s_num_restarts_hw_err;
+	knp++;
+	knp->value.ui32 = smp->sm_polling;
 	knp++;
 
 done:
@@ -147,7 +149,7 @@ sfxge_mon_kstat_init(sfxge_t *sp)
 
 	if ((ksp = kstat_create((char *)ddi_driver_name(dip),
 	    ddi_get_instance(dip), name, "mon", KSTAT_TYPE_NAMED,
-	    nstat+2, 0)) == NULL) {
+	    nstat+3, 0)) == NULL) {
 		rc = ENOMEM;
 		goto fail2;
 	}
@@ -172,6 +174,8 @@ sfxge_mon_kstat_init(sfxge_t *sp)
 	kstat_named_init(knp, "num_restarts", KSTAT_DATA_UINT32);
 	knp++;
 	kstat_named_init(knp, "num_restarts_hw_err", KSTAT_DATA_UINT32);
+	knp++;
+	kstat_named_init(knp, "mon_polling", KSTAT_DATA_UINT32);
 	knp++;
 
 	kstat_install(ksp);
@@ -325,4 +329,3 @@ sfxge_mon_fini(sfxge_t *sp)
 
 	SFXGE_OBJ_CHECK(smp, sfxge_mon_t);
 }
-#endif

@@ -114,11 +114,8 @@ extern "C" {
 
 #define	EFSYS_OPT_LOOPBACK 1
 
-// #define	EFSYS_OPT_MON_MCDI 1
-// #define	EFSYS_OPT_MON_STATS 1
-
-#undef	EFSYS_OPT_MON_MCDI
-#undef	EFSYS_OPT_MON_STATS
+#define	EFSYS_OPT_MON_MCDI 1
+#define	EFSYS_OPT_MON_STATS 1
 
 #define	EFSYS_OPT_PHY_STATS 1
 #define	EFSYS_OPT_BIST 1
