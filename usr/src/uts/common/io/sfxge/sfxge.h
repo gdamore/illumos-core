@@ -86,7 +86,7 @@ typedef enum sfxge_promisc_type_e {
 	SFXGE_PROMISC_ALL_PHYS
 } sfxge_promisc_type_t;
 
-#define	SFXGE_MCAST_LIST_MAX 256
+#define	SFXGE_MCAST_LIST_MAX 4096
 
 typedef enum sfxge_link_duplex_e {
 	SFXGE_LINK_DUPLEX_UNKNOWN = 0,
