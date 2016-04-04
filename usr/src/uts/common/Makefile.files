@@ -2016,7 +2016,6 @@ SFXGE_OBJS =	sfxge_err.o sfxge_ev.o sfxge_hash.o sfxge_intr.o sfxge_mac.o \
 		sfxge_sram.o sfxge_bar.o sfxge_pci.o sfxge_nvram.o \
 		sfxge_rx.o sfxge_tcp.o sfxge_tx.o sfxge_mcdi.o sfxge_vpd.o \
 		sfxge.o sfxge_dma.o \
-		sfxge.h.o sfxge_debug.h.o sfxge_ioc.h.o efsys.h.o \
 		efx_bootcfg.o efx_crc32.o efx_ev.o efx_filter.o \
 		efx_hash.o efx_intr.o efx_mac.o efx_mcdi.o efx_mon.o \
        		efx_nic.o efx_nvram.o efx_phy.o efx_port.o efx_rx.o \

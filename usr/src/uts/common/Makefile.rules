@@ -1446,12 +1446,6 @@ $(OBJS_DIR)/%.o:		$(UTSBASE)/common/io/sfxge/common/%.c
 	$(COMPILE.c) -o $@ $<
 	$(CTFCONVERT_O)
 
-$(OBJS_DIR)/%.h.o:		$(UTSBASE)/common/io/sfxge/%.h
-	$(CP) $< $(@:%.o=%.c)
-	$(COMPILE.c) -o $@ $(@:%.o=%.c)
-	$(RM) $(@:%.o=%.c)
-	$(CTFCONVERT_O)
-
 $(OBJS_DIR)/%.o:		$(UTSBASE)/common/io/skd/%.c
 	$(COMPILE.c) -o $@ $<
 	$(CTFCONVERT_O)
@@ -2768,11 +2762,6 @@ $(LINTS_DIR)/%.ln:		$(UTSBASE)/common/io/sfxge/%.c
 
 $(LINTS_DIR)/%.ln:		$(UTSBASE)/common/io/sfxge/common/%.c
 	@($(LHEAD) $(LINT.c) $< $(LTAIL))
-
-$(LINTS_DIR)/%.h.ln:		$(UTSBASE)/common/io/sfxge/%.h
-	@$(CP) $< $(@:%.ln=%.c)
-	@($(LHEAD) $(LINT.c) $(@:%.ln=%.c) $(LTAIL))
-	@$(RM) $(@:%.ln=%.c)
 
 $(LINTS_DIR)/%.ln:		$(UTSBASE)/common/io/skd/%.c
 	@($(LHEAD) $(LINT.c) $< $(LTAIL))
