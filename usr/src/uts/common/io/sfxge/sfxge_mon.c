@@ -32,7 +32,6 @@
 #include <sys/sysmacros.h>
 #include <sys/ddi.h>
 #include <sys/sunddi.h>
-#include <sys/cyclic.h>
 
 #include "sfxge.h"
 
