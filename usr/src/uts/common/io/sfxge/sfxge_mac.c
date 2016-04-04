@@ -811,15 +811,37 @@ sfxge_mac_unicst_set(sfxge_t *sp, uint8_t *addr)
 {
 	sfxge_mac_t *smp = &(sp->s_mac);
 	efx_nic_t *enp = sp->s_enp;
+	boolean_t old_mac_valid;
+	uint8_t old_mac[ETHERADDRL];
 	int rc;
 
 	mutex_enter(&(smp->sm_lock));
+
+	old_mac_valid = smp->sm_laa_valid;
+	if (old_mac_valid)
+		bcopy(smp->sm_laa, old_mac, ETHERADDRL);
 
 	bcopy(addr, smp->sm_laa, ETHERADDRL);
 	smp->sm_laa_valid = B_TRUE;
 
 	if (smp->sm_state != SFXGE_MAC_STARTED)
 		goto done;
+
+	if (efx_nic_cfg_get(enp)->enc_allow_set_mac_with_installed_filters) {
+		if ((rc = efx_mac_addr_set(enp, smp->sm_laa)) != 0)
+			goto fail1;
+	} else {
+		/* Older EF10 firmware requires a device start */
+		mutex_exit(&smp->sm_lock);
+		sfxge_stop(sp);
+		if ((rc = sfxge_start(sp, B_TRUE)) != 0) {
+			dev_err(sp->s_dip, CE_NOTE, SFXGE_CMN_ERR
+			    "unable to restart with a new MAC");
+			mutex_enter(&(smp->sm_lock));
+			goto fail1;
+		}
+		mutex_enter(&smp->sm_lock);
+	}
 
 	if ((rc = efx_mac_addr_set(enp, smp->sm_laa)) != 0)
 		goto fail1;
@@ -830,6 +852,11 @@ done:
 	return (0);
 
 fail1:
+	if (old_mac_valid)
+		bcopy(old_mac, smp->sm_laa, ETHERADDRL);
+	else
+		smp->sm_laa_valid = B_FALSE;
+
 	DTRACE_PROBE1(fail1, int, rc);
 
 	mutex_exit(&(smp->sm_lock));
