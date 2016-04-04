@@ -873,6 +873,13 @@ sfxge_mac_multicst_add(sfxge_t *sp, const uint8_t *addr)
 
 	mutex_enter(&(smp->sm_lock));
 
+	if ((addr[0] & 0x1) == 0) {
+		return (EINVAL);
+	}
+	if (smp->sm_mcast_count >= SFXGE_MCAST_LIST_MAX) {
+		return (ENOENT);
+	}
+
 	/* Check if the address is already in the list */
 	i = 0;
 	while (i < smp->sm_mcast_count) {
