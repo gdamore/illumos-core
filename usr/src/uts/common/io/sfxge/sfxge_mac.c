@@ -828,8 +828,11 @@ sfxge_mac_unicst_set(sfxge_t *sp, uint8_t *addr)
 		goto done;
 
 	if (efx_nic_cfg_get(enp)->enc_allow_set_mac_with_installed_filters) {
-		if ((rc = efx_mac_addr_set(enp, smp->sm_laa)) != 0)
+		if ((rc = efx_mac_addr_set(enp, smp->sm_laa)) != 0) {
+			dev_err(sp->s_dip, CE_NOTE, SFXGE_CMN_ERR
+			    "unable to set unicast MAC filter");
 			goto fail1;
+		}
 	} else {
 		/* Older EF10 firmware requires a device start */
 		mutex_exit(&smp->sm_lock);
