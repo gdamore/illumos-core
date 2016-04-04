@@ -40,7 +40,7 @@
 static const char	*__efx_mon_name[] = {
 	"",
 	"sfx90x0",
-	"sfx91x0"
+	"sfx91x0",
 	"sfx92x0"
 };
 
