@@ -31,8 +31,7 @@
 #include <sys/types.h>
 #include <sys/ddi.h>
 #include <sys/sunddi.h>
-#include <sys/stream.h>
-#include <sys/dlpi.h>
+#include <sys/id_space.h>
 
 #include "sfxge.h"
 
@@ -54,9 +53,7 @@ sfxge_sram_init(sfxge_t *sp)
 	 */
 	(void) snprintf(name, MAXNAMELEN - 1, "%s%d_sram", ddi_driver_name(dip),
 	    ddi_get_instance(dip));
-	ssp->ss_buf_tbl = vmem_create(name, (void *)1, EFX_BUF_TBL_SIZE, 1,
-	    NULL, NULL, NULL, 1, VM_SLEEP | VMC_IDENTIFIER);
-
+	ssp->ss_buf_ids = id_space_create(name, 1, EFX_BUF_TBL_SIZE);
 	ssp->ss_state = SFXGE_SRAM_INITIALIZED;
 }
 
@@ -64,20 +61,18 @@ int
 sfxge_sram_buf_tbl_alloc(sfxge_t *sp, size_t n, uint32_t *idp)
 {
 	sfxge_sram_t *ssp = &(sp->s_sram);
-	void *base;
+	id_t id;
 	int rc;
 
 	mutex_enter(&(ssp->ss_lock));
 
 	ASSERT(ssp->ss_state != SFXGE_SRAM_UNINITIALIZED);
 
-	if ((base = vmem_alloc(ssp->ss_buf_tbl, n, VM_NOSLEEP)) == NULL) {
+	if ((id = id_alloc_nosleep(ssp->ss_buf_ids)) < 0) {
 		rc = ENOSPC;
 		goto fail1;
 	}
-
-	*idp = (uint32_t)((uintptr_t)base - 1);
-
+	*idp = (uint32_t)id;
 	mutex_exit(&(ssp->ss_lock));
 
 	return (0);
@@ -171,14 +166,12 @@ void
 sfxge_sram_buf_tbl_free(sfxge_t *sp, uint32_t id, size_t n)
 {
 	sfxge_sram_t *ssp = &(sp->s_sram);
-	void *base;
 
 	mutex_enter(&(ssp->ss_lock));
 
 	ASSERT(ssp->ss_state != SFXGE_SRAM_UNINITIALIZED);
 
-	base = (void *)((uintptr_t)id + 1);
-	vmem_free(ssp->ss_buf_tbl, base, n);
+	id_free(ssp->ss_buf_ids, (id_t)id);
 
 	mutex_exit(&(ssp->ss_lock));
 }
@@ -191,8 +184,8 @@ sfxge_sram_fini(sfxge_t *sp)
 	ASSERT3U(ssp->ss_state, ==, SFXGE_SRAM_INITIALIZED);
 
 	/* Destroy the VMEM arena */
-	vmem_destroy(ssp->ss_buf_tbl);
-	ssp->ss_buf_tbl = NULL;
+	id_space_destroy(ssp->ss_buf_ids);
+	ssp->ss_buf_ids = NULL;
 
 	mutex_destroy(&(ssp->ss_lock));
 

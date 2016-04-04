@@ -172,7 +172,7 @@ typedef enum sfxge_sram_state_e {
 typedef struct sfxge_sram_s {
 	sfxge_t			*ss_sp;
 	kmutex_t		ss_lock;
-	vmem_t			*ss_buf_tbl;
+	id_space_t		*ss_buf_ids;
 	unsigned int		ss_count;
 	sfxge_sram_state_t	ss_state;
 } sfxge_sram_t;
