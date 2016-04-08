@@ -11,7 +11,7 @@
 .\"
 .\" Copyright 2016 Garrett D'Amore <garrett@damore.org>
 .\"
-.Dd Mar 15, 2016
+.Dd Apr 11, 2016
 .Dt SFXGE 7D
 .Os
 .Sh NAME
@@ -26,8 +26,9 @@ driver provides support for 10 and 40 Gbps Ethernet adapters
 based on the Solarflare SFC9000 family of controllers.
 .Lp
 These devices generally support the standard Ethernet features, including
-autonegotiation, etc.  They also support full size MTUs (1500 bytes),
-even when used with VLANs, and hardware based flow control.
+autonegotiation, VLANs, and hardware based flow control.
+The maximum frame size supported by these devices is 9202 bytes, including
+the tag, if present.
 .Lp
 The device driver supports the
 .Xr ieee802.3 5
@@ -49,8 +50,3 @@ Special character device.
 .%T IEEE 802.3: Ethernet
 .%Q IEEE Standards Association
 .Re
-.Sh BUGS
-The hardware has support for multiple hardware rings, providing for
-receive side scaling (RSS) and improved virtualization.
-This driver currently lacks support for exposing this functionality
-to the operating system.
