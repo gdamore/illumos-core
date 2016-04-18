@@ -906,9 +906,6 @@ sfxge_mac_multicst_add(sfxge_t *sp, const uint8_t *addr)
 	if ((addr[0] & 0x1) == 0) {
 		return (EINVAL);
 	}
-	if (smp->sm_mcast_count >= SFXGE_MCAST_LIST_MAX) {
-		return (ENOENT);
-	}
 
 	/* Check if the address is already in the list */
 	i = 0;
@@ -918,6 +915,10 @@ sfxge_mac_multicst_add(sfxge_t *sp, const uint8_t *addr)
 			goto done;
 		else
 			i++;
+	}
+
+	if (smp->sm_mcast_count >= SFXGE_MCAST_LIST_MAX) {
+		return (ENOENT);
 	}
 
 	/* Add to the list */
