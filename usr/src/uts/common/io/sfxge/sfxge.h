@@ -41,6 +41,7 @@ extern "C" {
 #include <sys/stream.h>
 #include <sys/ethernet.h>
 #include <sys/cpuvar.h>
+#include <sys/id_space.h>
 
 #include <sys/mac.h>
 #include <sys/mac_ether.h>

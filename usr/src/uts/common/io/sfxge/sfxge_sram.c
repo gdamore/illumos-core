@@ -31,7 +31,6 @@
 #include <sys/types.h>
 #include <sys/ddi.h>
 #include <sys/sunddi.h>
-#include <sys/id_space.h>
 
 #include "sfxge.h"
 
@@ -46,11 +45,6 @@ sfxge_sram_init(sfxge_t *sp)
 
 	mutex_init(&(ssp->ss_lock), NULL, MUTEX_DRIVER, NULL);
 
-	/*
-	 * Create a VMEM arena for the buffer table
-	 * Note that these are not in the DDI/DKI.
-	 * See "man rmalloc" for a possible alternative
-	 */
 	(void) snprintf(name, MAXNAMELEN - 1, "%s%d_sram", ddi_driver_name(dip),
 	    ddi_get_instance(dip));
 	ssp->ss_buf_ids = id_space_create(name, 1, EFX_BUF_TBL_SIZE);
@@ -183,7 +177,6 @@ sfxge_sram_fini(sfxge_t *sp)
 
 	ASSERT3U(ssp->ss_state, ==, SFXGE_SRAM_INITIALIZED);
 
-	/* Destroy the VMEM arena */
 	id_space_destroy(ssp->ss_buf_ids);
 	ssp->ss_buf_ids = NULL;
 
