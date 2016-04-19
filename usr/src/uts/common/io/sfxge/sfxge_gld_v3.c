@@ -444,6 +444,10 @@ sfxge_gld_tx(void *arg, mblk_t *mp)
 	return (NULL);
 }
 
+/*
+ * This must not be static, in order to be tunable by /etc/system.
+ * (Static declarations may be optmized away by the compiler.)
+ */
 boolean_t	sfxge_lso = B_TRUE;
 
 static boolean_t
@@ -1214,7 +1218,7 @@ sfxge_gld_register(sfxge_t *sp)
 	uint8_t addr[ETHERADDRL];
 	int rc;
 
-        if ((mrp = mac_alloc(MAC_VERSION)) == NULL) {
+	if ((mrp = mac_alloc(MAC_VERSION)) == NULL) {
 		rc = ENOTSUP;
 		goto fail1;
 	}
@@ -1274,8 +1278,6 @@ sfxge_gld_register(sfxge_t *sp)
 	/* Register the interface */
 	if ((rc = mac_register(mrp, &mh)) != 0)
 		goto fail3;
-
-	kmem_free(mrp->m_src_addr, ETHERADDRL);
 
 	/* Free the stack registration object */
 	kmem_free(mrp, sizeof (mac_register_t));

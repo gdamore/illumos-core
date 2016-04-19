@@ -50,7 +50,6 @@ sfxge_vpd_get_keyword(sfxge_t *sp, sfxge_vpd_ioc_t *svip)
 		rc = ENOMEM;
 		goto fail1;
 	}
-	ASSERT(buf);
 
 	if ((rc = efx_vpd_read(enp, buf, size)) != 0)
 		goto fail2;
@@ -105,7 +104,6 @@ sfxge_vpd_set_keyword(sfxge_t *sp, sfxge_vpd_ioc_t *svip)
 		rc = ENOMEM;
 		goto fail1;
 	}
-	ASSERT(buf);
 
 	if ((rc = efx_vpd_read(enp, buf, size)) != 0)
 		goto fail2;

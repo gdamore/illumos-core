@@ -483,7 +483,8 @@ sfxge_intr_nic_disable(sfxge_t *sp)
 	efx_intr_fini(enp);
 }
 
-static inline unsigned pow2_le(unsigned long n)
+static inline unsigned
+pow2_le(unsigned long n)
 {
 	unsigned int order = 1;
 	ASSERT3U(n, >, 0);

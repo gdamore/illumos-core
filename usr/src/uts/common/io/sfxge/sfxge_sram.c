@@ -47,7 +47,7 @@ sfxge_sram_init(sfxge_t *sp)
 
 	(void) snprintf(name, MAXNAMELEN - 1, "%s%d_sram", ddi_driver_name(dip),
 	    ddi_get_instance(dip));
-	ssp->ss_buf_ids = id_space_create(name, 1, EFX_BUF_TBL_SIZE);
+	ssp->ss_buf_tbl_ids = id_space_create(name, 1, EFX_BUF_TBL_SIZE);
 	ssp->ss_state = SFXGE_SRAM_INITIALIZED;
 }
 
@@ -62,7 +62,7 @@ sfxge_sram_buf_tbl_alloc(sfxge_t *sp, size_t n, uint32_t *idp)
 
 	ASSERT(ssp->ss_state != SFXGE_SRAM_UNINITIALIZED);
 
-	if ((id = id_alloc_nosleep(ssp->ss_buf_ids)) < 0) {
+	if ((id = id_alloc_nosleep(ssp->ss_buf_tbl_ids)) < 0) {
 		rc = ENOSPC;
 		goto fail1;
 	}
@@ -165,7 +165,7 @@ sfxge_sram_buf_tbl_free(sfxge_t *sp, uint32_t id, size_t n)
 
 	ASSERT(ssp->ss_state != SFXGE_SRAM_UNINITIALIZED);
 
-	id_free(ssp->ss_buf_ids, (id_t)id);
+	id_free(ssp->ss_buf_tbl_ids, (id_t)id);
 
 	mutex_exit(&(ssp->ss_lock));
 }
@@ -177,8 +177,8 @@ sfxge_sram_fini(sfxge_t *sp)
 
 	ASSERT3U(ssp->ss_state, ==, SFXGE_SRAM_INITIALIZED);
 
-	id_space_destroy(ssp->ss_buf_ids);
-	ssp->ss_buf_ids = NULL;
+	id_space_destroy(ssp->ss_buf_tbl_ids);
+	ssp->ss_buf_tbl_ids = NULL;
 
 	mutex_destroy(&(ssp->ss_lock));
 

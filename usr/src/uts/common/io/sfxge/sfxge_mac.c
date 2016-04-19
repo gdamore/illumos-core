@@ -904,7 +904,8 @@ sfxge_mac_multicst_add(sfxge_t *sp, const uint8_t *addr)
 	mutex_enter(&(smp->sm_lock));
 
 	if ((addr[0] & 0x1) == 0) {
-		return (EINVAL);
+		rc = EINVAL;
+		goto fail1;
 	}
 
 	/* Check if the address is already in the list */
@@ -917,8 +918,9 @@ sfxge_mac_multicst_add(sfxge_t *sp, const uint8_t *addr)
 			i++;
 	}
 
-	if (smp->sm_mcast_count >= SFXGE_MCAST_LIST_MAX) {
-		return (ENOENT);
+	if (smp->sm_mcast_count >= EFX_MAC_MULTICAST_LIST_MAX) {
+		rc = ENOENT;
+		goto fail1;
 	}
 
 	/* Add to the list */
@@ -926,12 +928,15 @@ sfxge_mac_multicst_add(sfxge_t *sp, const uint8_t *addr)
 	    ETHERADDRL);
 
 	if ((rc = sfxge_mac_filter_apply(sp)) != 0)
-		goto fail1;
+		goto fail2;
 
 done:
 	mutex_exit(&(smp->sm_lock));
 	return (0);
 
+fail2:
+	DTRACE_PROBE(fail2);
+	smp->sm_mcast_count--;
 fail1:
 	DTRACE_PROBE1(fail1, int, rc);
 	mutex_exit(&(smp->sm_lock));
@@ -1025,7 +1030,7 @@ sfxge_mac_fini(sfxge_t *sp)
 	smp->sm_link_mode = EFX_LINK_UNKNOWN;
 	smp->sm_promisc = SFXGE_PROMISC_OFF;
 
-	bzero(smp->sm_mcast_addr, SFXGE_MCAST_LIST_MAX * ETHERADDRL);
+	bzero(smp->sm_mcast_addr, sizeof (smp->sm_mcast_addr));
 	smp->sm_mcast_count = 0;
 
 	bzero(smp->sm_laa, ETHERADDRL);

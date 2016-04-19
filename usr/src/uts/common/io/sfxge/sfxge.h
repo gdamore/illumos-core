@@ -87,8 +87,6 @@ typedef enum sfxge_promisc_type_e {
 	SFXGE_PROMISC_ALL_PHYS
 } sfxge_promisc_type_t;
 
-#define	SFXGE_MCAST_LIST_MAX 4096
-
 typedef enum sfxge_link_duplex_e {
 	SFXGE_LINK_DUPLEX_UNKNOWN = 0,
 	SFXGE_LINK_DUPLEX_HALF,
@@ -124,7 +122,7 @@ typedef struct sfxge_mac_s {
 	boolean_t		sm_laa_valid;
 	unsigned int		sm_fcntl;
 	sfxge_promisc_type_t	sm_promisc;
-	uint8_t			sm_mcast_addr[SFXGE_MCAST_LIST_MAX *
+	uint8_t			sm_mcast_addr[EFX_MAC_MULTICAST_LIST_MAX *
 	    ETHERADDRL]; /* List of multicast addresses to filter on */
 	int			sm_mcast_count;
 	clock_t			sm_lbolt;
@@ -172,7 +170,7 @@ typedef enum sfxge_sram_state_e {
 typedef struct sfxge_sram_s {
 	sfxge_t			*ss_sp;
 	kmutex_t		ss_lock;
-	id_space_t		*ss_buf_ids;
+	id_space_t		*ss_buf_tbl_ids;
 	unsigned int		ss_count;
 	sfxge_sram_state_t	ss_state;
 } sfxge_sram_t;
